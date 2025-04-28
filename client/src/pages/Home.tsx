@@ -229,68 +229,198 @@ export default function Home() {
           background: 'radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.05) 0%, transparent 80%)'
         }}></div>
         
-        {/* Small stars */}
-        {Array.from({ length: 200 }).map((_, i) => (
-          <div key={`small-star-${i}`} style={{
-            position: 'absolute',
-            width: `${Math.random() * 2 + 1}px`,
-            height: `${Math.random() * 2 + 1}px`,
-            backgroundColor: `rgba(${Math.random() * 70 + 185}, ${Math.random() * 70 + 185}, ${Math.random() * 70 + 185}, ${Math.random() * 0.5 + 0.5})`,
-            borderRadius: '50%',
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 4 + 5}s infinite ease-in-out ${Math.random() * 3}s, float ${Math.random() * 120 + 180}s infinite ease-in-out ${Math.random() * 15}s`,
-            boxShadow: '0 0 3px rgba(255, 255, 255, 0.4)'
-          }} />
-        ))}
+        {/* Static star background */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: `
+            radial-gradient(1px 1px at 25% 15%, white, transparent),
+            radial-gradient(1px 1px at 50% 25%, white, transparent),
+            radial-gradient(1px 1px at 75% 5%, white, transparent),
+            radial-gradient(1.5px 1.5px at 10% 45%, white, transparent),
+            radial-gradient(1.5px 1.5px at 30% 65%, white, transparent),
+            radial-gradient(1.5px 1.5px at 65% 40%, white, transparent),
+            radial-gradient(1.5px 1.5px at 85% 70%, white, transparent),
+            radial-gradient(2px 2px at 20% 35%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 40% 80%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 60% 20%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 80% 50%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(3px 3px at 15% 75%, rgba(255, 255, 255, 0.95), transparent),
+            radial-gradient(3px 3px at 35% 5%, rgba(255, 255, 255, 0.95), transparent),
+            radial-gradient(3px 3px at 55% 55%, rgba(255, 255, 255, 0.95), transparent),
+            radial-gradient(3px 3px at 75% 95%, rgba(255, 255, 255, 0.95), transparent),
+            radial-gradient(3px 3px at 95% 30%, rgba(255, 255, 255, 0.95), transparent)
+          `
+        }}></div>
         
-        {/* Medium stars */}
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div key={`medium-star-${i}`} style={{
-            position: 'absolute',
-            width: `${Math.random() * 3 + 2}px`,
-            height: `${Math.random() * 3 + 2}px`,
-            backgroundColor: `rgba(${Math.random() * 50 + 205}, ${Math.random() * 50 + 205}, ${Math.random() * 50 + 205}, 0.9)`,
-            borderRadius: '50%',
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 5 + 6}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 120 + 200}s infinite ease-in-out ${Math.random() * 20}s`,
-            boxShadow: '0 0 5px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.3)'
-          }} />
-        ))}
+        {/* A few larger static glowing stars */}
+        <div style={{
+          position: 'absolute',
+          top: '15%',
+          left: '25%',
+          width: '2px',
+          height: '2px',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          boxShadow: '0 0 10px 2px white'
+        }}></div>
         
-        {/* Large stars with glow */}
-        {Array.from({ length: 15 }).map((_, i) => (
-          <div key={`large-star-${i}`} style={{
-            position: 'absolute',
-            width: `${Math.random() * 4 + 3}px`,
-            height: `${Math.random() * 4 + 3}px`,
-            backgroundColor: `rgba(${Math.random() * 30 + 225}, ${Math.random() * 30 + 225}, ${Math.random() * 30 + 225}, 1)`,
-            borderRadius: '50%',
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 7 + 7}s infinite ease-in-out ${Math.random() * 3}s, float ${Math.random() * 120 + 220}s infinite ease-in-out ${Math.random() * 30}s`,
-            boxShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.2)'
-          }} />
-        ))}
+        <div style={{
+          position: 'absolute',
+          top: '65%',
+          left: '75%',
+          width: '3px',
+          height: '3px',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          boxShadow: '0 0 15px 3px white'
+        }}></div>
         
-        {/* Colored stars with different hues */}
-        {Array.from({ length: 20 }).map((_, i) => {
-          const hue = Math.floor(Math.random() * 360);
-          return (
-            <div key={`colored-star-${i}`} style={{
-              position: 'absolute',
-              width: `${Math.random() * 3 + 2}px`,
-              height: `${Math.random() * 3 + 2}px`,
-              backgroundColor: `hsla(${hue}, 100%, 70%, 0.9)`,
-              borderRadius: '50%',
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animation: `twinkle ${Math.random() * 6 + 8}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 90 + 230}s infinite ease-in-out ${Math.random() * 25}s`,
-              boxShadow: `0 0 8px hsla(${hue}, 100%, 70%, 0.7), 0 0 16px hsla(${hue}, 100%, 70%, 0.4)`
-            }} />
-          );
-        })}
+        <div style={{
+          position: 'absolute',
+          top: '35%',
+          left: '85%',
+          width: '2px',
+          height: '2px',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          boxShadow: '0 0 12px 2px white'
+        }}></div>
+        
+        <div style={{
+          position: 'absolute',
+          top: '75%',
+          left: '15%',
+          width: '2px',
+          height: '2px',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          boxShadow: '0 0 10px 2px white'
+        }}></div>
+        
+        {/* Blue tinted stars */}
+        <div style={{
+          position: 'absolute',
+          top: '45%',
+          left: '60%',
+          width: '2px',
+          height: '2px',
+          borderRadius: '50%',
+          backgroundColor: '#a1c4fd',
+          boxShadow: '0 0 8px 3px #a1c4fd'
+        }}></div>
+        
+        <div style={{
+          position: 'absolute',
+          top: '25%',
+          left: '40%',
+          width: '2px',
+          height: '2px',
+          borderRadius: '50%',
+          backgroundColor: '#a1c4fd',
+          boxShadow: '0 0 10px 3px #a1c4fd'
+        }}></div>
+        
+        {/* Floating UI Elements */}
+        {/* Decorative circle */}
+        <div style={{
+          position: 'absolute',
+          top: '65%',
+          right: '10%',
+          width: '50px',
+          height: '50px',
+          borderRadius: '50%',
+          border: '1px solid rgba(160, 210, 255, 0.2)',
+          animation: 'float-ui 15s ease-in-out infinite'
+        }}></div>
+        
+        {/* Small floating dot */}
+        <div style={{
+          position: 'absolute',
+          top: '30%',
+          left: '12%',
+          width: '6px',
+          height: '6px',
+          backgroundColor: 'rgba(100, 180, 255, 0.6)',
+          borderRadius: '50%',
+          boxShadow: '0 0 5px rgba(100, 180, 255, 0.4)',
+          animation: 'float-ui 20s ease-in-out infinite 2s'
+        }}></div>
+        
+        {/* Larger floating dot */}
+        <div style={{
+          position: 'absolute',
+          top: '75%',
+          left: '25%',
+          width: '8px',
+          height: '8px',
+          backgroundColor: 'rgba(100, 180, 255, 0.5)',
+          borderRadius: '50%',
+          boxShadow: '0 0 10px rgba(100, 180, 255, 0.3)',
+          animation: 'float-ui 25s ease-in-out infinite 5s'
+        }}></div>
+        
+        {/* Decorative rings */}
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          right: '20%',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          border: '1px solid rgba(160, 210, 255, 0.15)',
+          animation: 'float-ui-slow 30s ease-in-out infinite',
+        }}></div>
+        
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          right: '20%',
+          width: '30px',
+          height: '30px',
+          borderRadius: '50%',
+          border: '1px solid rgba(160, 210, 255, 0.25)',
+          animation: 'float-ui-slow 30s ease-in-out infinite',
+        }}></div>
+        
+        {/* Small constellation lines */}
+        <svg style={{
+          position: 'absolute',
+          bottom: '20%',
+          right: '30%',
+          width: '100px',
+          height: '80px',
+          opacity: 0.4,
+          animation: 'float-ui-slow 35s ease-in-out infinite 10s'
+        }}>
+          <line x1="10" y1="10" x2="40" y2="30" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <line x1="40" y1="30" x2="80" y2="15" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <line x1="40" y1="30" x2="60" y2="60" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <circle cx="10" cy="10" r="1" fill="white" />
+          <circle cx="40" cy="30" r="1" fill="white" />
+          <circle cx="80" cy="15" r="1.5" fill="white" />
+          <circle cx="60" cy="60" r="1" fill="white" />
+        </svg>
+        
+        {/* Another small constellation */}
+        <svg style={{
+          position: 'absolute',
+          top: '15%',
+          left: '20%',
+          width: '80px',
+          height: '60px',
+          opacity: 0.4,
+          animation: 'float-ui-slow 28s ease-in-out infinite 5s'
+        }}>
+          <line x1="10" y1="30" x2="40" y2="10" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <line x1="40" y1="10" x2="65" y2="40" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <circle cx="10" cy="30" r="1" fill="white" />
+          <circle cx="40" cy="10" r="1" fill="white" />
+          <circle cx="65" cy="40" r="1.5" fill="white" />
+        </svg>
       </div>
       
       {/* Global style for animations */}
@@ -347,6 +477,19 @@ export default function Home() {
             0% { opacity: 0.3; transform: scale(0.8); }
             50% { opacity: 0.6; transform: scale(1.2); }
             100% { opacity: 0.3; transform: scale(0.8); }
+          }
+          
+          @keyframes float-ui {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+          }
+          
+          @keyframes float-ui-slow {
+            0% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-5px) rotate(1deg); }
+            66% { transform: translateY(5px) rotate(-1deg); }
+            100% { transform: translateY(0) rotate(0deg); }
           }
         `
       }} />
