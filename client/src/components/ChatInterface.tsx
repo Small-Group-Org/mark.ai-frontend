@@ -56,19 +56,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         borderBottom: '1px solid rgba(51, 65, 85, 0.5)',
         padding: '10px'
       }}>
-        {/* Features in a responsive layout */}
-        <div className="features-container" style={{ 
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '8px'
-        }}>
+        {/* Features in a responsive layout with consistent alignment */}
+        <div className="features-container">
           {features.map((feature, index) => (
-            <div key={index} className="feature-item" style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.5rem'
-            }}>
+            <div key={index} className="feature-item">
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" 
                   stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
