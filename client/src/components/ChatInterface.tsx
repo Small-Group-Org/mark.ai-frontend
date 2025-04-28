@@ -101,7 +101,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               maxWidth: '80%',
               boxShadow: message.sender === 'user'
                 ? 'none'
-                : '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)'
+                : '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)',
+              animation: 'messageAppear 0.5s ease-out'
             }}>
               {message.text}
             </div>

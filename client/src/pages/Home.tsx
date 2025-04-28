@@ -146,7 +146,7 @@ export default function Home() {
           height: '180px', 
           marginBottom: '2rem',
           position: 'relative',
-          animation: 'fadeIn 1.4s ease-in-out, float 10s ease-in-out infinite',
+          animation: 'fadeIn 1.4s ease-in-out',
           filter: 'drop-shadow(0 0 10px rgba(96, 165, 250, 0.5))'
         }}>
           {/* Blue cosmic aura around Mark */}
@@ -346,12 +346,11 @@ export default function Home() {
           }
           
           @keyframes float {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); }
-            20% { transform: translateY(-15px) translateX(15px) rotate(2deg); }
-            40% { transform: translateY(5px) translateX(25px) rotate(0deg); }
-            60% { transform: translateY(10px) translateX(15px) rotate(-2deg); }
-            80% { transform: translateY(-5px) translateX(-10px) rotate(0deg); }
-            100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(10px) translateX(10px); }
+            100% { transform: translateY(0) translateX(0); }
           }
           
           @keyframes nebula {
@@ -372,8 +371,8 @@ export default function Home() {
           }
           
           @keyframes messageAppear {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateX(-30px); }
+            100% { opacity: 1; transform: translateX(0); }
           }
           
           @keyframes glow {
