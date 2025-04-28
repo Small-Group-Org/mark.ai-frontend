@@ -1,6 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ChatInterface, { MessageType } from '@/components/ChatInterface';
 
 export default function Home() {
+  const [messages, setMessages] = useState<MessageType[]>([
+    {
+      id: '1',
+      text: '👋 Hi! I\'m Mark, your potential social media manager.',
+      sender: 'system',
+    },
+    {
+      id: '2',
+      text: 'I\'d love to learn about your business and social media goals.',
+      sender: 'system',
+    },
+    {
+      id: '3',
+      text: 'What\'s your biggest social media challenge right now?',
+      sender: 'system',
+    },
+    {
+      id: '4',
+      text: 'I need help in captions',
+      sender: 'user',
+    },
+  ]);
+
+  const handleSendMessage = (text: string) => {
+    // Add user message
+    const newMessage: MessageType = {
+      id: Date.now().toString(),
+      text,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    
+    setMessages(prev => [...prev, newMessage]);
+    
+    // Simulate system response
+    setTimeout(() => {
+      const systemResponse: MessageType = {
+        id: (Date.now() + 1).toString(),
+        text: `I can help with creating engaging captions! Let's work on making your posts stand out with compelling and creative captions.`,
+        sender: 'system',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, systemResponse]);
+    }, 1000);
+  };
+
   return (
     <div style={{ 
       position: "relative", 
@@ -80,145 +128,10 @@ export default function Home() {
         }}></div>
         
         {/* Chat Interface */}
-        <div style={{ 
-          width: '100%',
-          maxWidth: '592px',
-          border: '1px solid rgba(51, 65, 85, 0.5)',
-          background: 'rgba(30, 41, 59, 0.4)',
-          backdropFilter: 'blur(6px)',
-          borderRadius: '12px',
-          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-          overflow: 'hidden'
-        }}>
-          {/* Chat Header */}
-          <div style={{ 
-            borderBottom: '1px solid rgba(51, 65, 85, 0.5)',
-            padding: '8px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>Create engaging content</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.38096 1.33337L2.71429 9.33337H8.71429L8.04763 14.6667L14.7143 6.66671L8.71429 6.66671L9.38096 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>Schedule posts</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9.09526 1.33337L2.42859 9.33337H8.42859L7.76192 14.6667L14.4286 6.66671L8.42859 6.66671L9.09526 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>24/7 engagement</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M8.80955 1.33337L2.14288 9.33337H8.14288L7.47622 14.6667L14.1429 6.66671L8.14288 6.66671L8.80955 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>Track performance</span>
-            </div>
-          </div>
-          
-          {/* Chat Messages */}
-          <div style={{ padding: '16px', maxHeight: '250px', overflow: 'auto' }}>
-            <div style={{ 
-              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              borderRadius: '16px 16px 16px 0',
-              padding: '8px 16px',
-              display: 'inline-block',
-              marginBottom: '10px',
-              color: 'white',
-              maxWidth: '80%',
-              boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)'
-            }}>
-              👋 Hi! I'm Mark, your potential social media manager.
-            </div>
-            
-            <div style={{ 
-              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              borderRadius: '16px 16px 16px 0',
-              padding: '8px 16px',
-              display: 'inline-block',
-              marginBottom: '10px',
-              color: 'white',
-              maxWidth: '80%',
-              boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)'
-            }}>
-              I'd love to learn about your business and social media goals.
-            </div>
-            
-            <div style={{ 
-              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              borderRadius: '16px 16px 16px 0',
-              padding: '8px 16px',
-              display: 'inline-block',
-              marginBottom: '10px',
-              color: 'white',
-              maxWidth: '80%',
-              boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)'
-            }}>
-              What's your biggest social media challenge right now?
-            </div>
-            
-            <div style={{ 
-              background: 'white',
-              borderRadius: '16px 16px 0 16px',
-              padding: '8px 16px',
-              display: 'inline-block',
-              marginBottom: '10px',
-              color: '#334155',
-              maxWidth: '80%',
-              alignSelf: 'flex-end',
-              marginLeft: 'auto'
-            }}>
-              I need help in captions
-            </div>
-          </div>
-          
-          {/* Chat Input */}
-          <div style={{ 
-            padding: '13px 16px',
-            borderTop: '1px solid rgba(51, 65, 85, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <input 
-              type="text"
-              placeholder="Type your message..."
-              style={{
-                flex: 1,
-                border: '1px solid rgba(71, 85, 105, 0.5)',
-                background: 'rgba(51, 65, 85, 0.5)',
-                borderRadius: '9999px',
-                padding: '12px 17px',
-                color: 'white',
-                outline: 'none'
-              }}
-            />
-            <button style={{
-              backgroundColor: '#2563eb',
-              borderRadius: '9999px',
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: 'none',
-              cursor: 'pointer'
-            }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14.6666 1.33337L9.99998 14.6667L7.33331 8.66671L1.33331 6.00004L14.6666 1.33337Z" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M14.6666 1.33337L7.33331 8.66671" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        <ChatInterface 
+          messages={messages}
+          onSendMessage={handleSendMessage}
+        />
       </main>
 
       {/* Footer */}
@@ -260,13 +173,16 @@ export default function Home() {
         ))}
       </div>
       
-      <style jsx>{`
-        @keyframes twinkle {
-          0% { opacity: 0.7; }
-          50% { opacity: 1; }
-          100% { opacity: 0.7; }
-        }
-      `}</style>
+      {/* Global style for animations */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes twinkle {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+          }
+        `
+      }} />
     </div>
   );
 }

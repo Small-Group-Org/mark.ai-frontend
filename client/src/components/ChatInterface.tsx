@@ -1,65 +1,162 @@
-import React from 'react';
-import styles from "../styles/MainSection.module.css";
-import { Send } from 'lucide-react';
+import React, { useState } from 'react';
 
-const ChatInterface: React.FC = () => {
+export type MessageType = {
+  id: string;
+  text: string;
+  sender: 'user' | 'system';
+  timestamp?: Date;
+};
+
+export type ChatInterfaceProps = {
+  messages: MessageType[];
+  onSendMessage: (message: string) => void;
+  features?: string[];
+  className?: string;
+  placeholderText?: string;
+};
+
+const ChatInterface: React.FC<ChatInterfaceProps> = ({
+  messages,
+  onSendMessage,
+  features = [
+    'Create engaging content',
+    'Schedule posts',
+    '24/7 engagement',
+    'Track performance'
+  ],
+  className = '',
+  placeholderText = 'Type your message...'
+}) => {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      onSendMessage(inputValue);
+      setInputValue('');
+    }
+  };
+
   return (
-    <div className={styles.OverlayBorderShadowOverlayBlur_2_358}>
-      <div className={styles.HorizontalBorder_2_365}>
-        <div className={styles.Component_1_2_366}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <span className={styles.CreateEngagingContent_2_368}>Create engaging content</span>
-        <div className={styles.Component_2_3_29}>
-          <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.38096 1.33337L2.71429 9.33337H8.71429L8.04763 14.6667L14.7143 6.66671L8.71429 6.66671L9.38096 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <span className={styles.SchedulePosts_2_373}>Schedule posts</span>
-        <div className={styles.Component_3_3_32}>
-          <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.09526 1.33337L2.42859 9.33337H8.42859L7.76192 14.6667L14.4286 6.66671L8.42859 6.66671L9.09526 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <span className={styles._7Engagement_2_376}>24/7 engagement</span>
-        <div className={styles.Component_4_3_38}>
-          <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8.80955 1.33337L2.14288 9.33337H8.14288L7.47622 14.6667L14.1429 6.66671L8.14288 6.66671L8.80955 1.33337Z" stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <span className={styles.TrackPerformance_2_379}>Track performance</span>
-      </div>
-      <div className={styles.Container_2_380}>
-        <div className={styles.BackgroundShadow_2_381}>
-          <span className={styles.HiIMMarkYourPotentialSocialMediaManager_2_384}>👋 Hi! I'm Mark, your potential social media manager.</span>
-        </div>
-        <div className={styles.BackgroundShadow_2_385}>
-          <span className={styles.IDLoveToLearnAboutYourBusinessAndSocialMediaGoals_2_386}>I'd love to learn about your business and social media goals.</span>
-        </div>
-        <div className={styles.BackgroundShadow_3_41}>
-          <span className={styles.WhatSYourBiggestSocialMediaChallengeRightNow_3_42}>What's your biggest social media challenge right now?</span>
-        </div>
-      </div>
-      <div className={styles.BackgroundShadow_4_301}>
-        <span className={styles.INeedHelpInCaptions_4_302}>I need help in captions</span>
-      </div>
-      <div className={styles.Form_29_56}>
-        <div className={styles.Input_29_57}>
-          <div className={styles.Container_29_58}>
-            <span className={styles.TypeYourMessage_29_59}>Type your message...</span>
-          </div>
-        </div>
-        <div className={styles.Component_2_29_60}>
-          <div className={styles.Component_1_2_59}>
+    <div 
+      className={className}
+      style={{ 
+        width: '100%',
+        maxWidth: '592px',
+        border: '1px solid rgba(51, 65, 85, 0.5)',
+        background: 'rgba(30, 41, 59, 0.4)',
+        backdropFilter: 'blur(6px)',
+        borderRadius: '12px',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Chat Header with Features */}
+      <div style={{ 
+        borderBottom: '1px solid rgba(51, 65, 85, 0.5)',
+        padding: '8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        {features.map((feature, index) => (
+          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M14.6666 1.33337L9.99998 14.6667L7.33331 8.66671L1.33331 6.00004L14.6666 1.33337Z" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M14.6666 1.33337L7.33331 8.66671" stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" 
+                stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
+            <span style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>{feature}</span>
           </div>
-        </div>
+        ))}
       </div>
+      
+      {/* Chat Messages */}
+      <div style={{ 
+        padding: '16px', 
+        maxHeight: '250px', 
+        minHeight: '250px',
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {messages.map((message) => (
+          <div 
+            key={message.id}
+            style={{ 
+              display: 'flex',
+              justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
+              marginBottom: '10px',
+              width: '100%'
+            }}
+          >
+            <div style={{ 
+              background: message.sender === 'user' 
+                ? 'white' 
+                : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+              borderRadius: message.sender === 'user'
+                ? '16px 16px 0 16px'
+                : '16px 16px 16px 0',
+              padding: '8px 16px',
+              color: message.sender === 'user' ? '#334155' : 'white',
+              maxWidth: '80%',
+              boxShadow: message.sender === 'user'
+                ? 'none'
+                : '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)'
+            }}>
+              {message.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Chat Input */}
+      <form 
+        onSubmit={handleSubmit}
+        style={{ 
+          padding: '13px 16px',
+          borderTop: '1px solid rgba(51, 65, 85, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}
+      >
+        <input 
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={placeholderText}
+          style={{
+            flex: 1,
+            border: '1px solid rgba(71, 85, 105, 0.5)',
+            background: 'rgba(51, 65, 85, 0.5)',
+            borderRadius: '9999px',
+            padding: '12px 17px',
+            color: 'white',
+            outline: 'none'
+          }}
+        />
+        <button 
+          type="submit"
+          style={{
+            backgroundColor: '#2563eb',
+            borderRadius: '9999px',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14.6666 1.33337L9.99998 14.6667L7.33331 8.66671L1.33331 6.00004L14.6666 1.33337Z" 
+              stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14.6666 1.33337L7.33331 8.66671" 
+              stroke="white" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </form>
     </div>
   );
 };
