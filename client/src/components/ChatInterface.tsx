@@ -69,11 +69,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               alignItems: 'center', 
               gap: '0.5rem'
             }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" 
                   stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500 }}>{feature}</span>
+              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500, whiteSpace: 'nowrap' }}>{feature}</span>
             </div>
           ))}
         </div>

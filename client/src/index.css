@@ -160,6 +160,8 @@
     background-color: rgba(30, 41, 59, 0.5) !important;
     border-radius: 8px !important;
     justify-content: center !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
   }
 }
 
