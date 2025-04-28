@@ -265,7 +265,7 @@ export default function Home() {
           height: '100%',
           animation: 'stars-move-1 45s linear infinite'
         }}>
-          {[...Array(30)].map((_, i) => (
+          {[...Array(80)].map((_, i) => (
             <div 
               key={`star-s1-${i}`} 
               style={{
@@ -291,7 +291,7 @@ export default function Home() {
           height: '100%',
           animation: 'stars-move-2 60s linear infinite'
         }}>
-          {[...Array(25)].map((_, i) => (
+          {[...Array(70)].map((_, i) => (
             <div 
               key={`star-s2-${i}`} 
               style={{
@@ -300,6 +300,32 @@ export default function Home() {
                 left: `${Math.random() * 100}%`,
                 width: `${Math.random() * 1.5 + 1}px`,
                 height: `${Math.random() * 1.5 + 1}px`,
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                opacity: Math.random() * 0.3 + 0.7
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Animated floating stars - small group 3 */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          animation: 'stars-move-4 55s linear infinite'
+        }}>
+          {[...Array(60)].map((_, i) => (
+            <div 
+              key={`star-s3-${i}`} 
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 1.5 + 0.8}px`,
+                height: `${Math.random() * 1.5 + 0.8}px`,
                 backgroundColor: 'white',
                 borderRadius: '50%',
                 opacity: Math.random() * 0.3 + 0.7
@@ -317,7 +343,7 @@ export default function Home() {
           height: '100%',
           animation: 'stars-move-3 75s linear infinite'
         }}>
-          {[...Array(15)].map((_, i) => (
+          {[...Array(35)].map((_, i) => (
             <div 
               key={`star-m-${i}`} 
               style={{
@@ -344,7 +370,7 @@ export default function Home() {
           height: '100%',
           animation: 'stars-move-4 90s linear infinite'
         }}>
-          {[...Array(8)].map((_, i) => (
+          {[...Array(20)].map((_, i) => (
             <div 
               key={`star-blue-${i}`} 
               style={{
@@ -357,6 +383,32 @@ export default function Home() {
                 borderRadius: '50%',
                 boxShadow: '0 0 5px rgba(161, 196, 253, 0.7)',
                 opacity: Math.random() * 0.3 + 0.7
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Additional tiny stars layer */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          animation: 'stars-move-5 65s linear infinite'
+        }}>
+          {[...Array(100)].map((_, i) => (
+            <div 
+              key={`star-tiny-${i}`} 
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 0.8 + 0.5}px`,
+                height: `${Math.random() * 0.8 + 0.5}px`,
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                opacity: Math.random() * 0.4 + 0.5
               }}
             />
           ))}
@@ -753,6 +805,13 @@ export default function Home() {
           @keyframes star-pulse {
             0% { opacity: 0.7; box-shadow: 0 0 5px 2px white; }
             100% { opacity: 1; box-shadow: 0 0 15px 4px white; }
+          }
+          
+          @keyframes stars-move-5 {
+            0% { transform: translateY(0) translateX(0); }
+            33% { transform: translateY(-5px) translateX(5px); }
+            66% { transform: translateY(5px) translateX(-5px); }
+            100% { transform: translateY(0) translateX(0); }
           }
         `
       }} />
