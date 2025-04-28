@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
 
 export default function Home() {
-  const [messages, setMessages] = useState<MessageType[]>([
+  // Initial state with just the first three system messages (without user message)
+  const initialMessages: MessageType[] = [
     {
       id: '1',
       text: '👋 Hi! I\'m Mark, your potential social media manager.',
@@ -17,13 +18,25 @@ export default function Home() {
       id: '3',
       text: 'What\'s your biggest social media challenge right now?',
       sender: 'system',
-    },
-    {
-      id: '4',
-      text: 'I need help in captions',
-      sender: 'user',
-    },
-  ]);
+    }
+  ];
+
+  // State to control animation of messages
+  const [visibleMessages, setVisibleMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
+  const [messageIndex, setMessageIndex] = useState(0);
+
+  // Animation effect to show messages one by one with delay
+  useEffect(() => {
+    if (messageIndex < initialMessages.length) {
+      const timer = setTimeout(() => {
+        setVisibleMessages(prev => [...prev, initialMessages[messageIndex]]);
+        setMessageIndex(messageIndex + 1);
+      }, 1000); // 1 second delay between messages
+      
+      return () => clearTimeout(timer);
+    }
+  }, [messageIndex]);
 
   const handleSendMessage = (text: string) => {
     // Add user message
@@ -35,6 +48,7 @@ export default function Home() {
     };
     
     setMessages(prev => [...prev, newMessage]);
+    setVisibleMessages(prev => [...prev, newMessage]);
     
     // Simulate system response
     setTimeout(() => {
@@ -46,6 +60,7 @@ export default function Home() {
       };
       
       setMessages(prev => [...prev, systemResponse]);
+      setVisibleMessages(prev => [...prev, systemResponse]);
     }, 1000);
   };
 
@@ -57,7 +72,8 @@ export default function Home() {
       color: "white",
       fontFamily: 'Inter, sans-serif',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      overflow: 'hidden' // Ensure no scrollbars from animation overflow
     }}>
       {/* Navbar */}
       <header style={{ 
@@ -65,7 +81,8 @@ export default function Home() {
         display: 'flex', 
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderBottom: '1px solid rgba(255,255,255,0.1)'
+        position: 'relative',
+        zIndex: 2
       }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span style={{ fontWeight: 'bold', fontSize: '24px' }}>Mark</span>
@@ -101,37 +118,50 @@ export default function Home() {
         display: 'flex', 
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        position: 'relative',
+        zIndex: 2
       }}>
         <h1 style={{ 
           fontSize: '60px', 
           fontWeight: 'bold', 
-          color: '#60a5fa',
+          color: 'white',
           textAlign: 'center',
-          margin: '0 0 0.5rem 0'
-        }}>Interview Mark</h1>
+          margin: '0 0 0.5rem 0',
+          animation: 'fadeIn 1s ease-in-out'
+        }}>Interview <span style={{ color: '#60a5fa' }}>Mark</span></h1>
         <p style={{ 
           fontSize: '20px', 
           color: '#93c5fd',
           textAlign: 'center',
           maxWidth: '592px',
-          marginBottom: '2rem'
+          marginBottom: '2rem',
+          animation: 'fadeIn 1.2s ease-in-out'
         }}>Your 24/7 Social Media Expert</p>
 
-        {/* Profile Image */}
+        {/* Profile Image - Mark.png */}
         <div style={{ 
           width: '120px', 
           height: '150px', 
-          background: '#334155', 
-          borderRadius: '8px',
-          marginBottom: '2rem'
+          marginBottom: '2rem',
+          animation: 'fadeIn 1.4s ease-in-out, float 6s ease-in-out infinite',
+          backgroundImage: 'url(/attached_assets/mark.png)',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }}></div>
         
         {/* Chat Interface */}
-        <ChatInterface 
-          messages={messages}
-          onSendMessage={handleSendMessage}
-        />
+        <div style={{ 
+          width: '100%',
+          maxWidth: '592px',
+          animation: 'fadeIn 1.6s ease-in-out'
+        }}>
+          <ChatInterface 
+            messages={visibleMessages}
+            onSendMessage={handleSendMessage}
+          />
+        </div>
       </main>
 
       {/* Footer */}
@@ -139,7 +169,9 @@ export default function Home() {
         padding: '25px 48px 24px',
         borderTop: '1px solid #1e293b',
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        position: 'relative',
+        zIndex: 2
       }}>
         <div style={{ 
           width: '100%', 
@@ -157,8 +189,8 @@ export default function Home() {
         </div>
       </footer>
       
-      {/* Add stars for the background effect */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+      {/* Dynamic stars for the background effect with floating animation */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
         {Array.from({ length: 100 }).map((_, i) => (
           <div key={i} style={{
             position: 'absolute',
@@ -168,7 +200,7 @@ export default function Home() {
             borderRadius: '50%',
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out ${Math.random() * 2}s`
+            animation: `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 50 + 30}s infinite ease-in-out ${Math.random() * 10}s`
           }} />
         ))}
       </div>
@@ -180,6 +212,24 @@ export default function Home() {
             0% { opacity: 0.7; }
             50% { opacity: 1; }
             100% { opacity: 0.7; }
+          }
+          
+          @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(0) translateX(20px); }
+            75% { transform: translateY(10px) translateX(10px); }
+            100% { transform: translateY(0) translateX(0); }
+          }
+          
+          @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes messageAppear {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
           }
         `
       }} />
