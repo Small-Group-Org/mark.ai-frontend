@@ -1,0 +1,763 @@
+@import "https://fonts.googleapis.com/css?family=Inter:0,700;0,400;0,500&display=swap";
+
+.Background_2_98 {
+  background: var(--color-azure-11, #0f172a);
+  flex-flow: row;
+  flex-shrink: 0;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.Container_2_100 {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.Mark_2_101 {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.Overlay_2_181 {
+  background: var(--color-azure-8453, #aceaff87);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.08px;
+  height: 2.67px;
+  position: absolute;
+}
+
+.Overlay_2_103 {
+  background: var(--color-grey-90506, #ddcdff82);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.06px;
+  height: 2.88px;
+  position: absolute;
+}
+
+.Overlay_2_106 {
+  background: var(--color-magenta-8628, #fcbaff47);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.13px;
+  height: 2.98px;
+  position: absolute;
+}
+
+.Overlay_2_109 {
+  background: var(--color-azure-84298, #abd3ff4d);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.75px;
+  height: 3.91px;
+  position: absolute;
+}
+
+.Overlay_2_112 {
+  background: var(--color-azure-89675, #c8e6ffad);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.61px;
+  height: 3.73px;
+  position: absolute;
+}
+
+.Overlay_2_115 {
+  background: var(--color-grey-95624, #fae4ff9e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.98px;
+  height: 3.41px;
+  position: absolute;
+}
+
+.Overlay_2_118 {
+  background: var(--color-azure-87514, #bbcdff82);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.53px;
+  height: 3.09px;
+  position: absolute;
+}
+
+.Overlay_2_121 {
+  background: var(--color-grey-90337, #d5ceff57);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.58px;
+  height: 4.16px;
+  position: absolute;
+}
+
+.Overlay_2_124 {
+  background: var(--color-violet-85624, #d1b3ff9e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.77px;
+  height: 2.36px;
+  position: absolute;
+}
+
+.Overlay_2_127 {
+  background: var(--color-blue-88565, #c6c3ff8f);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.05px;
+  height: 2.69px;
+  position: absolute;
+}
+
+.Overlay_2_130 {
+  background: var(--color-violet-83243, #c8a6ff3d);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.16px;
+  height: 2.34px;
+  position: absolute;
+}
+
+.Overlay_2_133 {
+  background: var(--color-violet-88337, #ebc1ff57);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.61px;
+  height: 1.89px;
+  position: absolute;
+}
+
+.Overlay_2_136 {
+  background: var(--color-grey-91533, #dcd3ff87);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.42px;
+  height: 2.98px;
+  position: absolute;
+}
+
+.VerticalDivider_2_139 {
+  background: var(--color-magenta-87608, #f3bdff9c);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.94px;
+  height: 4.67px;
+  position: absolute;
+}
+
+.Overlay_2_142 {
+  background: var(--color-azure-8561, #b0cbff9c);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.39px;
+  height: 4.48px;
+  position: absolute;
+}
+
+.Overlay_2_145 {
+  background: var(--color-azure-81553, #a0c3ff8c);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.23px;
+  height: 2.48px;
+  position: absolute;
+}
+
+.Overlay_2_148 {
+  background: var(--color-grey-91624, #f2d1ff9e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.91px;
+  height: 3.52px;
+  position: absolute;
+}
+
+.Overlay_2_151 {
+  background: var(--color-magenta-8534, #eeb1ff57);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.11px;
+  height: 2.52px;
+  position: absolute;
+}
+
+.VerticalDivider_2_154 {
+  background: var(--color-violet-8649, #d6b6ff7d);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.38px;
+  height: 4.03px;
+  position: absolute;
+}
+
+.Overlay_2_157 {
+  background: var(--color-azure-9056, #cadeff8f);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.72px;
+  height: 3.58px;
+  position: absolute;
+}
+
+.Overlay_2_160 {
+  background: var(--color-blue-81384, #af9fff61);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.88px;
+  height: 4.78px;
+  position: absolute;
+}
+
+.VerticalDivider_2_163 {
+  background: var(--color-violet-8823, #e4c2ff3b);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.28px;
+  height: 4.08px;
+  position: absolute;
+}
+
+.Overlay_2_166 {
+  background: var(--color-cyan-87267, #bbfcff45);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.67px;
+  height: 2.02px;
+  position: absolute;
+}
+
+.Overlay_2_169 {
+  background: var(--color-blue-87427, #bec8ff6e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.92px;
+  height: 2.89px;
+  position: absolute;
+}
+
+.Overlay_2_172 {
+  background: var(--color-azure-89686, #c5d6ffb0);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.34px;
+  height: 1.55px;
+  position: absolute;
+}
+
+.Overlay_2_175 {
+  background: var(--color-azure-8336, #a8cfff5c);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.34px;
+  height: 2.05px;
+  position: absolute;
+}
+
+.Overlay_2_178 {
+  background: var(--color-magenta-8643, #f5baff6e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.55px;
+  height: 1.08px;
+  position: absolute;
+}
+
+.Overlay_2_184 {
+  background: var(--color-azure-85482, #b2ccff7a);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.42px;
+  height: 1.44px;
+  position: absolute;
+}
+
+.Overlay_2_187 {
+  background: var(--color-cyan-86255, #b7f8ff40);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.5px;
+  height: 3.61px;
+  position: absolute;
+}
+
+.Overlay_2_190 {
+  background: var(--color-azure-82663, #a4c7ffa8);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.22px;
+  height: 2.06px;
+  position: absolute;
+}
+
+.Overlay_2_193 {
+  background: var(--color-magenta-86675, #f6b9ffad);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.53px;
+  height: 3.03px;
+  position: absolute;
+}
+
+.HorizontalDivider_2_196 {
+  background: var(--color-grey-92216, #d5f7ff38);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.34px;
+  height: 1.44px;
+  position: absolute;
+}
+
+.Overlay_2_199 {
+  background: var(--color-violet-8926, #dcc7ff42);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.48px;
+  height: 1.13px;
+  position: absolute;
+}
+
+.Overlay_2_202 {
+  background: var(--color-grey-97408, #f8f1ff69);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.83px;
+  height: 4.2px;
+  position: absolute;
+}
+
+.Overlay_2_205 {
+  background: var(--color-grey-9263, #d5dfffa1);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.47px;
+  height: 2.05px;
+  position: absolute;
+}
+
+.Overlay_2_208 {
+  background: var(--color-azure-89494, #c8f0ff7d);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.39px;
+  height: 2.78px;
+  position: absolute;
+}
+
+.Overlay_2_211 {
+  background: var(--color-violet-8730, #e1bbff4d);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.61px;
+  height: 3.06px;
+  position: absolute;
+}
+
+.Overlay_2_214 {
+  background: var(--color-blue-8360, #baa8ff99);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.42px;
+  height: 3.25px;
+  position: absolute;
+}
+
+.Overlay_2_217 {
+  background: var(--color-cyan-86675, #b9f3ffad);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.89px;
+  height: 3.14px;
+  position: absolute;
+}
+
+.Overlay_2_220 {
+  background: var(--color-blue-85573, #b3beff91);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.19px;
+  height: 4.72px;
+  position: absolute;
+}
+
+.Overlay_2_223 {
+  background: var(--color-magenta-8866, #f6c0ffa8);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.58px;
+  height: 1.36px;
+  position: absolute;
+}
+
+.Overlay_2_226 {
+  background: var(--color-cyan-8544, #b4f2ff70);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.72px;
+  height: 1.05px;
+  position: absolute;
+}
+
+.Overlay_2_229 {
+  background: var(--color-azure-81318, #9fd8ff52);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.92px;
+  height: 2.84px;
+  position: absolute;
+}
+
+.Overlay_2_232 {
+  background: var(--color-grey-9731, #f8f1ff4f);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.42px;
+  height: 2.97px;
+  position: absolute;
+}
+
+.Overlay_2_235 {
+  background: var(--color-azure-8744, #bcd9ff70);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.31px;
+  height: 3.45px;
+  position: absolute;
+}
+
+.Overlay_2_238 {
+  background: var(--color-blue-87686, #bbc2ffb0);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3px;
+  height: 4.42px;
+  position: absolute;
+}
+
+.Overlay_2_241 {
+  background: var(--color-azure-80553, #9bdbff8c);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.08px;
+  height: 3.08px;
+  position: absolute;
+}
+
+.Overlay_2_244 {
+  background: var(--color-magenta-8737, #fbbbff5e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.25px;
+  height: 1px;
+  position: absolute;
+}
+
+.VerticalDivider_2_247 {
+  background: var(--color-violet-8135, #e29cff59);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.83px;
+  height: 4.02px;
+  position: absolute;
+}
+
+.Overlay_2_250 {
+  background: var(--color-cyan-81424, #9ff7ff6b);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.38px;
+  height: 3.81px;
+  position: absolute;
+}
+
+.Overlay_2_253 {
+  background: var(--color-azure-86655, #bae4ffa6);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.52px;
+  height: 4.88px;
+  position: absolute;
+}
+
+.Overlay_2_256 {
+  background: var(--color-grey-9133, #d3d5ff54);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.69px;
+  height: 3.41px;
+  position: absolute;
+}
+
+.Overlay_2_259 {
+  background: var(--color-azure-86545, #b6e2ff8c);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.69px;
+  height: 4.08px;
+  position: absolute;
+}
+
+.Overlay_2_262 {
+  background: var(--color-azure-8447, #acceff78);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.33px;
+  height: 3.81px;
+  position: absolute;
+}
+
+.Overlay_2_265 {
+  background: var(--color-violet-81584, #c09eff94);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.53px;
+  height: 3.86px;
+  position: absolute;
+}
+
+.Overlay_2_268 {
+  background: var(--color-blue-89325, #c8cbff52);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.25px;
+  height: 3.56px;
+  position: absolute;
+}
+
+.Overlay_2_271 {
+  background: var(--color-grey-9548, #e6f9ff7a);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.94px;
+  height: 2.64px;
+  position: absolute;
+}
+
+.Overlay_2_274 {
+  background: var(--color-violet-81447, #b69dff73);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.97px;
+  height: 3.02px;
+  position: absolute;
+}
+
+.Overlay_2_277 {
+  background: var(--color-blue-83318, #b5a8ff52);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.33px;
+  height: 3.28px;
+  position: absolute;
+}
+
+.Overlay_2_280 {
+  background: var(--color-grey-9263, #d5dfffa1);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.98px;
+  height: 4.63px;
+  position: absolute;
+}
+
+.Overlay_2_282 {
+  background: var(--color-cyan-8467, #afedffab);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.67px;
+  height: 4.28px;
+  position: absolute;
+}
+
+.Overlay_2_285 {
+  background: var(--color-cyan-81675, #9efbffad);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.72px;
+  height: 2.47px;
+  position: absolute;
+}
+
+.Overlay_2_288 {
+  background: var(--color-cyan-8368, #aafcffad);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.11px;
+  height: 4.19px;
+  position: absolute;
+}
+
+.Overlay_2_291 {
+  background: var(--color-magenta-8269, #e8a2ffb0);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 3.58px;
+  height: 1.08px;
+  position: absolute;
+}
+
+.HorizontalDivider_2_294 {
+  background: var(--color-grey-92596, #d7f5ff99);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.08px;
+  height: 1.58px;
+  position: absolute;
+}
+
+.Overlay_2_297 {
+  background: var(--color-magenta-90208, #fecaff36);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.39px;
+  height: 3.22px;
+  position: absolute;
+}
+
+.Overlay_2_300 {
+  background: var(--color-azure-84616, #abc2ff9e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.66px;
+  height: 2.7px;
+  position: absolute;
+}
+
+.Overlay_2_303 {
+  background: var(--color-blue-8159, #b59eff96);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.59px;
+  height: 3.95px;
+  position: absolute;
+}
+
+/* CSS variables for colors */
+:root {
+  --color-azure-11: #0f172a;
+  --color-azure-8453: #aceaff87;
+  --color-grey-90506: #ddcdff82;
+  --color-magenta-8628: #fcbaff47;
+  --color-azure-84298: #abd3ff4d;
+  --color-azure-89675: #c8e6ffad;
+  --color-grey-95624: #fae4ff9e;
+  --color-azure-87514: #bbcdff82;
+  --color-grey-90337: #d5ceff57;
+  --color-violet-85624: #d1b3ff9e;
+  --color-blue-88565: #c6c3ff8f;
+  --color-violet-83243: #c8a6ff3d;
+  --color-violet-88337: #ebc1ff57;
+  --color-grey-91533: #dcd3ff87;
+  --color-magenta-87608: #f3bdff9c;
+  --color-azure-8561: #b0cbff9c;
+  --color-azure-81553: #a0c3ff8c;
+  --color-grey-91624: #f2d1ff9e;
+  --color-magenta-8534: #eeb1ff57;
+  --color-violet-8649: #d6b6ff7d;
+  --color-azure-9056: #cadeff8f;
+  --color-blue-81384: #af9fff61;
+  --color-violet-8823: #e4c2ff3b;
+  --color-cyan-87267: #bbfcff45;
+  --color-blue-87427: #bec8ff6e;
+  --color-azure-89686: #c5d6ffb0;
+  --color-azure-8336: #a8cfff5c;
+  --color-magenta-8643: #f5baff6e;
+  --color-azure-85482: #b2ccff7a;
+  --color-cyan-86255: #b7f8ff40;
+  --color-azure-82663: #a4c7ffa8;
+  --color-magenta-86675: #f6b9ffad;
+  --color-grey-92216: #d5f7ff38;
+  --color-violet-8926: #dcc7ff42;
+  --color-grey-97408: #f8f1ff69;
+  --color-grey-9263: #d5dfffa1;
+  --color-azure-89494: #c8f0ff7d;
+  --color-violet-8730: #e1bbff4d;
+  --color-blue-8360: #baa8ff99;
+  --color-cyan-86675: #b9f3ffad;
+  --color-blue-85573: #b3beff91;
+  --color-magenta-8866: #f6c0ffa8;
+  --color-cyan-8544: #b4f2ff70;
+  --color-azure-81318: #9fd8ff52;
+  --color-grey-9731: #f8f1ff4f;
+  --color-azure-8744: #bcd9ff70;
+  --color-blue-87686: #bbc2ffb0;
+  --color-azure-80553: #9bdbff8c;
+  --color-magenta-8737: #fbbbff5e;
+  --color-violet-8135: #e29cff59;
+  --color-cyan-81424: #9ff7ff6b;
+  --color-azure-86655: #bae4ffa6;
+  --color-grey-9133: #d3d5ff54;
+  --color-azure-86545: #b6e2ff8c;
+  --color-azure-8447: #acceff78;
+  --color-violet-81584: #c09eff94;
+  --color-blue-89325: #c8cbff52;
+  --color-grey-9548: #e6f9ff7a;
+  --color-violet-81447: #b69dff73;
+  --color-blue-83318: #b5a8ff52;
+  --color-cyan-8467: #afedffab;
+  --color-cyan-81675: #9efbffad;
+  --color-cyan-8368: #aafcffad;
+  --color-magenta-8269: #e8a2ffb0;
+  --color-grey-92596: #d7f5ff99;
+  --color-magenta-90208: #fecaff36;
+  --color-azure-84616: #abc2ff9e;
+  --color-blue-8159: #b59eff96;
+}
+
+/* Add animation for twinkling stars effect */
+@keyframes twinkle {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* Apply twinkling effect to some stars */
+.Overlay_2_181,
+.Overlay_2_160,
+.Overlay_2_193,
+.Overlay_2_211,
+.Overlay_2_244,
+.Overlay_2_271,
+.Overlay_2_124,
+.Overlay_2_220 {
+  animation: twinkle 3s infinite ease-in-out;
+}
+
+/* Offset the animation timing for different stars */
+.Overlay_2_106,
+.Overlay_2_142,
+.Overlay_2_175,
+.Overlay_2_229,
+.Overlay_2_253,
+.Overlay_2_285,
+.Overlay_2_297,
+.Overlay_2_118 {
+  animation: twinkle 4s infinite ease-in-out;
+  animation-delay: 1s;
+}
+
+.Overlay_2_112,
+.Overlay_2_151,
+.Overlay_2_199,
+.Overlay_2_241,
+.Overlay_2_277,
+.Overlay_2_300,
+.VerticalDivider_2_139,
+.Overlay_2_169 {
+  animation: twinkle 5s infinite ease-in-out;
+  animation-delay: 2s;
+}
