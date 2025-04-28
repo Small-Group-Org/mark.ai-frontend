@@ -60,11 +60,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <div className="features-container">
           {features.map((feature, index) => (
             <div key={index} className="feature-item">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="10" height="10" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" 
                   stroke="#60A5FA" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span style={{ color: 'white', fontSize: '12px', fontWeight: 500, whiteSpace: 'nowrap' }}>{feature}</span>
+              <span style={{ color: 'white', fontSize: '9px', fontWeight: 500, whiteSpace: 'nowrap' }}>{feature}</span>
             </div>
           ))}
         </div>
