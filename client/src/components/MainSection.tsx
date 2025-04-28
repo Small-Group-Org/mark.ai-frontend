@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from "../styles/MainSection.module.css";
-import ChatInterface from './ChatInterface';
+import ChatInterface from '@/components/ChatInterface';
 
 const MainSection: React.FC = () => {
   return (

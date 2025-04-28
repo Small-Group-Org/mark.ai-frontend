@@ -1,4 +1,4 @@
-@import "https://fonts.googleapis.com/css?family=Inter:0,700;0,400;0,500&display=swap";
+
 
 .Background_2_98 {
   background: var(--color-azure-11, #0f172a);
@@ -35,6 +35,8 @@
   width: 3.08px;
   height: 2.67px;
   position: absolute;
+  top: 10%;
+  left: 15%;
 }
 
 .Overlay_2_103 {
@@ -638,6 +640,94 @@
   width: 2.59px;
   height: 3.95px;
   position: absolute;
+}
+
+.Overlay_2_306 {
+  background: var(--color-violet-8758, #d3beff94);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.86px;
+  height: 4.8px;
+  position: absolute;
+  top: 18%;
+  left: 26%;
+}
+
+.VerticalDivider_2_309 {
+  background: var(--color-magenta-82427, #f7a2ff6e);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 1.83px;
+  height: 4.69px;
+  position: absolute;
+  top: 55%;
+  left: 62%;
+}
+
+.Overlay_2_312 {
+  background: var(--color-cyan-89255, #c7f5ff40);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.61px;
+  height: 2.94px;
+  position: absolute;
+  top: 73%;
+  left: 35%;
+}
+
+.Overlay_2_315 {
+  background: var(--color-magenta-86467, #f4b8ff78);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.98px;
+  height: 2.81px;
+  position: absolute;
+  top: 85%;
+  left: 83%;
+}
+
+.Overlay_2_318 {
+  background: var(--color-violet-8150, #d09eff80);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.23px;
+  height: 2.77px;
+  position: absolute;
+  top: 32%;
+  left: 15%;
+}
+
+.Overlay_2_321 {
+  background: var(--color-violet-8523, #e2b3ff3b);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.09px;
+  height: 3.41px;
+  position: absolute;
+  top: 46%;
+  left: 78%;
+}
+
+.Overlay_2_324 {
+  background: var(--color-violet-81396, #e49eff66);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 2.27px;
+  height: 4.7px;
+  position: absolute;
+  top: 23%;
+  left: 45%;
+}
+
+.Overlay_2_327 {
+  background: var(--color-grey-94282, #dee6ff47);
+  border-radius: 9999px;
+  flex-shrink: 0;
+  width: 4.98px;
+  height: 4.89px;
+  position: absolute;
+  top: 67%;
+  left: 13%;
 }
 
 /* CSS variables for colors */
