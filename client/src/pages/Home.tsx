@@ -176,7 +176,7 @@ export default function Home() {
         
         {/* Mobile menu dropdown */}
         {mobileMenuOpen && (
-          <div style={{
+          <div className="mobile-menu" style={{
             position: 'absolute',
             top: '100%',
             left: 0,
