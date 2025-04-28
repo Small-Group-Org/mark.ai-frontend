@@ -78,36 +78,54 @@ export default function Home() {
     }}>
       {/* Navbar */}
       <header style={{ 
-        padding: '1rem 2rem', 
+        padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1rem, 5vw, 2rem)', 
         display: 'flex', 
+        flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         position: 'relative',
-        zIndex: 2
+        zIndex: 2,
+        flexWrap: 'wrap',
+        gap: '1rem'
       }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ fontWeight: 'bold', fontSize: '24px' }}>Mark</span>
-          <span style={{ color: '#60a5fa', marginLeft: '8px', fontSize: '18px' }}>- Social Growth Expert</span>
+          <span style={{ fontWeight: 'bold', fontSize: 'clamp(18px, 5vw, 24px)' }}>Mark</span>
+          <span style={{ 
+            color: '#60a5fa', 
+            marginLeft: '8px', 
+            fontSize: 'clamp(14px, 4vw, 18px)',
+            display: 'inline-block'
+          }}>- Social Growth Expert</span>
         </div>
-        <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <a href="#" style={{ color: '#d1d5db', textDecoration: 'none' }}>Features</a>
-          <a href="#" style={{ color: '#d1d5db', textDecoration: 'none' }}>About</a>
-          <a href="#" style={{ color: '#d1d5db', textDecoration: 'none' }}>FAQ</a>
+        <nav style={{ 
+          display: 'flex', 
+          gap: 'clamp(0.5rem, 3vw, 1.5rem)', 
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-end'
+        }}>
+          <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>Features</a>
+          <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>About</a>
+          <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
           <button style={{ 
             backgroundColor: '#1e293b', 
             color: 'white', 
             border: 'none', 
             borderRadius: '9999px', 
-            padding: '8px 20px',
-            cursor: 'pointer'
+            padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+            cursor: 'pointer',
+            fontSize: 'clamp(12px, 3vw, 14px)',
+            whiteSpace: 'nowrap'
           }}>Sign in</button>
           <button style={{ 
             backgroundColor: '#2563eb', 
             color: 'white', 
             border: 'none', 
             borderRadius: '9999px', 
-            padding: '8px 20px',
-            cursor: 'pointer'
+            padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+            cursor: 'pointer',
+            fontSize: 'clamp(12px, 3vw, 14px)',
+            whiteSpace: 'nowrap'
           }}>Sign up</button>
         </nav>
       </header>
@@ -115,7 +133,7 @@ export default function Home() {
       {/* Main Content */}
       <main style={{ 
         flex: 1, 
-        padding: '2rem', 
+        padding: 'clamp(1rem, 5vw, 2rem)', 
         display: 'flex', 
         flexDirection: 'column',
         alignItems: 'center',
@@ -124,27 +142,29 @@ export default function Home() {
         zIndex: 2
       }}>
         <h1 style={{ 
-          fontSize: '60px', 
+          fontSize: 'clamp(32px, 10vw, 60px)', 
           fontWeight: 'bold', 
           color: 'white',
           textAlign: 'center',
-          margin: '0 0 0.5rem 0',
-          animation: 'fadeIn 1s ease-in-out'
+          margin: '0 0 clamp(0.3rem, 2vw, 0.5rem) 0',
+          animation: 'fadeIn 1s ease-in-out',
+          width: '100%'
         }}>Interview <span style={{ color: '#60a5fa' }}>Mark</span></h1>
         <p style={{ 
-          fontSize: '20px', 
+          fontSize: 'clamp(16px, 5vw, 20px)', 
           color: '#93c5fd',
           textAlign: 'center',
           maxWidth: '592px',
-          marginBottom: '2rem',
-          animation: 'fadeIn 1.2s ease-in-out'
+          marginBottom: 'clamp(1rem, 5vw, 2rem)',
+          animation: 'fadeIn 1.2s ease-in-out',
+          width: '100%'
         }}>Your 24/7 Social Media Expert</p>
 
         {/* Profile Image - Mark.png */}
         <div style={{ 
-          width: '160px', 
-          height: '180px', 
-          marginBottom: '2rem',
+          width: 'clamp(120px, 30vw, 160px)', 
+          height: 'clamp(135px, 30vw, 180px)', 
+          marginBottom: 'clamp(1rem, 5vw, 2rem)',
           position: 'relative',
           animation: 'fadeIn 1.4s ease-in-out'
         }}>
@@ -175,25 +195,36 @@ export default function Home() {
 
       {/* Footer */}
       <footer style={{ 
-        padding: '25px 48px 24px',
+        padding: 'clamp(16px, 4vw, 25px) clamp(16px, 5vw, 48px) clamp(15px, 4vw, 24px)',
         borderTop: '1px solid #1e293b',
         display: 'flex',
         justifyContent: 'center',
         position: 'relative',
-        zIndex: 2
+        zIndex: 2,
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
         <div style={{ 
           width: '100%', 
           maxWidth: '1280px',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 'clamp(10px, 3vw, 20px)'
         }}>
-          <span style={{ color: '#64748b', fontSize: '14px' }}>© 2025 Built by The Honeymooners Club</span>
-          <div style={{ display: 'flex', gap: '24px' }}>
-            <a href="#" style={{ color: '#64748b', fontSize: '14px', textDecoration: 'none' }}>Terms</a>
-            <a href="#" style={{ color: '#64748b', fontSize: '14px', textDecoration: 'none' }}>Privacy</a>
-            <a href="#" style={{ color: '#64748b', fontSize: '14px', textDecoration: 'none' }}>Contact</a>
+          <span style={{ 
+            color: '#64748b', 
+            fontSize: 'clamp(12px, 3.5vw, 14px)'
+          }}>© 2025 Built by The Honeymooners Club</span>
+          <div style={{ 
+            display: 'flex', 
+            gap: 'clamp(12px, 3vw, 24px)',
+            flexWrap: 'wrap'
+          }}>
+            <a href="#" style={{ color: '#64748b', fontSize: 'clamp(12px, 3.5vw, 14px)', textDecoration: 'none' }}>Terms</a>
+            <a href="#" style={{ color: '#64748b', fontSize: 'clamp(12px, 3.5vw, 14px)', textDecoration: 'none' }}>Privacy</a>
+            <a href="#" style={{ color: '#64748b', fontSize: 'clamp(12px, 3.5vw, 14px)', textDecoration: 'none' }}>Contact</a>
           </div>
         </div>
       </footer>
@@ -229,7 +260,7 @@ export default function Home() {
           background: 'radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.05) 0%, transparent 80%)'
         }}></div>
         
-        {/* Base static star background */}
+        {/* Static reduced star background */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -237,184 +268,42 @@ export default function Home() {
           width: '100%',
           height: '100%',
           background: `
-            radial-gradient(1px 1px at 25% 15%, white, transparent),
-            radial-gradient(1px 1px at 50% 25%, white, transparent),
+            radial-gradient(1px 1px at 5% 15%, white, transparent),
+            radial-gradient(1px 1px at 15% 10%, white, transparent),
+            radial-gradient(1px 1px at 25% 12%, white, transparent),
+            radial-gradient(1px 1px at 35% 22%, white, transparent),
+            radial-gradient(1px 1px at 45% 30%, white, transparent),
+            radial-gradient(1px 1px at 55% 42%, white, transparent),
+            radial-gradient(1px 1px at 65% 25%, white, transparent),
             radial-gradient(1px 1px at 75% 5%, white, transparent),
-            radial-gradient(1.5px 1.5px at 10% 45%, white, transparent),
-            radial-gradient(1.5px 1.5px at 30% 65%, white, transparent),
-            radial-gradient(1.5px 1.5px at 65% 40%, white, transparent),
-            radial-gradient(1.5px 1.5px at 85% 70%, white, transparent),
-            radial-gradient(2px 2px at 20% 35%, rgba(255, 255, 255, 0.9), transparent),
-            radial-gradient(2px 2px at 40% 80%, rgba(255, 255, 255, 0.9), transparent),
-            radial-gradient(2px 2px at 60% 20%, rgba(255, 255, 255, 0.9), transparent),
-            radial-gradient(2px 2px at 80% 50%, rgba(255, 255, 255, 0.9), transparent),
-            radial-gradient(3px 3px at 15% 75%, rgba(255, 255, 255, 0.95), transparent),
-            radial-gradient(3px 3px at 35% 5%, rgba(255, 255, 255, 0.95), transparent),
-            radial-gradient(3px 3px at 55% 55%, rgba(255, 255, 255, 0.95), transparent),
-            radial-gradient(3px 3px at 75% 95%, rgba(255, 255, 255, 0.95), transparent),
-            radial-gradient(3px 3px at 95% 30%, rgba(255, 255, 255, 0.95), transparent)
+            radial-gradient(1px 1px at 85% 70%, white, transparent),
+            radial-gradient(1px 1px at 95% 80%, white, transparent),
+            
+            radial-gradient(1.5px 1.5px at 8% 50%, white, transparent),
+            radial-gradient(1.5px 1.5px at 22% 85%, white, transparent),
+            radial-gradient(1.5px 1.5px at 38% 12%, white, transparent),
+            radial-gradient(1.5px 1.5px at 52% 60%, white, transparent),
+            radial-gradient(1.5px 1.5px at 68% 40%, white, transparent),
+            radial-gradient(1.5px 1.5px at 82% 88%, white, transparent),
+            radial-gradient(1.5px 1.5px at 92% 65%, white, transparent),
+            
+            radial-gradient(2px 2px at 10% 75%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 25% 65%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 40% 45%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 55% 15%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 70% 95%, rgba(255, 255, 255, 0.9), transparent),
+            radial-gradient(2px 2px at 85% 50%, rgba(255, 255, 255, 0.9), transparent),
+            
+            radial-gradient(3px 3px at 17% 45%, rgba(255, 255, 255, 0.95), transparent),
+            radial-gradient(3px 3px at 47% 25%, rgba(255, 255, 255, 0.95), transparent),
+            radial-gradient(3px 3px at 77% 65%, rgba(255, 255, 255, 0.95), transparent),
+            
+            radial-gradient(1.5px 1.5px at 23% 67%, rgba(161, 196, 253, 0.9), transparent),
+            radial-gradient(1.5px 1.5px at 63% 78%, rgba(161, 196, 253, 0.9), transparent)
           `
         }}></div>
         
-        {/* Animated floating stars - small group 1 */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          animation: 'stars-move-1 45s linear infinite'
-        }}>
-          {[...Array(80)].map((_, i) => (
-            <div 
-              key={`star-s1-${i}`} 
-              style={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 1.5 + 1}px`,
-                height: `${Math.random() * 1.5 + 1}px`,
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                opacity: Math.random() * 0.3 + 0.7
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Animated floating stars - small group 2 */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          animation: 'stars-move-2 60s linear infinite'
-        }}>
-          {[...Array(70)].map((_, i) => (
-            <div 
-              key={`star-s2-${i}`} 
-              style={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 1.5 + 1}px`,
-                height: `${Math.random() * 1.5 + 1}px`,
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                opacity: Math.random() * 0.3 + 0.7
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Animated floating stars - small group 3 */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          animation: 'stars-move-4 55s linear infinite'
-        }}>
-          {[...Array(60)].map((_, i) => (
-            <div 
-              key={`star-s3-${i}`} 
-              style={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 1.5 + 0.8}px`,
-                height: `${Math.random() * 1.5 + 0.8}px`,
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                opacity: Math.random() * 0.3 + 0.7
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Animated floating stars - medium */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          animation: 'stars-move-3 75s linear infinite'
-        }}>
-          {[...Array(35)].map((_, i) => (
-            <div 
-              key={`star-m-${i}`} 
-              style={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 2 + 1.5}px`,
-                height: `${Math.random() * 2 + 1.5}px`,
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                boxShadow: '0 0 3px rgba(255, 255, 255, 0.5)',
-                opacity: Math.random() * 0.2 + 0.8
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Animated floating stars - blue tinted */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          animation: 'stars-move-4 90s linear infinite'
-        }}>
-          {[...Array(20)].map((_, i) => (
-            <div 
-              key={`star-blue-${i}`} 
-              style={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 2 + 1}px`,
-                height: `${Math.random() * 2 + 1}px`,
-                backgroundColor: '#a1c4fd',
-                borderRadius: '50%',
-                boxShadow: '0 0 5px rgba(161, 196, 253, 0.7)',
-                opacity: Math.random() * 0.3 + 0.7
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* Additional tiny stars layer */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          animation: 'stars-move-5 65s linear infinite'
-        }}>
-          {[...Array(100)].map((_, i) => (
-            <div 
-              key={`star-tiny-${i}`} 
-              style={{
-                position: 'absolute',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                width: `${Math.random() * 0.8 + 0.5}px`,
-                height: `${Math.random() * 0.8 + 0.5}px`,
-                backgroundColor: 'white',
-                borderRadius: '50%',
-                opacity: Math.random() * 0.4 + 0.5
-              }}
-            />
-          ))}
-        </div>
-        
-        {/* A few larger glowing stars */}
+        {/* Fixed star with glow */}
         <div style={{
           position: 'absolute',
           top: '15%',
@@ -423,8 +312,7 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 10px 2px white',
-          animation: 'star-pulse 5s infinite alternate'
+          boxShadow: '0 0 10px 2px white'
         }}></div>
         
         <div style={{
@@ -435,8 +323,7 @@ export default function Home() {
           height: '3px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 15px 3px white',
-          animation: 'star-pulse 7s infinite alternate 1s'
+          boxShadow: '0 0 15px 3px white'
         }}></div>
         
         <div style={{
@@ -447,8 +334,7 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 12px 2px white',
-          animation: 'star-pulse 6s infinite alternate 2s'
+          boxShadow: '0 0 12px 2px white'
         }}></div>
         
         <div style={{
@@ -459,11 +345,10 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 10px 2px white',
-          animation: 'star-pulse 8s infinite alternate 3s'
+          boxShadow: '0 0 10px 2px white'
         }}></div>
         
-        {/* Larger blue tinted stars */}
+        {/* Fixed blue tinted stars */}
         <div style={{
           position: 'absolute',
           top: '45%',
@@ -472,8 +357,7 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: '#a1c4fd',
-          boxShadow: '0 0 8px 3px #a1c4fd',
-          animation: 'star-pulse 9s infinite alternate 2s'
+          boxShadow: '0 0 8px 3px #a1c4fd'
         }}></div>
         
         <div style={{
@@ -484,11 +368,10 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: '#a1c4fd',
-          boxShadow: '0 0 10px 3px #a1c4fd',
-          animation: 'star-pulse 10s infinite alternate 1s'
+          boxShadow: '0 0 10px 3px #a1c4fd'
         }}></div>
         
-        {/* Floating UI Elements */}
+        {/* Static UI Elements */}
         {/* Decorative circle */}
         <div style={{
           position: 'absolute',
@@ -497,11 +380,10 @@ export default function Home() {
           width: '50px',
           height: '50px',
           borderRadius: '50%',
-          border: '1px solid rgba(160, 210, 255, 0.2)',
-          animation: 'float-ui 15s ease-in-out infinite'
+          border: '1px solid rgba(160, 210, 255, 0.2)'
         }}></div>
         
-        {/* Small floating dot */}
+        {/* Small dot */}
         <div style={{
           position: 'absolute',
           top: '30%',
@@ -510,11 +392,10 @@ export default function Home() {
           height: '6px',
           backgroundColor: 'rgba(100, 180, 255, 0.6)',
           borderRadius: '50%',
-          boxShadow: '0 0 5px rgba(100, 180, 255, 0.4)',
-          animation: 'float-ui 20s ease-in-out infinite 2s'
+          boxShadow: '0 0 5px rgba(100, 180, 255, 0.4)'
         }}></div>
         
-        {/* Larger floating dot */}
+        {/* Larger dot */}
         <div style={{
           position: 'absolute',
           top: '75%',
@@ -523,8 +404,7 @@ export default function Home() {
           height: '8px',
           backgroundColor: 'rgba(100, 180, 255, 0.5)',
           borderRadius: '50%',
-          boxShadow: '0 0 10px rgba(100, 180, 255, 0.3)',
-          animation: 'float-ui 25s ease-in-out infinite 5s'
+          boxShadow: '0 0 10px rgba(100, 180, 255, 0.3)'
         }}></div>
         
         {/* Decorative rings */}
@@ -535,8 +415,7 @@ export default function Home() {
           width: '60px',
           height: '60px',
           borderRadius: '50%',
-          border: '1px solid rgba(160, 210, 255, 0.15)',
-          animation: 'float-ui-slow 30s ease-in-out infinite',
+          border: '1px solid rgba(160, 210, 255, 0.15)'
         }}></div>
         
         <div style={{
@@ -546,8 +425,7 @@ export default function Home() {
           width: '30px',
           height: '30px',
           borderRadius: '50%',
-          border: '1px solid rgba(160, 210, 255, 0.25)',
-          animation: 'float-ui-slow 30s ease-in-out infinite',
+          border: '1px solid rgba(160, 210, 255, 0.25)'
         }}></div>
         
         {/* Small constellation lines */}
@@ -557,8 +435,7 @@ export default function Home() {
           right: '30%',
           width: '100px',
           height: '80px',
-          opacity: 0.4,
-          animation: 'float-ui-slow 35s ease-in-out infinite 10s'
+          opacity: 0.4
         }}>
           <line x1="10" y1="10" x2="40" y2="30" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
           <line x1="40" y1="30" x2="80" y2="15" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
@@ -576,8 +453,7 @@ export default function Home() {
           left: '20%',
           width: '80px',
           height: '60px',
-          opacity: 0.4,
-          animation: 'float-ui-slow 28s ease-in-out infinite 5s'
+          opacity: 0.4
         }}>
           <line x1="10" y1="30" x2="40" y2="10" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
           <line x1="40" y1="10" x2="65" y2="40" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
@@ -594,8 +470,7 @@ export default function Home() {
           right: '5%',
           width: '100px',
           height: '100px',
-          opacity: 0.6,
-          animation: 'float-ui-slow 32s ease-in-out infinite 3s'
+          opacity: 0.6
         }}>
           <div style={{
             position: 'absolute',
@@ -651,8 +526,7 @@ export default function Home() {
           right: '20%',
           width: '40px',
           height: '40px',
-          opacity: 0.3,
-          animation: 'float-ui-slow 25s ease-in-out infinite 8s'
+          opacity: 0.3
         }}>
           <polygon 
             points="20,0 40,10 40,30 20,40 0,30 0,10" 
@@ -670,8 +544,7 @@ export default function Home() {
           left: '10%',
           width: '50px',
           height: '50px',
-          opacity: 0.4,
-          animation: 'float-ui-slow 30s ease-in-out infinite 12s'
+          opacity: 0.4
         }}>
           <circle cx="25" cy="25" r="15" fill="none" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
           <line x1="10" y1="25" x2="40" y2="25" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
@@ -679,7 +552,7 @@ export default function Home() {
           <circle cx="25" cy="25" r="1" fill="white" />
         </svg>
         
-        {/* Floating squares */}
+        {/* Decorative squares */}
         <div style={{
           position: 'absolute',
           top: '20%',
@@ -687,8 +560,7 @@ export default function Home() {
           width: '20px',
           height: '20px',
           border: '1px solid rgba(160, 210, 255, 0.2)',
-          opacity: 0.4,
-          animation: 'float-ui-slow 28s ease-in-out infinite 5s'
+          opacity: 0.4
         }}></div>
         
         <div style={{
@@ -698,8 +570,7 @@ export default function Home() {
           width: '10px',
           height: '10px',
           border: '1px solid rgba(160, 210, 255, 0.3)',
-          opacity: 0.5,
-          animation: 'float-ui-slow 28s ease-in-out infinite 5s'
+          opacity: 0.5
         }}></div>
       </div>
       
