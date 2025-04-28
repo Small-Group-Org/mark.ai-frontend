@@ -156,12 +156,11 @@
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
-    padding: 5px !important;
+    padding: 2px 5px !important;
     border-radius: 8px !important;
     justify-content: flex-start !important;
     white-space: nowrap !important;
     font-size: 9px !important;
-    height: 38px !important;
     box-sizing: border-box !important;
     padding-left: 10px !important;
   }
