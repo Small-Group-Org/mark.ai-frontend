@@ -229,7 +229,7 @@ export default function Home() {
           background: 'radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.05) 0%, transparent 80%)'
         }}></div>
         
-        {/* Static star background */}
+        {/* Base static star background */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -256,7 +256,113 @@ export default function Home() {
           `
         }}></div>
         
-        {/* A few larger static glowing stars */}
+        {/* Animated floating stars - small group 1 */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          animation: 'stars-move-1 45s linear infinite'
+        }}>
+          {[...Array(30)].map((_, i) => (
+            <div 
+              key={`star-s1-${i}`} 
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 1.5 + 1}px`,
+                height: `${Math.random() * 1.5 + 1}px`,
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                opacity: Math.random() * 0.3 + 0.7
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Animated floating stars - small group 2 */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          animation: 'stars-move-2 60s linear infinite'
+        }}>
+          {[...Array(25)].map((_, i) => (
+            <div 
+              key={`star-s2-${i}`} 
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 1.5 + 1}px`,
+                height: `${Math.random() * 1.5 + 1}px`,
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                opacity: Math.random() * 0.3 + 0.7
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Animated floating stars - medium */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          animation: 'stars-move-3 75s linear infinite'
+        }}>
+          {[...Array(15)].map((_, i) => (
+            <div 
+              key={`star-m-${i}`} 
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 2 + 1.5}px`,
+                height: `${Math.random() * 2 + 1.5}px`,
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                boxShadow: '0 0 3px rgba(255, 255, 255, 0.5)',
+                opacity: Math.random() * 0.2 + 0.8
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Animated floating stars - blue tinted */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          animation: 'stars-move-4 90s linear infinite'
+        }}>
+          {[...Array(8)].map((_, i) => (
+            <div 
+              key={`star-blue-${i}`} 
+              style={{
+                position: 'absolute',
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                width: `${Math.random() * 2 + 1}px`,
+                height: `${Math.random() * 2 + 1}px`,
+                backgroundColor: '#a1c4fd',
+                borderRadius: '50%',
+                boxShadow: '0 0 5px rgba(161, 196, 253, 0.7)',
+                opacity: Math.random() * 0.3 + 0.7
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* A few larger glowing stars */}
         <div style={{
           position: 'absolute',
           top: '15%',
@@ -265,7 +371,8 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 10px 2px white'
+          boxShadow: '0 0 10px 2px white',
+          animation: 'star-pulse 5s infinite alternate'
         }}></div>
         
         <div style={{
@@ -276,7 +383,8 @@ export default function Home() {
           height: '3px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 15px 3px white'
+          boxShadow: '0 0 15px 3px white',
+          animation: 'star-pulse 7s infinite alternate 1s'
         }}></div>
         
         <div style={{
@@ -287,7 +395,8 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 12px 2px white'
+          boxShadow: '0 0 12px 2px white',
+          animation: 'star-pulse 6s infinite alternate 2s'
         }}></div>
         
         <div style={{
@@ -298,10 +407,11 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: 'white',
-          boxShadow: '0 0 10px 2px white'
+          boxShadow: '0 0 10px 2px white',
+          animation: 'star-pulse 8s infinite alternate 3s'
         }}></div>
         
-        {/* Blue tinted stars */}
+        {/* Larger blue tinted stars */}
         <div style={{
           position: 'absolute',
           top: '45%',
@@ -310,7 +420,8 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: '#a1c4fd',
-          boxShadow: '0 0 8px 3px #a1c4fd'
+          boxShadow: '0 0 8px 3px #a1c4fd',
+          animation: 'star-pulse 9s infinite alternate 2s'
         }}></div>
         
         <div style={{
@@ -321,7 +432,8 @@ export default function Home() {
           height: '2px',
           borderRadius: '50%',
           backgroundColor: '#a1c4fd',
-          boxShadow: '0 0 10px 3px #a1c4fd'
+          boxShadow: '0 0 10px 3px #a1c4fd',
+          animation: 'star-pulse 10s infinite alternate 1s'
         }}></div>
         
         {/* Floating UI Elements */}
@@ -421,6 +533,122 @@ export default function Home() {
           <circle cx="40" cy="10" r="1" fill="white" />
           <circle cx="65" cy="40" r="1.5" fill="white" />
         </svg>
+        
+        {/* Additional UI Elements */}
+        {/* Cluster of dots */}
+        <div style={{
+          position: 'absolute',
+          top: '40%',
+          right: '5%',
+          width: '100px',
+          height: '100px',
+          opacity: 0.6,
+          animation: 'float-ui-slow 32s ease-in-out infinite 3s'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: '20%',
+            left: '30%',
+            width: '3px',
+            height: '3px',
+            backgroundColor: 'rgba(200, 230, 255, 0.9)',
+            borderRadius: '50%'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            top: '50%',
+            left: '70%',
+            width: '2px',
+            height: '2px',
+            backgroundColor: 'rgba(200, 230, 255, 0.7)',
+            borderRadius: '50%'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            top: '70%',
+            left: '40%',
+            width: '2px',
+            height: '2px',
+            backgroundColor: 'rgba(200, 230, 255, 0.8)',
+            borderRadius: '50%'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            top: '30%',
+            left: '60%',
+            width: '1px',
+            height: '1px',
+            backgroundColor: 'rgba(200, 230, 255, 0.6)',
+            borderRadius: '50%'
+          }}></div>
+          <div style={{
+            position: 'absolute',
+            top: '60%',
+            left: '20%',
+            width: '2px',
+            height: '2px',
+            backgroundColor: 'rgba(200, 230, 255, 0.7)',
+            borderRadius: '50%'
+          }}></div>
+        </div>
+        
+        {/* Hexagon shape */}
+        <svg style={{
+          position: 'absolute',
+          top: '70%',
+          right: '20%',
+          width: '40px',
+          height: '40px',
+          opacity: 0.3,
+          animation: 'float-ui-slow 25s ease-in-out infinite 8s'
+        }}>
+          <polygon 
+            points="20,0 40,10 40,30 20,40 0,30 0,10" 
+            fill="none" 
+            stroke="rgba(160, 210, 255, 0.5)" 
+            strokeWidth="0.5"
+          />
+          <circle cx="20" cy="20" r="1" fill="white" />
+        </svg>
+        
+        {/* Circle with crossing lines */}
+        <svg style={{
+          position: 'absolute',
+          bottom: '15%',
+          left: '10%',
+          width: '50px',
+          height: '50px',
+          opacity: 0.4,
+          animation: 'float-ui-slow 30s ease-in-out infinite 12s'
+        }}>
+          <circle cx="25" cy="25" r="15" fill="none" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <line x1="10" y1="25" x2="40" y2="25" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <line x1="25" y1="10" x2="25" y2="40" stroke="rgba(160, 210, 255, 0.3)" strokeWidth="0.5" />
+          <circle cx="25" cy="25" r="1" fill="white" />
+        </svg>
+        
+        {/* Floating squares */}
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          left: '70%',
+          width: '20px',
+          height: '20px',
+          border: '1px solid rgba(160, 210, 255, 0.2)',
+          opacity: 0.4,
+          animation: 'float-ui-slow 28s ease-in-out infinite 5s'
+        }}></div>
+        
+        <div style={{
+          position: 'absolute',
+          top: '23%',
+          left: '73%',
+          width: '10px',
+          height: '10px',
+          border: '1px solid rgba(160, 210, 255, 0.3)',
+          opacity: 0.5,
+          animation: 'float-ui-slow 28s ease-in-out infinite 5s'
+        }}></div>
       </div>
       
       {/* Global style for animations */}
@@ -490,6 +718,41 @@ export default function Home() {
             33% { transform: translateY(-5px) rotate(1deg); }
             66% { transform: translateY(5px) rotate(-1deg); }
             100% { transform: translateY(0) rotate(0deg); }
+          }
+          
+          @keyframes stars-move-1 {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(-5px) translateX(15px); }
+            75% { transform: translateY(5px) translateX(5px); }
+            100% { transform: translateY(0) translateX(0); }
+          }
+          
+          @keyframes stars-move-2 {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(5px) translateX(-10px); }
+            50% { transform: translateY(10px) translateX(-15px); }
+            75% { transform: translateY(5px) translateX(-5px); }
+            100% { transform: translateY(0) translateX(0); }
+          }
+          
+          @keyframes stars-move-3 {
+            0% { transform: translateY(0) translateX(0); }
+            33% { transform: translateY(-7px) translateX(7px); }
+            66% { transform: translateY(7px) translateX(-7px); }
+            100% { transform: translateY(0) translateX(0); }
+          }
+          
+          @keyframes stars-move-4 {
+            0% { transform: translateY(0) translateX(0); }
+            33% { transform: translateY(8px) translateX(8px); }
+            66% { transform: translateY(-8px) translateX(-8px); }
+            100% { transform: translateY(0) translateX(0); }
+          }
+          
+          @keyframes star-pulse {
+            0% { opacity: 0.7; box-shadow: 0 0 5px 2px white; }
+            100% { opacity: 1; box-shadow: 0 0 15px 4px white; }
           }
         `
       }} />
