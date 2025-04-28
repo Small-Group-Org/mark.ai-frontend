@@ -140,29 +140,14 @@ export default function Home() {
           animation: 'fadeIn 1.2s ease-in-out'
         }}>Your 24/7 Social Media Expert</p>
 
-        {/* Profile Image - Mark.png with cosmic effect */}
+        {/* Profile Image - Mark.png */}
         <div style={{ 
           width: '160px', 
           height: '180px', 
           marginBottom: '2rem',
           position: 'relative',
-          animation: 'fadeIn 1.4s ease-in-out',
-          filter: 'drop-shadow(0 0 10px rgba(96, 165, 250, 0.5))'
+          animation: 'fadeIn 1.4s ease-in-out'
         }}>
-          {/* Blue cosmic aura around Mark */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '150px',
-            height: '150px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle at center, rgba(59, 130, 246, 0.6) 0%, transparent 70%)',
-            animation: 'pulse 3s infinite ease-in-out',
-            zIndex: -1
-          }}></div>
-          
           {/* Mark image */}
           <img 
             src={markImage} 
@@ -170,35 +155,9 @@ export default function Home() {
             style={{ 
               width: '100%', 
               height: '100%', 
-              objectFit: 'contain',
-              animation: 'glow 3s infinite ease-in-out'
+              objectFit: 'contain'
             }} 
           />
-          
-          {/* Small orbiting stars */}
-          <div style={{
-            position: 'absolute',
-            top: '-10px',
-            left: '50%',
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: 'white',
-            boxShadow: '0 0 10px #fff, 0 0 20px #fff',
-            animation: 'orbit 8s linear infinite'
-          }}></div>
-          
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            right: '-15px',
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            background: '#60a5fa',
-            boxShadow: '0 0 10px #60a5fa, 0 0 20px #60a5fa',
-            animation: 'orbit 12s linear infinite 2s'
-          }}></div>
         </div>
         
         {/* Chat Interface */}
