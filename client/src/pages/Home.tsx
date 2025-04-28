@@ -188,31 +188,37 @@ export default function Home() {
             flexDirection: 'column',
             gap: '1rem',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            borderTop: '1px solid #1e293b'
+            borderTop: '1px solid #1e293b',
+            textAlign: 'center'
           }}>
-            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>Features</a>
-            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>About</a>
-            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>FAQ</a>
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '8px' }}>
+            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '10px 0' }}>Features</a>
+            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '10px 0' }}>About</a>
+            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '10px 0' }}>FAQ</a>
+            <div style={{ 
+              display: 'flex', 
+              gap: '1rem', 
+              marginTop: '8px',
+              justifyContent: 'center'
+            }}>
               <button style={{ 
                 backgroundColor: '#1e293b', 
                 color: 'white', 
                 border: 'none', 
                 borderRadius: '9999px', 
-                padding: '8px 16px',
+                padding: '10px 20px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                flex: 1
+                width: '120px'
               }}>Sign in</button>
               <button style={{ 
                 backgroundColor: '#2563eb', 
                 color: 'white', 
                 border: 'none', 
                 borderRadius: '9999px', 
-                padding: '8px 16px',
+                padding: '10px 20px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                flex: 1
+                width: '120px'
               }}>Sign up</button>
             </div>
           </div>
@@ -269,71 +275,12 @@ export default function Home() {
           />
         </div>
         
-        {/* Chat Interface with Features (2x2 grid for mobile) */}
+        {/* Chat Interface */}
         <div style={{ 
           width: '100%',
           maxWidth: '592px',
           animation: 'fadeIn 1.6s ease-in-out'
         }}>
-          {/* Four features in 2x2 grid for mobile */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '1rem',
-            margin: '0 auto 1.5rem auto',
-            maxWidth: '500px',
-            padding: '0 0.5rem'
-          }}>
-            <div style={{
-              backgroundColor: 'rgba(30, 41, 59, 0.5)',
-              borderRadius: '8px',
-              padding: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center'
-            }}>
-              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>✨</span>
-              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>Content Creation</span>
-            </div>
-            <div style={{
-              backgroundColor: 'rgba(30, 41, 59, 0.5)',
-              borderRadius: '8px',
-              padding: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center'
-            }}>
-              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>📊</span>
-              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>Analytics</span>
-            </div>
-            <div style={{
-              backgroundColor: 'rgba(30, 41, 59, 0.5)',
-              borderRadius: '8px',
-              padding: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center'
-            }}>
-              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>🔍</span>
-              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>SEO Optimization</span>
-            </div>
-            <div style={{
-              backgroundColor: 'rgba(30, 41, 59, 0.5)',
-              borderRadius: '8px',
-              padding: '12px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center'
-            }}>
-              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>📱</span>
-              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>Multi-platform</span>
-            </div>
-          </div>
-          
           <ChatInterface 
             messages={visibleMessages}
             onSendMessage={handleSendMessage}
