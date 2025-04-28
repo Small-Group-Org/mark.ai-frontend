@@ -210,15 +210,14 @@ export default function Home() {
         zIndex: 0,
         background: 'radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%)'
       }}>
-        {/* Nebula effect */}
+        {/* Static background gradients - no animation */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'radial-gradient(circle at 50% 50%, rgba(33, 78, 194, 0.1) 0%, transparent 60%)',
-          animation: 'nebula 30s infinite ease-in-out alternate'
+          background: 'radial-gradient(circle at 50% 50%, rgba(33, 78, 194, 0.05) 0%, transparent 70%)'
         }}></div>
         
         <div style={{
@@ -227,8 +226,7 @@ export default function Home() {
           right: '20%',
           width: '40%',
           height: '40%',
-          background: 'radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.1) 0%, transparent 70%)',
-          animation: 'nebula2 40s infinite ease-in-out alternate'
+          background: 'radial-gradient(circle at 50% 50%, rgba(156, 39, 176, 0.05) 0%, transparent 80%)'
         }}></div>
         
         {/* Small stars */}
@@ -241,7 +239,7 @@ export default function Home() {
             borderRadius: '50%',
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 4 + 2}s infinite ease-in-out ${Math.random() * 3}s, float ${Math.random() * 80 + 40}s infinite ease-in-out ${Math.random() * 15}s`,
+            animation: `twinkle ${Math.random() * 4 + 5}s infinite ease-in-out ${Math.random() * 3}s, float ${Math.random() * 120 + 180}s infinite ease-in-out ${Math.random() * 15}s`,
             boxShadow: '0 0 3px rgba(255, 255, 255, 0.4)'
           }} />
         ))}
@@ -256,7 +254,7 @@ export default function Home() {
             borderRadius: '50%',
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 5 + 3}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 100 + 50}s infinite ease-in-out ${Math.random() * 20}s`,
+            animation: `twinkle ${Math.random() * 5 + 6}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 120 + 200}s infinite ease-in-out ${Math.random() * 20}s`,
             boxShadow: '0 0 5px rgba(255, 255, 255, 0.6), 0 0 10px rgba(255, 255, 255, 0.3)'
           }} />
         ))}
@@ -271,7 +269,7 @@ export default function Home() {
             borderRadius: '50%',
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            animation: `twinkle ${Math.random() * 7 + 4}s infinite ease-in-out ${Math.random() * 3}s, float ${Math.random() * 120 + 60}s infinite ease-in-out ${Math.random() * 30}s`,
+            animation: `twinkle ${Math.random() * 7 + 7}s infinite ease-in-out ${Math.random() * 3}s, float ${Math.random() * 120 + 220}s infinite ease-in-out ${Math.random() * 30}s`,
             boxShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4), 0 0 30px rgba(255, 255, 255, 0.2)'
           }} />
         ))}
@@ -288,7 +286,7 @@ export default function Home() {
               borderRadius: '50%',
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              animation: `twinkle ${Math.random() * 6 + 3}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 90 + 40}s infinite ease-in-out ${Math.random() * 25}s`,
+              animation: `twinkle ${Math.random() * 6 + 8}s infinite ease-in-out ${Math.random() * 2}s, float ${Math.random() * 90 + 230}s infinite ease-in-out ${Math.random() * 25}s`,
               boxShadow: `0 0 8px hsla(${hue}, 100%, 70%, 0.7), 0 0 16px hsla(${hue}, 100%, 70%, 0.4)`
             }} />
           );
@@ -299,16 +297,16 @@ export default function Home() {
       <style dangerouslySetInnerHTML={{
         __html: `
           @keyframes twinkle {
-            0% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.5; transform: scale(1); }
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.1); }
+            100% { opacity: 0.6; transform: scale(1); }
           }
           
           @keyframes float {
             0% { transform: translateY(0) translateX(0); }
-            25% { transform: translateY(-10px) translateX(10px); }
-            50% { transform: translateY(0) translateX(20px); }
-            75% { transform: translateY(10px) translateX(10px); }
+            25% { transform: translateY(-5px) translateX(5px); }
+            50% { transform: translateY(0) translateX(10px); }
+            75% { transform: translateY(5px) translateX(5px); }
             100% { transform: translateY(0) translateX(0); }
           }
           
