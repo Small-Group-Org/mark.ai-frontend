@@ -32,8 +32,8 @@
   background: var(--color-azure-8453, #aceaff87);
   border-radius: 9999px;
   flex-shrink: 0;
-  width: 3.08px;
-  height: 2.67px;
+  width: 6px; /* Increased size */
+  height: 6px; /* Increased size */
   position: absolute;
   top: 10%;
   left: 15%;
@@ -46,6 +46,8 @@
   width: 1.06px;
   height: 2.88px;
   position: absolute;
+  top: 20%;
+  left: 30%;
 }
 
 .Overlay_2_106 {
