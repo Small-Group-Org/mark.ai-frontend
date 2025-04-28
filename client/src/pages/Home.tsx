@@ -3,6 +3,8 @@ import ChatInterface, { MessageType } from '@/components/ChatInterface';
 import markImage from '../assets/mark.png';
 
 export default function Home() {
+  // State for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Initial state with just the first three system messages (without user message)
   const initialMessages: MessageType[] = [
     {
@@ -84,7 +86,7 @@ export default function Home() {
         justifyContent: 'space-between',
         alignItems: 'center',
         position: 'relative',
-        zIndex: 2,
+        zIndex: 10,
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
@@ -97,13 +99,56 @@ export default function Home() {
             display: 'inline-block'
           }}>- Social Growth Expert</span>
         </div>
-        <nav style={{ 
-          display: 'flex', 
-          gap: 'clamp(0.5rem, 3vw, 1.5rem)', 
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          justifyContent: 'flex-end'
-        }}>
+        
+        {/* Hamburger Menu for Mobile */}
+        <button 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="mobile-only hamburger-menu"
+          style={{
+            display: 'none', // Initially hidden, class will override on mobile
+            backgroundColor: 'transparent',
+            border: 'none',
+            color: 'white',
+            fontSize: '24px',
+            cursor: 'pointer',
+            padding: '8px',
+            zIndex: 11
+          }}
+        >
+          {/* Hamburger icon */}
+          <div style={{
+            width: '25px',
+            height: '3px',
+            backgroundColor: 'white',
+            margin: '4px 0',
+            transition: 'all 0.3s ease'
+          }}></div>
+          <div style={{
+            width: '25px',
+            height: '3px',
+            backgroundColor: 'white',
+            margin: '4px 0',
+            transition: 'all 0.3s ease'
+          }}></div>
+          <div style={{
+            width: '25px',
+            height: '3px',
+            backgroundColor: 'white',
+            margin: '4px 0',
+            transition: 'all 0.3s ease'
+          }}></div>
+        </button>
+        
+        {/* Navigation - desktop view */}
+        <nav 
+          className="desktop-only"
+          style={{ 
+            display: 'flex', 
+            gap: 'clamp(0.5rem, 3vw, 1.5rem)', 
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            justifyContent: 'flex-end'
+          }}>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>Features</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>About</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
@@ -128,6 +173,50 @@ export default function Home() {
             whiteSpace: 'nowrap'
           }}>Sign up</button>
         </nav>
+        
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            right: 0,
+            backgroundColor: '#0f172a',
+            padding: '1rem',
+            zIndex: 9,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            borderTop: '1px solid #1e293b'
+          }}>
+            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>Features</a>
+            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>About</a>
+            <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '8px 0' }}>FAQ</a>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '8px' }}>
+              <button style={{ 
+                backgroundColor: '#1e293b', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '9999px', 
+                padding: '8px 16px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                flex: 1
+              }}>Sign in</button>
+              <button style={{ 
+                backgroundColor: '#2563eb', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '9999px', 
+                padding: '8px 16px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                flex: 1
+              }}>Sign up</button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -180,12 +269,71 @@ export default function Home() {
           />
         </div>
         
-        {/* Chat Interface */}
+        {/* Chat Interface with Features (2x2 grid for mobile) */}
         <div style={{ 
           width: '100%',
           maxWidth: '592px',
           animation: 'fadeIn 1.6s ease-in-out'
         }}>
+          {/* Four features in 2x2 grid for mobile */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '1rem',
+            margin: '0 auto 1.5rem auto',
+            maxWidth: '500px',
+            padding: '0 0.5rem'
+          }}>
+            <div style={{
+              backgroundColor: 'rgba(30, 41, 59, 0.5)',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center'
+            }}>
+              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>✨</span>
+              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>Content Creation</span>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(30, 41, 59, 0.5)',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center'
+            }}>
+              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>📊</span>
+              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>Analytics</span>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(30, 41, 59, 0.5)',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center'
+            }}>
+              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>🔍</span>
+              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>SEO Optimization</span>
+            </div>
+            <div style={{
+              backgroundColor: 'rgba(30, 41, 59, 0.5)',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center'
+            }}>
+              <span style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>📱</span>
+              <span style={{ fontSize: '0.875rem', color: '#d1d5db' }}>Multi-platform</span>
+            </div>
+          </div>
+          
           <ChatInterface 
             messages={visibleMessages}
             onSendMessage={handleSendMessage}
@@ -204,7 +352,7 @@ export default function Home() {
         width: '100%',
         boxSizing: 'border-box'
       }}>
-        <div style={{ 
+        <div className="footer-content" style={{ 
           width: '100%', 
           maxWidth: '1280px',
           display: 'flex',
@@ -215,12 +363,14 @@ export default function Home() {
         }}>
           <span style={{ 
             color: '#64748b', 
-            fontSize: 'clamp(12px, 3.5vw, 14px)'
+            fontSize: 'clamp(12px, 3.5vw, 14px)',
+            textAlign: 'center' // Center aligned
           }}>© 2025 Built by The Honeymooners Club</span>
           <div style={{ 
             display: 'flex', 
             gap: 'clamp(12px, 3vw, 24px)',
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            justifyContent: 'center' // Center aligned
           }}>
             <a href="#" style={{ color: '#64748b', fontSize: 'clamp(12px, 3.5vw, 14px)', textDecoration: 'none' }}>Terms</a>
             <a href="#" style={{ color: '#64748b', fontSize: 'clamp(12px, 3.5vw, 14px)', textDecoration: 'none' }}>Privacy</a>
