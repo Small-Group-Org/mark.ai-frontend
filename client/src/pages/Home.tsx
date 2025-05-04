@@ -162,18 +162,16 @@ export default function Home() {
             fontSize: 'clamp(12px, 3vw, 14px)',
             whiteSpace: 'nowrap'
           }}>Sign in</button>
-          <a href="/dashboard">
-            <button style={{ 
-              backgroundColor: '#2563eb', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '9999px', 
-              padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
-              cursor: 'pointer',
-              fontSize: 'clamp(12px, 3vw, 14px)',
-              whiteSpace: 'nowrap'
-            }}>Sign up</button>
-          </a>
+          <button style={{ 
+            backgroundColor: '#2563eb', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '9999px', 
+            padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+            cursor: 'pointer',
+            fontSize: 'clamp(12px, 3vw, 14px)',
+            whiteSpace: 'nowrap'
+          }}>Sign up</button>
         </nav>
         
         {/* Mobile menu dropdown */}
