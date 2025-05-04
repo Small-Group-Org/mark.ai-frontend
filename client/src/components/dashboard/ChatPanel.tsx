@@ -14,12 +14,13 @@ interface Message {
 const ChatPanel = () => {
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<Message[]>([
-        // Initial messages from the design
-        { id: 1, text: "👋 Hi! I'm Mark, your potential social media manager.", sender: 'ai' },
-        { id: 2, text: "I'd love to learn about your business and social media goals.", sender: 'ai' },
-        { id: 3, text: "What's your biggest social media challenge right now?", sender: 'ai' },
-        { id: 4, text: "I need help in captions", sender: 'user' },
-        { id: 5, text: "Let's start creating your post 🚀✨", sender: 'ai' },
+        // Initial messages for the create post flow
+        { id: 1, text: "👋 Welcome to the post creation interface!", sender: 'ai' },
+        { id: 2, text: "I'll help you craft the perfect social media post. What platform would you like to create content for?", sender: 'ai' },
+        { id: 3, text: "I need to create a post for Instagram", sender: 'user' },
+        { id: 4, text: "Great choice! Let's create an engaging Instagram post. What's the main topic or theme you want to focus on?", sender: 'ai' },
+        { id: 5, text: "Our new product launch", sender: 'user' },
+        { id: 6, text: "Perfect! I'll help you create a captivating product launch post for Instagram. What specific aspects of the product would you like to highlight?", sender: 'ai' },
     ]);
     const chatContainerRef = useRef<HTMLDivElement>(null); // Ref for scrolling
 
@@ -100,7 +101,7 @@ const ChatPanel = () => {
                             }`}>
                             {/* Basic rendering of text, consider markdown support later */}
                             {message.text.split('\n').map((line, index) => (
-                                <React.Fragment key={index}>{line}<br /></React.Fragment>
+                                <span key={index}>{line}<br /></span>
                             ))}
                         </div>
                     </div>

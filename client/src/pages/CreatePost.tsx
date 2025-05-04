@@ -1,10 +1,10 @@
 import React from 'react';
-import MarkAiDashboard from '../components/MarkAiDashboard';
+import MarkAiCreatePost from '../components/MarkAiCreatePost';
 
 export default function CreatePostRoute() {
   return (
     <main>
-      <MarkAiDashboard />
+      <MarkAiCreatePost />
     </main>
   );
 }

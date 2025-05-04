@@ -19,21 +19,21 @@ const Sidebar = () => {
 
             {/* Navigation Icons */}
             <nav className="flex flex-col items-center space-y-7 flex-grow w-full">
-                {/* Dashboard Item - Example of active state */}
-                <a href="#" className="flex flex-col items-center text-center group relative w-full py-1">
-                    {/* Active indicator bar */}
-                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-white rounded-r-sm"></div>
-                    {/* Icon background */}
-                    <div className="p-3 bg-white/10 rounded-lg mb-1">
-                        <DashboardIcon className="text-white" />
+                {/* Dashboard Item */}
+                <a href="/" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
+                    <div className="p-3 rounded-lg mb-1 group-hover:bg-white/5">
+                        <DashboardIcon />
                     </div>
                     <span className="text-xs font-medium">Dashboard</span>
                 </a>
 
-                {/* Other Nav Items */}
-                <a href="#" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
-                    <div className="p-3 rounded-lg mb-1 group-hover:bg-white/5">
-                        <CreateIcon />
+                {/* Create Item - Active state */}
+                <a href="/create" className="flex flex-col items-center text-center group relative w-full py-1">
+                    {/* Active indicator bar */}
+                    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-white rounded-r-sm"></div>
+                    {/* Icon background */}
+                    <div className="p-3 bg-white/10 rounded-lg mb-1">
+                        <CreateIcon className="text-white" />
                     </div>
                     <span className="text-xs font-medium">Create</span>
                 </a>

@@ -12,7 +12,7 @@ const Header = () => {
             {/* Logo */}
             <div className="relative flex-shrink-0 w-[220px] h-[57px] flex items-center">
                 {/* We're using a text placeholder instead of Image since we don't have the actual logo */}
-                <div className="text-2xl font-bold text-white">Mark.ai</div>
+                <div className="text-2xl font-bold text-white">Create Post</div>
             </div>
 
             {/* User Profile Section */}
