@@ -36,6 +36,13 @@ export interface PostData {
 type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
 
 const PostPreviewPanel = () => {
+    // Add a forceUpdate function to force re-rendering
+    const [, forceRender] = useState({});
+    const forceUpdate = React.useCallback(() => {
+        console.log("Forcing component update");
+        forceRender({});
+    }, []);
+
     // Post content states
     const [postTitle, setPostTitle] = useState<string | null>("New Product Launch");
     const [postContent, setPostContent] = useState<string | null>("We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.");
@@ -200,8 +207,13 @@ const PostPreviewPanel = () => {
         const globalUpdateFunction = (data: PostData) => {
             // Return the result of updatePostData which is a Promise
             const result = updatePostData(data);
-            // Force a forceUpdate by setting a dummy state
-            setActivePlatforms(current => ({...current}));
+            
+            // Force React to re-render the component
+            setTimeout(() => {
+                console.log('Forcing component render to reflect new data');
+                forceUpdate();
+            }, 50);
+            
             return result;
         };
         
@@ -246,7 +258,7 @@ const PostPreviewPanel = () => {
             // Make the property undefined rather than using delete
             window.updatePostPreview = undefined as any;
         };
-    }, []);
+    }, [forceUpdate]);
     
     // Update the formatted date string whenever date changes
     useEffect(() => {
