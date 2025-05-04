@@ -6,6 +6,13 @@ import SocialMediaPostPreview from '../ui/social-media-post-preview';
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from 'date-fns';
 
+// Declare the global function on the Window interface
+declare global {
+    interface Window {
+        updatePostPreview: (data: PostData) => boolean;
+    }
+}
+
 // Define the PostData interface based on the provided JSON structure
 export interface PostData {
   post: {
@@ -145,7 +152,7 @@ const PostPreviewPanel = () => {
     
     // Expose the function globally for testing via console and load initial data
     useEffect(() => {
-        // @ts-ignore - Assigning to window for testing purposes
+        // Make updatePostData available globally
         window.updatePostPreview = updatePostData;
         
         // Load initial sample data on component mount
@@ -182,7 +189,7 @@ const PostPreviewPanel = () => {
         updatePostData(sampleData);
         
         return () => {
-            // @ts-ignore - Cleanup when component unmounts
+            // Cleanup when component unmounts
             delete window.updatePostPreview;
         };
     }, []);
