@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import PlatformToggle from './PlatformToggle';
-import {
-    UploadIcon,
-    CalendarTodayIcon
-} from './IconComponents';
+import { CalendarTodayIcon } from './IconComponents';
+import SocialMediaPostPreview from '../ui/social-media-post-preview';
 
 // Define platform names type for state management
 type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
@@ -102,55 +100,21 @@ const PostPreviewPanel = () => {
                 <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>Youtube Shorts</button>
             </div>
 
-            {/* Content Display Area - Social Media Post Preview */} 
+            {/* Content Display Area with Social Media Post Preview Component */} 
             <div className={`flex-1 overflow-y-auto p-6 ${postPreviewCardBg}`}>
-                {/* Social Media Post Container */}
-                <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
-                    {/* Post Header with User Info */}
-                    <div className="p-4 border-b border-gray-100 flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-3">
-                            SC
-                        </div>
-                        <div>
-                            <h3 className="font-medium text-gray-900">Stephen Conley</h3>
-                            <p className="text-xs text-gray-500">@steveconley • Product Designer</p>
-                        </div>
-                    </div>
-
-                    {/* Post Content Area */}
-                    <div className="flex flex-col md:flex-row">
-                        {/* Left side - Image/Video */}
-                        <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
-                            {/* If no image uploaded yet, show upload option */}
-                            <div className="flex flex-col items-center text-center">
-                                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
-                                    <UploadIcon className="text-gray-500 w-6 h-6" />
-                                </div>
-                                <p className="text-sm text-gray-500 mx-4">
-                                    <span className="font-semibold text-blue-600">Upload Image</span>
-                                    <span className="block mt-1">for your post</span>
-                                </p>
-                                <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                            </div>
-                            
-                            {/* If image is uploaded, it would replace the upload option */}
-                            {/* Preview image would display here */}
-                        </div>
-
-                        {/* Right side - Post Text Content */}
-                        <div className="md:w-1/2 p-5">
-                            <h2 className="font-bold text-lg text-gray-900 mb-2">New Product Launch</h2>
-                            <p className="text-gray-700 mb-4 text-sm">
-                                We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.
-                            </p>
-                            <div className="text-blue-500 text-sm space-x-1">
-                                <span>#productlaunch</span>
-                                <span>#innovation</span>
-                                <span>#technology</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <SocialMediaPostPreview 
+                    userInitials="SC"
+                    userName="Stephen Conley"
+                    userHandle="@steveconley"
+                    userTitle="Product Designer"
+                    postTitle="New Product Launch"
+                    postContent="We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs."
+                    hashtags={['productlaunch', 'innovation', 'technology']}
+                    scheduledDate="May 5, 2025 • 9:00 AM"
+                    onSchedule={() => console.log('Schedule post clicked')}
+                    onDateChange={() => console.log('Date change clicked')}
+                    hideFooter={true} // Hide the footer since we have our own implementation below
+                />
             </div>
 
             {/* Footer with Schedule Options */}
