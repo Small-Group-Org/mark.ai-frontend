@@ -83,13 +83,19 @@ const PostPreviewPanel = () => {
      * This function will be exposed globally for testing via the console
      */
     const updatePostData = (data: PostData) => {
-        // Update post content
-        setPostTitle(data.post.title || "");
-        setPostContent(data.post.content || "");
-        setPostHashtags(data.post.hashtags || []);
+        // Check if post object exists and has required fields
+        if (!data || !data.post) {
+            console.error("Invalid post data format - missing post object");
+            return false;
+        }
+        
+        // Update post content with null checks (undefined, null, or empty string become null)
+        setPostTitle(data.post.title || null);
+        setPostContent(data.post.content || null);
+        setPostHashtags(Array.isArray(data.post.hashtags) ? data.post.hashtags : []);
         
         // Handle image URL (take the first one from the array if available)
-        if (data.post.mediaUrl && data.post.mediaUrl.length > 0) {
+        if (data.post.mediaUrl && Array.isArray(data.post.mediaUrl) && data.post.mediaUrl.length > 0) {
             setImageUrl(data.post.mediaUrl[0]);
         } else {
             setImageUrl(undefined);

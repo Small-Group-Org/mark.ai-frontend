@@ -119,11 +119,22 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
           {/* Right side - Post Text Content */}
           <div className="md:w-1/2 p-5">
-            <h2 className="font-bold text-lg text-gray-900 mb-2">{postTitle}</h2>
-            <p className="text-gray-700 mb-4 text-sm">
-              {postContent}
-            </p>
-            {hashtags.length > 0 && (
+            {/* Post Title - with placeholder if missing */}
+            {postTitle ? (
+              <h2 className="font-bold text-lg text-gray-900 mb-2">{postTitle}</h2>
+            ) : (
+              <h2 className="font-bold text-lg text-gray-400 mb-2 italic">Post title will appear here</h2>
+            )}
+            
+            {/* Post Content - with placeholder if missing */}
+            {postContent ? (
+              <p className="text-gray-700 mb-4 text-sm">{postContent}</p>
+            ) : (
+              <p className="text-gray-400 mb-4 text-sm italic">Your post content will be displayed in this area. Add compelling content to engage your audience.</p>
+            )}
+            
+            {/* Hashtags - only show if there are any */}
+            {hashtags && hashtags.length > 0 && (
               <div className="text-blue-500 text-sm space-x-1">
                 {hashtags.map((tag, index) => (
                   <span key={index}>#{tag}</span>
