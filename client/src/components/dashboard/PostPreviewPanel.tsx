@@ -27,7 +27,7 @@ export interface PostData {
 // Declare the global function on the Window interface
 declare global {
   interface Window {
-    updatePostPreview: (data: PostData) => void;
+    updatePostData: (data: PostData) => void;
   }
 }
 
@@ -166,7 +166,7 @@ const PostPreviewPanel = () => {
         console.log("PostPreviewPanel mounted - registering global function");
         
         // Set the global function directly 
-        window.updatePostPreview = (data: PostData) => {
+        window.updatePostData = (data: PostData) => {
             return updatePostData(data);
         };
         
@@ -205,7 +205,7 @@ const PostPreviewPanel = () => {
         
         // Cleanup on unmount
         return () => {
-            window.updatePostPreview = undefined as any;
+            window.updatePostData = undefined as any;
         };
     }, []);
     

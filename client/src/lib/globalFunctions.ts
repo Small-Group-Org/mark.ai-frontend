@@ -8,13 +8,13 @@ function isOnCreatePage(): boolean {
   return false;
 }
 
-// Make sure window.updatePostPreview has a fallback if the component isn't mounted yet
-if (typeof window !== 'undefined' && !window.updatePostPreview) {
+// Make sure window.updatePostData has a fallback if the component isn't mounted yet
+if (typeof window !== 'undefined' && !window.updatePostData) {
   // Define a temporary function that will handle calls before the component mounts
-  window.updatePostPreview = (data: PostData) => {
+  window.updatePostData = (data: PostData) => {
     // First check if we're on the correct page
     if (!isOnCreatePage()) {
-      console.error('Error: updatePostPreview only works on the /create page. Please navigate to /create and try again.');
+      console.error('Error: updatePostData only works on the /create page. Please navigate to /create and try again.');
       return false;
     } else {
       console.error('Error: PostPreviewPanel is not mounted yet. Please wait for the component to load completely.');
@@ -26,6 +26,6 @@ if (typeof window !== 'undefined' && !window.updatePostPreview) {
 // Add TypeScript declaration for the window object
 declare global {
   interface Window {
-    updatePostPreview: (data: PostData) => void;
+    updatePostData: (data: PostData) => void;
   }
 }
