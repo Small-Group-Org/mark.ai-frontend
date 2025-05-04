@@ -27,9 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = 'create' }) => {
                 {/* Dashboard Item */}
                 <Link href="/dashboard">
                     <div className={`flex flex-col items-center text-center group ${currentRoute === 'dashboard' ? 'text-white' : 'text-gray-300 hover:text-white'} w-full py-1 relative cursor-pointer`}>
-                        {currentRoute === 'dashboard' && (
-                            <div className="absolute left-0 top-[calc(0.25rem+1px)] w-1 h-8 bg-white rounded-r-sm"></div>
-                        )}
+
                         <div className={`p-3 mb-1 rounded-lg ${currentRoute === 'dashboard' ? 'bg-white/10' : 'group-hover:bg-white/5'}`}>
                             <DashboardIcon className={currentRoute === 'dashboard' ? 'text-white' : ''} />
                         </div>
@@ -40,9 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = 'create' }) => {
                 {/* Create Item */}
                 <Link href="/create">
                     <div className={`flex flex-col items-center text-center group ${currentRoute === 'create' ? 'text-white' : 'text-gray-300 hover:text-white'} w-full py-1 relative cursor-pointer`}>
-                        {currentRoute === 'create' && (
-                            <div className="absolute left-0 top-[calc(0.25rem+1px)] w-1 h-8 bg-white rounded-r-sm"></div>
-                        )}
+
                         <div className={`p-3 mb-1 rounded-lg ${currentRoute === 'create' ? 'bg-white/10' : 'group-hover:bg-white/5'}`}>
                             <CreateIcon className={currentRoute === 'create' ? 'text-white' : ''} />
                         </div>
@@ -53,9 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = 'create' }) => {
                 {/* Calendar Item */}
                 <Link href="/calendar">
                     <div className={`flex flex-col items-center text-center group ${currentRoute === 'calendar' ? 'text-white' : 'text-gray-300 hover:text-white'} w-full py-1 relative cursor-pointer`}>
-                        {currentRoute === 'calendar' && (
-                            <div className="absolute left-0 top-[calc(0.25rem+1px)] w-1 h-8 bg-white rounded-r-sm"></div>
-                        )}
+
                         <div className={`p-3 mb-1 rounded-lg ${currentRoute === 'calendar' ? 'bg-white/10' : 'group-hover:bg-white/5'}`}>
                             <CalendarIcon className={currentRoute === 'calendar' ? 'text-white' : ''} />
                         </div>
@@ -66,9 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = 'create' }) => {
                 {/* Mind Item */}
                 <Link href="/mind">
                     <div className={`flex flex-col items-center text-center group ${currentRoute === 'mind' ? 'text-white' : 'text-gray-300 hover:text-white'} w-full py-1 relative cursor-pointer`}>
-                        {currentRoute === 'mind' && (
-                            <div className="absolute left-0 top-[calc(0.25rem+1px)] w-1 h-8 bg-white rounded-r-sm"></div>
-                        )}
+
                         <div className={`p-3 mb-1 rounded-lg ${currentRoute === 'mind' ? 'bg-white/10' : 'group-hover:bg-white/5'}`}>
                             <MindIcon className={currentRoute === 'mind' ? 'text-white' : ''} />
                         </div>
