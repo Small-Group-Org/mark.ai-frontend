@@ -102,62 +102,75 @@ const PostPreviewPanel = () => {
                 <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>Youtube Shorts</button>
             </div>
 
-            {/* Content Input Area */} 
-            {/* Added flex-grow and overflow-y-auto */}
-            <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-6 ${postPreviewCardBg}">
-                {/* Left Column: Text Inputs */}
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="postTitle" className="block text-sm font-medium text-gray-700 mb-1">Post Title</label>
-                        <input type="text" id="postTitle" defaultValue="AyrShare Test" className={`w-full px-3 py-1.5 border ${inputBorder} rounded-md text-sm ${inputTextColor} focus:ring-blue-500 focus:border-blue-500`} /> {/* Adjusted padding */} 
-                    </div>
-                    <div>
-                        <label htmlFor="postText" className="block text-sm font-medium text-gray-700 mb-1">Post Text</label>
-                        <textarea id="postText" rows={10} defaultValue="Hi This is me testing AyrShare" className={`w-full px-3 py-1.5 border ${inputBorder} rounded-md text-sm ${inputTextColor} focus:ring-blue-500 focus:border-blue-500 resize-none`}></textarea> {/* Adjusted padding/rows */} 
-                    </div>
-                </div>
-
-                {/* Right Column: Image/Video Upload */}
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Add Images or a Video</label>
-                        {/* Upload Area */}
-                        <div className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed ${inputBorder} rounded-lg text-center ${platformSectionBg} hover:bg-gray-100 cursor-pointer relative`}>
-                            {/* Input file hidden */} 
-                            <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                            <div className={`w-10 h-10 rounded-lg bg-gray-200 flex items-center justify-center mb-2`}>
-                                <UploadIcon className="text-gray-500 w-5 h-5" />
-                            </div>
-                            <p className="text-sm">
-                                <span className="font-semibold text-blue-600">Click to Upload</span>
-                                <span className="text-gray-600"> or Drag & Drop</span>
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1 px-4">PNG, JPG, GIF, WEBP, MP4, MOV or AVI up to 25 MB - API supports larger files</p>
+            {/* Content Display Area - Social Media Post Preview */} 
+            <div className={`flex-1 overflow-y-auto p-6 ${postPreviewCardBg}`}>
+                {/* Social Media Post Container */}
+                <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+                    {/* Post Header with User Info */}
+                    <div className="p-4 border-b border-gray-100 flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-3">
+                            SC
+                        </div>
+                        <div>
+                            <h3 className="font-medium text-gray-900">Stephen Conley</h3>
+                            <p className="text-xs text-gray-500">@steveconley • Product Designer</p>
                         </div>
                     </div>
-                    {/* Image Preview */}
-                    <div>
-                        {/* <label className="block text-sm font-medium text-gray-700 mb-1">Preview</label> */} 
-                        <div
-                            className="w-[100px] h-[100px] rounded-lg border border-gray-300 bg-gray-200 flex items-center justify-center text-gray-500"
-                        >
-                            Preview
+
+                    {/* Post Content Area */}
+                    <div className="flex flex-col md:flex-row">
+                        {/* Left side - Image/Video */}
+                        <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
+                            {/* If no image uploaded yet, show upload option */}
+                            <div className="flex flex-col items-center text-center">
+                                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
+                                    <UploadIcon className="text-gray-500 w-6 h-6" />
+                                </div>
+                                <p className="text-sm text-gray-500 mx-4">
+                                    <span className="font-semibold text-blue-600">Upload Image</span>
+                                    <span className="block mt-1">for your post</span>
+                                </p>
+                                <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            </div>
+                            
+                            {/* If image is uploaded, it would replace the upload option */}
+                            {/* Preview image would display here */}
+                        </div>
+
+                        {/* Right side - Post Text Content */}
+                        <div className="md:w-1/2 p-5">
+                            <h2 className="font-bold text-lg text-gray-900 mb-2">New Product Launch</h2>
+                            <p className="text-gray-700 mb-4 text-sm">
+                                We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.
+                            </p>
+                            <div className="text-blue-500 text-sm space-x-1">
+                                <span>#productlaunch</span>
+                                <span>#innovation</span>
+                                <span>#technology</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Footer Actions */}
-            <div className={`h-[73px] px-5 py-4 border-t ${postPreviewBorder} ${postPreviewCardBg} shrink-0 flex items-center justify-between flex-wrap gap-4`}> {/* Added flex-wrap/gap */} 
-                <div className="flex items-center space-x-3">
-                    <button className={`px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-200`}>Preview</button>
-                    {/* Date Picker Placeholder */}
-                    <div className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}>
-                        <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>06/24/2021 - 06/24/2021</span>
-                        <CalendarTodayIcon className={`${datePickerText}`} />
+            {/* Footer with Schedule Options */}
+            <div className={`px-5 py-4 border-t ${postPreviewBorder} ${postPreviewCardBg} shrink-0`}>
+                <div className="max-w-2xl mx-auto flex items-center justify-between flex-wrap gap-4">
+                    {/* Left: Date Display & Selector */}
+                    <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-700">Post scheduled for:</span>
+                        {/* Date Picker Component */}
+                        <div className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}>
+                            <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>May 5, 2025 • 9:00 AM</span>
+                            <CalendarTodayIcon className={`${datePickerText}`} />
+                        </div>
                     </div>
+                    
+                    {/* Right: Schedule Button */}
+                    <button className={`px-6 py-2 rounded-lg text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap`}>
+                        Schedule Post
+                    </button>
                 </div>
-                <button className={`px-6 py-2 rounded-lg text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap`}>Schedule Post</button>
             </div>
         </div>
     );
