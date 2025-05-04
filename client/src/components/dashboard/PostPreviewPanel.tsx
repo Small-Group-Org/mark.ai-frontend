@@ -30,9 +30,9 @@ type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | '
 
 const PostPreviewPanel = () => {
     // Post content states
-    const [postTitle, setPostTitle] = useState("New Product Launch");
-    const [postContent, setPostContent] = useState("We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.");
-    const [postHashtags, setPostHashtags] = useState(['productlaunch', 'innovation', 'technology']);
+    const [postTitle, setPostTitle] = useState<string | null>("New Product Launch");
+    const [postContent, setPostContent] = useState<string | null>("We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.");
+    const [postHashtags, setPostHashtags] = useState<string[]>(['productlaunch', 'innovation', 'technology']);
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     
     // Platform toggles state
@@ -90,8 +90,8 @@ const PostPreviewPanel = () => {
         }
         
         // Update post content with null checks (undefined, null, or empty string become null)
-        setPostTitle(data.post.title || null);
-        setPostContent(data.post.content || null);
+        setPostTitle(data.post.title || null as any);
+        setPostContent(data.post.content || null as any);
         setPostHashtags(Array.isArray(data.post.hashtags) ? data.post.hashtags : []);
         
         // Handle image URL (take the first one from the array if available)
@@ -278,21 +278,10 @@ const PostPreviewPanel = () => {
 
             {/* Platform Selection */}
             <div className={`px-5 py-4 border-b ${postPreviewBorder} ${platformSectionBg} shrink-0`}>
-                {/* Platform Row 1 */}
-                <div className="flex flex-wrap gap-x-10 gap-y-3 mb-3"> {/* Adjusted gaps */} 
-                    {platformsRow1.map((platform) => (
-                        <PlatformToggle
-                            key={platform.name}
-                            label={platform.name}
-                            icon={platform.icon}
-                            active={activePlatforms[platform.name]}
-                            onToggle={() => handlePlatformToggle(platform.name)}
-                        />
-                    ))}
-                </div>
-                {/* Platform Row 2 */}
-                <div className="flex flex-wrap gap-x-10 gap-y-3"> {/* Adjusted gaps */} 
-                    {platformsRow2.map((platform) => (
+                {/* All platforms in a single responsive grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-4 gap-x-2 sm:gap-x-3 md:gap-x-4">
+                    {/* Combine all platforms into a single array for the grid */}
+                    {[...platformsRow1, ...platformsRow2].map((platform) => (
                         <PlatformToggle
                             key={platform.name}
                             label={platform.name}

@@ -10,8 +10,8 @@ interface SocialMediaPostPreviewProps {
   userTitle?: string;
   
   // Post content
-  postTitle?: string;
-  postContent?: string;
+  postTitle?: string | null;
+  postContent?: string | null;
   hashtags?: string[];
   
   // Image data
@@ -111,8 +111,18 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
               /* If image is uploaded, show it */
               <img 
                 src={imageUrl} 
-                alt="Post visual" 
+                alt="Post visual content" 
                 className="object-cover h-full w-full" 
+                onError={(e) => {
+                  // Add error message when image fails to load
+                  e.currentTarget.alt = "Image could not be loaded - URL may be invalid or inaccessible";
+                  // Optionally add a visual indicator of broken image
+                  e.currentTarget.style.backgroundColor = "#f8f9fa";
+                  e.currentTarget.style.padding = "2rem";
+                  e.currentTarget.style.display = "flex";
+                  e.currentTarget.style.alignItems = "center";
+                  e.currentTarget.style.justifyContent = "center";
+                }}
               />
             )}
           </div>

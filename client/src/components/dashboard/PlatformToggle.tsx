@@ -45,12 +45,12 @@ const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, on
     }
 
     return (
-        <div className="flex items-center space-x-2 cursor-pointer group" onClick={onToggle}>
+        <div className="flex items-center space-x-2 cursor-pointer group hover:bg-gray-100 p-1.5 rounded-md transition-colors duration-150 w-full" onClick={onToggle}>
             {/* Custom Toggle Switch - Simplified style closer to screenshot */}
             <button
                 type="button"
                 className={`${active ? platformActiveIconBg : platformIconBg
-                    } relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none`}
+                    } relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none flex-shrink-0`}
                 aria-pressed={active}
             >
                 <span className="sr-only">Enable {label}</span>
@@ -61,12 +61,12 @@ const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, on
             </button>
 
             {/* Platform Icon */}
-            <div className={`w-5 h-5 flex items-center justify-center text-xs font-bold rounded-sm ${active ? iconColorClass : platformIconColor}`}>
+            <div className={`w-5 h-5 flex items-center justify-center text-xs font-bold rounded-sm flex-shrink-0 ${active ? iconColorClass : platformIconColor}`}>
                 {IconComponent ? <IconComponent className="w-4 h-4" /> : <span>{icon}</span>}
             </div>
 
             {/* Label */}
-            <span className={`text-sm font-medium ${active ? platformActiveTextColor : platformTextColor} group-hover:text-gray-800`}>{label}</span>
+            <span className={`text-sm font-medium truncate ${active ? platformActiveTextColor : platformTextColor} group-hover:text-gray-800`}>{label}</span>
         </div>
     );
 }
