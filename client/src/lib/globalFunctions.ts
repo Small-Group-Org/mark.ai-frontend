@@ -10,16 +10,16 @@ function isOnCreatePage(): boolean {
 
 // Store for global functions
 const globalFunctions: {
-  updatePostPreview?: (data: PostData) => boolean;
+  updatePostPreview?: (data: PostData) => any;
 } = {};
 
 // Export a function to register the updatePostPreview function
-export function registerUpdatePostPreview(fn: (data: PostData) => boolean) {
+export function registerUpdatePostPreview(fn: (data: PostData) => any) {
   globalFunctions.updatePostPreview = fn;
 }
 
 // Export the function for use in other components
-export function getUpdatePostPreview(): ((data: PostData) => boolean) | undefined {
+export function getUpdatePostPreview(): ((data: PostData) => any) | undefined {
   return globalFunctions.updatePostPreview;
 }
 
@@ -35,6 +35,7 @@ if (typeof window !== 'undefined') {
     
     // Then check if the function is registered
     if (globalFunctions.updatePostPreview) {
+      // Call the function and return its result (could be Promise or boolean)
       return globalFunctions.updatePostPreview(data);
     } else {
       console.error('Error: PostPreviewPanel is not mounted yet. Please wait for the component to load completely.');
@@ -46,6 +47,6 @@ if (typeof window !== 'undefined') {
 // Add TypeScript declaration for the window object
 declare global {
   interface Window {
-    updatePostPreview: (data: PostData) => boolean;
+    updatePostPreview: (data: PostData) => any;
   }
 }

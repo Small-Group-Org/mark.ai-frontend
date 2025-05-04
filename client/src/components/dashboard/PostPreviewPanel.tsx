@@ -2,14 +2,14 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import PlatformToggle from './PlatformToggle';
 import { CalendarTodayIcon } from './IconComponents';
-import SocialMediaPostPreview from '../ui/social-media-post-preview';
+import SocialMediaPostPreview from '@/components/ui/social-media-post-preview';
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from 'date-fns';
 
 // Declare the global function on the Window interface
 declare global {
     interface Window {
-        updatePostPreview: (data: PostData) => boolean;
+        updatePostPreview: (data: PostData) => any;
     }
 }
 
@@ -99,71 +99,92 @@ const PostPreviewPanel = () => {
         console.log("Updating post with new data:", data.post);
         
         try {
-            // Update post content with null checks (undefined, null, or empty string become null)
-            setPostTitle(data.post.title || null as any);
-            setPostContent(data.post.content || null as any);
-            setPostHashtags(Array.isArray(data.post.hashtags) ? data.post.hashtags : []);
-            
-            // Handle image URL (take the first one from the array if available)
-            if (data.post.mediaUrl && Array.isArray(data.post.mediaUrl) && data.post.mediaUrl.length > 0) {
-                setImageUrl(data.post.mediaUrl[0]);
-            } else {
-                setImageUrl(undefined);
-            }
-            
-            // Update platform selections
-            if (data.post.socialPlatforms) {
-                console.log("Setting platforms to:", data.post.socialPlatforms);
-                setActivePlatforms({...data.post.socialPlatforms});
-            }
-            
-            // Update post type
-            if (data.post.postType) {
-                console.log("Setting post type to:", data.post.postType);
-                setPostType({...data.post.postType});
-            }
-            
-            // Update scheduled date/time
-            if (data.post.scheduledDate) {
-                try {
-                    // Parse the ISO date string
-                    const newDate = parseISO(data.post.scheduledDate);
-                    setDate(newDate);
-                    
-                    // Format time for the dropdown
-                    const hours = newDate.getHours();
-                    const minutes = newDate.getMinutes();
-                    const ampm = hours >= 12 ? 'PM' : 'AM';
-                    const hour12 = hours % 12 || 12; // Convert to 12-hour format
-                    
-                    // Format as "9:00 AM" style string
-                    const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
-                    
-                    // Find closest matching time in our options or use the formatted time
-                    const closestTime = timeOptions.find(t => t === timeString) || timeString;
-                    setSelectedTime(closestTime);
-                    
-                    // Update the formatted display string
-                    const formattedDate = format(newDate, "MMMM d, yyyy");
-                    setScheduledDate(`${formattedDate} • ${closestTime}`);
-                } catch (error) {
-                    console.error("Error parsing date:", error);
+            // Create a promise to handle all state updates and return a value after they complete
+            return new Promise<boolean>((resolve) => {
+                // First, batch all state updates using a function to ensure we're using latest state
+                
+                // Update post content
+                const newTitle = data.post.title || null as any;
+                const newContent = data.post.content || null as any;
+                const newHashtags = Array.isArray(data.post.hashtags) ? [...data.post.hashtags] : [];
+                
+                // Handle image URL
+                let newImageUrl = undefined;
+                if (data.post.mediaUrl && Array.isArray(data.post.mediaUrl) && data.post.mediaUrl.length > 0) {
+                    newImageUrl = data.post.mediaUrl[0];
                 }
-            }
-
-            // Trigger a re-render
-            setTimeout(() => {
-                console.log("Current state after update:", {
-                    title: postTitle,
-                    content: postContent,
-                    hashtags: postHashtags,
-                    platforms: activePlatforms,
-                    postType: postType
-                });
-            }, 100);
-
-            console.log("Post data updated successfully!");
-            return true;
+                
+                // Update platform selections
+                let newPlatforms = {...activePlatforms};
+                if (data.post.socialPlatforms) {
+                    console.log("Setting platforms to:", data.post.socialPlatforms);
+                    newPlatforms = {...data.post.socialPlatforms};
+                }
+                
+                // Update post type
+                let newPostType = {...postType};
+                if (data.post.postType) {
+                    console.log("Setting post type to:", data.post.postType);
+                    newPostType = {...data.post.postType};
+                }
+                
+                // Update scheduled date/time
+                let newDate = date;
+                let newSelectedTime = selectedTime;
+                let newFormattedScheduledDate = scheduledDate;
+                
+                if (data.post.scheduledDate) {
+                    try {
+                        // Parse the ISO date string
+                        newDate = parseISO(data.post.scheduledDate);
+                        
+                        // Format time for the dropdown
+                        const hours = newDate.getHours();
+                        const minutes = newDate.getMinutes();
+                        const ampm = hours >= 12 ? 'PM' : 'AM';
+                        const hour12 = hours % 12 || 12; // Convert to 12-hour format
+                        
+                        // Format as "9:00 AM" style string
+                        const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
+                        
+                        // Find closest matching time in our options or use the formatted time
+                        newSelectedTime = timeOptions.find(t => t === timeString) || timeString;
+                        
+                        // Update the formatted display string
+                        const formattedDate = format(newDate, "MMMM d, yyyy");
+                        newFormattedScheduledDate = `${formattedDate} • ${newSelectedTime}`;
+                    } catch (error) {
+                        console.error("Error parsing date:", error);
+                    }
+                }
+                
+                // Now update all state at once
+                setPostTitle(newTitle);
+                setPostContent(newContent);
+                setPostHashtags(newHashtags);
+                setImageUrl(newImageUrl);
+                setActivePlatforms(newPlatforms);
+                setPostType(newPostType);
+                setDate(newDate);
+                setSelectedTime(newSelectedTime);
+                setScheduledDate(newFormattedScheduledDate);
+                
+                // Force a check for the update with setTimeout
+                setTimeout(() => {
+                    // Very important - log the state AFTER it's been updated
+                    // This is a workaround for the React state timing issue
+                    console.log("State updated to:", {
+                        title: newTitle,
+                        content: newContent,
+                        hashtags: newHashtags,
+                        platforms: newPlatforms,
+                        postType: newPostType,
+                        scheduledDate: newFormattedScheduledDate
+                    });
+                    console.log("Post data updated successfully!");
+                    resolve(true);
+                }, 100);
+            });
         } catch (error) {
             console.error("Error updating post data:", error);
             return false;
@@ -174,8 +195,18 @@ const PostPreviewPanel = () => {
     useEffect(() => {
         console.log('PostPreviewPanel mounted - registering global function');
         
+        // Create a global wrapper for the updatePostData function
+        // This wrapper will trigger a UI state update, then return the Promise result
+        const globalUpdateFunction = (data: PostData) => {
+            // Return the result of updatePostData which is a Promise
+            const result = updatePostData(data);
+            // Force a forceUpdate by setting a dummy state
+            setActivePlatforms(current => ({...current}));
+            return result;
+        };
+        
         // Make updatePostData available globally via window object
-        window.updatePostPreview = updatePostData;
+        window.updatePostPreview = globalUpdateFunction;
         
         // Load initial sample data on component mount
         const sampleData: PostData = {
