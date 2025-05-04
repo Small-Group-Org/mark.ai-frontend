@@ -54,8 +54,8 @@ const MainSection: React.FC = () => {
         Your 24/7 Social Media Expert
       </span>
       <div className="mt-2 mb-4">
-        <a href="/dashboard" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-          Go to Dashboard
+        <a href="/create" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+          Create Post
         </a>
       </div>
       <div className={styles.Mark_1_3_27}></div>

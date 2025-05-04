@@ -16,9 +16,9 @@ const Navbar: React.FC = () => {
       <div className={styles.Component_3_2_409}>
         <span className={styles.Text_2_24}>FAQ</span>
       </div>
-      <Link href="/dashboard">
+      <Link href="/create">
         <div className={styles.Component_3_2_409} style={{ cursor: 'pointer' }}>
-          <span className={styles.Text_2_24}>Dashboard</span>
+          <span className={styles.Text_2_24}>Create Post</span>
         </div>
       </Link>
       <div className={styles.Component_4_2_411}>

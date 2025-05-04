@@ -4,7 +4,7 @@ import Header from './dashboard/Header';
 import ChatPanel from './dashboard/ChatPanel';
 import PostPreviewPanel from './dashboard/PostPreviewPanel';
 
-const MarkAiDashboard = () => {
+const MarkAiCreatePost = () => {
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden"> {/* Added overflow-hidden */}
       {/* Sidebar */}
@@ -33,4 +33,4 @@ const MarkAiDashboard = () => {
   );
 };
 
-export default MarkAiDashboard;
+export default MarkAiCreatePost;
