@@ -20,7 +20,7 @@ const Sidebar = () => {
             {/* Navigation Icons */}
             <nav className="flex flex-col items-center space-y-7 flex-grow w-full">
                 {/* Dashboard Item */}
-                <a href="/" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
+                <a href="/dashboard" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
                     <div className="p-3 rounded-lg mb-1 group-hover:bg-white/5">
                         <DashboardIcon />
                     </div>
@@ -37,13 +37,13 @@ const Sidebar = () => {
                     </div>
                     <span className="text-xs font-medium">Create</span>
                 </a>
-                <a href="#" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
+                <a href="/calendar" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
                     <div className="p-3 rounded-lg mb-1 group-hover:bg-white/5">
                         <CalendarIcon />
                     </div>
                     <span className="text-xs font-medium">Calendar</span>
                 </a>
-                <a href="#" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
+                <a href="/mind" className="flex flex-col items-center text-center group text-gray-300 hover:text-white w-full py-1">
                     <div className="p-3 rounded-lg mb-1 group-hover:bg-white/5">
                         <MindIcon />
                     </div>
