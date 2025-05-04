@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "wouter";
 import styles from "../styles/Navbar.module.css";
 
 const Navbar: React.FC = () => {
@@ -15,6 +16,11 @@ const Navbar: React.FC = () => {
       <div className={styles.Component_3_2_409}>
         <span className={styles.Text_2_24}>FAQ</span>
       </div>
+      <Link href="/dashboard">
+        <div className={styles.Component_3_2_409} style={{ cursor: 'pointer' }}>
+          <span className={styles.Text_2_24}>Dashboard</span>
+        </div>
+      </Link>
       <div className={styles.Component_4_2_411}>
         <span className={styles.Text_2_45}>Sign in</span>
       </div>
