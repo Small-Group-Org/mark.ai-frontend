@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from './dashboard/Sidebar';
 import Header from './dashboard/Header';
 import ChatPanel from './dashboard/ChatPanel';
-import PostPreviewPanel from './dashboard/PostPreviewPanel-fixed';
+import PostPreviewPanel from './dashboard/PostPreviewPanel';
 
 const MarkAiCreatePost = () => {
   return (

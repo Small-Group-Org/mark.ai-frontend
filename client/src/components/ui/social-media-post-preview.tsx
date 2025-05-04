@@ -25,7 +25,6 @@ interface SocialMediaPostPreviewProps {
   // Content editing callbacks
   onContentChange?: (content: string) => void;
   onTitleChange?: (title: string) => void;
-  onHashtagsChange?: (hashtags: string[]) => void;
   
   // Customization options
   hideHeader?: boolean;
@@ -60,7 +59,6 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   // Content editing callbacks
   onContentChange,
   onTitleChange,
-  onHashtagsChange,
   
   // Customization options
   hideHeader = false,
@@ -156,42 +154,9 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
             
             {hashtags.length > 0 && (
               <div className="text-blue-500 text-sm space-x-1">
-                {onHashtagsChange ? (
-                  <div className="flex flex-wrap gap-2">
-                    {hashtags.map((tag, index) => (
-                      <span key={index} className="flex items-center bg-blue-100 rounded-full px-2 py-1">
-                        <span>#{tag}</span>
-                        <button 
-                          className="ml-1 text-gray-500 hover:text-red-500"
-                          onClick={() => {
-                            const newTags = [...hashtags];
-                            newTags.splice(index, 1);
-                            onHashtagsChange(newTags);
-                          }}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                    <button 
-                      className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-full px-2 py-1 text-xs flex items-center"
-                      onClick={() => {
-                        const newTag = prompt('Enter hashtag (without #):');
-                        if (newTag && newTag.trim() !== '') {
-                          onHashtagsChange([...hashtags, newTag.trim().replace(/\s+/g, '')]);
-                        }
-                      }}
-                    >
-                      + Add Tag
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    {hashtags.map((tag, index) => (
-                      <span key={index}>#{tag}</span>
-                    ))}
-                  </div>
-                )}
+                {hashtags.map((tag, index) => (
+                  <span key={index}>#{tag}</span>
+                ))}
               </div>
             )}
           </div>
