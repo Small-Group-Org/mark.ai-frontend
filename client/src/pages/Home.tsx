@@ -153,7 +153,24 @@ export default function Home() {
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>About</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
           <button 
-            onClick={() => window.location.href = '/create'}
+            onClick={() => {
+              // Show loading overlay
+              const loadingOverlay = document.createElement('div');
+              loadingOverlay.className = 'fixed inset-0 bg-black flex items-center justify-center z-50';
+              loadingOverlay.innerHTML = `
+                <div class="flex flex-col items-center">
+                  <div class="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin mb-4"></div>
+                  <h2 class="text-xl text-white mb-2">Loading Mark AI</h2>
+                  <p class="text-blue-400">Please wait while we prepare your content creation tools...</p>
+                </div>
+              `;
+              document.body.appendChild(loadingOverlay);
+              
+              // Wait a moment to show the loader before redirecting
+              setTimeout(() => {
+                window.location.href = '/create';
+              }, 800);
+            }}
             style={{ 
               backgroundColor: '#1e293b', 
               color: 'white', 
@@ -203,7 +220,24 @@ export default function Home() {
               justifyContent: 'center'
             }}>
               <button 
-                onClick={() => window.location.href = '/create'}
+                onClick={() => {
+                  // Show loading overlay
+                  const loadingOverlay = document.createElement('div');
+                  loadingOverlay.className = 'fixed inset-0 bg-black flex items-center justify-center z-50';
+                  loadingOverlay.innerHTML = `
+                    <div class="flex flex-col items-center">
+                      <div class="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin mb-4"></div>
+                      <h2 class="text-xl text-white mb-2">Loading Mark AI</h2>
+                      <p class="text-blue-400">Please wait while we prepare your content creation tools...</p>
+                    </div>
+                  `;
+                  document.body.appendChild(loadingOverlay);
+                  
+                  // Wait a moment to show the loader before redirecting
+                  setTimeout(() => {
+                    window.location.href = '/create';
+                  }, 800);
+                }}
                 style={{ 
                   backgroundColor: '#1e293b', 
                   color: 'white', 
