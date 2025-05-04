@@ -310,6 +310,9 @@ const PostPreviewPanel = () => {
                     onTitleChange={(newTitle: string) => {
                         setAyrsharePost(prev => ({...prev, title: newTitle}));
                     }}
+                    onHashtagsChange={(newHashtags: string[]) => {
+                        setAyrsharePost(prev => ({...prev, tags: newHashtags}));
+                    }}
                 />
             </div>
 
