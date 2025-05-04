@@ -1,26 +1,34 @@
-import React from 'react';
-import Sidebar from '../components/dashboard/Sidebar';
-import Header from '../components/dashboard/Header';
+import React, { useEffect, useState } from 'react';
+import DashboardLayout from '../components/layout/DashboardLayout';
 
 export default function CalendarRoute() {
+  const [loading, setLoading] = useState(true);
+
+  // Simulate loading delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800); // Simulate 800ms loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="flex h-screen bg-black text-white overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[90px] h-screen">
-        {/* Header */}
-        <Header />
-
-        {/* Calendar Content */}
-        <main className="flex-1 p-6 flex items-center justify-center">
+    <DashboardLayout>
+      {/* Calendar Content */}
+      <div className="p-6 h-full flex items-center justify-center">
+        {loading ? (
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+            <p className="mt-3 text-blue-400">Loading calendar data...</p>
+          </div>
+        ) : (
           <div className="text-center">
             <h2 className="text-2xl text-blue-400 mb-4">Calendar Page</h2>
             <p className="text-gray-400">This is a placeholder for the Calendar content.</p>
           </div>
-        </main>
+        )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
