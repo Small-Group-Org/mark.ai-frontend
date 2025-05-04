@@ -91,33 +91,11 @@ const PostPreviewPanel = () => {
         userTitle: "Product Designer"
     });
     
-    // Reference for calendar dropdown (to detect clicks outside)
-    const calendarRef = useRef<HTMLDivElement>(null);
-    
     // Update the formatted date string whenever date changes
     useEffect(() => {
         const formattedDate = format(date, "MMMM d, yyyy");
         setScheduledDate(`${formattedDate} • ${selectedTime}`);
     }, [date, selectedTime]);
-    
-    // Handle clicking outside calendar to close it
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-                setIsCalendarOpen(false);
-            }
-        };
-        
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-    
-    // Function to toggle calendar visibility
-    const handleDateChange = () => {
-        setIsCalendarOpen(!isCalendarOpen);
-    };
     
     // Handle date selection from calendar
     const handleSelectDate = (newDate: Date | undefined) => {
@@ -129,7 +107,6 @@ const PostPreviewPanel = () => {
     // Handle time selection
     const handleTimeSelect = (time: string) => {
         setSelectedTime(time);
-        setIsCalendarOpen(false);
     };
     
     // Update Ayrshare post data whenever date, time, or other relevant fields change
@@ -325,14 +302,12 @@ const PostPreviewPanel = () => {
                     hashtags={ayrsharePost.tags || ['productlaunch', 'innovation', 'technology']}
                     scheduledDate={scheduledDate}
                     onSchedule={handleSchedulePost}
-                    onDateChange={handleDateChange}
+                    onDateChange={() => {}} // Not used with Popover
                     hideFooter={true} // Hide the footer since we have our own implementation below
-                    // Update the content when it changes in the preview
-                    onContentChange={(newContent) => {
+                    onContentChange={(newContent: string) => {
                         setAyrsharePost(prev => ({...prev, post: newContent}));
                     }}
-                    // Update the title when it changes in the preview
-                    onTitleChange={(newTitle) => {
+                    onTitleChange={(newTitle: string) => {
                         setAyrsharePost(prev => ({...prev, title: newTitle}));
                     }}
                 />
