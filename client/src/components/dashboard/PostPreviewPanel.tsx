@@ -105,13 +105,13 @@ const PostPreviewPanel = () => {
     }, []);
 
     // This is the function that will update all the state from the external JSON
-    const updatePostPreviewFromJson = (data: PostData) => {
+    const updatePostData = (data: PostData) => {
         if (!data || !data.post) {
             console.error("Invalid post data");
-            return;
+            return false;
         }
 
-        console.log("Updating post preview with:", data.post);
+        console.log("Updating post data with:", data.post);
 
         // Update title and content
         setPostTitle(data.post.title);
@@ -157,6 +157,8 @@ const PostPreviewPanel = () => {
                 console.error("Error parsing date:", error);
             }
         }
+        
+        return true;
     };
     
     // Register global function on mount
@@ -165,8 +167,7 @@ const PostPreviewPanel = () => {
         
         // Set the global function directly 
         window.updatePostPreview = (data: PostData) => {
-            updatePostPreviewFromJson(data);
-            return true;
+            return updatePostData(data);
         };
         
         // Initial data
@@ -200,7 +201,7 @@ const PostPreviewPanel = () => {
         };
         
         // Initialize with sample data
-        updatePostPreviewFromJson(sampleData);
+        updatePostData(sampleData);
         
         // Cleanup on unmount
         return () => {
