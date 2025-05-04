@@ -4,12 +4,50 @@ import { CalendarTodayIcon } from './IconComponents';
 import SocialMediaPostPreview from '../ui/social-media-post-preview';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-// Define platform names type for state management
-type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
+// Define platform names type for Ayrshare API
+type PlatformName = 'bluesky' | 'facebook' | 'google' | 'instagram' | 'twitter' | 'reddit' | 'telegram' | 'threads' | 'tiktok' | 'youtube';
+
+// Define platform names for UI display (different case and naming)
+type UIPlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
+
+// Define the post type options
+type PostType = 'post' | 'story' | 'reel' | 'shorts';
+
+// Define Ayrshare post data structure
+interface AyrsharePost {
+    post: string;             // The post content
+    platforms: PlatformName[]; // Array of platforms to post to
+    mediaUrls?: string[];      // Optional array of media URLs (images, videos, etc.)
+    scheduleDate?: string;     // ISO date string for scheduling
+    title?: string;            // Optional title for the post
+    tags?: string[];           // Optional array of hashtags
+    postType?: PostType;       // Type of post (regular post, story, reel, etc.)
+    profileKeys?: string[];    // Optional array of profile keys
+    userId?: string;           // Optional user ID
+    userDisplayName?: string;  // Optional user display name
+    userTitle?: string;        // Optional user title/description
+    userProfilePicture?: string; // Optional user profile picture URL
+}
 
 const PostPreviewPanel = () => {
-    const [activePlatforms, setActivePlatforms] = useState<Record<PlatformName, boolean>>({
+    // Create a mapping from UI platform names to Ayrshare platform names
+    const platformMapping: Record<string, PlatformName> = {
+        'Bluesky': 'bluesky',
+        'Facebook': 'facebook',
+        'Google Business': 'google',
+        'Instagram': 'instagram',
+        'X/Twitter': 'twitter',
+        'Reddit': 'reddit',
+        'Telegram': 'telegram',
+        'Threads': 'threads',
+        'TikTok': 'tiktok',
+        'YouTube': 'youtube',
+    };
+
+    // State for active platforms (UI tracking)
+    const [activePlatforms, setActivePlatforms] = useState<Record<string, boolean>>({
         'Bluesky': false,
         'Facebook': false,
         'Google Business': false,
@@ -22,13 +60,16 @@ const PostPreviewPanel = () => {
         'YouTube': true,  // Default active based on screenshot
     });
     
-    // State for managing actual date object
+    // State for post type
+    const [postType, setPostType] = useState<PostType>('post');
+    
+    // State for managing date object
     const [date, setDate] = useState<Date>(new Date(2025, 4, 5, 9, 0)); // May 5, 2025, 9:00 AM
     
     // State for formatted date string display
     const [scheduledDate, setScheduledDate] = useState("May 5, 2025 • 9:00 AM");
     
-    // State to control calendar visibility
+    // State for calendar visibility/popover
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     
     // Time options for dropdown
@@ -39,6 +80,19 @@ const PostPreviewPanel = () => {
     
     // State for selected time
     const [selectedTime, setSelectedTime] = useState(timeOptions[0]);
+    
+    // Main Ayrshare post state
+    const [ayrsharePost, setAyrsharePost] = useState<AyrsharePost>({
+        post: "We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.",
+        platforms: ['instagram', 'twitter', 'tiktok', 'youtube'], // Default active platforms
+        title: "New Product Launch",
+        tags: ['productlaunch', 'innovation', 'technology'],
+        postType: 'post',
+        scheduleDate: new Date(2025, 4, 5, 9, 0).toISOString(),
+        userDisplayName: "Stephen Conley",
+        userId: "@steveconley",
+        userTitle: "Product Designer"
+    });
     
     // Reference for calendar dropdown (to detect clicks outside)
     const calendarRef = useRef<HTMLDivElement>(null);
@@ -81,18 +135,80 @@ const PostPreviewPanel = () => {
         setIsCalendarOpen(false);
     };
     
+    // Update Ayrshare post data whenever date, time, or other relevant fields change
+    useEffect(() => {
+        // Create a date object that includes the selected date and parses the time
+        let dateObj = new Date(date);
+        
+        // Extract hours and minutes from selectedTime (format: "9:00 AM", "2:30 PM", etc.)
+        const timeMatch = selectedTime.match(/(\d+):(\d+)\s+(AM|PM)/i);
+        if (timeMatch) {
+            let hours = parseInt(timeMatch[1]);
+            const minutes = parseInt(timeMatch[2]);
+            const period = timeMatch[3].toUpperCase();
+            
+            // Convert 12-hour format to 24-hour format
+            if (period === 'PM' && hours < 12) {
+                hours += 12;
+            } else if (period === 'AM' && hours === 12) {
+                hours = 0;
+            }
+            
+            dateObj.setHours(hours, minutes, 0, 0);
+        }
+        
+        // Update the Ayrshare post with the new schedule date
+        setAyrsharePost(prev => ({
+            ...prev,
+            scheduleDate: dateObj.toISOString(),
+        }));
+    }, [date, selectedTime]);
+    
     // Function to handle schedule button click
     const handleSchedulePost = () => {
-        // Display a confirmation in the console (would be an API call in a real app)
-        console.log(`Post scheduled for: ${scheduledDate}`);
-        alert(`Post successfully scheduled for: ${scheduledDate}`);
+        // Display a confirmation and the complete Ayrshare post data
+        console.log('Scheduling post with Ayrshare data:', ayrsharePost);
+        alert(`Post scheduled for: ${scheduledDate} on ${ayrsharePost.platforms.length} platforms`);
+        
+        // In a real app, this would make an API call to Ayrshare's endpoint:
+        // POST https://app.ayrshare.com/api/post
+        // with the ayrsharePost data and the API key in the header
     };
 
-    const handlePlatformToggle = (platformName: PlatformName) => {
-        setActivePlatforms(prev => ({
-            ...prev,
-            [platformName]: !prev[platformName],
-        }));
+    // Function to handle platform toggling and update Ayrshare post data
+    const handlePlatformToggle = (platformDisplayName: string) => {
+        // First update the UI state
+        setActivePlatforms(prev => {
+            const newState = {
+                ...prev,
+                [platformDisplayName]: !prev[platformDisplayName]
+            };
+            
+            // Then update the Ayrshare post data with the new platforms
+            const platformName = platformMapping[platformDisplayName];
+            if (platformName) {
+                setAyrsharePost(prevPost => {
+                    if (newState[platformDisplayName]) {
+                        // Add platform if it's not already there
+                        if (!prevPost.platforms.includes(platformName)) {
+                            return {
+                                ...prevPost,
+                                platforms: [...prevPost.platforms, platformName]
+                            };
+                        }
+                    } else {
+                        // Remove platform
+                        return {
+                            ...prevPost,
+                            platforms: prevPost.platforms.filter(p => p !== platformName)
+                        };
+                    }
+                    return prevPost;
+                });
+            }
+            
+            return newState;
+        });
     };
 
     // Color definitions (consider moving to a shared constants file if used elsewhere)
@@ -110,14 +226,14 @@ const PostPreviewPanel = () => {
     const datePickerText = 'text-gray-700'; // Adjusted for better contrast
 
     // Platform Data (could be fetched or defined elsewhere)
-    const platformsRow1: { name: PlatformName; icon: string }[] = [
+    const platformsRow1: { name: string; icon: string }[] = [
         { name: 'Bluesky', icon: 'B' },
         { name: 'Facebook', icon: 'f' },
         { name: 'Google Business', icon: 'G' },
         { name: 'Instagram', icon: 'I' }, // Replace 'I' with actual icon component/SVG if available
         { name: 'X/Twitter', icon: 'X' }, // Replace 'X' with actual icon component/SVG if available
     ];
-    const platformsRow2: { name: PlatformName; icon: string }[] = [
+    const platformsRow2: { name: string; icon: string }[] = [
         { name: 'Reddit', icon: 'R' }, // Replace 'R' with actual icon component/SVG if available
         { name: 'Telegram', icon: 'T' }, // Replace 'T' with actual icon component/SVG if available
         { name: 'Threads', icon: '@' }, // Replace '@' with actual icon component/SVG if available
@@ -162,26 +278,66 @@ const PostPreviewPanel = () => {
 
             {/* Post Type Selection */}
             <div className={`px-5 py-3 border-b ${postPreviewBorder} ${postPreviewCardBg} shrink-0 flex flex-wrap gap-3`}> {/* Added gap, reduced py */} 
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium ${activeButtonBg} text-white`}>Feed Post</button>
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>IG Story</button>
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>Reel</button>
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>Youtube Shorts</button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType === 'post' ? `${activeButtonBg} text-white` : `bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}`}
+                    onClick={() => {
+                        setPostType('post');
+                        setAyrsharePost(prev => ({...prev, postType: 'post'}));
+                    }}
+                >
+                    Feed Post
+                </button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType === 'story' ? `${activeButtonBg} text-white` : `bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}`}
+                    onClick={() => {
+                        setPostType('story');
+                        setAyrsharePost(prev => ({...prev, postType: 'story'}));
+                    }}
+                >
+                    IG Story
+                </button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType === 'reel' ? `${activeButtonBg} text-white` : `bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}`}
+                    onClick={() => {
+                        setPostType('reel');
+                        setAyrsharePost(prev => ({...prev, postType: 'reel'}));
+                    }}
+                >
+                    Reel
+                </button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType === 'shorts' ? `${activeButtonBg} text-white` : `bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}`}
+                    onClick={() => {
+                        setPostType('shorts');
+                        setAyrsharePost(prev => ({...prev, postType: 'shorts'}));
+                    }}
+                >
+                    Youtube Shorts
+                </button>
             </div>
 
             {/* Content Display Area with Social Media Post Preview Component */} 
             <div className={`flex-1 overflow-y-auto p-6 ${postPreviewCardBg}`}>
                 <SocialMediaPostPreview 
-                    userInitials="SC"
-                    userName="Stephen Conley"
-                    userHandle="@steveconley"
-                    userTitle="Product Designer"
-                    postTitle="New Product Launch"
-                    postContent="We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs."
-                    hashtags={['productlaunch', 'innovation', 'technology']}
+                    userInitials={ayrsharePost.userDisplayName?.split(' ').map(n => n[0]).join('') || 'SC'}
+                    userName={ayrsharePost.userDisplayName || "Stephen Conley"}
+                    userHandle={ayrsharePost.userId || "@steveconley"}
+                    userTitle={ayrsharePost.userTitle || "Product Designer"}
+                    postTitle={ayrsharePost.title || "New Product Launch"}
+                    postContent={ayrsharePost.post}
+                    hashtags={ayrsharePost.tags || ['productlaunch', 'innovation', 'technology']}
                     scheduledDate={scheduledDate}
                     onSchedule={handleSchedulePost}
                     onDateChange={handleDateChange}
                     hideFooter={true} // Hide the footer since we have our own implementation below
+                    // Update the content when it changes in the preview
+                    onContentChange={(newContent) => {
+                        setAyrsharePost(prev => ({...prev, post: newContent}));
+                    }}
+                    // Update the title when it changes in the preview
+                    onTitleChange={(newTitle) => {
+                        setAyrsharePost(prev => ({...prev, title: newTitle}));
+                    }}
                 />
             </div>
 

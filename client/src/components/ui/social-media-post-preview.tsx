@@ -22,6 +22,10 @@ interface SocialMediaPostPreviewProps {
   onSchedule?: () => void;
   onDateChange?: () => void;
   
+  // Content editing callbacks
+  onContentChange?: (content: string) => void;
+  onTitleChange?: (title: string) => void;
+  
   // Customization options
   hideHeader?: boolean;
   hideFooter?: boolean;
@@ -51,6 +55,10 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   scheduledDate = 'May 5, 2025 • 9:00 AM',
   onSchedule,
   onDateChange,
+  
+  // Content editing callbacks
+  onContentChange,
+  onTitleChange,
   
   // Customization options
   hideHeader = false,
