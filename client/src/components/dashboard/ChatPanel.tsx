@@ -84,7 +84,7 @@ const ChatPanel = () => {
     };
 
     return (
-        <div className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full`}> {/* Ensure full height */} 
+        <div className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}> {/* Added overflow-hidden */} 
             {/* Chat Header */}
             <div className={`h-[54px] flex items-center px-5 border-b ${chatHeaderBorder} shrink-0`}>
                 <h2 className="font-semibold text-sm">Chat with Mark</h2>
