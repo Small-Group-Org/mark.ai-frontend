@@ -6,6 +6,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import CreatePost from "@/pages/CreatePost";
+import Dashboard from "@/pages/Dashboard";
+import Calendar from "@/pages/Calendar";
+import Mind from "@/pages/Mind";
 
 function Router() {
   return (
@@ -13,6 +16,9 @@ function Router() {
       {/* Add pages below */}
       <Route path="/" component={Home} />
       <Route path="/create" component={CreatePost} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/calendar" component={Calendar} />
+      <Route path="/mind" component={Mind} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

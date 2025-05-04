@@ -2,7 +2,7 @@ import React from 'react';
 import Sidebar from '../components/dashboard/Sidebar';
 import Header from '../components/dashboard/Header';
 
-export default function DashboardRoute() {
+export default function CalendarRoute() {
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">
       {/* Sidebar */}
@@ -13,11 +13,11 @@ export default function DashboardRoute() {
         {/* Header */}
         <Header />
 
-        {/* Dashboard Content */}
+        {/* Calendar Content */}
         <main className="flex-1 p-6 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl text-blue-400 mb-4">Dashboard Page</h2>
-            <p className="text-gray-400">This is a placeholder for the Dashboard content.</p>
+            <h2 className="text-2xl text-blue-400 mb-4">Calendar Page</h2>
+            <p className="text-gray-400">This is a placeholder for the Calendar content.</p>
           </div>
         </main>
       </div>

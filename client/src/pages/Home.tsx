@@ -152,16 +152,18 @@ export default function Home() {
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>Features</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>About</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
-          <button style={{ 
-            backgroundColor: '#1e293b', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '9999px', 
-            padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
-            cursor: 'pointer',
-            fontSize: 'clamp(12px, 3vw, 14px)',
-            whiteSpace: 'nowrap'
-          }}>Sign in</button>
+          <button 
+            onClick={() => window.location.href = '/create'}
+            style={{ 
+              backgroundColor: '#1e293b', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '9999px', 
+              padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+              cursor: 'pointer',
+              fontSize: 'clamp(12px, 3vw, 14px)',
+              whiteSpace: 'nowrap'
+            }}>Sign in</button>
           <button style={{ 
             backgroundColor: '#2563eb', 
             color: 'white', 
@@ -200,16 +202,18 @@ export default function Home() {
               marginTop: '8px',
               justifyContent: 'center'
             }}>
-              <button style={{ 
-                backgroundColor: '#1e293b', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '9999px', 
-                padding: '10px 20px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                width: '120px'
-              }}>Sign in</button>
+              <button 
+                onClick={() => window.location.href = '/create'}
+                style={{ 
+                  backgroundColor: '#1e293b', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '9999px', 
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  width: '120px'
+                }}>Sign in</button>
               <button style={{ 
                 backgroundColor: '#2563eb', 
                 color: 'white', 
