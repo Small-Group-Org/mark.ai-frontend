@@ -19,6 +19,31 @@ const PostPreviewPanel = () => {
         'TikTok': true,   // Default active based on screenshot
         'YouTube': true,  // Default active based on screenshot
     });
+    
+    // State for managing selected date
+    const [scheduledDate, setScheduledDate] = useState("May 5, 2025 • 9:00 AM");
+    
+    // Function to handle date change - in a real app, this would open a date picker
+    const handleDateChange = () => {
+        // For demonstration purposes, we'll cycle through a few dates
+        const dates = [
+            "May 5, 2025 • 9:00 AM",
+            "May 6, 2025 • 10:30 AM", 
+            "May 7, 2025 • 2:15 PM",
+            "May 8, 2025 • 5:45 PM"
+        ];
+        
+        const currentIndex = dates.indexOf(scheduledDate);
+        const nextIndex = (currentIndex + 1) % dates.length;
+        setScheduledDate(dates[nextIndex]);
+    };
+    
+    // Function to handle schedule button click
+    const handleSchedulePost = () => {
+        // Display a confirmation in the console (would be an API call in a real app)
+        console.log(`Post scheduled for: ${scheduledDate}`);
+        alert(`Post successfully scheduled for: ${scheduledDate}`);
+    };
 
     const handlePlatformToggle = (platformName: PlatformName) => {
         setActivePlatforms(prev => ({
@@ -110,9 +135,9 @@ const PostPreviewPanel = () => {
                     postTitle="New Product Launch"
                     postContent="We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs."
                     hashtags={['productlaunch', 'innovation', 'technology']}
-                    scheduledDate="May 5, 2025 • 9:00 AM"
-                    onSchedule={() => console.log('Schedule post clicked')}
-                    onDateChange={() => console.log('Date change clicked')}
+                    scheduledDate={scheduledDate}
+                    onSchedule={handleSchedulePost}
+                    onDateChange={handleDateChange}
                     hideFooter={true} // Hide the footer since we have our own implementation below
                 />
             </div>
@@ -124,14 +149,20 @@ const PostPreviewPanel = () => {
                     <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-700">Post scheduled for:</span>
                         {/* Date Picker Component */}
-                        <div className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}>
-                            <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>May 5, 2025 • 9:00 AM</span>
+                        <div 
+                            className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}
+                            onClick={handleDateChange}
+                        >
+                            <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>{scheduledDate}</span>
                             <CalendarTodayIcon className={`${datePickerText}`} />
                         </div>
                     </div>
                     
                     {/* Right: Schedule Button */}
-                    <button className={`px-6 py-2 rounded-lg text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap`}>
+                    <button 
+                        className={`px-6 py-2 rounded-lg text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap`}
+                        onClick={handleSchedulePost}
+                    >
                         Schedule Post
                     </button>
                 </div>
