@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, KeyboardEvent, useRef, useEffect } from 'react';
+import axios from 'axios'; // Import axios
 import {
     PaperclipIcon,
     SendIcon
@@ -13,15 +14,8 @@ interface Message {
 
 const ChatPanel = () => {
     const [inputValue, setInputValue] = useState('');
-    const [messages, setMessages] = useState<Message[]>([
-        // Initial messages for the create post flow
-        { id: 1, text: "👋 Welcome to the post creation interface!", sender: 'ai' },
-        { id: 2, text: "I'll help you craft the perfect social media post. What platform would you like to create content for?", sender: 'ai' },
-        { id: 3, text: "I need to create a post for Instagram", sender: 'user' },
-        { id: 4, text: "Great choice! Let's create an engaging Instagram post. What's the main topic or theme you want to focus on?", sender: 'ai' },
-        { id: 5, text: "Our new product launch", sender: 'user' },
-        { id: 6, text: "Perfect! I'll help you create a captivating product launch post for Instagram. What specific aspects of the product would you like to highlight?", sender: 'ai' },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [isThinking, setIsThinking] = useState(false); // Add isThinking state
     const chatContainerRef = useRef<HTMLDivElement>(null); // Ref for scrolling
 
     const chatPanelBg = 'bg-[#11132f]';
@@ -33,6 +27,52 @@ const ChatPanel = () => {
     const chatBubbleGradient = 'bg-gradient-to-r from-[#3b82f6] to-[#2563eb]';
     const userChatBubbleBg = 'bg-white';
     const userChatBubbleText = 'text-gray-700'; // text-[#334155]
+
+    // Initialize chat with first AI message
+    useEffect(() => {
+        // Set thinking state when component mounts
+        setIsThinking(true);
+
+        // Make API call to get initial greeting
+        axios.post(
+            'https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073',
+            {
+                inputText: "Hi There!",
+                sessionID: "u1234s21"
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }
+        )
+        .then(response => {
+            setIsThinking(false);
+            const data = response.data;
+            
+            if (data && data.output) {
+                const aiResponse: Message = {
+                    id: Date.now(),
+                    text: data.output,
+                    sender: 'ai'
+                };
+                setMessages([aiResponse]); // Set as first message
+            }
+        })
+        .catch(error => {
+            setIsThinking(false);
+            console.error('Initial API call error:', error);
+            
+            // Handle error case
+            const errorMessage = 'Sorry, I couldn\'t connect. Please try again later.';
+            const aiErrorResponse: Message = {
+                id: Date.now(),
+                text: errorMessage,
+                sender: 'ai'
+            };
+            setMessages([aiErrorResponse]);
+        });
+    }, []); // Empty dependency array ensures this only runs once on mount
 
     // Scroll to bottom whenever messages change
     useEffect(() => {
@@ -47,7 +87,7 @@ const ChatPanel = () => {
         e.target.style.height = `${e.target.scrollHeight}px`;
     };
 
-    const handleSend = () => {
+    const handleSend = async () => { // Make the function async
         const messageText = inputValue.trim();
         if (messageText) {
             const newMessage: Message = {
@@ -55,24 +95,86 @@ const ChatPanel = () => {
                 text: messageText,
                 sender: 'user'
             };
+            // Add user message immediately
             setMessages(prevMessages => [...prevMessages, newMessage]);
-            setInputValue('');
+            setInputValue(''); // Clear input after sending user message
 
             const textarea = document.getElementById('chat-textarea') as HTMLTextAreaElement;
             if (textarea) {
-                textarea.style.height = 'auto';
+                textarea.style.height = 'auto'; // Reset textarea height
             }
 
-            // TODO: Add logic here to potentially trigger an AI response
-            // For example, using setTimeout to simulate a delay:
-            // setTimeout(() => {
-            //     const aiResponse: Message = {
-            //         id: Date.now() + 1,
-            //         text: "Okay, working on captions for you...",
-            //         sender: 'ai'
-            //     };
-            //     setMessages(prev => [...prev, aiResponse]);
-            // }, 1000);
+            // Set thinking flag to true
+            setIsThinking(true);
+
+            // --- API Call Logic using axios ---
+            try {
+                const response = await axios.post(
+                    'https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073',
+                    {
+                        inputText: messageText,
+                        sessionID: "u1234s21" // Hardcoded session ID for now
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                );
+
+                setIsThinking(false); // Reset thinking state
+                const data = response.data; // axios automatically parses JSON
+
+                if (data && data.output) {
+                    const aiResponse: Message = {
+                        id: Date.now() + 1, // Ensure unique ID
+                        text: data.output,
+                        sender: 'ai'
+                    };
+                    setMessages(prev => [...prev, aiResponse]);
+                } else {
+                    console.error('API Error: Invalid response format', data);
+                    const aiErrorResponse: Message = {
+                        id: Date.now() + 1,
+                        text: 'Error: Received invalid response format from AI.',
+                        sender: 'ai'
+                    };
+                    setMessages(prev => [...prev, aiErrorResponse]);
+                }
+
+            } catch (error) {
+                setIsThinking(false); // Reset thinking state on error
+                console.error('Axios Error:', error);
+                let errorMessage = 'Error: Could not connect to the AI service.';
+                if (axios.isAxiosError(error)) {
+                    if (error.response) {
+                        // The request was made and the server responded with a status code
+                        // that falls out of the range of 2xx
+                        console.error('API Error Data:', error.response.data);
+                        console.error('API Error Status:', error.response.status);
+                        errorMessage = `Error: Could not get response (${error.response.status})`;
+                    } else if (error.request) {
+                        // The request was made but no response was received
+                        console.error('API No Response Request:', error.request);
+                        errorMessage = 'Error: No response received from AI service.';
+                    } else {
+                        // Something happened in setting up the request that triggered an Error
+                        console.error('Axios Setup Error:', error.message);
+                        errorMessage = `Error: ${error.message}`;
+                    }
+                } else {
+                    // Handle non-Axios errors
+                    console.error('Non-Axios Error:', error);
+                }
+
+                const aiErrorResponse: Message = {
+                    id: Date.now() + 1,
+                    text: errorMessage,
+                    sender: 'ai'
+                };
+                setMessages(prev => [...prev, aiErrorResponse]);
+            }
+            // --- End API Call Logic ---
         }
     };
 
@@ -106,6 +208,15 @@ const ChatPanel = () => {
                         </div>
                     </div>
                 ))}
+                
+                {/* Thinking indicator */}
+                {isThinking && (
+                    <div className="flex justify-start">
+                        <div className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${chatBubbleGradient} text-white`}>
+                            Thinking...
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Chat Input Area */}
