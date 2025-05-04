@@ -4,23 +4,56 @@ import PlatformToggle from './PlatformToggle';
 import { CalendarTodayIcon } from './IconComponents';
 import SocialMediaPostPreview from '../ui/social-media-post-preview';
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
+
+// Define the PostData interface based on the provided JSON structure
+export interface PostData {
+  post: {
+    userId: number;
+    title: string;
+    content: string;
+    mediaUrl: string[];
+    hashtags: string[];
+    socialPlatforms: Record<PlatformName, boolean>;
+    postType: {
+      feedPost: boolean;
+      igStory: boolean;
+      reel: boolean;
+      youtubeShorts: boolean;
+    };
+    scheduledDate: string; // ISO date string
+  };
+}
 
 // Define platform names type for state management
 type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
 
 const PostPreviewPanel = () => {
+    // Post content states
+    const [postTitle, setPostTitle] = useState("New Product Launch");
+    const [postContent, setPostContent] = useState("We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.");
+    const [postHashtags, setPostHashtags] = useState(['productlaunch', 'innovation', 'technology']);
+    
+    // Platform toggles state
     const [activePlatforms, setActivePlatforms] = useState<Record<PlatformName, boolean>>({
         'Bluesky': false,
         'Facebook': false,
         'Google Business': false,
-        'Instagram': true, // Default active based on screenshot
-        'X/Twitter': true, // Default active based on screenshot
+        'Instagram': true,
+        'X/Twitter': true,
         'Reddit': false,
         'Telegram': false,
         'Threads': false,
-        'TikTok': true,   // Default active based on screenshot
-        'YouTube': true,  // Default active based on screenshot
+        'TikTok': true,
+        'YouTube': true,
+    });
+    
+    // Post type selection state
+    const [postType, setPostType] = useState({
+        feedPost: true,
+        igStory: false,
+        reel: false,
+        youtubeShorts: false
     });
     
     // State for managing actual date object
@@ -43,6 +76,102 @@ const PostPreviewPanel = () => {
     
     // Reference for calendar dropdown (to detect clicks outside)
     const calendarRef = useRef<HTMLDivElement>(null);
+    
+    /**
+     * Update all post data from a JSON object
+     * This function will be exposed globally for testing via the console
+     */
+    const updatePostData = (data: PostData) => {
+        // Update post content
+        setPostTitle(data.post.title || "");
+        setPostContent(data.post.content || "");
+        setPostHashtags(data.post.hashtags || []);
+        
+        // Update platform selections
+        if (data.post.socialPlatforms) {
+            setActivePlatforms(data.post.socialPlatforms);
+        }
+        
+        // Update post type
+        if (data.post.postType) {
+            setPostType(data.post.postType);
+        }
+        
+        // Update scheduled date/time
+        if (data.post.scheduledDate) {
+            try {
+                // Parse the ISO date string
+                const newDate = parseISO(data.post.scheduledDate);
+                setDate(newDate);
+                
+                // Format time for the dropdown
+                const hours = newDate.getHours();
+                const minutes = newDate.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const hour12 = hours % 12 || 12; // Convert to 12-hour format
+                
+                // Format as "9:00 AM" style string
+                const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
+                
+                // Find closest matching time in our options or use the formatted time
+                const closestTime = timeOptions.find(t => t === timeString) || timeString;
+                setSelectedTime(closestTime);
+                
+                // Update the formatted display string
+                const formattedDate = format(newDate, "MMMM d, yyyy");
+                setScheduledDate(`${formattedDate} • ${closestTime}`);
+            } catch (error) {
+                console.error("Error parsing date:", error);
+            }
+        }
+        
+        console.log("Post data updated successfully!");
+        return true;
+    };
+    
+    // Expose the function globally for testing via console and load initial data
+    useEffect(() => {
+        // @ts-ignore - Assigning to window for testing purposes
+        window.updatePostPreview = updatePostData;
+        
+        // Load initial sample data on component mount
+        const sampleData: PostData = {
+            post: {
+                userId: 123,
+                title: "New Product Launch",
+                content: "We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.",
+                mediaUrl: [],
+                hashtags: ["productlaunch", "innovation", "technology"],
+                socialPlatforms: {
+                    'Bluesky': false,
+                    'Facebook': false,
+                    'Google Business': false,
+                    'Instagram': true,
+                    'X/Twitter': true,
+                    'Reddit': false,
+                    'Telegram': false,
+                    'Threads': false,
+                    'TikTok': true,
+                    'YouTube': true
+                },
+                postType: {
+                    feedPost: true,
+                    igStory: false,
+                    reel: false,
+                    youtubeShorts: false
+                },
+                scheduledDate: "2025-05-05T09:00:00Z"
+            }
+        };
+        
+        // Initialize the component with sample data
+        updatePostData(sampleData);
+        
+        return () => {
+            // @ts-ignore - Cleanup when component unmounts
+            delete window.updatePostPreview;
+        };
+    }, []);
     
     // Update the formatted date string whenever date changes
     useEffect(() => {
@@ -162,11 +291,31 @@ const PostPreviewPanel = () => {
             </div>
 
             {/* Post Type Selection */}
-            <div className={`px-5 py-3 border-b ${postPreviewBorder} ${postPreviewCardBg} shrink-0 flex flex-wrap gap-3`}> {/* Added gap, reduced py */} 
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium ${activeButtonBg} text-white`}>Feed Post</button>
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>IG Story</button>
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>Reel</button>
-                <button className={`px-4 py-1.5 rounded-lg text-sm font-medium bg-white border ${postPreviewBorder} ${inactiveButtonText} hover:bg-gray-50 hover:border-gray-300`}>Youtube Shorts</button>
+            <div className={`px-5 py-3 border-b ${postPreviewBorder} ${postPreviewCardBg} shrink-0 flex flex-wrap gap-3`}> 
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.feedPost ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => setPostType({...postType, feedPost: true, igStory: false, reel: false, youtubeShorts: false})}
+                >
+                    Feed Post
+                </button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.igStory ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => setPostType({...postType, feedPost: false, igStory: true, reel: false, youtubeShorts: false})}
+                >
+                    IG Story
+                </button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.reel ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => setPostType({...postType, feedPost: false, igStory: false, reel: true, youtubeShorts: false})}
+                >
+                    Reel
+                </button>
+                <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.youtubeShorts ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => setPostType({...postType, feedPost: false, igStory: false, reel: false, youtubeShorts: true})}
+                >
+                    Youtube Shorts
+                </button>
             </div>
 
             {/* Content Display Area with Social Media Post Preview Component */} 
@@ -176,9 +325,9 @@ const PostPreviewPanel = () => {
                     userName="Stephen Conley"
                     userHandle="@steveconley"
                     userTitle="Product Designer"
-                    postTitle="New Product Launch"
-                    postContent="We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs."
-                    hashtags={['productlaunch', 'innovation', 'technology']}
+                    postTitle={postTitle}
+                    postContent={postContent}
+                    hashtags={postHashtags}
                     scheduledDate={scheduledDate}
                     onSchedule={handleSchedulePost}
                     onDateChange={handleDateChange}
