@@ -5,13 +5,7 @@ import { CalendarTodayIcon } from './IconComponents';
 import SocialMediaPostPreview from '../ui/social-media-post-preview';
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from 'date-fns';
-
-// Declare the global function on the Window interface
-declare global {
-    interface Window {
-        updatePostPreview: (data: PostData) => boolean;
-    }
-}
+import { registerUpdatePostPreview } from '@/lib/globalFunctions';
 
 // Define the PostData interface based on the provided JSON structure
 export interface PostData {
@@ -152,8 +146,8 @@ const PostPreviewPanel = () => {
     
     // Expose the function globally for testing via console and load initial data
     useEffect(() => {
-        // Make updatePostData available globally
-        window.updatePostPreview = updatePostData;
+        // Register the updatePostData function globally through our helper
+        registerUpdatePostPreview(updatePostData);
         
         // Load initial sample data on component mount
         const sampleData: PostData = {
@@ -188,10 +182,7 @@ const PostPreviewPanel = () => {
         // Initialize the component with sample data
         updatePostData(sampleData);
         
-        return () => {
-            // Cleanup when component unmounts
-            delete window.updatePostPreview;
-        };
+        // No need for manual cleanup as the registerUpdatePostPreview handles this
     }, []);
     
     // Update the formatted date string whenever date changes
