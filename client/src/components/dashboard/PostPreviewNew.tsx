@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import ImageUploader from './ImageUploader';
 import PostDetails from './PostDetails';
-import { CalendarTodayIcon } from './IconComponents';
+import PlatformToggle from './PlatformToggle';
+import {
+    CalendarTodayIcon,
+    UploadIcon
+} from './IconComponents';
+
+// Define platform names type for state management
+type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
 
 // Sample data for demonstration
 const samplePostData = {
@@ -12,12 +19,84 @@ const samplePostData = {
 
 const PostPreviewNew: React.FC = () => {
   const [postData] = useState(samplePostData);
+  const [activePlatforms, setActivePlatforms] = useState<Record<PlatformName, boolean>>({
+    'Bluesky': false,
+    'Facebook': false,
+    'Google Business': false,
+    'Instagram': true, // Default active based on screenshot
+    'X/Twitter': true, // Default active based on screenshot
+    'Reddit': false,
+    'Telegram': false,
+    'Threads': false,
+    'TikTok': true,   // Default active based on screenshot
+    'YouTube': true,  // Default active based on screenshot
+  });
+
+  const handlePlatformToggle = (platformName: PlatformName) => {
+    setActivePlatforms(prev => ({
+        ...prev,
+        [platformName]: !prev[platformName],
+    }));
+  };
+
+  // Platform Data (could be fetched or defined elsewhere)
+  const platformsRow1: { name: PlatformName; icon: string }[] = [
+    { name: 'Bluesky', icon: 'B' },
+    { name: 'Facebook', icon: 'f' },
+    { name: 'Google Business', icon: 'G' },
+    { name: 'Instagram', icon: 'I' },
+    { name: 'X/Twitter', icon: 'X' },
+  ];
+  
+  const platformsRow2: { name: PlatformName; icon: string }[] = [
+    { name: 'Reddit', icon: 'R' },
+    { name: 'Telegram', icon: 'T' },
+    { name: 'Threads', icon: '@' },
+    { name: 'TikTok', icon: '♪' },
+    { name: 'YouTube', icon: '▶' },
+  ];
   
   return (
     <div className="flex flex-col bg-white h-full overflow-hidden">
       {/* Header */}
       <div className="h-[58px] flex items-center px-5 border-b border-gray-200 shrink-0">
         <h2 className="font-semibold text-gray-800">Post Preview</h2>
+      </div>
+      
+      {/* Platform Selection */}
+      <div className="px-5 py-4 border-b border-gray-200 bg-gray-50 shrink-0">
+        {/* Platform Row 1 */}
+        <div className="flex flex-wrap gap-x-10 gap-y-3 mb-3">
+            {platformsRow1.map((platform) => (
+                <PlatformToggle
+                    key={platform.name}
+                    label={platform.name}
+                    icon={platform.icon}
+                    active={activePlatforms[platform.name]}
+                    onToggle={() => handlePlatformToggle(platform.name)}
+                />
+            ))}
+        </div>
+        {/* Platform Row 2 */}
+        <div className="flex flex-wrap gap-x-10 gap-y-3">
+            {platformsRow2.map((platform) => (
+                <PlatformToggle
+                    key={platform.name}
+                    label={platform.name}
+                    icon={platform.icon}
+                    active={activePlatforms[platform.name]}
+                    onToggle={() => handlePlatformToggle(platform.name)}
+                />
+            ))}
+        </div>
+      </div>
+      
+      {/* Post Type Selection */}
+      <div className="px-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-3">
+        <button className="px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-500 text-white">Feed Post</button>
+        <button className="px-4 py-1.5 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300">IG Story</button>
+        <button className="px-4 py-1.5 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300">Reel</button>
+        <button className="px-4 py-1.5 rounded-lg text-sm font-medium bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300">TikTok</button>
       </div>
       
       {/* Content */}
