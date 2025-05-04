@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PlatformToggle from './PlatformToggle';
 import { CalendarTodayIcon } from './IconComponents';
 import SocialMediaPostPreview from '../ui/social-media-post-preview';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 // Define platform names type for state management
 type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
@@ -20,22 +22,63 @@ const PostPreviewPanel = () => {
         'YouTube': true,  // Default active based on screenshot
     });
     
-    // State for managing selected date
+    // State for managing actual date object
+    const [date, setDate] = useState<Date>(new Date(2025, 4, 5, 9, 0)); // May 5, 2025, 9:00 AM
+    
+    // State for formatted date string display
     const [scheduledDate, setScheduledDate] = useState("May 5, 2025 • 9:00 AM");
     
-    // Function to handle date change - in a real app, this would open a date picker
-    const handleDateChange = () => {
-        // For demonstration purposes, we'll cycle through a few dates
-        const dates = [
-            "May 5, 2025 • 9:00 AM",
-            "May 6, 2025 • 10:30 AM", 
-            "May 7, 2025 • 2:15 PM",
-            "May 8, 2025 • 5:45 PM"
-        ];
+    // State to control calendar visibility
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    
+    // Time options for dropdown
+    const timeOptions = [
+        "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", 
+        "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
+    ];
+    
+    // State for selected time
+    const [selectedTime, setSelectedTime] = useState(timeOptions[0]);
+    
+    // Reference for calendar dropdown (to detect clicks outside)
+    const calendarRef = useRef<HTMLDivElement>(null);
+    
+    // Update the formatted date string whenever date changes
+    useEffect(() => {
+        const formattedDate = format(date, "MMMM d, yyyy");
+        setScheduledDate(`${formattedDate} • ${selectedTime}`);
+    }, [date, selectedTime]);
+    
+    // Handle clicking outside calendar to close it
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+                setIsCalendarOpen(false);
+            }
+        };
         
-        const currentIndex = dates.indexOf(scheduledDate);
-        const nextIndex = (currentIndex + 1) % dates.length;
-        setScheduledDate(dates[nextIndex]);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+    
+    // Function to toggle calendar visibility
+    const handleDateChange = () => {
+        setIsCalendarOpen(!isCalendarOpen);
+    };
+    
+    // Handle date selection from calendar
+    const handleSelectDate = (newDate: Date | undefined) => {
+        if (newDate) {
+            setDate(newDate);
+        }
+    };
+    
+    // Handle time selection
+    const handleTimeSelect = (time: string) => {
+        setSelectedTime(time);
+        setIsCalendarOpen(false);
     };
     
     // Function to handle schedule button click
@@ -146,9 +189,9 @@ const PostPreviewPanel = () => {
             <div className={`px-5 py-4 border-t ${postPreviewBorder} ${postPreviewCardBg} shrink-0`}>
                 <div className="max-w-2xl mx-auto flex items-center justify-between flex-wrap gap-4">
                     {/* Left: Date Display & Selector */}
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 relative">
                         <span className="text-sm text-gray-700">Post scheduled for:</span>
-                        {/* Date Picker Component */}
+                        {/* Date Picker Trigger */}
                         <div 
                             className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}
                             onClick={handleDateChange}
@@ -156,6 +199,44 @@ const PostPreviewPanel = () => {
                             <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>{scheduledDate}</span>
                             <CalendarTodayIcon className={`${datePickerText}`} />
                         </div>
+                        
+                        {/* Calendar Dropdown */}
+                        {isCalendarOpen && (
+                            <div 
+                                ref={calendarRef}
+                                className="absolute left-0 top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
+                            >
+                                <div className="flex flex-col">
+                                    {/* Calendar */}
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={handleSelectDate}
+                                        className="rounded-md border"
+                                    />
+                                    
+                                    {/* Time Selection */}
+                                    <div className="mt-3 border-t pt-3">
+                                        <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {timeOptions.map((time) => (
+                                                <button
+                                                    key={time}
+                                                    onClick={() => handleTimeSelect(time)}
+                                                    className={`text-xs py-1 px-2 rounded ${
+                                                        selectedTime === time
+                                                            ? 'bg-blue-500 text-white'
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}
+                                                >
+                                                    {time}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     
                     {/* Right: Schedule Button */}
