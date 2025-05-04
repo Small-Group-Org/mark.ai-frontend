@@ -22,10 +22,6 @@ interface SocialMediaPostPreviewProps {
   onSchedule?: () => void;
   onDateChange?: () => void;
   
-  // Content editing callbacks
-  onContentChange?: (content: string) => void;
-  onTitleChange?: (title: string) => void;
-  
   // Customization options
   hideHeader?: boolean;
   hideFooter?: boolean;
@@ -55,10 +51,6 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   scheduledDate = 'May 5, 2025 • 9:00 AM',
   onSchedule,
   onDateChange,
-  
-  // Content editing callbacks
-  onContentChange,
-  onTitleChange,
   
   // Customization options
   hideHeader = false,
@@ -127,31 +119,10 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
           {/* Right side - Post Text Content */}
           <div className="md:w-1/2 p-5">
-            {onTitleChange ? (
-              <input
-                type="text"
-                className="font-bold text-lg text-gray-900 mb-2 w-full border-b border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none px-2 py-1 -ml-2"
-                value={postTitle}
-                onChange={(e) => onTitleChange(e.target.value)}
-                placeholder="Add a title for your post"
-              />
-            ) : (
-              <h2 className="font-bold text-lg text-gray-900 mb-2">{postTitle}</h2>
-            )}
-            
-            {onContentChange ? (
-              <textarea
-                className="text-gray-700 mb-4 text-sm w-full min-h-[120px] border border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none rounded px-2 py-1 -ml-2"
-                value={postContent}
-                onChange={(e) => onContentChange(e.target.value)}
-                placeholder="Write your post content here..."
-              />
-            ) : (
-              <p className="text-gray-700 mb-4 text-sm">
-                {postContent}
-              </p>
-            )}
-            
+            <h2 className="font-bold text-lg text-gray-900 mb-2">{postTitle}</h2>
+            <p className="text-gray-700 mb-4 text-sm">
+              {postContent}
+            </p>
             {hashtags.length > 0 && (
               <div className="text-blue-500 text-sm space-x-1">
                 {hashtags.map((tag, index) => (
