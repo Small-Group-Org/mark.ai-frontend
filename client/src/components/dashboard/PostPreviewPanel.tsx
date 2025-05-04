@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import PlatformToggle from './PlatformToggle';
 import { CalendarTodayIcon } from './IconComponents';
 import SocialMediaPostPreview from '../ui/social-media-post-preview';
