@@ -65,8 +65,8 @@ const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, on
                 {IconComponent ? <IconComponent className="w-4 h-4" /> : <span>{icon}</span>}
             </div>
 
-            {/* Label */}
-            <span className={`text-sm font-medium truncate ${active ? platformActiveTextColor : platformTextColor} group-hover:text-gray-800`}>{label}</span>
+            {/* Label - removed truncate to show full text */}
+            <span className={`text-sm font-medium ${active ? platformActiveTextColor : platformTextColor} group-hover:text-gray-800`}>{label}</span>
         </div>
     );
 }

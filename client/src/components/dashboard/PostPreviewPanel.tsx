@@ -278,8 +278,8 @@ const PostPreviewPanel = () => {
 
             {/* Platform Selection */}
             <div className={`px-5 py-4 border-b ${postPreviewBorder} ${platformSectionBg} shrink-0`}>
-                {/* All platforms in a single responsive grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-4 gap-x-2 sm:gap-x-3 md:gap-x-4">
+                {/* All platforms in a single responsive grid with more space for longer names */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-4 sm:gap-x-6">
                     {/* Combine all platforms into a single array for the grid */}
                     {[...platformsRow1, ...platformsRow2].map((platform) => (
                         <PlatformToggle
