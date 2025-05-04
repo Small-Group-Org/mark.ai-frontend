@@ -28,6 +28,7 @@ export interface PostData {
 declare global {
   interface Window {
     updatePostData: (data: PostData) => void;
+    updatePostPreview: (data: PostData) => void; // Keep both for backward compatibility
   }
 }
 
@@ -165,10 +166,20 @@ const PostPreviewPanel = () => {
     useEffect(() => {
         console.log("PostPreviewPanel mounted - registering global function");
         
-        // Set the global function directly 
-        window.updatePostData = (data: PostData) => {
+        // Define the function to be assigned to the window object
+        const globalUpdateFunction = (data: PostData) => {
+            console.log("Global update function called");
             return updatePostData(data);
         };
+        
+        // Assign to both names for backward compatibility
+        window.updatePostData = globalUpdateFunction;
+        
+        // Also support the old name for backward compatibility
+        window.updatePostPreview = globalUpdateFunction;
+        
+        // Log that both function names are registered and available
+        console.log('Both updatePostData and updatePostPreview are now available globally');
         
         // Initial data
         const sampleData = {
@@ -206,6 +217,7 @@ const PostPreviewPanel = () => {
         // Cleanup on unmount
         return () => {
             window.updatePostData = undefined as any;
+            window.updatePostPreview = undefined as any;
         };
     }, []);
     
