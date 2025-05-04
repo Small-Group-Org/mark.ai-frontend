@@ -146,6 +146,8 @@ const PostPreviewPanel = () => {
     
     // Expose the function globally for testing via console and load initial data
     useEffect(() => {
+        console.log('PostPreviewPanel mounted - registering global function');
+        
         // Register the updatePostData function globally through our helper
         registerUpdatePostPreview(updatePostData);
         
@@ -181,8 +183,6 @@ const PostPreviewPanel = () => {
         
         // Initialize the component with sample data
         updatePostData(sampleData);
-        
-        // No need for manual cleanup as the registerUpdatePostPreview handles this
     }, []);
     
     // Update the formatted date string whenever date changes
