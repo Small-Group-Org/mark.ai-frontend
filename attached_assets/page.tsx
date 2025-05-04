@@ -1,5 +1,5 @@
 import React from 'react';
-import MarkAiDashboard from '../components/MarkAiDashboard';
+import MarkAiDashboard from '@/components/MarkAiDashboard'; // Adjust the import path if necessary
 
 export default function DashboardRoute() {
   return (
@@ -7,4 +7,4 @@ export default function DashboardRoute() {
       <MarkAiDashboard />
     </main>
   );
-}
+} 
