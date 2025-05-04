@@ -96,58 +96,78 @@ const PostPreviewPanel = () => {
             return false;
         }
         
-        // Update post content with null checks (undefined, null, or empty string become null)
-        setPostTitle(data.post.title || null as any);
-        setPostContent(data.post.content || null as any);
-        setPostHashtags(Array.isArray(data.post.hashtags) ? data.post.hashtags : []);
+        console.log("Updating post with new data:", data.post);
         
-        // Handle image URL (take the first one from the array if available)
-        if (data.post.mediaUrl && Array.isArray(data.post.mediaUrl) && data.post.mediaUrl.length > 0) {
-            setImageUrl(data.post.mediaUrl[0]);
-        } else {
-            setImageUrl(undefined);
-        }
-        
-        // Update platform selections
-        if (data.post.socialPlatforms) {
-            setActivePlatforms(data.post.socialPlatforms);
-        }
-        
-        // Update post type
-        if (data.post.postType) {
-            setPostType(data.post.postType);
-        }
-        
-        // Update scheduled date/time
-        if (data.post.scheduledDate) {
-            try {
-                // Parse the ISO date string
-                const newDate = parseISO(data.post.scheduledDate);
-                setDate(newDate);
-                
-                // Format time for the dropdown
-                const hours = newDate.getHours();
-                const minutes = newDate.getMinutes();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                const hour12 = hours % 12 || 12; // Convert to 12-hour format
-                
-                // Format as "9:00 AM" style string
-                const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
-                
-                // Find closest matching time in our options or use the formatted time
-                const closestTime = timeOptions.find(t => t === timeString) || timeString;
-                setSelectedTime(closestTime);
-                
-                // Update the formatted display string
-                const formattedDate = format(newDate, "MMMM d, yyyy");
-                setScheduledDate(`${formattedDate} • ${closestTime}`);
-            } catch (error) {
-                console.error("Error parsing date:", error);
+        try {
+            // Update post content with null checks (undefined, null, or empty string become null)
+            setPostTitle(data.post.title || null as any);
+            setPostContent(data.post.content || null as any);
+            setPostHashtags(Array.isArray(data.post.hashtags) ? data.post.hashtags : []);
+            
+            // Handle image URL (take the first one from the array if available)
+            if (data.post.mediaUrl && Array.isArray(data.post.mediaUrl) && data.post.mediaUrl.length > 0) {
+                setImageUrl(data.post.mediaUrl[0]);
+            } else {
+                setImageUrl(undefined);
             }
+            
+            // Update platform selections
+            if (data.post.socialPlatforms) {
+                console.log("Setting platforms to:", data.post.socialPlatforms);
+                setActivePlatforms({...data.post.socialPlatforms});
+            }
+            
+            // Update post type
+            if (data.post.postType) {
+                console.log("Setting post type to:", data.post.postType);
+                setPostType({...data.post.postType});
+            }
+            
+            // Update scheduled date/time
+            if (data.post.scheduledDate) {
+                try {
+                    // Parse the ISO date string
+                    const newDate = parseISO(data.post.scheduledDate);
+                    setDate(newDate);
+                    
+                    // Format time for the dropdown
+                    const hours = newDate.getHours();
+                    const minutes = newDate.getMinutes();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    const hour12 = hours % 12 || 12; // Convert to 12-hour format
+                    
+                    // Format as "9:00 AM" style string
+                    const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
+                    
+                    // Find closest matching time in our options or use the formatted time
+                    const closestTime = timeOptions.find(t => t === timeString) || timeString;
+                    setSelectedTime(closestTime);
+                    
+                    // Update the formatted display string
+                    const formattedDate = format(newDate, "MMMM d, yyyy");
+                    setScheduledDate(`${formattedDate} • ${closestTime}`);
+                } catch (error) {
+                    console.error("Error parsing date:", error);
+                }
+            }
+
+            // Trigger a re-render
+            setTimeout(() => {
+                console.log("Current state after update:", {
+                    title: postTitle,
+                    content: postContent,
+                    hashtags: postHashtags,
+                    platforms: activePlatforms,
+                    postType: postType
+                });
+            }, 100);
+
+            console.log("Post data updated successfully!");
+            return true;
+        } catch (error) {
+            console.error("Error updating post data:", error);
+            return false;
         }
-        
-        console.log("Post data updated successfully!");
-        return true;
     };
     
     // Expose the function globally for testing via console and load initial data
