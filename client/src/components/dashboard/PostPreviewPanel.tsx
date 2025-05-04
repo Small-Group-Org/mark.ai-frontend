@@ -33,6 +33,7 @@ const PostPreviewPanel = () => {
     const [postTitle, setPostTitle] = useState("New Product Launch");
     const [postContent, setPostContent] = useState("We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.");
     const [postHashtags, setPostHashtags] = useState(['productlaunch', 'innovation', 'technology']);
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
     
     // Platform toggles state
     const [activePlatforms, setActivePlatforms] = useState<Record<PlatformName, boolean>>({
@@ -86,6 +87,13 @@ const PostPreviewPanel = () => {
         setPostTitle(data.post.title || "");
         setPostContent(data.post.content || "");
         setPostHashtags(data.post.hashtags || []);
+        
+        // Handle image URL (take the first one from the array if available)
+        if (data.post.mediaUrl && data.post.mediaUrl.length > 0) {
+            setImageUrl(data.post.mediaUrl[0]);
+        } else {
+            setImageUrl(undefined);
+        }
         
         // Update platform selections
         if (data.post.socialPlatforms) {
@@ -328,6 +336,7 @@ const PostPreviewPanel = () => {
                     postTitle={postTitle}
                     postContent={postContent}
                     hashtags={postHashtags}
+                    imageUrl={imageUrl}
                     scheduledDate={scheduledDate}
                     onSchedule={handleSchedulePost}
                     onDateChange={handleDateChange}
