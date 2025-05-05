@@ -5,353 +5,260 @@ import SocialMediaPostPreview from '../ui/social-media-post-preview';
 import { Calendar } from '@/components/ui/calendar';
 import { format, parseISO } from 'date-fns';
 
-// Define the PostData interface based on the provided JSON structure
-export interface PostData {
-  post: {
-    userId: number;
-    title: string;
-    content: string;
-    mediaUrl: string[];
-    hashtags: string[];
-    socialPlatforms: Record<PlatformName, boolean>;
-    postType: {
-      feedPost: boolean;
-      igStory: boolean;
-      reel: boolean;
-      youtubeShorts: boolean;
-    };
-    scheduledDate: string; // ISO date string
-  };
-}
-
-// Declare the global function on the Window interface
-declare global {
-  interface Window {
-    updatePostData: (data: PostData) => void;
-    updatePostPreview: (data: PostData) => void; // Keep both for backward compatibility
-  }
-}
-
-// Define platform names type for state management
+// Define PlatformName type (can move to types file)
 type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
 
-const PostPreviewPanel = () => {
-    // Post content states
-    const [postTitle, setPostTitle] = useState<string | null>("New Product Launch");
-    const [postContent, setPostContent] = useState<string | null>("We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.");
-    const [postHashtags, setPostHashtags] = useState<string[]>(['productlaunch', 'innovation', 'technology']);
-    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-    
-    // Platform toggles state
-    const [activePlatforms, setActivePlatforms] = useState<Record<PlatformName, boolean>>({
-        'Bluesky': false,
-        'Facebook': false,
-        'Google Business': false,
-        'Instagram': true,
-        'X/Twitter': true,
-        'Reddit': false,
-        'Telegram': false,
-        'Threads': false,
-        'TikTok': true,
-        'YouTube': true,
-    });
-    
-    // Post type selection state
-    const [postType, setPostType] = useState({
-        feedPost: true,
-        igStory: false,
-        reel: false,
-        youtubeShorts: false
-    });
-    
-    // State for managing actual date object
-    const [date, setDate] = useState<Date>(new Date(2025, 4, 5, 9, 0)); // May 5, 2025, 9:00 AM
-    
-    // State for formatted date string display
-    const [scheduledDate, setScheduledDate] = useState("May 5, 2025 • 9:00 AM");
-    
+// --- Define Props Interface --- 
+interface PostPreviewPanelProps {
+    postTitle: string | null;
+    postContent: string | null;
+    postHashtags: string[];
+    mediaUrl: string[];
+    socialPlatforms: Record<PlatformName, boolean>;
+    postType: { feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean };
+    scheduledDate: string; // ISO string from parent
+    // Setters passed from parent
+    setSocialPlatforms: React.Dispatch<React.SetStateAction<Record<PlatformName, boolean>>>;
+    setPostType: React.Dispatch<React.SetStateAction<{ feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean }>>;
+    setScheduledDate: React.Dispatch<React.SetStateAction<string>>;
+}
+
+// Remove global declaration for window.updatePostData
+// declare global {
+//   interface Window {
+//     updatePostData: (data: PostData) => void;
+//     updatePostPreview: (data: PostData) => void; 
+//   }
+// }
+
+// Component receives props now
+const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({ 
+    postTitle, postContent, postHashtags, mediaUrl,
+    socialPlatforms, postType, scheduledDate,
+    setSocialPlatforms, setPostType, setScheduledDate 
+}) => {
+
+    // --- Local UI State Only ---
+    // State for managing actual date object derived from prop
+    const [date, setDate] = useState<Date | undefined>(undefined);
+    // State for formatted date string display derived from prop
+    const [displayDate, setDisplayDate] = useState("");
     // State to control calendar visibility
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-    
+    // State for selected time (part of the date)
+    const [selectedTime, setSelectedTime] = useState("9:00 AM"); // Default or derived
+    const calendarRef = useRef<HTMLDivElement>(null);
     // Time options for dropdown
     const timeOptions = [
         "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", 
         "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
     ];
-    
-    // State for selected time
-    const [selectedTime, setSelectedTime] = useState(timeOptions[0]);
-    
-    // Reference for calendar dropdown (to detect clicks outside)
-    const calendarRef = useRef<HTMLDivElement>(null);
-    
-    // Update the formatted date string whenever date changes
+    // Derive image URL from mediaUrl prop
+    const imageUrl = mediaUrl && mediaUrl.length > 0 ? mediaUrl[0] : undefined;
+
+    // --- Effects for handling date prop ---
+    // Effect to parse the ISO scheduledDate prop into local Date object and time string
     useEffect(() => {
-        const formattedDate = format(date, "MMMM d, yyyy");
-        setScheduledDate(`${formattedDate} • ${selectedTime}`);
+        try {
+            const parsedDate = parseISO(scheduledDate);
+            setDate(parsedDate);
+            
+            const hours = parsedDate.getHours();
+            const minutes = parsedDate.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const hour12 = hours % 12 || 12;
+            const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
+            
+            const bestTimeMatch = timeOptions.find(t => t === timeString) || timeString;
+            setSelectedTime(bestTimeMatch);
+        } catch (error) {
+            console.error("Error parsing scheduledDate prop:", error);
+            setDate(new Date()); // Fallback to now if parse fails
+            setSelectedTime("9:00 AM"); // Fallback time
+        }
+    }, [scheduledDate]); // Re-run when the scheduledDate prop changes
+
+    // Effect to update the display date string whenever local date or time changes
+    useEffect(() => {
+        if (date) {
+            const formattedDate = format(date, "MMMM d, yyyy");
+            setDisplayDate(`${formattedDate} • ${selectedTime}`);
+        }
     }, [date, selectedTime]);
-    
-    // Handle clicking outside calendar to close it
+
+    // Effect for closing calendar on outside click (remains the same)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
                 setIsCalendarOpen(false);
             }
         };
-        
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
-    // This is the function that will update all the state from the external JSON
-    const updatePostData = (data: PostData) => {
-        if (!data || !data.post) {
-            console.error("Invalid post data");
-            return false;
-        }
+    // REMOVE the updatePostData function and the useEffect that registers it
+    // const updatePostData = (data: PostData) => { ... };
+    // useEffect(() => { window.updatePostData = ... }, []);
 
-        console.log("Updating post data with:", data.post);
+    // --- Event Handlers using Prop Setters ---
 
-        // Update title and content
-        setPostTitle(data.post.title);
-        setPostContent(data.post.content);
-        
-        // Update hashtags
-        if (Array.isArray(data.post.hashtags)) {
-            setPostHashtags(data.post.hashtags);
-        }
-        
-        // Update image URL (take first if it's an array)
-        if (data.post.mediaUrl && data.post.mediaUrl.length > 0) {
-            setImageUrl(data.post.mediaUrl[0]);
-        }
-        
-        // Update platform toggles
-        if (data.post.socialPlatforms) {
-            setActivePlatforms(data.post.socialPlatforms);
-        }
-        
-        // Update post type toggles
-        if (data.post.postType) {
-            setPostType(data.post.postType);
-        }
-        
-        // Update date/time if provided
-        if (data.post.scheduledDate) {
-            try {
-                const scheduledDate = parseISO(data.post.scheduledDate);
-                setDate(scheduledDate);
-                
-                // Format the time string
-                const hours = scheduledDate.getHours();
-                const minutes = scheduledDate.getMinutes();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                const hour12 = hours % 12 || 12;
-                const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
-                
-                // Either find matching time in options or use custom one
-                const bestTimeMatch = timeOptions.find(t => t === timeString) || timeString;
-                setSelectedTime(bestTimeMatch);
-            } catch (error) {
-                console.error("Error parsing date:", error);
-            }
-        }
-        
-        return true;
-    };
-    
-    // Register global function on mount
-    useEffect(() => {
-        console.log("PostPreviewPanel mounted - registering global function");
-        
-        // Define the function to be assigned to the window object
-        const globalUpdateFunction = (data: PostData) => {
-            console.log("Global update function called");
-            return updatePostData(data);
-        };
-        
-        // Assign to both names for backward compatibility
-        window.updatePostData = globalUpdateFunction;
-        
-        // Also support the old name for backward compatibility
-        window.updatePostPreview = globalUpdateFunction;
-        
-        // Log that both function names are registered and available
-        console.log('Both updatePostData and updatePostPreview are now available globally');
-        
-        // Initial data
-        const sampleData = {
-            post: {
-                userId: 123,
-                title: "New Product Launch",
-                content: "We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs.",
-                mediaUrl: [],
-                hashtags: ["productlaunch", "innovation", "technology"],
-                socialPlatforms: {
-                    'Bluesky': false,
-                    'Facebook': false,
-                    'Google Business': false,
-                    'Instagram': true,
-                    'X/Twitter': true,
-                    'Reddit': false,
-                    'Telegram': false,
-                    'Threads': false,
-                    'TikTok': true,
-                    'YouTube': true
-                },
-                postType: {
-                    feedPost: true,
-                    igStory: false,
-                    reel: false,
-                    youtubeShorts: false
-                },
-                scheduledDate: "2025-05-05T09:00:00Z"
-            }
-        };
-        
-        // Initialize with sample data
-        updatePostData(sampleData);
-        
-        // Cleanup on unmount
-        return () => {
-            window.updatePostData = undefined as any;
-            window.updatePostPreview = undefined as any;
-        };
-    }, []);
-    
-    // Toggle calendar visibility
-    const handleDateChange = () => {
-        setIsCalendarOpen(!isCalendarOpen);
-    };
-    
-    // Handle date selection from calendar
-    const handleSelectDate = (newDate: Date | undefined) => {
-        if (newDate) {
-            setDate(newDate);
-        }
-    };
-    
-    // Handle time selection
-    const handleTimeSelect = (time: string) => {
-        setSelectedTime(time);
-        setIsCalendarOpen(false);
-    };
-    
-    // Handle schedule button click
-    const handleSchedulePost = () => {
-        // Display a confirmation in the console (would be an API call in a real app)
-        console.log(`Post scheduled for: ${scheduledDate}`);
-        alert(`Post successfully scheduled for: ${scheduledDate}`);
-    };
-
-    // Handle platform toggle click
+    // Handle platform toggle click - use prop setter
     const handlePlatformToggle = (platformName: PlatformName) => {
-        setActivePlatforms(prev => ({
+        setSocialPlatforms(prev => ({
             ...prev,
             [platformName]: !prev[platformName],
         }));
     };
 
-    // Color definitions
+    // Handle post type click - use prop setter
+    const handlePostTypeClick = (type: 'feedPost' | 'igStory' | 'reel' | 'youtubeShorts') => {
+        setPostType({
+            feedPost: type === 'feedPost',
+            igStory: type === 'igStory',
+            reel: type === 'reel',
+            youtubeShorts: type === 'youtubeShorts'
+        });
+    };
+
+    // Toggle calendar visibility
+    const handleDateChange = () => {
+        setIsCalendarOpen(!isCalendarOpen);
+    };
+
+    // Handle date selection from calendar - update local date state first
+    const handleSelectDate = (newDate: Date | undefined) => {
+        if (newDate && date) {
+             // Keep the time from the existing date state
+             newDate.setHours(date.getHours());
+             newDate.setMinutes(date.getMinutes());
+             setDate(newDate); // Update local date state
+             // Update parent state with new ISO string
+             setScheduledDate(newDate.toISOString()); 
+        }
+    };
+
+    // Handle time selection - update local time state first
+    const handleTimeSelect = (time: string) => {
+        setSelectedTime(time);
+        setIsCalendarOpen(false);
+        // Parse time and update the local Date object, then update parent
+        if (date) {
+            const [timePart, ampm] = time.split(' ');
+            let [hoursStr, minutesStr] = timePart.split(':');
+            let hours = parseInt(hoursStr);
+            const minutes = parseInt(minutesStr);
+
+            if (ampm === 'PM' && hours !== 12) hours += 12;
+            if (ampm === 'AM' && hours === 12) hours = 0; // Midnight case
+
+            const newDate = new Date(date);
+            newDate.setHours(hours);
+            newDate.setMinutes(minutes);
+            newDate.setSeconds(0);
+            newDate.setMilliseconds(0);
+            
+            setDate(newDate); // Update local date state
+            setScheduledDate(newDate.toISOString()); // Update parent state
+        }
+    };
+
+    // Handle schedule button click (logic can remain or be moved up)
+    const handleSchedulePost = () => {
+        console.log(`Post scheduled for: ${displayDate} (ISO: ${scheduledDate})`);
+        alert(`Post successfully scheduled for: ${displayDate}`);
+    };
+
+    // --- Render using props and local UI state ---
+    // Color definitions (remain the same)
     const previewPanelBg = 'bg-gray-100';
-    const postPreviewCardBg = 'bg-white';
-    const postPreviewBorder = 'border-gray-200';
-    const postPreviewHeaderText = 'text-gray-800';
-    const platformSectionBg = 'bg-gray-50';
-    const activeButtonBg = 'bg-blue-500';
-    const inactiveButtonText = 'text-gray-500';
+    // ... other color definitions ...
     const scheduleButtonBg = 'bg-cyan-500';
     const datePickerBg = 'bg-gray-200';
     const datePickerText = 'text-gray-700';
 
-    // Platform Data
+    // Platform Data (remain the same)
     const platformsRow1: { name: PlatformName; icon: string }[] = [
-        { name: 'Bluesky', icon: 'B' },
-        { name: 'Facebook', icon: 'f' },
-        { name: 'Google Business', icon: 'G' },
-        { name: 'Instagram', icon: 'I' },
-        { name: 'X/Twitter', icon: 'X' },
+        { name: 'Bluesky', icon: 'B' }, { name: 'Facebook', icon: 'f' }, { name: 'Google Business', icon: 'G' },
+        { name: 'Instagram', icon: 'I' }, { name: 'X/Twitter', icon: 'X' },
     ];
     const platformsRow2: { name: PlatformName; icon: string }[] = [
-        { name: 'Reddit', icon: 'R' },
-        { name: 'Telegram', icon: 'T' },
-        { name: 'Threads', icon: '@' },
-        { name: 'TikTok', icon: '♪' },
-        { name: 'YouTube', icon: '▶' },
+        { name: 'Reddit', icon: 'R' }, { name: 'Telegram', icon: 'T' }, { name: 'Threads', icon: '@' },
+        { name: 'TikTok', icon: '♪' }, { name: 'YouTube', icon: '▶' },
     ];
 
     return (
-        <div className={`flex flex-col ${previewPanelBg} text-black overflow-hidden h-full`}> 
-            {/* Post Preview Header */}
-            <div className={`h-[58px] flex items-center px-5 border-b ${postPreviewBorder} shrink-0 ${postPreviewCardBg}`}>
-                <h2 className={`font-semibold ${postPreviewHeaderText}`}>Post Preview</h2>
+        <div className={`flex flex-col ${previewPanelBg} text-black overflow-hidden h-full`}>
+            {/* Header (remains the same) */}
+            <div className={`h-[58px] flex items-center px-5 border-b border-gray-200 shrink-0 bg-white`}>
+                <h2 className={`font-semibold text-gray-800`}>Post Preview</h2>
             </div>
 
-            {/* Platform Selection */}
-            <div className={`px-5 py-4 border-b ${postPreviewBorder} ${platformSectionBg} shrink-0`}>
+            {/* Platform Selection - Use socialPlatforms prop and handlePlatformToggle */}
+            <div className={`px-5 py-4 border-b border-gray-200 bg-gray-50 shrink-0`}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-4 sm:gap-x-6">
                     {[...platformsRow1, ...platformsRow2].map((platform) => (
                         <PlatformToggle
                             key={platform.name}
                             label={platform.name}
                             icon={platform.icon}
-                            active={activePlatforms[platform.name]}
-                            onToggle={() => handlePlatformToggle(platform.name)}
+                            active={socialPlatforms?.[platform.name] ?? false} // Use prop with fallback
+                            onToggle={() => handlePlatformToggle(platform.name)} // Calls prop setter
                         />
                     ))}
                 </div>
             </div>
 
-            {/* Post Type Selection */}
-            <div className={`px-5 py-3 border-b ${postPreviewBorder} ${postPreviewCardBg} shrink-0 flex flex-wrap gap-3`}> 
+            {/* Post Type Selection - Use postType prop and handlePostTypeClick */}
+            <div className={`px-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-3`}> 
                 <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.feedPost ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => setPostType({...postType, feedPost: true, igStory: false, reel: false, youtubeShorts: false})}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.feedPost ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => handlePostTypeClick('feedPost')} // Calls prop setter
                 >
                     Feed Post
                 </button>
-                <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.igStory ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => setPostType({...postType, feedPost: false, igStory: true, reel: false, youtubeShorts: false})}
+                 <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.igStory ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => handlePostTypeClick('igStory')} // Calls prop setter
                 >
                     IG Story
                 </button>
-                <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.reel ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => setPostType({...postType, feedPost: false, igStory: false, reel: true, youtubeShorts: false})}
+                 <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.reel ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => handlePostTypeClick('reel')} // Calls prop setter
                 >
                     Reel
                 </button>
-                <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType.youtubeShorts ? activeButtonBg + ' text-white' : 'bg-white border ' + postPreviewBorder + ' ' + inactiveButtonText + ' hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => setPostType({...postType, feedPost: false, igStory: false, reel: false, youtubeShorts: true})}
+                 <button 
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.youtubeShorts ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => handlePostTypeClick('youtubeShorts')} // Calls prop setter
                 >
                     Youtube Shorts
                 </button>
             </div>
 
-            {/* Content Display Area with Social Media Post Preview Component */} 
-            <div className={`flex-1 overflow-y-auto p-6 ${postPreviewCardBg}`}>
+            {/* Content Display Area - Use props */}
+            <div className={`flex-1 overflow-y-auto p-6 bg-white`}>
                 <SocialMediaPostPreview 
                     userInitials="SC"
                     userName="Stephen Conley"
                     userHandle="@steveconley"
                     userTitle="Product Designer"
-                    postTitle={postTitle}
-                    postContent={postContent}
-                    hashtags={postHashtags}
-                    imageUrl={imageUrl}
-                    scheduledDate={scheduledDate}
+                    postTitle={postTitle}      // Use prop
+                    postContent={postContent}  // Use prop
+                    hashtags={postHashtags}    // Use prop
+                    imageUrl={imageUrl}        // Use derived state
+                    scheduledDate={displayDate} // Use local display state
                     onSchedule={handleSchedulePost}
                     onDateChange={handleDateChange}
                     hideFooter={true}
                 />
             </div>
 
-            {/* Footer with Schedule Options */}
-            <div className={`px-5 py-4 border-t ${postPreviewBorder} ${postPreviewCardBg} shrink-0`}>
+            {/* Footer with Schedule Options - Use displayDate and local state */} 
+            <div className={`px-5 py-4 border-t border-gray-200 bg-white shrink-0`}>
                 <div className="max-w-2xl mx-auto flex items-center justify-between flex-wrap gap-4">
                     {/* Left: Date Display & Selector */}
                     <div className="flex items-center space-x-2 relative">
@@ -360,35 +267,33 @@ const PostPreviewPanel = () => {
                             className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}
                             onClick={handleDateChange}
                         >
-                            <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>{scheduledDate}</span>
+                            {/* Use local displayDate state */}
+                            <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>{displayDate}</span> 
                             <CalendarTodayIcon className={`${datePickerText}`} />
                         </div>
                         
-                        {/* Calendar Dropdown */}
+                        {/* Calendar Dropdown - uses local state (date, isCalendarOpen) */}
                         {isCalendarOpen && (
                             <div 
                                 ref={calendarRef}
-                                className="absolute left-0 top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
+                                className="absolute left-0 bottom-full mb-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3" // Changed position to bottom-full
                             >
                                 <div className="flex flex-col">
-                                    {/* Calendar */}
                                     <Calendar
                                         mode="single"
-                                        selected={date}
-                                        onSelect={handleSelectDate}
+                                        selected={date} // Use local date state
+                                        onSelect={handleSelectDate} // Updates local state and calls prop setter
                                         className="rounded-md border"
                                     />
-                                    
-                                    {/* Time Selection */}
                                     <div className="mt-3 border-t pt-3">
                                         <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
                                         <div className="grid grid-cols-3 gap-2">
                                             {timeOptions.map((time) => (
                                                 <button
                                                     key={time}
-                                                    onClick={() => handleTimeSelect(time)}
+                                                    onClick={() => handleTimeSelect(time)} // Updates local state and calls prop setter
                                                     className={`text-xs py-1 px-2 rounded ${
-                                                        selectedTime === time
+                                                        selectedTime === time // Use local selectedTime state
                                                             ? 'bg-blue-500 text-white'
                                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                     }`}
@@ -403,7 +308,7 @@ const PostPreviewPanel = () => {
                         )}
                     </div>
                     
-                    {/* Right: Schedule Button */}
+                    {/* Right: Schedule Button (remains the same) */}
                     <button 
                         className={`px-6 py-2 rounded-lg text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap`}
                         onClick={handleSchedulePost}

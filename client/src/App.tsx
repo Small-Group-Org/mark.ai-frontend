@@ -5,7 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
-import CreatePost from "@/pages/CreatePost";
+// import CreatePost from "@/pages/CreatePost"; // Comment out or remove old import
+import MarkAiCreatePost from "@/components/MarkAiCreatePost"; // Import the correct component
 import Dashboard from "@/pages/Dashboard";
 import Calendar from "@/pages/Calendar";
 import Mind from "@/pages/Mind";
@@ -15,7 +16,7 @@ function Router() {
     <Switch>
       {/* Add pages below */}
       <Route path="/" component={Home} />
-      <Route path="/create" component={CreatePost} />
+      <Route path="/create" component={MarkAiCreatePost} /> {/* Use MarkAiCreatePost */}
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/calendar" component={Calendar} />
       <Route path="/mind" component={Mind} />

@@ -9,13 +9,56 @@ import {
   PanelResizeHandle 
 } from 'react-resizable-panels';
 
+// Define the message structure (can be moved to a types file later)
+interface Message {
+  id: number;
+  text: string;
+  sender: 'user' | 'ai';
+}
+
+// Define platform names type (can be moved to a types file later)
+type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
+
 const MarkAiCreatePost = () => {
-  // Default panel sizes (can also be stored in localStorage for persistence)
+  // Layout states
   const [leftPanelSize, setLeftPanelSize] = useState(30); // 30% of the width
   const [rightPanelSize, setRightPanelSize] = useState(70); // 70% of the width
   
   // Mobile view state (chat or preview)
   const [mobileView, setMobileView] = useState<'chat' | 'preview'>('chat');
+  
+  // --- SHARED STATE LIFTED UP ---
+  // Chat state
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isThinking, setIsThinking] = useState(false);
+
+  // Post details state
+  const [postTitle, setPostTitle] = useState("New Product Launch");
+  const [postContent, setPostContent] = useState(
+    "We're excited to announce our newest product line! After months of development, we're proud to bring you the most innovative solution for your needs."
+  );
+  const [postHashtags, setPostHashtags] = useState<string[]>(["productlaunch", "innovation", "technology"]);
+  const [mediaUrl, setMediaUrl] = useState<string[]>(["www.img.com"]); // Initial example URL
+  const [socialPlatforms, setSocialPlatforms] = useState<Record<PlatformName, boolean>>({
+    'Bluesky': false,
+    'Facebook': false,
+    'Google Business': false,
+    'Instagram': true,
+    'X/Twitter': true,
+    'Reddit': false,
+    'Telegram': false,
+    'Threads': false,
+    'TikTok': true,
+    'YouTube': true,
+  });
+  const [postType, setPostType] = useState({
+    feedPost: true,
+    igStory: false,
+    reel: false,
+    youtubeShorts: false,
+  });
+  const [scheduledDate, setScheduledDate] = useState("2025-05-05T09:00:00Z"); // ISO string
+  // --- END SHARED STATE ---
   
   // Function to handle panel resize
   const handlePanelResize = (sizes: number[]) => {
@@ -81,7 +124,25 @@ const MarkAiCreatePost = () => {
               minSize={20} // Minimum 20% width
               className="h-full"
             >
-              <ChatPanel />
+              <ChatPanel 
+                messages={messages}
+                setMessages={setMessages}
+                isThinking={isThinking}
+                setIsThinking={setIsThinking}
+                postTitle={postTitle}
+                postContent={postContent}
+                postHashtags={postHashtags}
+                mediaUrl={mediaUrl}
+                socialPlatforms={socialPlatforms}
+                postType={postType}
+                scheduledDate={scheduledDate}
+                setPostTitle={setPostTitle}
+                setPostContent={setPostContent}
+                setPostHashtags={setPostHashtags}
+                setMediaUrl={setMediaUrl}
+                setSocialPlatforms={setSocialPlatforms}
+                setPostType={setPostType}
+              />
             </Panel>
             
             {/* Resize Handle with visual indicators */}
@@ -108,7 +169,18 @@ const MarkAiCreatePost = () => {
               minSize={30} // Minimum 30% width
               className="h-full"
             >
-              <PostPreviewPanel />
+              <PostPreviewPanel 
+                postTitle={postTitle}
+                postContent={postContent}
+                postHashtags={postHashtags}
+                mediaUrl={mediaUrl}
+                socialPlatforms={socialPlatforms}
+                postType={postType}
+                scheduledDate={scheduledDate}
+                setSocialPlatforms={setSocialPlatforms}
+                setPostType={setPostType}
+                setScheduledDate={setScheduledDate}
+              />
             </Panel>
           </PanelGroup>
         </div>
@@ -117,12 +189,41 @@ const MarkAiCreatePost = () => {
         <div className="flex flex-1 lg:hidden h-[calc(100vh-110px)]">
           {/* Chat Panel - Show only when toggled to chat view */}
           <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
-            <ChatPanel />
+            <ChatPanel 
+              messages={messages}
+              setMessages={setMessages}
+              isThinking={isThinking}
+              setIsThinking={setIsThinking}
+              postTitle={postTitle}
+              postContent={postContent}
+              postHashtags={postHashtags}
+              mediaUrl={mediaUrl}
+              socialPlatforms={socialPlatforms}
+              postType={postType}
+              scheduledDate={scheduledDate}
+              setPostTitle={setPostTitle}
+              setPostContent={setPostContent}
+              setPostHashtags={setPostHashtags}
+              setMediaUrl={setMediaUrl}
+              setSocialPlatforms={setSocialPlatforms}
+              setPostType={setPostType}
+            />
           </div>
           
           {/* Post Preview Panel - Show only when toggled to preview view */}
           <div className={`w-full h-full ${mobileView === 'preview' ? 'block' : 'hidden'}`}>
-            <PostPreviewPanel />
+            <PostPreviewPanel 
+              postTitle={postTitle}
+              postContent={postContent}
+              postHashtags={postHashtags}
+              mediaUrl={mediaUrl}
+              socialPlatforms={socialPlatforms}
+              postType={postType}
+              scheduledDate={scheduledDate}
+              setSocialPlatforms={setSocialPlatforms}
+              setPostType={setPostType}
+              setScheduledDate={setScheduledDate}
+            />
           </div>
         </div>
       </div>

@@ -1,85 +1,156 @@
-import React, { useState, ChangeEvent, KeyboardEvent, useRef, useEffect } from 'react';
+import React, { ChangeEvent, KeyboardEvent, useRef, useEffect } from 'react';
 import axios from 'axios'; // Import axios
 import {
     PaperclipIcon,
     SendIcon
 } from './IconComponents';
 
-// Define message structure
+// Define message structure (can be moved to types file)
 interface Message {
-    id: number; // Simple ID for key prop
+    id: number;
     text: string;
     sender: 'user' | 'ai';
 }
 
-const ChatPanel = () => {
-    const [inputValue, setInputValue] = useState('');
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [isThinking, setIsThinking] = useState(false); // Add isThinking state
-    const chatContainerRef = useRef<HTMLDivElement>(null); // Ref for scrolling
+// Define platform names type (can be moved to types file)
+type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
+
+// --- Define Props Interface ---
+interface ChatPanelProps {
+    messages: Message[];
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+    isThinking: boolean;
+    setIsThinking: React.Dispatch<React.SetStateAction<boolean>>;
+    postTitle: string;
+    postContent: string;
+    postHashtags: string[];
+    mediaUrl: string[];
+    socialPlatforms: Record<PlatformName, boolean>;
+    postType: { feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean };
+    scheduledDate: string;
+    setPostTitle: React.Dispatch<React.SetStateAction<string>>;
+    setPostContent: React.Dispatch<React.SetStateAction<string>>;
+    setPostHashtags: React.Dispatch<React.SetStateAction<string[]>>;
+    setMediaUrl: React.Dispatch<React.SetStateAction<string[]>>;
+    // Add setters for socialPlatforms, postType
+    setSocialPlatforms: React.Dispatch<React.SetStateAction<Record<PlatformName, boolean>>>;
+    setPostType: React.Dispatch<React.SetStateAction<{ feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean }>>;
+    // We might need setScheduledDate later if the API modifies it too
+    // setScheduledDate: React.Dispatch<React.SetStateAction<string>>;
+}
+
+// Use props instead of local state
+const ChatPanel: React.FC<ChatPanelProps> = ({ 
+    messages, setMessages,
+    isThinking, setIsThinking,
+    postTitle, postContent, postHashtags, mediaUrl, socialPlatforms, postType, scheduledDate,
+    setPostTitle, setPostContent, setPostHashtags, setMediaUrl,
+    // Destructure new props
+    setSocialPlatforms, setPostType 
+}) => {
+    // Local state only for the input field value
+    const [inputValue, setInputValue] = React.useState(''); 
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const chatPanelBg = 'bg-[#11132f]';
     const chatHeaderBorder = 'border-gray-600/60';
     const chatInputBorder = 'border-[#475569]/50';
     const chatInputBg = 'bg-[#334155]/50';
     const messagePlaceholderColor = 'text-gray-400';
-    const sendButtonBg = 'bg-blue-600'; // bg-[#2563eb]
+    const sendButtonBg = 'bg-blue-600';
     const chatBubbleGradient = 'bg-gradient-to-r from-[#3b82f6] to-[#2563eb]';
     const userChatBubbleBg = 'bg-white';
-    const userChatBubbleText = 'text-gray-700'; // text-[#334155]
+    const userChatBubbleText = 'text-gray-700';
 
-    // Initialize chat with first AI message
+    // Initialize chat with first AI message - Use props now
+    // --- Restore Initial API Call Logic ---
     useEffect(() => {
-        // Set thinking state when component mounts
-        setIsThinking(true);
+        // Only run if messages are defined and empty initially
+        if (messages && messages.length === 0) { 
+            setIsThinking(true);
 
-        // Make API call to get initial greeting
-        axios.post(
-            'https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073',
-            {
-                inputText: "Hi There!",
-                sessionID: "u1234s21"
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
+            // Construct the initial request body using props
+            const initialRequestBody = {
+                sessionId: "test-session-initial", // Use a specific initial session ID
+                userId: 103,                 // Hardcoded
+                message: "Hi There!",      // Initial greeting message
+                post: {
+                  userId: 123,              // Hardcoded as per example
+                  title: postTitle,         // Use initial prop value
+                  content: postContent,     // Use initial prop value
+                  mediaUrl: mediaUrl,         // Use initial prop value
+                  hashtags: postHashtags,     // Use initial prop value
+                  socialPlatforms: socialPlatforms, // Use initial prop value
+                  postType: postType,             // Use initial prop value
+                  scheduledDate: scheduledDate  // Use initial prop value
                 }
-            }
-        )
-        .then(response => {
-            setIsThinking(false);
-            const data = response.data;
-            
-            if (data && data.output) {
-                const aiResponse: Message = {
+              };
+
+            axios.post(
+                'https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073',
+                initialRequestBody, // Send the structured body
+                { headers: { 'Content-Type': 'application/json' } }
+            )
+            .then(response => {
+                setIsThinking(false);
+                const responseData = response.data;
+                // Expecting { output: { message: "...", post: { ... } } }
+                if (responseData?.output?.post && responseData?.output?.message) {
+                    const { message: aiMessageContent, post: initialPost } = responseData.output;
+                    
+                    // Update post state from initial response
+                    setPostTitle(initialPost.title ?? ''); 
+                    setPostContent(initialPost.content ?? '');
+                    setPostHashtags(initialPost.hashtags ?? []);
+                    setMediaUrl(initialPost.mediaUrl ?? []);
+                    // Update toggles if API provides them initially
+                    if (initialPost.socialPlatforms) setSocialPlatforms(initialPost.socialPlatforms);
+                    if (initialPost.postType) setPostType(initialPost.postType);
+                    // if (initialPost.scheduledDate) setScheduledDate(initialPost.scheduledDate);
+
+                    // Set the initial AI message
+                    const aiResponseMessage: Message = {
+                        id: Date.now(),
+                        text: aiMessageContent,
+                        sender: 'ai'
+                    };
+                    setMessages([aiResponseMessage]); // Use prop setter
+
+                } else {
+                    // Handle potential invalid format in initial call
+                    console.error('Initial API Error: Invalid response format', responseData);
+                    const aiErrorResponse: Message = {
+                        id: Date.now(),
+                        text: 'Error: Received invalid initial response format.',
+                        sender: 'ai'
+                    };
+                    setMessages([aiErrorResponse]);
+                }
+            })
+            .catch(error => {
+                setIsThinking(false);
+                console.error('Initial API call error:', error);
+                const errorMessage = 'Sorry, I couldn\'t connect. Please try again later.';
+                const aiErrorResponse: Message = {
                     id: Date.now(),
-                    text: data.output,
+                    text: errorMessage,
                     sender: 'ai'
                 };
-                setMessages([aiResponse]); // Set as first message
-            }
-        })
-        .catch(error => {
-            setIsThinking(false);
-            console.error('Initial API call error:', error);
-            
-            // Handle error case
-            const errorMessage = 'Sorry, I couldn\'t connect. Please try again later.';
-            const aiErrorResponse: Message = {
-                id: Date.now(),
-                text: errorMessage,
-                sender: 'ai'
-            };
-            setMessages([aiErrorResponse]);
-        });
-    }, []); // Empty dependency array ensures this only runs once on mount
+                setMessages([aiErrorResponse]); // Use prop setter
+            });
+        }
+    // Add props used inside useEffect to dependency array for correctness,
+    // but only if they should trigger a re-fetch if they change *after* initial load.
+    // Since this should likely only run ONCE, keep the dependency array empty.
+    }, []); 
+    // --- End Initial API Call Logic ---
 
-    // Scroll to bottom whenever messages change
+    // Scroll to bottom whenever messages change - Use props
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
-    }, [messages]);
+    }, [messages]); // Depend on messages prop
 
     const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
@@ -87,94 +158,105 @@ const ChatPanel = () => {
         e.target.style.height = `${e.target.scrollHeight}px`;
     };
 
-    const handleSend = async () => { // Make the function async
+    // Use props in handleSend
+    const handleSend = async () => {
         const messageText = inputValue.trim();
         if (messageText) {
             const newMessage: Message = {
-                id: Date.now(), // Use timestamp for unique ID (simple approach)
+                id: Date.now(), 
                 text: messageText,
                 sender: 'user'
             };
-            // Add user message immediately
-            setMessages(prevMessages => [...prevMessages, newMessage]);
-            setInputValue(''); // Clear input after sending user message
+            setMessages(prevMessages => [...prevMessages, newMessage]); // Use prop setter
+            setInputValue('');
 
             const textarea = document.getElementById('chat-textarea') as HTMLTextAreaElement;
             if (textarea) {
-                textarea.style.height = 'auto'; // Reset textarea height
+                textarea.style.height = 'auto';
             }
 
-            // Set thinking flag to true
-            setIsThinking(true);
+            setIsThinking(true); // Use prop setter
 
-            // --- API Call Logic using axios ---
             try {
+                const requestBody = {
+                    sessionId: "test-session-3",
+                    userId: 103,
+                    message: messageText,
+                    post: {
+                      userId: 123,
+                      // Read post details from props
+                      title: postTitle,
+                      content: postContent,
+                      mediaUrl: mediaUrl, 
+                      hashtags: postHashtags,
+                      socialPlatforms: socialPlatforms,
+                      postType: postType,
+                      scheduledDate: scheduledDate
+                    }
+                  };
+
                 const response = await axios.post(
                     'https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073',
-                    {
-                        inputText: messageText,
-                        sessionID: "u1234s21" // Hardcoded session ID for now
-                    },
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    }
+                    requestBody,
+                    { headers: { 'Content-Type': 'application/json' } }
                 );
 
-                setIsThinking(false); // Reset thinking state
-                const data = response.data; // axios automatically parses JSON
+                console.log("API Response Data:", response.data);
 
-                if (data && data.output) {
-                    const aiResponse: Message = {
-                        id: Date.now() + 1, // Ensure unique ID
-                        text: data.output,
+                setIsThinking(false); // Use prop setter
+                const responseData = response.data;
+
+                if (responseData?.output?.post && responseData?.output?.message) {
+                    const { message: aiMessageContent, post: updatedPost } = responseData.output;
+
+                    // Update post state using prop setters
+                    setPostTitle(updatedPost.title ?? ''); 
+                    setPostContent(updatedPost.content ?? '');
+                    setPostHashtags(updatedPost.hashtags ?? []); 
+                    setMediaUrl(updatedPost.mediaUrl ?? []); 
+                    // Update toggles if API provides them
+                    if (updatedPost.socialPlatforms) setSocialPlatforms(updatedPost.socialPlatforms);
+                    if (updatedPost.postType) setPostType(updatedPost.postType);
+                    // if (updatedPost.scheduledDate) setScheduledDate(updatedPost.scheduledDate);
+
+                    const aiResponseMessage: Message = {
+                        id: Date.now() + 1,
+                        text: aiMessageContent,
                         sender: 'ai'
                     };
-                    setMessages(prev => [...prev, aiResponse]);
+                    setMessages(prev => [...prev, aiResponseMessage]); // Use prop setter
+
                 } else {
-                    console.error('API Error: Invalid response format', data);
+                    console.error('API Error: Invalid response format', responseData);
                     const aiErrorResponse: Message = {
                         id: Date.now() + 1,
                         text: 'Error: Received invalid response format from AI.',
                         sender: 'ai'
                     };
-                    setMessages(prev => [...prev, aiErrorResponse]);
+                    setMessages(prev => [...prev, aiErrorResponse]); // Use prop setter
                 }
 
             } catch (error) {
-                setIsThinking(false); // Reset thinking state on error
+                setIsThinking(false); // Use prop setter
                 console.error('Axios Error:', error);
                 let errorMessage = 'Error: Could not connect to the AI service.';
                 if (axios.isAxiosError(error)) {
                     if (error.response) {
-                        // The request was made and the server responded with a status code
-                        // that falls out of the range of 2xx
-                        console.error('API Error Data:', error.response.data);
-                        console.error('API Error Status:', error.response.status);
                         errorMessage = `Error: Could not get response (${error.response.status})`;
                     } else if (error.request) {
-                        // The request was made but no response was received
-                        console.error('API No Response Request:', error.request);
                         errorMessage = 'Error: No response received from AI service.';
                     } else {
-                        // Something happened in setting up the request that triggered an Error
-                        console.error('Axios Setup Error:', error.message);
-                        errorMessage = `Error: ${error.message}`;
+                         errorMessage = `Error: ${error.message}`;
                     }
-                } else {
-                    // Handle non-Axios errors
-                    console.error('Non-Axios Error:', error);
-                }
+                } 
 
                 const aiErrorResponse: Message = {
                     id: Date.now() + 1,
                     text: errorMessage,
                     sender: 'ai'
                 };
-                setMessages(prev => [...prev, aiErrorResponse]);
+                setMessages(prev => [...prev, aiErrorResponse]); // Use prop setter
             }
-            // --- End API Call Logic ---
         }
     };
 
@@ -185,23 +267,20 @@ const ChatPanel = () => {
         }
     };
 
+    // Render using props
     return (
-        <div className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}> {/* Added overflow-hidden */} 
-            {/* Chat Header */}
+        <div className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}>
             <div className={`h-[54px] flex items-center px-5 border-b ${chatHeaderBorder} shrink-0`}>
                 <h2 className="font-semibold text-sm">Chat with Mark</h2>
             </div>
 
-            {/* Chat Messages Area */}
-            {/* Added flex-grow and overflow-y-auto for scrolling */}
             <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-5 space-y-4">
-                {messages.map((message) => (
+                {(messages || []).map((message) => ( // Use messages from props, add fallback
                     <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${message.sender === 'user'
                             ? `${userChatBubbleBg} ${userChatBubbleText}`
                             : `${chatBubbleGradient} text-white`
                             }`}>
-                            {/* Basic rendering of text, consider markdown support later */}
                             {message.text.split('\n').map((line, index) => (
                                 <span key={index}>{line}<br /></span>
                             ))}
@@ -209,7 +288,7 @@ const ChatPanel = () => {
                     </div>
                 ))}
                 
-                {/* Thinking indicator */}
+                {/* Use isThinking from props */}
                 {isThinking && (
                     <div className="flex justify-start">
                         <div className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${chatBubbleGradient} text-white`}>
@@ -218,11 +297,11 @@ const ChatPanel = () => {
                     </div>
                 )}
             </div>
-
-            {/* Chat Input Area */}
-            {/* Ensure input stays at the bottom */}
+            
+            {/* Input area - unchanged, uses local inputValue state */}
             <div className={`p-4 border-t ${chatInputBorder} shrink-0`}>
-                <div className={`flex items-end ${chatInputBg} rounded-xl border ${chatInputBorder} px-4 py-2`}> {/* Use items-end */} 
+                 {/* ... input textarea and send button ... */}
+                 <div className={`flex items-end ${chatInputBg} rounded-xl border ${chatInputBorder} px-4 py-2`}> 
                     <textarea
                         id="chat-textarea"
                         rows={1}
@@ -236,7 +315,7 @@ const ChatPanel = () => {
                     <button
                         className={`ml-3 ${sendButtonBg} rounded-full w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700 flex-shrink-0 self-center mb-0.5 disabled:opacity-50 disabled:cursor-not-allowed`}
                         onClick={handleSend}
-                        disabled={!inputValue.trim()}
+                        disabled={!inputValue.trim() || isThinking} // Disable send when thinking
                     >
                         <SendIcon className="w-5 h-5" />
                     </button>
