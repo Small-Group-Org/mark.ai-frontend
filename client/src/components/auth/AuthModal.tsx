@@ -68,15 +68,30 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!email || !password || !firstName || !lastName || !confirmPassword) return;
+    if (!email || !password || !firstName || !lastName || !confirmPassword) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please try again.",
+        variant: "destructive"
+      });
       return;
     }
     
     if (!agreeToTerms) {
-      alert('You must agree to the terms of service');
+      toast({
+        title: "Terms Agreement Required",
+        description: "You must agree to the Terms of Service and Privacy Policy.",
+        variant: "destructive"
+      });
       return;
     }
     
@@ -84,9 +99,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     
     try {
       await register(firstName, lastName, email, password);
+      toast({
+        title: "Account Created",
+        description: "Your account has been created successfully!",
+      });
       onClose(); // Close modal on successful registration
     } catch (error) {
       console.error('Registration error:', error);
+      toast({
+        title: "Registration Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }

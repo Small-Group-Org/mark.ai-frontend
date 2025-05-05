@@ -3,6 +3,7 @@ import { ChevronDownIcon } from './IconComponents';
 import { useAuth } from '@/hooks/use-auth';
 import { useAuthModal } from '@/hooks/use-auth-modal';
 import { Button } from '@/components/ui/button';
+import { AuthButton } from '@/components/auth/AuthButton';
 
 const Header = () => {
     // Get auth state and functions from our hooks
@@ -68,19 +69,15 @@ const Header = () => {
             ) : (
                 // Auth buttons (when not authenticated)
                 <div className="flex items-center space-x-4">
-                    <Button
-                        onClick={handleSignIn}
-                        variant="ghost"
-                        className="text-gray-200 hover:text-white hover:bg-slate-700"
-                    >
-                        Sign In
-                    </Button>
-                    <Button
-                        onClick={handleSignUp}
-                        className="bg-cyan-500 hover:bg-cyan-600 text-white"
-                    >
-                        Sign Up
-                    </Button>
+                    <AuthButton 
+                        mode="signin" 
+                        variant="ghost" 
+                        className="text-gray-200 hover:text-white"
+                    />
+                    <AuthButton 
+                        mode="signup" 
+                        variant="default"
+                    />
                 </div>
             )}
         </header>
