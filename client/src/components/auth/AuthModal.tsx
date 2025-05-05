@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { useAuthModal } from '@/hooks/use-auth-modal';
 import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const { view, setView } = useAuthModal();
   const { login, register } = useAuth();
+  const { toast } = useToast();
   
   // Form states
   const [email, setEmail] = useState('');
@@ -32,15 +34,31 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!email || !password) return;
+    if (!email || !password) {
+      toast({
+        title: "Missing Fields",
+        description: "Please enter both email and password.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
       await login(email, password);
+      toast({
+        title: "Success",
+        description: "You have been logged in successfully!"
+      });
       onClose(); // Close modal on successful login
     } catch (error) {
       console.error('Login error:', error);
+      toast({
+        title: "Login Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
