@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, FormEvent } from 'react';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { useAuthModal } from '@/hooks/use-auth-modal';
+import { useAuth } from '@/hooks/use-auth';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -15,6 +16,63 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const { view, setView } = useAuthModal();
+  const { login, register } = useAuth();
+  
+  // Form states
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Handle login form submission
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!email || !password) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      await login(email, password);
+      onClose(); // Close modal on successful login
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  // Handle registration form submission
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!email || !password || !firstName || !lastName || !confirmPassword) return;
+    
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    
+    if (!agreeToTerms) {
+      alert('You must agree to the terms of service');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      await register(firstName, lastName, email, password);
+      onClose(); // Close modal on successful registration
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Cosmic theme colors
   const primaryBg = 'bg-indigo-900'; // Deep cosmic blue background
@@ -82,7 +140,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           {/* Sign In Form */}
           <TabsContent value="signin" className="px-6 pb-6 pt-2">
-            <form>
+            <form onSubmit={handleLogin}>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-gray-200">
@@ -92,6 +150,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     id="email"
                     placeholder="name@example.com"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className={cn(
                       inputBg,
                       inputBorder,
@@ -112,6 +173,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Input
                     id="password"
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                     className={cn(
                       inputBg,
                       inputBorder,
@@ -121,7 +185,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   />
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
+                  <Checkbox 
+                    id="remember" 
+                    checked={rememberMe}
+                    onCheckedChange={(checked) => setRememberMe(checked === true)}
+                  />
                   <Label
                     htmlFor="remember"
                     className="text-xs text-gray-300 font-medium leading-none"
@@ -131,9 +199,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </div>
                 <Button 
                   type="submit" 
-                  className={cn(accentColor, accentHover, "w-full text-white")}
+                  disabled={isSubmitting}
+                  className={cn(accentColor, accentHover, "w-full text-white", 
+                    isSubmitting && "opacity-70 cursor-not-allowed")}
                 >
-                  Sign In
+                  {isSubmitting ? 'Signing In...' : 'Sign In'}
                 </Button>
               </div>
             </form>
@@ -151,7 +221,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           {/* Sign Up Form */}
           <TabsContent value="signup" className="px-6 pb-6 pt-2">
-            <form>
+            <form onSubmit={handleRegister}>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -161,6 +231,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <Input
                       id="firstName"
                       placeholder="John"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
                       className={cn(
                         inputBg,
                         inputBorder,
@@ -176,6 +249,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     <Input
                       id="lastName"
                       placeholder="Doe"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
                       className={cn(
                         inputBg,
                         inputBorder,
@@ -193,6 +269,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     id="email-signup"
                     placeholder="name@example.com"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className={cn(
                       inputBg,
                       inputBorder,
@@ -208,6 +287,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Input
                     id="password-signup"
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                     className={cn(
                       inputBg,
                       inputBorder,
@@ -223,6 +305,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Input
                     id="confirm-password"
                     type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                     className={cn(
                       inputBg,
                       inputBorder,
@@ -232,7 +317,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   />
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" />
+                  <Checkbox 
+                    id="terms" 
+                    checked={agreeToTerms}
+                    onCheckedChange={(checked) => setAgreeToTerms(checked === true)}
+                    required
+                  />
                   <Label
                     htmlFor="terms"
                     className="text-xs text-gray-300 font-medium leading-none"
@@ -249,9 +339,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </div>
                 <Button 
                   type="submit" 
-                  className={cn(accentColor, accentHover, "w-full text-white")}
+                  disabled={isSubmitting}
+                  className={cn(accentColor, accentHover, "w-full text-white",
+                    isSubmitting && "opacity-70 cursor-not-allowed")}
                 >
-                  Create Account
+                  {isSubmitting ? 'Creating Account...' : 'Create Account'}
                 </Button>
               </div>
             </form>
@@ -260,7 +352,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 type="button"
                 className={accentText + " hover:underline font-medium"}
-                onClick={() => setActiveTab('signin')}
+                onClick={() => setView('signin')}
               >
                 Sign in
               </button>

@@ -10,6 +10,7 @@ import MarkAiCreatePost from "@/components/MarkAiCreatePost"; // Import the corr
 import Dashboard from "@/pages/Dashboard";
 import Calendar from "@/pages/Calendar";
 import Mind from "@/pages/Mind";
+import { AuthModalProvider } from "@/components/auth/AuthModalProvider";
 
 function Router() {
   return (
@@ -30,8 +31,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        <AuthModalProvider>
+          <Toaster />
+          <Router />
+        </AuthModalProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
