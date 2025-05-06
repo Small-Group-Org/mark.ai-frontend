@@ -6,22 +6,17 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 
-// Import only the type, not the variable
-import type { User } from "@shared/schema";
+// Import User type from schema
+import type { User as DbUser } from "@shared/schema";
 
-// Extend Express User interface
+// Ensure our Express User interface matches the DB User type
+type User = DbUser;
+
+// Extend Express User interface to match the database model
 declare global {
   namespace Express {
-    // Use the interface without circular reference
-    interface User {
-      id: number;
-      email: string;
-      firstName: string;
-      lastName: string;
-      password: string;
-      avatarUrl?: string;
-      createdAt?: Date;
-    }
+    // This should match the database User model
+    interface User extends DbUser {}
   }
 }
 
