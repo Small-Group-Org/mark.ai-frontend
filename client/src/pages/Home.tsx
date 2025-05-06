@@ -229,16 +229,21 @@ export default function Home() {
                   fontSize: '14px',
                   width: '120px'
                 }}>Sign in</button>
-              <button style={{ 
-                backgroundColor: '#2563eb', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '9999px', 
-                padding: '10px 20px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                width: '120px'
-              }}>Sign up</button>
+              <button 
+                onClick={() => {
+                  setView('signup');
+                  onOpen();
+                }}
+                style={{ 
+                  backgroundColor: '#2563eb', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '9999px', 
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  width: '120px'
+                }}>Sign up</button>
             </div>
           </div>
         )}
