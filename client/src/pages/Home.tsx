@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
 import markImage from '../assets/mark.png';
 import { useAuthModal } from '@/hooks/use-auth-modal';
+import { useAuth } from '@/hooks/use-auth';
+import { useLocation } from 'wouter';
 
 export default function Home() {
   // State for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Auth modal state
+  // Auth states
   const { onOpen, setView } = useAuthModal();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [, setLocation] = useLocation();
   // Initial state with just the first three system messages (without user message)
   const initialMessages: MessageType[] = [
     {
