@@ -119,13 +119,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   // Cosmic theme colors with gradient background
   const primaryBg = 'bg-gradient-to-bl from-slate-800 to-blue-950'; // Dark bluish gradient
   const primaryText = 'text-white';
-  const accentColor = 'bg-cyan-500';
-  const accentHover = 'hover:bg-cyan-600';
-  const accentText = 'text-cyan-500';
+  const accentColor = 'bg-blue-600';
+  const accentHover = 'hover:bg-blue-700';
+  const accentText = 'text-blue-500';
   const secondaryBg = 'bg-slate-800/40';
   const inputBg = 'bg-slate-800/40';
   const inputBorder = 'border-slate-600/50';
-  const inputFocus = 'focus:border-cyan-500 focus:ring-cyan-500';
+  const inputFocus = 'focus:border-blue-500 focus:ring-blue-500';
   const tabActive = 'bg-blue-600 text-white border-b-2 border-blue-400';
   const tabInactive = 'bg-slate-800 text-gray-300 border-b-2 border-transparent';
 
@@ -155,7 +155,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <div className="flex items-center justify-center p-6 pb-2">
           <h1 className="text-2xl font-bold">
             <span className="text-white">Interview</span>
-            <span className="text-cyan-400">Mark</span>
+            <span className="text-blue-400">Mark</span>
           </h1>
         </div>
 
@@ -165,7 +165,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           onValueChange={(v) => setView(v as 'signin' | 'signup')}
           className="w-full"
         >
-          <TabsList className="grid grid-cols-2 mx-6 mb-6 rounded-lg overflow-hidden">
+          <TabsList className="grid grid-cols-2 mx-6 mb-6 rounded-lg overflow-hidden ring-0 border border-slate-700 bg-slate-800 p-0">
             <TabsTrigger 
               value="signin" 
               className={cn("py-3 rounded-none", view === 'signin' ? tabActive : tabInactive)}
