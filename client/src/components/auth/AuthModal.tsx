@@ -117,7 +117,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   };
 
   // Cosmic theme colors with gradient background
-  const primaryBg = 'bg-gradient-to-bl from-[#8E2DE2] to-[#4A00E0]'; // Dark purplish gradient
+  const primaryBg = 'bg-gradient-to-bl from-slate-800 to-blue-950'; // Dark bluish gradient
   const primaryText = 'text-white';
   const accentColor = 'bg-cyan-500';
   const accentHover = 'hover:bg-cyan-600';
@@ -126,8 +126,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const inputBg = 'bg-slate-800/40';
   const inputBorder = 'border-slate-600/50';
   const inputFocus = 'focus:border-cyan-500 focus:ring-cyan-500';
-  const tabActive = 'bg-cyan-500 text-white';
-  const tabInactive = 'bg-slate-700/70 text-gray-300';
+  const tabActive = 'bg-blue-600 text-white border-b-2 border-blue-400';
+  const tabInactive = 'bg-slate-800 text-gray-300 border-b-2 border-transparent';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
