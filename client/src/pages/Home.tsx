@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
 import markImage from '../assets/mark.png';
+import { useAuthModal } from '@/hooks/use-auth-modal';
 
 export default function Home() {
   // State for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Auth modal state
+  const { onOpen, setView } = useAuthModal();
   // Initial state with just the first three system messages (without user message)
   const initialMessages: MessageType[] = [
     {
@@ -154,22 +158,8 @@ export default function Home() {
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
           <button 
             onClick={() => {
-              // Show loading overlay
-              const loadingOverlay = document.createElement('div');
-              loadingOverlay.className = 'fixed inset-0 bg-black flex items-center justify-center z-50';
-              loadingOverlay.innerHTML = `
-                <div class="flex flex-col items-center">
-                  <div class="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin mb-4"></div>
-                  <h2 class="text-xl text-white mb-2">Loading Mark AI</h2>
-                  <p class="text-blue-400">Please wait while we prepare your content creation tools...</p>
-                </div>
-              `;
-              document.body.appendChild(loadingOverlay);
-              
-              // Wait a moment to show the loader before redirecting
-              setTimeout(() => {
-                window.location.href = '/create';
-              }, 800);
+              setView('signin');
+              onOpen();
             }}
             style={{ 
               backgroundColor: '#1e293b', 
@@ -181,16 +171,21 @@ export default function Home() {
               fontSize: 'clamp(12px, 3vw, 14px)',
               whiteSpace: 'nowrap'
             }}>Sign in</button>
-          <button style={{ 
-            backgroundColor: '#2563eb', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '9999px', 
-            padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
-            cursor: 'pointer',
-            fontSize: 'clamp(12px, 3vw, 14px)',
-            whiteSpace: 'nowrap'
-          }}>Sign up</button>
+          <button 
+            onClick={() => {
+              setView('signup');
+              onOpen();
+            }}
+            style={{ 
+              backgroundColor: '#2563eb', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '9999px', 
+              padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+              cursor: 'pointer',
+              fontSize: 'clamp(12px, 3vw, 14px)',
+              whiteSpace: 'nowrap'
+            }}>Sign up</button>
         </nav>
         
         {/* Mobile menu dropdown */}
@@ -221,22 +216,8 @@ export default function Home() {
             }}>
               <button 
                 onClick={() => {
-                  // Show loading overlay
-                  const loadingOverlay = document.createElement('div');
-                  loadingOverlay.className = 'fixed inset-0 bg-black flex items-center justify-center z-50';
-                  loadingOverlay.innerHTML = `
-                    <div class="flex flex-col items-center">
-                      <div class="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin mb-4"></div>
-                      <h2 class="text-xl text-white mb-2">Loading Mark AI</h2>
-                      <p class="text-blue-400">Please wait while we prepare your content creation tools...</p>
-                    </div>
-                  `;
-                  document.body.appendChild(loadingOverlay);
-                  
-                  // Wait a moment to show the loader before redirecting
-                  setTimeout(() => {
-                    window.location.href = '/create';
-                  }, 800);
+                  setView('signin');
+                  onOpen();
                 }}
                 style={{ 
                   backgroundColor: '#1e293b', 
