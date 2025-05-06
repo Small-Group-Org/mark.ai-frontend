@@ -160,36 +160,71 @@ export default function Home() {
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>Features</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>About</a>
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
-          <button 
-            onClick={() => {
-              setView('signin');
-              onOpen();
-            }}
-            style={{ 
-              backgroundColor: '#1e293b', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '9999px', 
-              padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
-              cursor: 'pointer',
-              fontSize: 'clamp(12px, 3vw, 14px)',
-              whiteSpace: 'nowrap'
-            }}>Sign in</button>
-          <button 
-            onClick={() => {
-              setView('signup');
-              onOpen();
-            }}
-            style={{ 
-              backgroundColor: '#2563eb', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '9999px', 
-              padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
-              cursor: 'pointer',
-              fontSize: 'clamp(12px, 3vw, 14px)',
-              whiteSpace: 'nowrap'
-            }}>Sign up</button>
+          
+          {/* Show different buttons based on authentication status */}
+          {isAuthenticated ? (
+            <>
+              <button 
+                onClick={() => setLocation('/dashboard')}
+                style={{ 
+                  backgroundColor: '#1e293b', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '9999px', 
+                  padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+                  cursor: 'pointer',
+                  fontSize: 'clamp(12px, 3vw, 14px)',
+                  whiteSpace: 'nowrap'
+                }}>Dashboard</button>
+              <button 
+                onClick={async () => {
+                  await logout();
+                }}
+                style={{ 
+                  backgroundColor: '#2563eb', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '9999px', 
+                  padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+                  cursor: 'pointer',
+                  fontSize: 'clamp(12px, 3vw, 14px)',
+                  whiteSpace: 'nowrap'
+                }}>Sign out</button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => {
+                  setView('signin');
+                  onOpen();
+                }}
+                style={{ 
+                  backgroundColor: '#1e293b', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '9999px', 
+                  padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+                  cursor: 'pointer',
+                  fontSize: 'clamp(12px, 3vw, 14px)',
+                  whiteSpace: 'nowrap'
+                }}>Sign in</button>
+              <button 
+                onClick={() => {
+                  setView('signup');
+                  onOpen();
+                }}
+                style={{ 
+                  backgroundColor: '#2563eb', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '9999px', 
+                  padding: 'clamp(6px, 2vw, 8px) clamp(12px, 4vw, 20px)',
+                  cursor: 'pointer',
+                  fontSize: 'clamp(12px, 3vw, 14px)',
+                  whiteSpace: 'nowrap'
+                }}>Sign up</button>
+            </>
+          )}
         </nav>
         
         {/* Mobile menu dropdown */}
@@ -212,42 +247,79 @@ export default function Home() {
             <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '10px 0' }}>Features</a>
             <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '10px 0' }}>About</a>
             <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: '16px', padding: '10px 0' }}>FAQ</a>
+            
             <div style={{ 
               display: 'flex', 
               gap: '1rem', 
               marginTop: '8px',
               justifyContent: 'center'
             }}>
-              <button 
-                onClick={() => {
-                  setView('signin');
-                  onOpen();
-                }}
-                style={{ 
-                  backgroundColor: '#1e293b', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '9999px', 
-                  padding: '10px 20px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  width: '120px'
-                }}>Sign in</button>
-              <button 
-                onClick={() => {
-                  setView('signup');
-                  onOpen();
-                }}
-                style={{ 
-                  backgroundColor: '#2563eb', 
-                  color: 'white', 
-                  border: 'none', 
-                  borderRadius: '9999px', 
-                  padding: '10px 20px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  width: '120px'
-                }}>Sign up</button>
+              {isAuthenticated ? (
+                <>
+                  <button 
+                    onClick={() => setLocation('/dashboard')}
+                    style={{ 
+                      backgroundColor: '#1e293b', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '9999px', 
+                      padding: '10px 20px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      width: '120px'
+                    }}>Dashboard</button>
+                  <button 
+                    onClick={async () => {
+                      await logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    style={{ 
+                      backgroundColor: '#2563eb', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '9999px', 
+                      padding: '10px 20px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      width: '120px'
+                    }}>Sign out</button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => {
+                      setView('signin');
+                      onOpen();
+                      setMobileMenuOpen(false);
+                    }}
+                    style={{ 
+                      backgroundColor: '#1e293b', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '9999px', 
+                      padding: '10px 20px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      width: '120px'
+                    }}>Sign in</button>
+                  <button 
+                    onClick={() => {
+                      setView('signup');
+                      onOpen();
+                      setMobileMenuOpen(false);
+                    }}
+                    style={{ 
+                      backgroundColor: '#2563eb', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '9999px', 
+                      padding: '10px 20px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      width: '120px'
+                    }}>Sign up</button>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -281,7 +353,13 @@ export default function Home() {
           marginBottom: 'clamp(1rem, 5vw, 2rem)',
           animation: 'fadeIn 1.2s ease-in-out',
           width: '100%'
-        }}>Your 24/7 Social Media Expert</p>
+        }}>
+          {isAuthenticated && user ? (
+            <>Welcome back, {user.firstName}! Your 24/7 Social Media Expert</>
+          ) : (
+            <>Your 24/7 Social Media Expert</>
+          )}
+        </p>
 
         {/* Profile Image - Mark.png */}
         <div style={{ 

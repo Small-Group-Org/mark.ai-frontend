@@ -9,8 +9,8 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  avatarUrl: text("avatar_url"),
-  createdAt: timestamp("created_at").defaultNow(),
+  avatarUrl: text("avatar_url"), // nullable
+  createdAt: timestamp("created_at").defaultNow(), // nullable
 });
 
 // Messages table to store chat messages per user
