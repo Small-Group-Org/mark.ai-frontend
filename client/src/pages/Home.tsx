@@ -3,7 +3,7 @@ import ChatInterface, { MessageType } from '@/components/ChatInterface';
 import markImage from '../assets/mark.png';
 import { useAuthModal } from '@/hooks/use-auth-modal';
 import { useAuth } from '@/hooks/use-auth';
-import { useLocation, Redirect } from 'wouter';
+import { useLocation } from 'wouter';
 
 export default function Home() {
   // State for mobile menu
@@ -11,13 +11,8 @@ export default function Home() {
   
   // Auth states
   const { onOpen, setView } = useAuthModal();
-  const { user, isAuthenticated, logout, isLoading } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
-  
-  // Redirect authenticated users to dashboard
-  if (!isLoading && isAuthenticated) {
-    return <Redirect to="/dashboard" />;
-  }
   // Initial state with just the first three system messages (without user message)
   const initialMessages: MessageType[] = [
     {

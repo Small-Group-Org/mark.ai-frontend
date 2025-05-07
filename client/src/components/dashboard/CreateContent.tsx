@@ -9,13 +9,13 @@ import {
 
 const CreateContent = () => {
   // Default panel sizes (can also be stored in localStorage for persistence)
-  const [leftPanelSize, setLeftPanelSize] = useState(40); // 40% of the width
-  const [rightPanelSize, setRightPanelSize] = useState(60); // Remaining space
+  const [leftPanelSize, setLeftPanelSize] = useState(30); // 30% of the width
+  const [rightPanelSize, setRightPanelSize] = useState(70); // 70% of the width
   
   // Mobile view state (chat or preview)
   const [mobileView, setMobileView] = useState<'chat' | 'preview'>('chat');
   
-  // Function to handle panel resize - allow resizing but track the sizes
+  // Function to handle panel resize
   const handlePanelResize = (sizes: number[]) => {
     if (sizes.length >= 2) {
       setLeftPanelSize(sizes[0]);
@@ -24,9 +24,9 @@ const CreateContent = () => {
   };
 
   return (
-    <div className="h-full bg-[#11132f]">
+    <div className="h-full">
       {/* Mobile View Toggle - Only visible on mobile */}
-      <div className="block lg:hidden bg-[#11132f] text-center py-2 px-4">
+      <div className="block lg:hidden bg-gray-800 text-center py-2 px-4">
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
             type="button"
@@ -54,7 +54,7 @@ const CreateContent = () => {
       </div>
 
       {/* Desktop Layout - Always side by side with resize handle */}
-      <div className="hidden lg:block h-full w-full bg-[#11132f]">
+      <div className="hidden lg:block h-full">
         <PanelGroup 
           direction="horizontal" 
           autoSaveId="mark-ai-layout"
@@ -62,7 +62,7 @@ const CreateContent = () => {
         >
           {/* Chat Panel (Left) */}
           <Panel 
-            defaultSize={40}
+            defaultSize={leftPanelSize} 
             minSize={20} // Minimum 20% width
             className="h-full"
           >
@@ -71,6 +71,9 @@ const CreateContent = () => {
           
           {/* Resize Handle with visual indicators */}
           <PanelResizeHandle className="w-2 bg-gray-800 hover:bg-blue-500 transition-colors duration-200 cursor-col-resize relative group flex items-center justify-center">
+            {/* Visual hover effect */}
+            <div className="absolute inset-y-0 -right-2 -left-2 group-hover:bg-blue-500/10"></div>
+            
             {/* Dots for drag indicator */}
             <div className="flex flex-col items-center justify-center h-16 space-y-1 z-10">
               <div className="w-1 h-1 rounded-full bg-gray-500 group-hover:bg-blue-400"></div>
@@ -86,7 +89,7 @@ const CreateContent = () => {
           
           {/* Post Preview Panel (Right) */}
           <Panel 
-            defaultSize={60} 
+            defaultSize={rightPanelSize} 
             minSize={30} // Minimum 30% width
             className="h-full"
           >
@@ -96,7 +99,7 @@ const CreateContent = () => {
       </div>
       
       {/* Mobile Layout - Toggle between views */}
-      <div className="flex flex-1 lg:hidden h-[calc(100vh-110px)] bg-[#11132f]">
+      <div className="flex flex-1 lg:hidden h-[calc(100vh-110px)]">
         {/* Chat Panel - Show only when toggled to chat view */}
         <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
           <ChatPanel />
