@@ -10,17 +10,17 @@ import {
 const CreateContent = () => {
   // Default panel sizes (can also be stored in localStorage for persistence)
   const [leftPanelSize, setLeftPanelSize] = useState(40); // 40% of the width
-  const [rightPanelSize, setRightPanelSize] = useState(55); // 55% of the width
+  const [rightPanelSize, setRightPanelSize] = useState(60); // Remaining space
   
   // Mobile view state (chat or preview)
   const [mobileView, setMobileView] = useState<'chat' | 'preview'>('chat');
   
-  // Function to handle panel resize - force our exact 40/55 ratio
+  // Function to handle panel resize - allow resizing but track the sizes
   const handlePanelResize = (sizes: number[]) => {
-    // We could use the sizes passed, but we want to enforce our exact ratio
-    // This effectively makes the resize handle visual-only
-    setLeftPanelSize(40);
-    setRightPanelSize(55);
+    if (sizes.length >= 2) {
+      setLeftPanelSize(sizes[0]);
+      setRightPanelSize(sizes[1]);
+    }
   };
 
   return (
@@ -69,19 +69,24 @@ const CreateContent = () => {
             <ChatPanel />
           </Panel>
           
-          {/* Resize Handle with visual indicators - Just a divider now */}
-          <PanelResizeHandle className="w-2 bg-gray-700 flex items-center justify-center cursor-default">
-            {/* Dots for separator indicator */}
+          {/* Resize Handle with visual indicators */}
+          <PanelResizeHandle className="w-2 bg-gray-800 hover:bg-blue-500 transition-colors duration-200 cursor-col-resize relative group flex items-center justify-center">
+            {/* Dots for drag indicator */}
             <div className="flex flex-col items-center justify-center h-16 space-y-1 z-10">
-              <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-              <div className="w-1 h-1 rounded-full bg-gray-500"></div>
-              <div className="w-1 h-1 rounded-full bg-gray-500"></div>
+              <div className="w-1 h-1 rounded-full bg-gray-500 group-hover:bg-blue-400"></div>
+              <div className="w-1 h-1 rounded-full bg-gray-500 group-hover:bg-blue-400"></div>
+              <div className="w-1 h-1 rounded-full bg-gray-500 group-hover:bg-blue-400"></div>
+            </div>
+            
+            {/* Add tooltip on hover */}
+            <div className="absolute opacity-0 group-hover:opacity-100 top-1/2 left-1/2 transform -translate-y-1/2 translate-x-2 bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap transition-opacity duration-200">
+              Drag to resize
             </div>
           </PanelResizeHandle>
           
           {/* Post Preview Panel (Right) */}
           <Panel 
-            defaultSize={55} 
+            defaultSize={60} 
             minSize={30} // Minimum 30% width
             className="h-full"
           >
