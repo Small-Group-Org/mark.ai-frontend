@@ -9,8 +9,8 @@ import {
 
 const CreateContent = () => {
   // Default panel sizes (can also be stored in localStorage for persistence)
-  const [leftPanelSize, setLeftPanelSize] = useState(30); // 30% of the width
-  const [rightPanelSize, setRightPanelSize] = useState(70); // 70% of the width
+  const [leftPanelSize, setLeftPanelSize] = useState(40); // 40% of the width
+  const [rightPanelSize, setRightPanelSize] = useState(55); // 55% of the width
   
   // Mobile view state (chat or preview)
   const [mobileView, setMobileView] = useState<'chat' | 'preview'>('chat');
