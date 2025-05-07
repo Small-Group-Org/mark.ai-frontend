@@ -59,10 +59,12 @@ const CreateContent = () => {
           direction="horizontal" 
           autoSaveId="mark-ai-layout"
           onLayout={handlePanelResize}
+          units="percentages" 
+          disablePointerEventsDuringResize={true}
         >
           {/* Chat Panel (Left) */}
           <Panel 
-            defaultSize={leftPanelSize} 
+            defaultSize={40}
             minSize={20} // Minimum 20% width
             className="h-full"
           >
@@ -89,7 +91,7 @@ const CreateContent = () => {
           
           {/* Post Preview Panel (Right) */}
           <Panel 
-            defaultSize={rightPanelSize} 
+            defaultSize={55} 
             minSize={30} // Minimum 30% width
             className="h-full"
           >
