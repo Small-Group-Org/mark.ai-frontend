@@ -21,10 +21,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className="flex h-screen bg-[#11132f] text-white overflow-hidden">
       {/* Sidebar */}
-      <Sidebar currentRoute={currentRoute} />
+      <div className="w-[80px] flex-shrink-0">
+        <Sidebar currentRoute={currentRoute} />
+      </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[80px] h-screen">
+      <div className="flex-1 flex flex-col h-screen">
         {/* Header */}
         <Header />
 
