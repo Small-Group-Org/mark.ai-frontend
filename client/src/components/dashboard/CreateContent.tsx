@@ -59,8 +59,6 @@ const CreateContent = () => {
           direction="horizontal" 
           autoSaveId="mark-ai-layout"
           onLayout={handlePanelResize}
-          units="percentages" 
-          disablePointerEventsDuringResize={true}
         >
           {/* Chat Panel (Left) */}
           <Panel 
