@@ -24,9 +24,9 @@ const CreateContent = () => {
   };
 
   return (
-    <div className="h-full">
+    <div className="h-full bg-[#11132f]">
       {/* Mobile View Toggle - Only visible on mobile */}
-      <div className="block lg:hidden bg-gray-800 text-center py-2 px-4">
+      <div className="block lg:hidden bg-[#11132f] text-center py-2 px-4">
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
             type="button"
@@ -54,7 +54,7 @@ const CreateContent = () => {
       </div>
 
       {/* Desktop Layout - Always side by side with resize handle */}
-      <div className="hidden lg:block h-full w-[calc(100vw-80px)]">
+      <div className="hidden lg:block h-full w-[calc(100vw-80px)] bg-[#11132f]">
         <PanelGroup 
           direction="horizontal" 
           autoSaveId="mark-ai-layout"
@@ -96,7 +96,7 @@ const CreateContent = () => {
       </div>
       
       {/* Mobile Layout - Toggle between views */}
-      <div className="flex flex-1 lg:hidden h-[calc(100vh-110px)]">
+      <div className="flex flex-1 lg:hidden h-[calc(100vh-110px)] bg-[#11132f]">
         {/* Chat Panel - Show only when toggled to chat view */}
         <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
           <ChatPanel />
