@@ -54,7 +54,7 @@ const CreateContent = () => {
       </div>
 
       {/* Desktop Layout - Always side by side with resize handle */}
-      <div className="hidden lg:block h-full w-[calc(100vw-80px)] bg-[#11132f]">
+      <div className="hidden lg:block h-full w-full bg-[#11132f]">
         <PanelGroup 
           direction="horizontal" 
           autoSaveId="mark-ai-layout"

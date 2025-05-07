@@ -16,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = 'create' }) => {
     const sidebarBg = 'bg-[#11132f]'; // Matching the main container background
 
     return (
-        <aside className={`w-[80px] ${sidebarBg} text-white flex flex-col items-center py-5 space-y-10 h-screen z-10`}>
+        <aside className={`${sidebarBg} text-white flex flex-col items-center py-5 space-y-10 h-full w-full z-10`}>
             {/* Logo placeholder - Replace with actual logo if available */}
             <div className="w-16 h-16 bg-white/10 rounded-full mb-6 flex items-center justify-center text-xs flex-shrink-0">
                 LOGO
