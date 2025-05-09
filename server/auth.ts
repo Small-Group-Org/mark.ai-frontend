@@ -7,16 +7,12 @@ import { promisify } from "util";
 import { storage } from "./storage";
 
 // Import User type from schema
-import type { User as DbUser } from "@shared/schema";
+import type { User } from "@shared/schema";
 
-// Ensure our Express User interface matches the DB User type
-type User = DbUser;
-
-// Extend Express User interface to match the database model
+// Extend Express User interface to match our User type
 declare global {
   namespace Express {
-    // This should match the database User model
-    interface User extends DbUser {}
+    interface User extends User {}
   }
 }
 

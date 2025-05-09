@@ -1,44 +1,39 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User model updated for email-based authentication
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  avatarUrl: text("avatar_url"), // nullable
-  createdAt: timestamp("created_at").defaultNow(), // nullable
-});
+// User interface without database-specific code
+export interface User {
+  id: number;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  avatarUrl?: string;
+  createdAt?: Date;
+}
 
-// Messages table to store chat messages per user
-export const messages = pgTable("messages", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
-  text: text("text").notNull(),
-  sender: text("sender").notNull(), // 'user' or 'system'
-  createdAt: timestamp("created_at").defaultNow(),
-});
+// Message interface without database-specific code
+export interface Message {
+  id: number;
+  userId: number;
+  text: string;
+  sender: string; // 'user' or 'system'
+  createdAt?: Date;
+}
 
 // Schema for creating a new user
-export const insertUserSchema = createInsertSchema(users).pick({
-  email: true,
-  password: true,
-  firstName: true,
-  lastName: true,
+export const insertUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
 });
 
 // Schema for creating a new message
-export const insertMessageSchema = createInsertSchema(messages).pick({
-  userId: true,
-  text: true,
-  sender: true,
+export const insertMessageSchema = z.object({
+  userId: z.number(),
+  text: z.string(),
+  sender: z.string(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
-
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
-export type Message = typeof messages.$inferSelect;
