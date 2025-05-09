@@ -26,7 +26,7 @@ interface ChatPanelProps {
     postHashtags: string[];
     mediaUrl: string[];
     socialPlatforms: Record<PlatformName, boolean>;
-    postType: { feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean };
+    postType: { post: boolean; story: boolean; reel: boolean; };
     scheduledDate: string;
     setPostTitle: React.Dispatch<React.SetStateAction<string>>;
     setPostContent: React.Dispatch<React.SetStateAction<string>>;
@@ -34,9 +34,9 @@ interface ChatPanelProps {
     setMediaUrl: React.Dispatch<React.SetStateAction<string[]>>;
     // Add setters for socialPlatforms, postType
     setSocialPlatforms: React.Dispatch<React.SetStateAction<Record<PlatformName, boolean>>>;
-    setPostType: React.Dispatch<React.SetStateAction<{ feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean }>>;
+    setPostType: React.Dispatch<React.SetStateAction<{ post: boolean; story: boolean; reel: boolean; }>>;
     // We might need setScheduledDate later if the API modifies it too
-    // setScheduledDate: React.Dispatch<React.SetStateAction<string>>;
+    setScheduledDate: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // Use props instead of local state
@@ -46,7 +46,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
     postTitle, postContent, postHashtags, mediaUrl, socialPlatforms, postType, scheduledDate,
     setPostTitle, setPostContent, setPostHashtags, setMediaUrl,
     // Destructure new props
-    setSocialPlatforms, setPostType 
+    setSocialPlatforms, setPostType, setScheduledDate 
 }) => {
     // Local state only for the input field value
     const [inputValue, setInputValue] = React.useState(''); 
@@ -81,7 +81,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                   mediaUrl: mediaUrl,         // Use initial prop value
                   hashtags: postHashtags,     // Use initial prop value
                   socialPlatforms: socialPlatforms, // Use initial prop value
-                  postType: postType,             // Use initial prop value
+                  postType: { post: postType.post, story: postType.story, reel: postType.reel }, // Use new keys
                   scheduledDate: scheduledDate  // Use initial prop value
                 }
               };
@@ -105,8 +105,18 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     setMediaUrl(initialPost.mediaUrl ?? []);
                     // Update toggles if API provides them initially
                     if (initialPost.socialPlatforms) setSocialPlatforms(initialPost.socialPlatforms);
-                    if (initialPost.postType) setPostType(initialPost.postType);
-                    // if (initialPost.scheduledDate) setScheduledDate(initialPost.scheduledDate);
+                    if (initialPost.postType) {
+                        const apiPostType = initialPost.postType as any; // Cast to allow any keys
+                        console.log('[ChatPanel] Received from API (initial) - raw apiPostType:', apiPostType);
+                        const transformedPostType = {
+                            post: apiPostType.Post ?? false,      // Directly use Post, default to false
+                            story: apiPostType.Story ?? false,     // Directly use Story, default to false
+                            reel: apiPostType.reel ?? false,      // Directly use reel, default to false
+                        };
+                        console.log('[ChatPanel] Transformed postType for state update (initial):', transformedPostType);
+                        setPostType(transformedPostType);
+                    }
+                    if (initialPost.scheduledDate) setScheduledDate(initialPost.scheduledDate);
 
                     // Set the initial AI message
                     const aiResponseMessage: Message = {
@@ -190,10 +200,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                       mediaUrl: mediaUrl, 
                       hashtags: postHashtags,
                       socialPlatforms: socialPlatforms,
-                      postType: postType,
+                      postType: { post: postType.post, story: postType.story, reel: postType.reel }, // Use new keys
                       scheduledDate: scheduledDate
                     }
                   };
+                console.log('[ChatPanel] Sending to API - postType:', requestBody.post.postType);
 
                 const response = await axios.post(
                     'https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073',
@@ -216,8 +227,18 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                     setMediaUrl(updatedPost.mediaUrl ?? []); 
                     // Update toggles if API provides them
                     if (updatedPost.socialPlatforms) setSocialPlatforms(updatedPost.socialPlatforms);
-                    if (updatedPost.postType) setPostType(updatedPost.postType);
-                    // if (updatedPost.scheduledDate) setScheduledDate(updatedPost.scheduledDate);
+                    if (updatedPost.postType) {
+                        const apiPostType = updatedPost.postType as any; // Cast to allow any keys
+                        console.log('[ChatPanel] Received from API - raw apiPostType:', apiPostType);
+                        const transformedPostType = {
+                            post: apiPostType.Post ?? false,      // Directly use Post, default to false
+                            story: apiPostType.Story ?? false,     // Directly use Story, default to false
+                            reel: apiPostType.reel ?? false,      // Directly use reel, default to false
+                        };
+                        console.log('[ChatPanel] Transformed postType for state update:', transformedPostType);
+                        setPostType(transformedPostType);
+                    }
+                    if (updatedPost.scheduledDate) setScheduledDate(updatedPost.scheduledDate);
 
                     const aiResponseMessage: Message = {
                         id: Date.now() + 1,

@@ -15,11 +15,11 @@ interface PostPreviewPanelProps {
     postHashtags: string[];
     mediaUrl: string[];
     socialPlatforms: Record<PlatformName, boolean>;
-    postType: { feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean };
+    postType: { post: boolean; story: boolean; reel: boolean; };
     scheduledDate: string; // ISO string from parent
     // Setters passed from parent
     setSocialPlatforms: React.Dispatch<React.SetStateAction<Record<PlatformName, boolean>>>;
-    setPostType: React.Dispatch<React.SetStateAction<{ feedPost: boolean; igStory: boolean; reel: boolean; youtubeShorts: boolean }>>;
+    setPostType: React.Dispatch<React.SetStateAction<{ post: boolean; story: boolean; reel: boolean; }>>;
     setScheduledDate: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -31,6 +31,13 @@ interface PostPreviewPanelProps {
 //   }
 // }
 
+// Simple ChevronDownIcon (can be moved to IconComponents later)
+const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
+        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+    </svg>
+);
+
 // Component receives props now
 const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({ 
     postTitle, postContent, postHashtags, mediaUrl,
@@ -39,52 +46,95 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
 }) => {
 
     // --- Local UI State Only ---
-    // State for managing actual date object derived from prop
-    const [date, setDate] = useState<Date | undefined>(undefined);
-    // State for formatted date string display derived from prop
+    const [date, setDate] = useState<Date | undefined>(new Date()); // Initialize with current date
     const [displayDate, setDisplayDate] = useState("");
-    // State to control calendar visibility
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-    // State for selected time (part of the date)
-    const [selectedTime, setSelectedTime] = useState("9:00 AM"); // Default or derived
+    
+    // New state for time inputs
+    const [inputHour, setInputHour] = useState<string>("09"); // e.g., "01" through "12"
+    const [inputMinute, setInputMinute] = useState<string>("00"); // e.g., "00", "15", "30", "45"
+    const [inputAmPm, setInputAmPm] = useState<'AM' | 'PM'>("AM");
+
+    // State for schedule options dropdown
+    const [isScheduleOptionsOpen, setIsScheduleOptionsOpen] = useState(false);
+    const scheduleButtonRef = useRef<HTMLDivElement>(null); // For closing dropdown on outside click
+
     const calendarRef = useRef<HTMLDivElement>(null);
-    // Time options for dropdown
-    const timeOptions = [
-        "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", 
-        "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"
-    ];
-    // Derive image URL from mediaUrl prop
     const imageUrl = mediaUrl && mediaUrl.length > 0 ? mediaUrl[0] : undefined;
 
-    // --- Effects for handling date prop ---
-    // Effect to parse the ISO scheduledDate prop into local Date object and time string
+    // Options for time dropdowns
+    const hourOptions = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+    const minuteOptions = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+
+    console.log('[PostPreviewPanel Render] isScheduleOptionsOpen:', isScheduleOptionsOpen);
+
+    // Effect to parse the ISO scheduledDate prop and set date and time inputs
     useEffect(() => {
         try {
-            const parsedDate = parseISO(scheduledDate);
-            setDate(parsedDate);
-            
-            const hours = parsedDate.getHours();
-            const minutes = parsedDate.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const hour12 = hours % 12 || 12;
-            const timeString = `${hour12}:${minutes === 0 ? '00' : minutes} ${ampm}`;
-            
-            const bestTimeMatch = timeOptions.find(t => t === timeString) || timeString;
-            setSelectedTime(bestTimeMatch);
+            if (scheduledDate) {
+                const parsedDate = parseISO(scheduledDate);
+                setDate(parsedDate); // Set the main date object
+                
+                let hours = parsedDate.getHours();
+                const minutes = parsedDate.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12; // Convert to 12-hour format
+
+                setInputHour(hours.toString().padStart(2, '0'));
+                setInputMinute(minutes.toString().padStart(2, '0'));
+                setInputAmPm(ampm);
+            }
         } catch (error) {
             console.error("Error parsing scheduledDate prop:", error);
-            setDate(new Date()); // Fallback to now if parse fails
-            setSelectedTime("9:00 AM"); // Fallback time
+            // Fallback to current time if parse fails or scheduledDate is invalid
+            const now = new Date();
+            setDate(now);
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            setInputHour(hours.toString().padStart(2, '0'));
+            setInputMinute(minutes.toString().padStart(2, '0'));
+            setInputAmPm(ampm);
         }
-    }, [scheduledDate]); // Re-run when the scheduledDate prop changes
+    }, [scheduledDate]);
 
-    // Effect to update the display date string whenever local date or time changes
+    // Effect to update the display date string whenever the main 'date' object changes
     useEffect(() => {
         if (date) {
-            const formattedDate = format(date, "MMMM d, yyyy");
-            setDisplayDate(`${formattedDate} • ${selectedTime}`);
+            // Format date to "MMMM d, yyyy • h:mm aa" (e.g., May 10, 2025 • 9:30 AM)
+            setDisplayDate(format(date, "MMMM d, yyyy • h:mm aa"));
         }
-    }, [date, selectedTime]);
+    }, [date]); // Re-run when the main date object changes
+
+    // Effect for handling changes from time inputs (hour, minute, AM/PM)
+    useEffect(() => {
+        if (!date) return; // Guard if date is not yet initialized
+
+        const currentHours = parseInt(inputHour, 10);
+        const currentMinutes = parseInt(inputMinute, 10);
+
+        if (isNaN(currentHours) || isNaN(currentMinutes)) return; // Guard against invalid number parsing
+
+        let newHours24 = currentHours;
+        if (inputAmPm === 'PM' && currentHours < 12) {
+            newHours24 += 12;
+        } else if (inputAmPm === 'AM' && currentHours === 12) { // Midnight case (12 AM)
+            newHours24 = 0;
+        }
+
+        const newDate = new Date(date); // Start with a copy of the current date (to keep day, month, year)
+        newDate.setHours(newHours24, currentMinutes, 0, 0); // Set new hours and minutes
+
+        // Check if this newDate is actually different from the current 'date' state to avoid infinite loops
+        if (date && newDate.getTime() !== date.getTime()) {
+            setDate(newDate); // Update the main date state
+            setScheduledDate(newDate.toISOString()); // Update parent state
+        }
+    // IMPORTANT: Add date to dependency array if we want time changes to reflect on a *newly picked date* immediately.
+    // However, be cautious of infinite loops. A more robust solution might be to have explicit update button or blur handlers.
+    // For now, this effect primarily reacts to manual changes in time inputs.
+    }, [inputHour, inputMinute, inputAmPm, date, setScheduledDate]); // Added date back, as newDate is derived from it.
 
     // Effect for closing calendar on outside click (remains the same)
     useEffect(() => {
@@ -92,12 +142,16 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
             if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
                 setIsCalendarOpen(false);
             }
+            // Close schedule options dropdown if click is outside
+            if (scheduleButtonRef.current && !scheduleButtonRef.current.contains(event.target as Node)) {
+                setIsScheduleOptionsOpen(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
 
     // REMOVE the updatePostData function and the useEffect that registers it
     // const updatePostData = (data: PostData) => { ... };
@@ -114,13 +168,13 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
     };
 
     // Handle post type click - use prop setter
-    const handlePostTypeClick = (type: 'feedPost' | 'igStory' | 'reel' | 'youtubeShorts') => {
-        setPostType({
-            feedPost: type === 'feedPost',
-            igStory: type === 'igStory',
-            reel: type === 'reel',
-            youtubeShorts: type === 'youtubeShorts'
-        });
+    const handlePostTypeClick = (type: 'post' | 'story' | 'reel') => {
+        setPostType(prevPostType => ({
+            ...prevPostType,
+            post: type === 'post' ? !prevPostType.post : (prevPostType.post ?? false),
+            story: type === 'story' ? !prevPostType.story : (prevPostType.story ?? false),
+            reel: type === 'reel' ? !prevPostType.reel : (prevPostType.reel ?? false),
+        }));
     };
 
     // Toggle calendar visibility
@@ -128,48 +182,118 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         setIsCalendarOpen(!isCalendarOpen);
     };
 
-    // Handle date selection from calendar - update local date state first
-    const handleSelectDate = (newDate: Date | undefined) => {
-        if (newDate && date) {
-             // Keep the time from the existing date state
-             newDate.setHours(date.getHours());
-             newDate.setMinutes(date.getMinutes());
-             setDate(newDate); // Update local date state
-             // Update parent state with new ISO string
-             setScheduledDate(newDate.toISOString()); 
-        }
-    };
-
-    // Handle time selection - update local time state first
-    const handleTimeSelect = (time: string) => {
-        setSelectedTime(time);
-        setIsCalendarOpen(false);
-        // Parse time and update the local Date object, then update parent
-        if (date) {
-            const [timePart, ampm] = time.split(' ');
-            let [hoursStr, minutesStr] = timePart.split(':');
-            let hours = parseInt(hoursStr);
-            const minutes = parseInt(minutesStr);
-
-            if (ampm === 'PM' && hours !== 12) hours += 12;
-            if (ampm === 'AM' && hours === 12) hours = 0; // Midnight case
-
-            const newDate = new Date(date);
-            newDate.setHours(hours);
-            newDate.setMinutes(minutes);
-            newDate.setSeconds(0);
-            newDate.setMilliseconds(0);
+    // Handle date selection from calendar
+    const handleSelectDate = (selectedDateFromCalendar: Date | undefined) => {
+        if (selectedDateFromCalendar && date) { // Ensure local 'date' is available for time preservation
+            const newDate = new Date(selectedDateFromCalendar); 
             
-            setDate(newDate); // Update local date state
-            setScheduledDate(newDate.toISOString()); // Update parent state
+            let hours24 = parseInt(inputHour, 10);
+            if (isNaN(hours24)) hours24 = new Date().getHours(); // Fallback if inputHour is not a number
+
+            let minutes = parseInt(inputMinute, 10);
+            if (isNaN(minutes)) minutes = new Date().getMinutes(); // Fallback if inputMinute is not a number
+
+            if (inputAmPm === 'PM' && hours24 < 12) hours24 += 12;
+            if (inputAmPm === 'AM' && hours24 === 12) hours24 = 0; 
+            
+            newDate.setHours(hours24, minutes, 0, 0);
+
+            setDate(newDate);
+            setScheduledDate(newDate.toISOString());
+            setIsCalendarOpen(false); 
         }
     };
 
-    // Handle schedule button click (logic can remain or be moved up)
-    const handleSchedulePost = () => {
-        console.log(`Post scheduled for: ${displayDate} (ISO: ${scheduledDate})`);
-        alert(`Post successfully scheduled for: ${displayDate}`);
+    // New robust input handlers (simplified for select dropdowns)
+    const handleHourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setInputHour(e.target.value);
     };
+
+    const handleMinuteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setInputMinute(e.target.value);
+    };
+
+    const handleAmPmChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setInputAmPm(e.target.value as 'AM' | 'PM');
+    };
+
+    // Handle schedule button click
+    const handleSchedulePost = () => {
+        console.log(`[PostPreviewPanel] Post scheduled for: ${displayDate} (ISO: ${scheduledDate})`);
+        alert(`Post successfully scheduled for: ${displayDate}`);
+        setIsScheduleOptionsOpen(false); // Close dropdown
+    };
+
+    // New handlers for dropdown
+    const handleToggleScheduleOptions = () => {
+        setIsScheduleOptionsOpen(!isScheduleOptionsOpen);
+    };
+
+    const handleDraftPost = () => {
+        console.log("[PostPreviewPanel] Post saved as draft. Scheduled date was:", scheduledDate);
+        alert("Post saved as draft!");
+        setIsScheduleOptionsOpen(false);
+    };
+
+    // Effect to parse the ISO scheduledDate prop and set date and time inputs
+    // This is Effect A - Prop to Local Time Inputs
+    useEffect(() => {
+        try {
+            if (scheduledDate) {
+                const parsedDateFromProp = parseISO(scheduledDate);
+                
+                // Current time represented by input fields
+                let currentInputHoursNum = parseInt(inputHour, 10);
+                let currentInputMinutesNum = parseInt(inputMinute, 10);
+
+                if(isNaN(currentInputHoursNum) || isNaN(currentInputMinutesNum)) {
+                    // If inputs are somehow not valid numbers, force update from prop
+                    console.warn('[PostPreviewPanel Effect A] Invalid current time inputs, forcing update from prop.');
+                } else {
+                    let currentInputHours24 = currentInputHoursNum;
+                    if (inputAmPm === 'PM' && currentInputHoursNum < 12) currentInputHours24 += 12;
+                    if (inputAmPm === 'AM' && currentInputHoursNum === 12) currentInputHours24 = 0; 
+    
+                    const propHours24 = parsedDateFromProp.getHours();
+                    const propMinutes = parsedDateFromProp.getMinutes();
+    
+                    // Check if the time from prop is actually different from what inputs represent
+                    if (propHours24 === currentInputHours24 && propMinutes === currentInputMinutesNum) {
+                        // Time is the same, only update main 'date' object if its date part changed or it's not set
+                        if (!date || parsedDateFromProp.toDateString() !== date.toDateString()) {
+                            setDate(parsedDateFromProp);
+                        }
+                        return; // Avoid resetting input fields if time is effectively the same
+                    }
+                }
+
+                // If we reach here, it means the time from prop IS different, or inputs were invalid.
+                // So, reset the input fields based on the scheduledDate prop.
+                console.log('[PostPreviewPanel Effect A] scheduledDate prop change caused time input reset. Prop time:', parsedDateFromProp.toLocaleTimeString(), 'Current input time effectively:', `${currentInputHoursNum}:${inputMinute} ${inputAmPm}`);
+                setDate(parsedDateFromProp); 
+                
+                let displayHours = parsedDateFromProp.getHours();
+                const displayMinutes = parsedDateFromProp.getMinutes();
+                const newAmPm = displayHours >= 12 ? 'PM' : 'AM';
+                displayHours = displayHours % 12 || 12; 
+
+                setInputHour(displayHours.toString().padStart(2, '0'));
+                setInputMinute(displayMinutes.toString().padStart(2, '0'));
+                setInputAmPm(newAmPm);
+            }
+        } catch (error) {
+            console.error("[PostPreviewPanel Effect A] Error parsing scheduledDate prop:", error, "Value:", scheduledDate);
+            const now = new Date();
+            setDate(now);
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            setInputHour(hours.toString().padStart(2, '0'));
+            setInputMinute(minutes.toString().padStart(2, '0'));
+            setInputAmPm(ampm);
+        }
+    }, [scheduledDate]); // Only react to external prop changes for setting inputs
 
     // --- Render using props and local UI state ---
     // Color definitions (remain the same)
@@ -190,7 +314,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
     ];
 
     return (
-        <div className={`flex flex-col ${previewPanelBg} text-black overflow-hidden h-full`}>
+        <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
             {/* Header (remains the same) */}
             <div className={`h-[58px] flex items-center px-5 border-b border-gray-200 shrink-0 bg-white`}>
                 <h2 className={`font-semibold text-gray-800`}>Post Preview</h2>
@@ -214,28 +338,22 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
             {/* Post Type Selection - Use postType prop and handlePostTypeClick */}
             <div className={`px-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-3`}> 
                 <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.feedPost ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => handlePostTypeClick('feedPost')} // Calls prop setter
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.post ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => handlePostTypeClick('post')}
                 >
-                    Feed Post
+                    Post
                 </button>
                  <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.igStory ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => handlePostTypeClick('igStory')} // Calls prop setter
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.story ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
+                    onClick={() => handlePostTypeClick('story')}
                 >
-                    IG Story
+                    Story
                 </button>
                  <button 
                     className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.reel ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => handlePostTypeClick('reel')} // Calls prop setter
+                    onClick={() => handlePostTypeClick('reel')}
                 >
                     Reel
-                </button>
-                 <button 
-                    className={`px-4 py-1.5 rounded-lg text-sm font-medium ${postType?.youtubeShorts ? 'bg-blue-500 text-white' : 'bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300'}`}
-                    onClick={() => handlePostTypeClick('youtubeShorts')} // Calls prop setter
-                >
-                    Youtube Shorts
                 </button>
             </div>
 
@@ -287,20 +405,21 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                                     />
                                     <div className="mt-3 border-t pt-3">
                                         <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {timeOptions.map((time) => (
-                                                <button
-                                                    key={time}
-                                                    onClick={() => handleTimeSelect(time)} // Updates local state and calls prop setter
-                                                    className={`text-xs py-1 px-2 rounded ${
-                                                        selectedTime === time // Use local selectedTime state
-                                                            ? 'bg-blue-500 text-white'
-                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                    }`}
-                                                >
-                                                    {time}
-                                                </button>
-                                            ))}
+                                        <div className="flex items-center space-x-2">
+                                            {/* Hour Dropdown */}
+                                            <select value={inputHour} onChange={handleHourChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                                {hourOptions.map(h => <option key={h} value={h}>{h}</option>)}
+                                            </select>
+                                            <span className="text-gray-700">:</span>
+                                            {/* Minute Dropdown */}
+                                            <select value={inputMinute} onChange={handleMinuteChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                                {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+                                            </select>
+                                            {/* AM/PM Selector */}
+                                            <select value={inputAmPm} onChange={handleAmPmChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                                <option value="AM">AM</option>
+                                                <option value="PM">PM</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -308,13 +427,46 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         )}
                     </div>
                     
-                    {/* Right: Schedule Button (remains the same) */}
-                    <button 
-                        className={`px-6 py-2 rounded-lg text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap`}
-                        onClick={handleSchedulePost}
-                    >
-                        Schedule Post
-                    </button>
+                    {/* Right: Schedule Button Dropdown */}
+                    <div className="relative" ref={scheduleButtonRef}>
+                        <div className="flex rounded-lg shadow-sm">
+                            <button 
+                                type="button"
+                                className={`px-6 py-2 text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2`}
+                                onClick={handleSchedulePost}
+                            >
+                                Schedule Post
+                            </button>
+                            <button 
+                                type="button"
+                                className={`px-2 py-2 ${scheduleButtonBg} text-white hover:bg-cyan-700 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2`}
+                                onClick={handleToggleScheduleOptions}
+                                aria-haspopup="true"
+                                aria-expanded={isScheduleOptionsOpen}
+                            >
+                                <ChevronDownIcon className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        {isScheduleOptionsOpen && (
+                            <div 
+                                className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                role="menu"
+                                aria-orientation="vertical"
+                                aria-labelledby="options-menu"
+                            >
+                                <div className="py-1" role="none">
+                                    <button
+                                        onClick={handleDraftPost}
+                                        className="text-gray-700 block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 hover:text-gray-900"
+                                        role="menuitem"
+                                    >
+                                        Draft Post
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

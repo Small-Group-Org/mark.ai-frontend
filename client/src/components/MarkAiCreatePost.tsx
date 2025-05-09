@@ -52,12 +52,11 @@ const MarkAiCreatePost = () => {
     'YouTube': true,
   });
   const [postType, setPostType] = useState({
-    feedPost: true,
-    igStory: false,
+    post: true,
+    story: false,
     reel: false,
-    youtubeShorts: false,
   });
-  const [scheduledDate, setScheduledDate] = useState("2025-05-05T09:00:00Z"); // ISO string
+  const [scheduledDate, setScheduledDate] = useState(new Date().toISOString()); // ISO string
   // --- END SHARED STATE ---
   
   // Function to handle panel resize
@@ -142,6 +141,7 @@ const MarkAiCreatePost = () => {
                 setMediaUrl={setMediaUrl}
                 setSocialPlatforms={setSocialPlatforms}
                 setPostType={setPostType}
+                setScheduledDate={setScheduledDate}
               />
             </Panel>
             
@@ -207,6 +207,7 @@ const MarkAiCreatePost = () => {
               setMediaUrl={setMediaUrl}
               setSocialPlatforms={setSocialPlatforms}
               setPostType={setPostType}
+              setScheduledDate={setScheduledDate}
             />
           </div>
           

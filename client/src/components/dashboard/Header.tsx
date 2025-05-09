@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { LogOut } from 'lucide-react';
+import markAiLogo from '../../assets/logo.png'; // Corrected file name to logo.png
 
 const Header = () => {
     // Header background in Figma seems slightly darker than the Chat Panel overlay bg.
@@ -22,10 +23,11 @@ const Header = () => {
             {/* Logo */}
             <div className="relative flex-shrink-0 w-[220px] flex items-center">
                 {/* We're using a text placeholder instead of Image since we don't have the actual logo */}
-                <div className="text-2xl font-bold text-white">
-                    <span className="text-white">Interview</span>
-                    <span className="text-blue-400">Mark</span>
-                </div>
+                <img
+                    src={markAiLogo} // Changed to use imported logo
+                    alt="Mark.ai Logo"
+                    style={{ width: '200px', height: '45px', objectFit: 'contain' }} // Removed marginLeft: '-10px'
+                />
             </div>
 
             {/* Sign out button */}

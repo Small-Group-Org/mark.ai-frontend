@@ -2160,7 +2160,7 @@
               "children": [
                 {
                   "id": "I109:1528;22:185",
-                  "name": "Let’s create your post 🚀 🚀",
+                  "name": "Let's create your post 🚀 🚀",
                   "type": "TEXT",
                   "x": 16,
                   "y": 8,
@@ -2337,7 +2337,7 @@
               "children": [
                 {
                   "id": "I109:1529;22:185",
-                  "name": "Let’s create your post 🚀 🚀",
+                  "name": "Let's create your post 🚀 🚀",
                   "type": "TEXT",
                   "x": 16.036237716674805,
                   "y": 8.018118858337402,
@@ -2514,7 +2514,7 @@
               "children": [
                 {
                   "id": "I109:1530;22:185",
-                  "name": "Let’s create your post 🚀 🚀",
+                  "name": "Let's create your post 🚀 🚀",
                   "type": "TEXT",
                   "x": 16.036237716674805,
                   "y": 8.018118858337402,
@@ -2691,7 +2691,7 @@
               "children": [
                 {
                   "id": "I109:1531;22:185",
-                  "name": "Let’s create your post 🚀 🚀",
+                  "name": "Let's create your post 🚀 🚀",
                   "type": "TEXT",
                   "x": 16.036237716674805,
                   "y": 8.018118858337402,
@@ -6106,7 +6106,7 @@
               "children": [
                 {
                   "id": "I114:2637;108:2284",
-                  "name": "Feed Post",
+                  "name": "Post",
                   "type": "TEXT",
                   "x": 16,
                   "y": 11,
@@ -6215,7 +6215,7 @@
               "children": [
                 {
                   "id": "I114:2637;108:2286",
-                  "name": "IG Story",
+                  "name": "Story",
                   "type": "TEXT",
                   "x": 8,
                   "y": 11,
@@ -6432,18 +6432,18 @@
               "itemSpacing": 0,
               "children": [
                 {
-                  "id": "I114:2637;108:2519",
-                  "name": "Youtube Shorts",
+                  "id": "I114:2637;108:2517",
+                  "name": "Reel",
                   "type": "TEXT",
-                  "x": -13,
+                  "x": 44,
                   "y": 11,
-                  "width": 141,
+                  "width": 40,
                   "height": 17,
                   "relativeTransform": [
                     [
                       1,
                       0,
-                      -13
+                      44
                     ],
                     [
                       0,
