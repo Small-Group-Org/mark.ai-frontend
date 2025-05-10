@@ -21,6 +21,7 @@ interface PostPreviewPanelProps {
     setSocialPlatforms: React.Dispatch<React.SetStateAction<Record<PlatformName, boolean>>>;
     setPostType: React.Dispatch<React.SetStateAction<{ post: boolean; story: boolean; reel: boolean; }>>;
     setScheduledDate: React.Dispatch<React.SetStateAction<string>>;
+    setMediaUrl?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 // Remove global declaration for window.updatePostData
@@ -42,7 +43,7 @@ const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({ 
     postTitle, postContent, postHashtags, mediaUrl,
     socialPlatforms, postType, scheduledDate,
-    setSocialPlatforms, setPostType, setScheduledDate 
+    setSocialPlatforms, setPostType, setScheduledDate, setMediaUrl
 }) => {
 
     // --- Local UI State Only ---
@@ -60,7 +61,11 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
     const scheduleButtonRef = useRef<HTMLDivElement>(null); // For closing dropdown on outside click
 
     const calendarRef = useRef<HTMLDivElement>(null);
-    const imageUrl = mediaUrl && mediaUrl.length > 0 ? mediaUrl[0] : undefined;
+    const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null);
+    const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
+
+    // Show local preview if file is selected, otherwise use mediaUrl
+    const imageUrl = localImageUrl || (mediaUrl && mediaUrl.length > 0 ? mediaUrl[0] : undefined);
 
     // Options for time dropdowns
     const hourOptions = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
@@ -153,9 +158,16 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         };
     }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
 
-    // REMOVE the updatePostData function and the useEffect that registers it
-    // const updatePostData = (data: PostData) => { ... };
-    // useEffect(() => { window.updatePostData = ... }, []);
+    // Clean up local object URL when file changes
+    useEffect(() => {
+        if (uploadedImageFile) {
+            const url = URL.createObjectURL(uploadedImageFile);
+            setLocalImageUrl(url);
+            return () => URL.revokeObjectURL(url);
+        } else {
+            setLocalImageUrl(null);
+        }
+    }, [uploadedImageFile]);
 
     // --- Event Handlers using Prop Setters ---
 
@@ -217,11 +229,63 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         setInputAmPm(e.target.value as 'AM' | 'PM');
     };
 
-    // Handle schedule button click
-    const handleSchedulePost = () => {
-        console.log(`[PostPreviewPanel] Post scheduled for: ${displayDate} (ISO: ${scheduledDate})`);
-        alert(`Post successfully scheduled for: ${displayDate}`);
-        setIsScheduleOptionsOpen(false); // Close dropdown
+    // Image upload handler
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setUploadedImageFile(file);
+        }
+    };
+
+    // Modified schedule post handler to send image if present
+    const handleSchedulePost = async () => {
+        try {
+            let responseData;
+            if (uploadedImageFile) {
+                const formData = new FormData();
+                formData.append('image', uploadedImageFile);
+                formData.append('title', postTitle || '');
+                formData.append('content', postContent || '');
+                formData.append('hashtags', JSON.stringify(postHashtags));
+                formData.append('socialPlatforms', JSON.stringify(socialPlatforms));
+                formData.append('postType', JSON.stringify(postType));
+                formData.append('scheduledDate', scheduledDate);
+                // TODO: Replace with your actual API endpoint
+                const response = await fetch('/api/schedule-post', {
+                    method: 'POST',
+                    body: formData,
+                });
+                responseData = await response.json();
+            } else {
+                // Fallback: send as JSON if no image
+                const response = await fetch('/api/schedule-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: postTitle,
+                        content: postContent,
+                        hashtags: postHashtags,
+                        socialPlatforms,
+                        postType,
+                        scheduledDate,
+                    }),
+                });
+                responseData = await response.json();
+            }
+            // If backend returns image URL, update mediaUrl and clear local file
+            if (responseData && responseData.url) {
+                setUploadedImageFile(null);
+                setLocalImageUrl(null);
+                if (responseData.url) {
+                    // Assuming setMediaUrl is available via props (if not, lift state up)
+                    if (typeof setMediaUrl === 'function') setMediaUrl([responseData.url]);
+                }
+            }
+            alert(`Post successfully scheduled for: ${displayDate}`);
+            setIsScheduleOptionsOpen(false);
+        } catch (error) {
+            alert('Failed to schedule post.');
+        }
     };
 
     // New handlers for dropdown
@@ -372,6 +436,8 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                     onSchedule={handleSchedulePost}
                     onDateChange={handleDateChange}
                     hideFooter={true}
+                    onImageUpload={handleImageUpload}
+                    uploadedImageFile={uploadedImageFile}
                 />
             </div>
 

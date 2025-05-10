@@ -26,6 +26,10 @@ interface SocialMediaPostPreviewProps {
   hideHeader?: boolean;
   hideFooter?: boolean;
   className?: string;
+  
+  // Add these props for upload
+  onImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  uploadedImageFile?: File | null;
 }
 
 /**
@@ -56,7 +60,31 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   hideHeader = false,
   hideFooter = false,
   className = '',
+  
+  // Add these props for upload
+  onImageUpload,
+  uploadedImageFile,
 }) => {
+  // Helper for local preview
+  const [localPreviewUrl, setLocalPreviewUrl] = React.useState<string | null>(null);
+  const [imageError, setImageError] = React.useState(false);
+
+  React.useEffect(() => {
+    if (uploadedImageFile) {
+      const url = URL.createObjectURL(uploadedImageFile);
+      setLocalPreviewUrl(url);
+      setImageError(false); // Reset error on new upload
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setLocalPreviewUrl(null);
+    }
+  }, [uploadedImageFile]);
+
+  // Reset error if imageUrl changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [imageUrl]);
+
   return (
     <div className={`flex flex-col ${className}`}>
       {/* Post Preview Container */}
@@ -78,9 +106,9 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
         <div className="flex flex-col md:flex-row">
           {/* Left side - Image/Video */}
           <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
-            {!imageUrl ? (
-              /* If no image uploaded yet, show upload option */
-              <div className="flex flex-col items-center text-center">
+            {((!imageUrl && !localPreviewUrl) || imageError) ? (
+              /* If no image uploaded yet, or image failed to load, show upload option */
+              <div className="flex flex-col items-center text-center w-full h-full justify-center">
                 <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -102,27 +130,19 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
                   </svg>
                 </div>
                 <p className="text-sm text-gray-500 mx-4">
-                  <span className="font-semibold text-blue-600">Upload Image</span>
-                  <span className="block mt-1">for your post</span>
+                  <span className="font-semibold text-blue-600 cursor-pointer">Click to Upload</span>
+                  <span className="block mt-1">or Drag & Drop</span>
                 </p>
-                <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onChange={onImageUpload} />
               </div>
             ) : (
-              /* If image is uploaded, show it */
+              /* If image is uploaded, show it (local preview takes precedence) */
               <img 
-                src={imageUrl} 
+                src={localPreviewUrl || imageUrl} 
                 alt="Post visual content" 
                 className="object-cover h-full w-full" 
-                onError={(e) => {
-                  // Add error message when image fails to load
-                  e.currentTarget.alt = "Image could not be loaded - URL may be invalid or inaccessible";
-                  // Optionally add a visual indicator of broken image
-                  e.currentTarget.style.backgroundColor = "#f8f9fa";
-                  e.currentTarget.style.padding = "2rem";
-                  e.currentTarget.style.display = "flex";
-                  e.currentTarget.style.alignItems = "center";
-                  e.currentTarget.style.justifyContent = "center";
-                }}
+                onError={() => setImageError(true)}
+                onLoad={() => setImageError(false)}
               />
             )}
           </div>
