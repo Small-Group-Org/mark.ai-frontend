@@ -477,9 +477,11 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                                                 {hourOptions.map(h => <option key={h} value={h}>{h}</option>)}
                                             </select>
                                             <span className="text-gray-700">:</span>
-                                            {/* Minute Dropdown */}
-                                            <select value={inputMinute} onChange={handleMinuteChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                                                {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+                                            {/* Minute Dropdown - with max-height */}
+                                            <select value={inputMinute} onChange={handleMinuteChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" style={{ scrollbarWidth: 'thin' }}>
+                                                <optgroup style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                                    {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+                                                </optgroup>
                                             </select>
                                             {/* AM/PM Selector */}
                                             <select value={inputAmPm} onChange={handleAmPmChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">

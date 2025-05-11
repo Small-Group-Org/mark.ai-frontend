@@ -216,3 +216,34 @@
   }
 }
 
+/* Fix for long dropdowns (like minute selector) */
+select option {
+  font-size: 14px;
+}
+
+select.time-select {
+  width: auto;
+  max-height: 40px;
+}
+
+/* Limiting minutes dropdown height */
+html select[multiple] {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Apply max-height to all select dropdowns */
+select {
+  max-height: 300px;
+}
+
+/* Ensure dropdown options don't extend too far */
+select:not([multiple]) {
+  overflow: hidden;
+}
+
+select:not([multiple]):hover option {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
