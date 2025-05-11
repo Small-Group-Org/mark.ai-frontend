@@ -493,8 +493,8 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
             </div>
 
             {/* Content Display Area - Use props */}
-            <div className={`flex-1 overflow-y-auto bg-white flex flex-col`}>
-                <div className="p-6 flex-grow">
+            <div className={`flex-1 overflow-y-auto bg-white`}>
+                <div className="p-6">
                     <SocialMediaPostPreview 
                         userInitials="SC"
                         userName="Stephen Conley"
@@ -507,133 +507,98 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         scheduledDate={displayDate} // Use local display state
                         onSchedule={handleSchedulePost}
                         onDateChange={handleDateChange}
-                        hideFooter={true}
+                        hideFooter={false}
                         onImageUpload={handleImageUpload}
                         uploadedImageFile={uploadedImageFile}
                     />
-                </div>
-                
-                {/* Schedule Controls below post preview - aligned right */}
-                <div className="px-6 py-4 border-t border-gray-200 flex justify-end items-center gap-3">
-                    {/* Date Display & Selector */}
-                    <div className="flex items-center space-x-2 relative">
+                    
+                    {/* Calendar Dropdown - uses local state (date, isCalendarOpen) */}
+                    {isCalendarOpen && (
                         <div 
-                            className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}
-                            onClick={handleDateChange}
+                            ref={calendarRef}
+                            className="fixed right-1/4 top-1/3 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
                         >
-                            {/* Use local displayDate state */}
-                            <span className={`text-sm ${datePickerText} font-medium whitespace-nowrap`}>{displayDate}</span> 
-                            <CalendarTodayIcon className={`${datePickerText}`} />
-                        </div>
-                        
-                        {/* Calendar Dropdown - uses local state (date, isCalendarOpen) */}
-                        {isCalendarOpen && (
-                            <div 
-                                ref={calendarRef}
-                                className="absolute right-0 bottom-full mb-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
-                            >
-                                <div className="flex flex-col">
-                                    <Calendar
-                                        mode="single"
-                                        selected={date} // Use local date state
-                                        onSelect={handleSelectDate} // Updates local state and calls prop setter
-                                        className="rounded-md border"
-                                    />
-                                    <div className="mt-3 border-t pt-3">
-                                        <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
-                                        <div className="flex items-center space-x-2">
-                                            {/* Hour Dropdown */}
-                                            <select 
-                                                value={inputHour} 
-                                                onChange={handleHourChange} 
-                                                className="hour-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
-                                                size={1}
-                                            >
-                                                {hourOptions.map(h => <option key={h} value={h}>{h}</option>)}
-                                            </select>
-                                            <span className="text-gray-700">:</span>
-                                            {/* Minute Dropdown with controlled height */}
-                                            <select 
-                                                value={inputMinute} 
-                                                onChange={handleMinuteChange} 
-                                                className="minute-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
-                                                size={1}
-                                            >
-                                                {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
-                                                {/* Add a "Custom..." option that shows all minutes */}
-                                                <option value="custom" disabled style={{fontStyle: 'italic', color: '#aaa'}}>───────────</option>
-                                                {allMinuteOptions
-                                                    .filter(m => !minuteOptions.includes(m)) // Only show minutes not already in the list
-                                                    .map(m => <option key={`all-${m}`} value={m}>{m}</option>)}
-                                            </select>
-                                            {/* AM/PM Selector */}
-                                            <select value={inputAmPm} onChange={handleAmPmChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                                                <option value="AM">AM</option>
-                                                <option value="PM">PM</option>
-                                            </select>
-                                        </div>
+                            <div className="flex flex-col">
+                                <Calendar
+                                    mode="single"
+                                    selected={date} // Use local date state
+                                    onSelect={handleSelectDate} // Updates local state and calls prop setter
+                                    className="rounded-md border"
+                                />
+                                <div className="mt-3 border-t pt-3">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
+                                    <div className="flex items-center space-x-2">
+                                        {/* Hour Dropdown */}
+                                        <select 
+                                            value={inputHour} 
+                                            onChange={handleHourChange} 
+                                            className="hour-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
+                                            size={1}
+                                        >
+                                            {hourOptions.map(h => <option key={h} value={h}>{h}</option>)}
+                                        </select>
+                                        <span className="text-gray-700">:</span>
+                                        {/* Minute Dropdown with controlled height */}
+                                        <select 
+                                            value={inputMinute} 
+                                            onChange={handleMinuteChange} 
+                                            className="minute-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
+                                            size={1}
+                                        >
+                                            {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+                                            {/* Add a "Custom..." option that shows all minutes */}
+                                            <option value="custom" disabled style={{fontStyle: 'italic', color: '#aaa'}}>───────────</option>
+                                            {allMinuteOptions
+                                                .filter(m => !minuteOptions.includes(m)) // Only show minutes not already in the list
+                                                .map(m => <option key={`all-${m}`} value={m}>{m}</option>)}
+                                        </select>
+                                        {/* AM/PM Selector */}
+                                        <select value={inputAmPm} onChange={handleAmPmChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                    
-                    {/* Schedule Button Dropdown */}
-                    <div className="relative" ref={scheduleButtonRef}>
-                        <div className="flex rounded-lg shadow-sm">
-                            <button 
-                                type="button"
-                                className={`px-6 py-2 text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2`}
-                                onClick={handleToggleScheduleOptions}
-                            >
-                                Schedule Post
-                            </button>
-                            <button 
-                                type="button"
-                                className={`px-2 py-2 ${scheduleButtonBg} text-white hover:bg-cyan-700 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2`}
-                                onClick={handleToggleScheduleOptions}
-                                aria-haspopup="true"
-                                aria-expanded={isScheduleOptionsOpen}
-                            >
-                                <ChevronDownIcon className="h-5 w-5" />
-                            </button>
                         </div>
-
-                        {isScheduleOptionsOpen && (
-                            <div 
-                                className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
-                                role="menu"
-                                aria-orientation="vertical"
-                                aria-labelledby="options-menu"
-                            >
-                                <div className="py-1" role="none">
-                                    {/* Schedule Post option */}
-                                    <button
-                                        onClick={handleSchedulePostFromDropdown}
-                                        className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-                                        role="menuitem"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        Schedule Post
-                                    </button>
-                                    
-                                    {/* Draft Post option */}
-                                    <button
-                                        onClick={handleDraftPost}
-                                        className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-                                        role="menuitem"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                        Draft Post
-                                    </button>
-                                </div>
+                    )}
+                    
+                    {/* Schedule options dropdown */}
+                    {isScheduleOptionsOpen && (
+                        <div 
+                            className="fixed right-20 top-2/3 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="options-menu"
+                            ref={scheduleButtonRef}
+                        >
+                            <div className="py-1" role="none">
+                                {/* Schedule Post option */}
+                                <button
+                                    onClick={handleSchedulePostFromDropdown}
+                                    className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                                    role="menuitem"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Schedule Post
+                                </button>
+                                
+                                {/* Draft Post option */}
+                                <button
+                                    onClick={handleDraftPost}
+                                    className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                                    role="menuitem"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Draft Post
+                                </button>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

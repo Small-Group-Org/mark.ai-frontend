@@ -177,21 +177,17 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
       {/* Footer with Schedule Options */}
       {!hideFooter && (
-        <div className="max-w-2xl mx-auto mt-4 flex items-center justify-between flex-wrap gap-4 w-full">
-          {/* Left: Date Display & Selector */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700">Post scheduled for:</span>
-            {/* Date Picker Component */}
-            <div 
-              className="flex items-center bg-gray-200 rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300"
-              onClick={onDateChange}
-            >
-              <span className="text-sm text-gray-700 font-medium whitespace-nowrap">{scheduledDate}</span>
-              <CalendarIcon className="text-gray-700 h-4 w-4" />
-            </div>
+        <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end flex-wrap gap-4 w-full">
+          {/* Date Display & Calendar Button */}
+          <div 
+            className="flex items-center bg-gray-200 rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300"
+            onClick={onDateChange}
+          >
+            <span className="text-sm text-gray-700 font-medium whitespace-nowrap">{scheduledDate}</span>
+            <CalendarIcon className="text-gray-700 h-4 w-4" />
           </div>
           
-          {/* Right: Schedule Button */}
+          {/* Schedule Button */}
           <button 
             className="px-6 py-2 rounded-lg text-sm font-medium bg-cyan-500 text-white hover:bg-cyan-600 whitespace-nowrap"
             onClick={onSchedule}
