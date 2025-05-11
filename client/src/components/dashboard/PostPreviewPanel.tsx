@@ -341,16 +341,10 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         setIsScheduleOptionsOpen(!isScheduleOptionsOpen);
     };
 
-    // Handle "Schedule Post" option selection - just change the button text
-    const handleSelectScheduleOption = () => {
-        setSelectedButtonType('schedule');
-        setIsScheduleOptionsOpen(false);
-    };
-
-    // Handle "Draft Post" option selection - just change the button text
-    const handleSelectDraftOption = () => {
-        setSelectedButtonType('draft');
-        setIsScheduleOptionsOpen(false);
+    // Handle dropdown option toggle - this is called by SocialMediaPostPreview component
+    const handleToggleDropdownOption = () => {
+        // Toggle between 'schedule' and 'draft'
+        setSelectedButtonType(prev => prev === 'schedule' ? 'draft' : 'schedule');
     };
     
     // Handle the actual draft post saving when button is clicked
@@ -522,7 +516,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         scheduledDate={displayDate} // Use local display state
                         onSchedule={handleSchedulePost}
                         onDateChange={handleDateChange}
-                        onToggleOptions={handleToggleScheduleOptions}
+                        onToggleOptions={handleToggleDropdownOption}
                         hideFooter={false}
                         onImageUpload={handleImageUpload}
                         uploadedImageFile={uploadedImageFile}
