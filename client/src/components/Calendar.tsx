@@ -678,18 +678,7 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
         {view === "week" ? <WeekView /> : <MonthView />}
       </div>
       
-      {/* CSS for drag-over effect */}
-      <style jsx>{`
-        .time-slot.drag-over {
-          background-color: rgba(59, 130, 246, 0.15);
-        }
-        
-        body.dragging-active {
-          user-select: none;
-          -webkit-user-select: none;
-          cursor: grabbing !important;
-        }
-      `}</style>
+      {/* Note: CSS for drag-over effect is now in index.css */}
     </div>
   );
 }
