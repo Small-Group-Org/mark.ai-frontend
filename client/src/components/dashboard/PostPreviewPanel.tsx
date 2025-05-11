@@ -69,7 +69,30 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
 
     // Options for time dropdowns
     const hourOptions = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
-    const minuteOptions = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+    
+    // Create a more manageable set of minute options (increments of 5, plus the exact current minute)
+    const generateMinuteOptions = () => {
+        // First create standard 5-minute increments
+        const fiveMinIncrements = Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, '0'));
+        
+        // Get current selected minute
+        const currentSelectedMinute = inputMinute;
+        
+        // If the current selected minute is not in the 5-minute increments, add it
+        if (currentSelectedMinute && !fiveMinIncrements.includes(currentSelectedMinute)) {
+            fiveMinIncrements.push(currentSelectedMinute);
+            // Sort numerically
+            fiveMinIncrements.sort((a, b) => parseInt(a) - parseInt(b));
+        }
+        
+        return fiveMinIncrements;
+    };
+    
+    // For direct input, create all 60 options in case user needs specific minute
+    const allMinuteOptions = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+    
+    // Use the reduced set for display
+    const minuteOptions = generateMinuteOptions();
 
     console.log('[PostPreviewPanel Render] isScheduleOptionsOpen:', isScheduleOptionsOpen);
 
@@ -473,15 +496,28 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                                         <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
                                         <div className="flex items-center space-x-2">
                                             {/* Hour Dropdown */}
-                                            <select value={inputHour} onChange={handleHourChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                                            <select 
+                                                value={inputHour} 
+                                                onChange={handleHourChange} 
+                                                className="hour-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
+                                                size={1}
+                                            >
                                                 {hourOptions.map(h => <option key={h} value={h}>{h}</option>)}
                                             </select>
                                             <span className="text-gray-700">:</span>
-                                            {/* Minute Dropdown - with max-height */}
-                                            <select value={inputMinute} onChange={handleMinuteChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" style={{ scrollbarWidth: 'thin' }}>
-                                                <optgroup style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                                                    {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
-                                                </optgroup>
+                                            {/* Minute Dropdown with controlled height */}
+                                            <select 
+                                                value={inputMinute} 
+                                                onChange={handleMinuteChange} 
+                                                className="minute-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
+                                                size={1}
+                                            >
+                                                {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+                                                {/* Add a "Custom..." option that shows all minutes */}
+                                                <option value="custom" disabled style={{fontStyle: 'italic', color: '#aaa'}}>───────────</option>
+                                                {allMinuteOptions
+                                                    .filter(m => !minuteOptions.includes(m)) // Only show minutes not already in the list
+                                                    .map(m => <option key={`all-${m}`} value={m}>{m}</option>)}
                                             </select>
                                             {/* AM/PM Selector */}
                                             <select value={inputAmPm} onChange={handleAmPmChange} className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">

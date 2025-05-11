@@ -221,29 +221,63 @@ select option {
   font-size: 14px;
 }
 
+/* Time selectors */
 select.time-select {
   width: auto;
   max-height: 40px;
 }
 
-/* Limiting minutes dropdown height */
-html select[multiple] {
-  max-height: 200px;
-  overflow-y: auto;
+/* Specific styles for minute dropdown */
+.minute-select {
+  scrollbar-width: thin;
 }
 
-/* Apply max-height to all select dropdowns */
-select {
+/* This targets Webkit browsers (Chrome, Safari, newer Edge) */
+.minute-select::-webkit-scrollbar {
+  width: 6px;
+}
+
+.minute-select::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+/* This limits the height of dropdown options in supported browsers */
+@supports (-moz-appearance:none) {
+  /* Firefox-specific styles */
+  .minute-select {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+}
+
+/* Microsoft Edge and IE */
+@supports (-ms-ime-align:auto) {
+  .minute-select {
+    max-height: 200px;
+  }
+}
+
+/* General attempt to limit dropdown height across browsers */
+select option {
   max-height: 300px;
 }
 
-/* Ensure dropdown options don't extend too far */
-select:not([multiple]) {
-  overflow: hidden;
+/* Explicitly limit the visible dropdown height when opened */
+.minute-select option {
+  max-height: 200px !important;
 }
 
-select:not([multiple]):hover option {
-  max-height: 200px;
-  overflow-y: auto;
+/* For select in Chrome/Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select {
+    appearance: menulist-button;
+    height: 30px;
+  }
+  
+  /* Ensure the dropdown doesn't go offscreen */
+  select.minute-select {
+    background-position: 90% center;
+  }
 }
 
