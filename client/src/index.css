@@ -4,6 +4,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Calendar specific styles */
+.time-slot.drag-over {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+body.dragging-active {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing !important;
+}
+
+/* For browsers that don't support :has() */
+.calendar-event {
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.calendar-event:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  z-index: 15;
+}
+
 :root {
   /* Base theme colors */
   --background: 0 0% 100%;
