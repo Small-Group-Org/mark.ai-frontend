@@ -493,31 +493,30 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
             </div>
 
             {/* Content Display Area - Use props */}
-            <div className={`flex-1 overflow-y-auto p-6 bg-white`}>
-                <SocialMediaPostPreview 
-                    userInitials="SC"
-                    userName="Stephen Conley"
-                    userHandle="@steveconley"
-                    userTitle="Product Designer"
-                    postTitle={postTitle}      // Use prop
-                    postContent={postContent}  // Use prop
-                    hashtags={postHashtags}    // Use prop
-                    imageUrl={imageUrl}        // Use derived state
-                    scheduledDate={displayDate} // Use local display state
-                    onSchedule={handleSchedulePost}
-                    onDateChange={handleDateChange}
-                    hideFooter={true}
-                    onImageUpload={handleImageUpload}
-                    uploadedImageFile={uploadedImageFile}
-                />
-            </div>
-
-            {/* Footer with Schedule Options - Use displayDate and local state */} 
-            <div className={`px-5 py-4 border-t border-gray-200 bg-white shrink-0`}>
-                <div className="max-w-2xl mx-auto flex items-center justify-between flex-wrap gap-4">
-                    {/* Left: Date Display & Selector */}
+            <div className={`flex-1 overflow-y-auto bg-white flex flex-col`}>
+                <div className="p-6 flex-grow">
+                    <SocialMediaPostPreview 
+                        userInitials="SC"
+                        userName="Stephen Conley"
+                        userHandle="@steveconley"
+                        userTitle="Product Designer"
+                        postTitle={postTitle}      // Use prop
+                        postContent={postContent}  // Use prop
+                        hashtags={postHashtags}    // Use prop
+                        imageUrl={imageUrl}        // Use derived state
+                        scheduledDate={displayDate} // Use local display state
+                        onSchedule={handleSchedulePost}
+                        onDateChange={handleDateChange}
+                        hideFooter={true}
+                        onImageUpload={handleImageUpload}
+                        uploadedImageFile={uploadedImageFile}
+                    />
+                </div>
+                
+                {/* Schedule Controls below post preview - aligned right */}
+                <div className="px-6 py-4 border-t border-gray-200 flex justify-end items-center gap-3">
+                    {/* Date Display & Selector */}
                     <div className="flex items-center space-x-2 relative">
-                        <span className="text-sm text-gray-700">Post scheduled for:</span>
                         <div 
                             className={`flex items-center ${datePickerBg} rounded-md px-3 py-2 space-x-2 cursor-pointer hover:bg-gray-300`}
                             onClick={handleDateChange}
@@ -531,7 +530,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         {isCalendarOpen && (
                             <div 
                                 ref={calendarRef}
-                                className="absolute left-0 bottom-full mb-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3" // Changed position to bottom-full
+                                className="absolute right-0 bottom-full mb-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
                             >
                                 <div className="flex flex-col">
                                     <Calendar
@@ -579,7 +578,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         )}
                     </div>
                     
-                    {/* Right: Schedule Button Dropdown */}
+                    {/* Schedule Button Dropdown */}
                     <div className="relative" ref={scheduleButtonRef}>
                         <div className="flex rounded-lg shadow-sm">
                             <button 
