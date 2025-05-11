@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CalendarIcon, ChevronDown } from 'lucide-react';
 
 // Define types for component props
@@ -69,6 +69,23 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   onImageUpload,
   uploadedImageFile,
 }) => {
+  // State for handling dropdown menu
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Handler for clicking outside the dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   // Helper for local preview
   const [localPreviewUrl, setLocalPreviewUrl] = React.useState<string | null>(null);
   const [imageError, setImageError] = React.useState(false);

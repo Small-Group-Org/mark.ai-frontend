@@ -342,13 +342,13 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
     };
 
     // Handle "Schedule Post" option selection - just change the button text
-    const handleSchedulePostFromDropdown = () => {
+    const handleSelectScheduleOption = () => {
         setSelectedButtonType('schedule');
         setIsScheduleOptionsOpen(false);
     };
 
     // Handle "Draft Post" option selection - just change the button text
-    const handleDraftPost = () => {
+    const handleSelectDraftOption = () => {
         setSelectedButtonType('draft');
         setIsScheduleOptionsOpen(false);
     };
@@ -580,42 +580,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         </div>
                     )}
                     
-                    {/* Schedule options dropdown - positioned above the button */}
-                    {isScheduleOptionsOpen && (
-                        <div 
-                            className="fixed right-20 bottom-20 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
-                            role="menu"
-                            aria-orientation="vertical"
-                            aria-labelledby="options-menu"
-                            ref={scheduleButtonRef}
-                        >
-                            <div className="py-1" role="none">
-                                {/* Schedule Post option */}
-                                <button
-                                    onClick={handleSelectScheduleOption}
-                                    className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-                                    role="menuitem"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    Schedule Post
-                                </button>
-                                
-                                {/* Draft Post option */}
-                                <button
-                                    onClick={handleSelectDraftOption}
-                                    className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
-                                    role="menuitem"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    Draft Post
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                    {/* We're letting the SocialMediaPostPreview component handle the dropdown */}
                 </div>
             </div>
         </div>
