@@ -164,20 +164,34 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
     // For now, this effect primarily reacts to manual changes in time inputs.
     }, [inputHour, inputMinute, inputAmPm, date, setScheduledDate]); // Added date back, as newDate is derived from it.
 
-    // Effect for closing calendar on outside click (remains the same)
+    // Effect for closing calendar and dropdown on outside click or escape key
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            // Close calendar if click is outside
             if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
                 setIsCalendarOpen(false);
             }
+            
             // Close schedule options dropdown if click is outside
             if (scheduleButtonRef.current && !scheduleButtonRef.current.contains(event.target as Node)) {
                 setIsScheduleOptionsOpen(false);
             }
         };
+        
+        // Close dropdown on escape key
+        const handleEscapeKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsCalendarOpen(false);
+                setIsScheduleOptionsOpen(false);
+            }
+        };
+        
         document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("keydown", handleEscapeKey);
+        
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("keydown", handleEscapeKey);
         };
     }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
 
@@ -311,15 +325,49 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         }
     };
 
-    // New handlers for dropdown
+    // Handlers for dropdown menu
     const handleToggleScheduleOptions = () => {
         setIsScheduleOptionsOpen(!isScheduleOptionsOpen);
     };
 
+    // Handle "Schedule Post" option
+    const handleSchedulePostFromDropdown = () => {
+        handleSchedulePost();
+        // Note: handleSchedulePost already closes the dropdown
+    };
+
+    // Handle "Draft Post" option
     const handleDraftPost = () => {
-        console.log("[PostPreviewPanel] Post saved as draft. Scheduled date was:", scheduledDate);
-        alert("Post saved as draft!");
-        setIsScheduleOptionsOpen(false);
+        try {
+            // Save draft post logic
+            const draftData = {
+                title: postTitle,
+                content: postContent,
+                hashtags: postHashtags,
+                platforms: Object.entries(socialPlatforms)
+                    .filter(([_, isActive]) => isActive)
+                    .map(([name]) => name),
+                scheduledDate: scheduledDate,
+                postType: postType
+            };
+            
+            // Save draft to localStorage for persistence
+            const existingDrafts = JSON.parse(localStorage.getItem('postDrafts') || '[]');
+            existingDrafts.push({
+                ...draftData,
+                id: Date.now(),  // Simple unique ID
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem('postDrafts', JSON.stringify(existingDrafts));
+            
+            console.log("[PostPreviewPanel] Post saved as draft:", draftData);
+            alert("Post saved as draft!");
+        } catch (error) {
+            console.error("Error saving draft:", error);
+            alert("Failed to save draft.");
+        } finally {
+            setIsScheduleOptionsOpen(false);
+        }
     };
 
     // Effect to parse the ISO scheduledDate prop and set date and time inputs
@@ -537,7 +585,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                             <button 
                                 type="button"
                                 className={`px-6 py-2 text-sm font-medium ${scheduleButtonBg} text-white hover:bg-cyan-600 whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2`}
-                                onClick={handleSchedulePost}
+                                onClick={handleToggleScheduleOptions}
                             >
                                 Schedule Post
                             </button>
@@ -554,17 +602,33 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
 
                         {isScheduleOptionsOpen && (
                             <div 
-                                className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
                                 role="menu"
                                 aria-orientation="vertical"
                                 aria-labelledby="options-menu"
                             >
                                 <div className="py-1" role="none">
+                                    {/* Schedule Post option */}
                                     <button
-                                        onClick={handleDraftPost}
-                                        className="text-gray-700 block w-full px-4 py-2 text-sm text-left hover:bg-gray-100 hover:text-gray-900"
+                                        onClick={handleSchedulePostFromDropdown}
+                                        className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
                                         role="menuitem"
                                     >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        Schedule Post
+                                    </button>
+                                    
+                                    {/* Draft Post option */}
+                                    <button
+                                        onClick={handleDraftPost}
+                                        className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                                        role="menuitem"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
                                         Draft Post
                                     </button>
                                 </div>
