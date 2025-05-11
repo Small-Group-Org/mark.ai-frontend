@@ -19,15 +19,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const currentRoute = location.split('/')[1] || 'dashboard';
 
   return (
-    <div className="flex h-screen bg-black text-white overflow-hidden">
+    <div className="flex h-screen bg-gray-50 text-white overflow-hidden">
       {/* Sidebar */}
       <Sidebar currentRoute={currentRoute} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col ml-[90px] h-screen">
-        {/* Header */}
-        <Header />
-
         {/* Main Content with Loading State */}
         <main className="flex-1 relative">
           {/* Loading Overlay */}

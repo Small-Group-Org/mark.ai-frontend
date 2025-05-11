@@ -93,7 +93,7 @@ export default function CalendarRoute() {
   return (
     <DashboardLayout>
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col ml-[90px] h-screen">
+      <div className="flex-1 flex flex-col h-screen bg-white">
         {/* Header */}
         <Header />
         
@@ -184,7 +184,7 @@ export default function CalendarRoute() {
               minSize={30} // Minimum 30% width
               className="h-full"
             >
-              <div className="p-6 h-full flex flex-col">
+              <div className="p-6 h-full flex flex-col bg-white">
                 <div className="mb-6">
                   <h1 className="text-3xl font-bold text-blue-400">Content Calendar</h1>
                   <p className="text-gray-400 mt-1">
@@ -192,7 +192,7 @@ export default function CalendarRoute() {
                   </p>
                 </div>
                 
-                <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex-1 overflow-auto">
+                <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
                   <Calendar 
                     events={events} 
                     onEventsChange={handleEventsChange} 
@@ -231,12 +231,12 @@ export default function CalendarRoute() {
           
           {/* Calendar View - Show only when toggled to preview view */}
           <div className={`w-full h-full ${mobileView === 'calendar' ? 'block' : 'hidden'}`}>
-            <div className="p-4 h-full flex flex-col">
+            <div className="p-4 h-full flex flex-col bg-white">
               <div className="mb-4">
                 <h2 className="text-xl font-semibold text-blue-400">Content Calendar</h2>
               </div>
               
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex-1 overflow-auto">
+              <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
                 <Calendar 
                   events={events} 
                   onEventsChange={handleEventsChange} 
