@@ -507,6 +507,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         scheduledDate={displayDate} // Use local display state
                         onSchedule={handleSchedulePost}
                         onDateChange={handleDateChange}
+                        onToggleOptions={handleToggleScheduleOptions}
                         hideFooter={false}
                         onImageUpload={handleImageUpload}
                         uploadedImageFile={uploadedImageFile}

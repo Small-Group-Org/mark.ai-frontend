@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, ChevronDown } from 'lucide-react';
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -21,6 +21,7 @@ interface SocialMediaPostPreviewProps {
   scheduledDate?: string;
   onSchedule?: () => void;
   onDateChange?: () => void;
+  onToggleOptions?: () => void; // For dropdown toggle
   
   // Customization options
   hideHeader?: boolean;
@@ -55,6 +56,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   scheduledDate = 'May 5, 2025 • 9:00 AM',
   onSchedule,
   onDateChange,
+  onToggleOptions,
   
   // Customization options
   hideHeader = false,
@@ -187,13 +189,22 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
             <CalendarIcon className="text-gray-700 h-4 w-4" />
           </div>
           
-          {/* Schedule Button */}
-          <button 
-            className="px-6 py-2 rounded-lg text-sm font-medium bg-cyan-500 text-white hover:bg-cyan-600 whitespace-nowrap"
-            onClick={onSchedule}
-          >
-            Schedule Post
-          </button>
+          {/* Schedule Button with Dropdown */}
+          <div className="flex rounded-lg shadow-sm">
+            <button 
+              className="px-6 py-2 text-sm font-medium bg-cyan-500 text-white hover:bg-cyan-600 whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+              onClick={onToggleOptions || onSchedule}
+            >
+              Schedule Post
+            </button>
+            <button 
+              className="px-2 py-2 bg-cyan-500 text-white hover:bg-cyan-700 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+              onClick={onToggleOptions || onSchedule}
+              aria-haspopup="true"
+            >
+              <ChevronDown className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       )}
     </div>
