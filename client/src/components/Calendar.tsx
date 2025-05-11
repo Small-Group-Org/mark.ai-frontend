@@ -448,27 +448,27 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
       display: "grid",
       gridTemplateColumns: "60px repeat(7, 1fr)",
       gridTemplateRows: "auto repeat(24, 60px)",
-      minWidth: "800px",
+      minWidth: "700px",
       position: "relative",
       zIndex: 1,
       borderCollapse: "collapse"
     }}>
       {/* Time column header (empty corner) */}
-      <div className="sticky left-0 z-10 bg-white border-b border-gray-200"></div>
+      <div className="sticky left-0 top-0 z-20 bg-white border-b border-gray-200"></div>
       
       {/* Day headers */}
       {daysToShow.map((day, index) => (
         <div 
           key={`header-${index}`} 
-          className="sticky top-0 z-50 bg-white border-b border-gray-200 font-medium text-center py-2"
+          className="sticky top-0 z-20 bg-white border-b border-gray-200 font-medium text-center py-2 shadow-sm"
           style={{
             position: "sticky",
             top: 0,
-            zIndex: 50,
+            zIndex: 20,
             backgroundColor: "#fff"
           }}
         >
-          <div>{format(day, 'EEE')}</div>
+          <div className="text-gray-700 font-bold">{format(day, 'EEE')}</div>
           <div className={cn(
             "text-xs mt-1",
             isSameDay(day, new Date()) ? "bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center mx-auto" : ""
@@ -498,11 +498,12 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
       gridTemplateColumns: "repeat(7, 1fr)",
       gridAutoRows: "minmax(100px, auto)",
       gridGap: 0,
-      borderCollapse: "collapse"
+      borderCollapse: "collapse",
+      minWidth: "500px"
     }}>
       {/* Day headers */}
       {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-        <div key={day} className="text-center text-sm text-gray-500 py-1">
+        <div key={day} className="text-center text-sm text-gray-700 py-2 font-bold bg-white sticky top-0 z-20 border-b border-gray-200 shadow-sm">
           {day}
         </div>
       ))}
