@@ -530,7 +530,7 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
       overflow: "hidden"
     }}>
       {/* Calendar Controls */}
-      <div className="bg-white border-b border-gray-200 p-4 flex flex-wrap justify-between items-center gap-2" style={{
+      <div className="bg-white border-b border-gray-200 p-4 flex flex-wrap justify-between items-center gap-2 overflow-x-auto" style={{
         backgroundColor: "#fff",
         borderBottom: "1px solid #e5e7eb",
         padding: "1rem",
@@ -636,11 +636,13 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h2 className="text-lg font-medium" style={{
+          <h2 className="text-lg font-medium text-center min-w-[180px] px-3" style={{
             fontSize: "1.125rem",
             lineHeight: "1.75rem",
             fontWeight: 500
-          }}>{dateRangeText}</h2>
+          }}>
+            {dateRangeText}
+          </h2>
           <button 
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-full"
             onClick={navigateNext}
@@ -679,7 +681,9 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
           backgroundColor: "#fff"
         }}
       >
-        {view === "week" ? <WeekView /> : <MonthView />}
+        <div className="min-w-full md:min-w-0 md:w-full overflow-auto">
+          {view === "week" ? <WeekView /> : <MonthView />}
+        </div>
       </div>
       
       {/* Note: CSS for drag-over effect is now in index.css */}
