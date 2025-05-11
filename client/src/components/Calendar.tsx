@@ -636,10 +636,11 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h2 className="text-lg font-medium text-center min-w-[180px] px-3" style={{
+          <h2 className="text-lg font-medium text-center min-w-[180px] px-3 text-gray-800" style={{
             fontSize: "1.125rem",
             lineHeight: "1.75rem",
-            fontWeight: 500
+            fontWeight: 500,
+            color: "#1f2937"
           }}>
             {dateRangeText}
           </h2>
