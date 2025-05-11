@@ -529,17 +529,20 @@ export default function Calendar({ events, onEventsChange }: CalendarProps) {
       overflow: "hidden"
     }}>
       {/* Calendar Controls */}
-      <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center" style={{
+      <div className="bg-white border-b border-gray-200 p-4 flex flex-wrap justify-between items-center gap-2" style={{
         backgroundColor: "#fff",
         borderBottom: "1px solid #e5e7eb",
         padding: "1rem",
         display: "flex",
+        flexWrap: "wrap",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        gap: "0.5rem"
       }}>
         {/* View Controls */}
-        <div className="flex items-center space-x-2" style={{
+        <div className="flex flex-wrap items-center gap-2" style={{
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "center",
           gap: "0.5rem"
         }}>
