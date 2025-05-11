@@ -580,10 +580,10 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         </div>
                     )}
                     
-                    {/* Schedule options dropdown */}
+                    {/* Schedule options dropdown - positioned above the button */}
                     {isScheduleOptionsOpen && (
                         <div 
-                            className="fixed right-20 top-2/3 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
+                            className="fixed right-20 bottom-20 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
                             role="menu"
                             aria-orientation="vertical"
                             aria-labelledby="options-menu"
@@ -592,7 +592,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                             <div className="py-1" role="none">
                                 {/* Schedule Post option */}
                                 <button
-                                    onClick={handleSchedulePostFromDropdown}
+                                    onClick={handleSelectScheduleOption}
                                     className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
                                     role="menuitem"
                                 >
@@ -604,7 +604,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                                 
                                 {/* Draft Post option */}
                                 <button
-                                    onClick={handleDraftPost}
+                                    onClick={handleSelectDraftOption}
                                     className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
                                     role="menuitem"
                                 >

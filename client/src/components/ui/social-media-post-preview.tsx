@@ -58,6 +58,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   onSchedule,
   onDateChange,
   onToggleOptions,
+  buttonType = 'schedule',
   
   // Customization options
   hideHeader = false,
@@ -194,16 +195,16 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
           <div className="flex rounded-lg shadow-sm">
             <button 
               className="px-6 py-2 text-sm font-medium bg-cyan-500 text-white hover:bg-cyan-600 whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
-              onClick={onToggleOptions || onSchedule}
+              onClick={onSchedule}
             >
-              Schedule Post
+              {buttonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
             </button>
             <button 
               className="px-2 py-2 bg-cyan-500 text-white hover:bg-cyan-700 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
-              onClick={onToggleOptions || onSchedule}
+              onClick={onToggleOptions}
               aria-haspopup="true"
             >
-              <ChevronDown className="h-5 w-5" />
+              <ChevronDown className="h-5 w-5 transform rotate-180" />
             </button>
           </div>
         </div>
