@@ -22,6 +22,7 @@ interface SocialMediaPostPreviewProps {
   onSchedule?: () => void;
   onDateChange?: () => void;
   onToggleOptions?: () => void; // For dropdown toggle
+  buttonType?: 'schedule' | 'draft'; // Button type to display
   
   // Customization options
   hideHeader?: boolean;

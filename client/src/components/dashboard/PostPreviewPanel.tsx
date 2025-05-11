@@ -58,6 +58,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
 
     // State for schedule options dropdown
     const [isScheduleOptionsOpen, setIsScheduleOptionsOpen] = useState(false);
+    const [selectedButtonType, setSelectedButtonType] = useState<'schedule' | 'draft'>('schedule');
     const scheduleButtonRef = useRef<HTMLDivElement>(null); // For closing dropdown on outside click
 
     const calendarRef = useRef<HTMLDivElement>(null);
@@ -274,54 +275,64 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         }
     };
 
-    // Modified schedule post handler to send image if present
+    // Modified handler to handle either scheduling or drafting based on selected type
     const handleSchedulePost = async () => {
         try {
-            let responseData;
-            if (uploadedImageFile) {
-                const formData = new FormData();
-                formData.append('image', uploadedImageFile);
-                formData.append('title', postTitle || '');
-                formData.append('content', postContent || '');
-                formData.append('hashtags', JSON.stringify(postHashtags));
-                formData.append('socialPlatforms', JSON.stringify(socialPlatforms));
-                formData.append('postType', JSON.stringify(postType));
-                formData.append('scheduledDate', scheduledDate);
-                // TODO: Replace with your actual API endpoint
-                const response = await fetch('/api/schedule-post', {
-                    method: 'POST',
-                    body: formData,
-                });
-                responseData = await response.json();
-            } else {
-                // Fallback: send as JSON if no image
-                const response = await fetch('/api/schedule-post', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: postTitle,
-                        content: postContent,
-                        hashtags: postHashtags,
-                        socialPlatforms,
-                        postType,
-                        scheduledDate,
-                    }),
-                });
-                responseData = await response.json();
-            }
-            // If backend returns image URL, update mediaUrl and clear local file
-            if (responseData && responseData.url) {
-                setUploadedImageFile(null);
-                setLocalImageUrl(null);
-                if (responseData.url) {
-                    // Assuming setMediaUrl is available via props (if not, lift state up)
-                    if (typeof setMediaUrl === 'function') setMediaUrl([responseData.url]);
+            // Check which action to perform based on the selected button type
+            if (selectedButtonType === 'schedule') {
+                // Schedule post action
+                let responseData;
+                if (uploadedImageFile) {
+                    const formData = new FormData();
+                    formData.append('image', uploadedImageFile);
+                    formData.append('title', postTitle || '');
+                    formData.append('content', postContent || '');
+                    formData.append('hashtags', JSON.stringify(postHashtags));
+                    formData.append('socialPlatforms', JSON.stringify(socialPlatforms));
+                    formData.append('postType', JSON.stringify(postType));
+                    formData.append('scheduledDate', scheduledDate);
+                    // TODO: Replace with your actual API endpoint
+                    const response = await fetch('/api/schedule-post', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    responseData = await response.json();
+                } else {
+                    // Fallback: send as JSON if no image
+                    const response = await fetch('/api/schedule-post', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: postTitle,
+                            content: postContent,
+                            hashtags: postHashtags,
+                            socialPlatforms,
+                            postType,
+                            scheduledDate,
+                        }),
+                    });
+                    responseData = await response.json();
                 }
+                // If backend returns image URL, update mediaUrl and clear local file
+                if (responseData && responseData.url) {
+                    setUploadedImageFile(null);
+                    setLocalImageUrl(null);
+                    if (responseData.url) {
+                        // Assuming setMediaUrl is available via props (if not, lift state up)
+                        if (typeof setMediaUrl === 'function') setMediaUrl([responseData.url]);
+                    }
+                }
+                alert(`Post successfully scheduled for: ${displayDate}`);
+            } else {
+                // This is a draft action
+                handleSaveDraft();
             }
-            alert(`Post successfully scheduled for: ${displayDate}`);
-            setIsScheduleOptionsOpen(false);
         } catch (error) {
-            alert('Failed to schedule post.');
+            if (selectedButtonType === 'schedule') {
+                alert('Failed to schedule post.');
+            } else {
+                alert('Failed to save draft.');
+            }
         }
     };
 
@@ -330,14 +341,20 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         setIsScheduleOptionsOpen(!isScheduleOptionsOpen);
     };
 
-    // Handle "Schedule Post" option
+    // Handle "Schedule Post" option selection - just change the button text
     const handleSchedulePostFromDropdown = () => {
-        handleSchedulePost();
-        // Note: handleSchedulePost already closes the dropdown
+        setSelectedButtonType('schedule');
+        setIsScheduleOptionsOpen(false);
     };
 
-    // Handle "Draft Post" option
+    // Handle "Draft Post" option selection - just change the button text
     const handleDraftPost = () => {
+        setSelectedButtonType('draft');
+        setIsScheduleOptionsOpen(false);
+    };
+    
+    // Handle the actual draft post saving when button is clicked
+    const handleSaveDraft = () => {
         try {
             // Save draft post logic
             const draftData = {
@@ -365,8 +382,6 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
         } catch (error) {
             console.error("Error saving draft:", error);
             alert("Failed to save draft.");
-        } finally {
-            setIsScheduleOptionsOpen(false);
         }
     };
 
@@ -511,6 +526,7 @@ const PostPreviewPanel: React.FC<PostPreviewPanelProps> = ({
                         hideFooter={false}
                         onImageUpload={handleImageUpload}
                         uploadedImageFile={uploadedImageFile}
+                        buttonType={selectedButtonType} // Pass the selected button type
                     />
                     
                     {/* Calendar Dropdown - uses local state (date, isCalendarOpen) */}
