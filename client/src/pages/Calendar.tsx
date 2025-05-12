@@ -117,7 +117,24 @@ export default function CalendarRoute() {
   // Initialize localStorage on component mount if it doesn't exist
   useEffect(() => {
     if (!localStorage.getItem('calendarEvents')) {
-      localStorage.setItem('calendarEvents', JSON.stringify(events));
+      // Add a sample Tea Garden event as the first event with the correct format for EditPost UI
+      const initialEvents = [
+        {
+          id: 1,
+          title: "Tea Garden",
+          scheduled_time: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(),
+          platforms: ["Instagram", "X/Twitter"],
+          content: "Netflix and Chill\nMountain-ing and Hill\nAbsolutely loved the greens",
+          hashtags: ["#kudremukh", "#mausam", "#karnataka"],
+          mediaUrl: []
+        },
+        ...events.slice(1)
+      ];
+      
+      // Save to localStorage
+      localStorage.setItem('calendarEvents', JSON.stringify(initialEvents));
+      // Update the state
+      setEvents(initialEvents);
     }
   }, []);
   

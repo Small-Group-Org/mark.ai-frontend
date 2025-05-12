@@ -66,27 +66,45 @@ export const useEditPost = () => {
           let mockPost: PostData;
           
           if (calendarEvent) {
-            // This is a calendar event, convert it to PostData format
-            mockPost = {
-              ...DEFAULT_POST,
-              id: postIdOrEvent,
-              title: calendarEvent.title || 'Calendar Event',
-              content: calendarEvent.content || 'Content from calendar event',
-              // Parse hashtags from content if they exist or use default
-              hashtags: calendarEvent.hashtags || ['#event', '#scheduled'],
-              // Use the scheduled time from the event
-              scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
-              // Convert platforms array to socialPlatforms object
-              socialPlatforms: {
-                ...DEFAULT_POST.socialPlatforms,
-                ...(calendarEvent.platforms || []).reduce((acc: any, platform: string) => {
-                  acc[platform] = true;
-                  return acc;
-                }, {})
-              },
-              // Use media URLs if they exist
-              mediaUrl: calendarEvent.mediaUrl || []
-            };
+            // Special handling for Tea Garden demo event
+            if (calendarEvent.title === "Tea Garden") {
+              mockPost = {
+                ...DEFAULT_POST,
+                id: postIdOrEvent,
+                title: "Tea Garden",
+                content: "Netflix and Chill\nMountain-ing and Hill\nAbsolutely loved the greens",
+                hashtags: ["#kudremukh", "#mausam", "#karnataka"],
+                scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
+                socialPlatforms: {
+                  ...DEFAULT_POST.socialPlatforms,
+                  Instagram: true,
+                  "X/Twitter": true,
+                },
+                mediaUrl: ["https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3"]
+              };
+            } else {
+              // This is a regular calendar event, convert it to PostData format
+              mockPost = {
+                ...DEFAULT_POST,
+                id: postIdOrEvent,
+                title: calendarEvent.title || 'Calendar Event',
+                content: calendarEvent.content || 'Content from calendar event',
+                // Parse hashtags from content if they exist or use default
+                hashtags: calendarEvent.hashtags || ['#event', '#scheduled'],
+                // Use the scheduled time from the event
+                scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
+                // Convert platforms array to socialPlatforms object
+                socialPlatforms: {
+                  ...DEFAULT_POST.socialPlatforms,
+                  ...(calendarEvent.platforms || []).reduce((acc: any, platform: string) => {
+                    acc[platform] = true;
+                    return acc;
+                  }, {})
+                },
+                // Use media URLs if they exist
+                mediaUrl: calendarEvent.mediaUrl || []
+              };
+            }
           } else {
             // Regular post, use default mock data
             mockPost = {

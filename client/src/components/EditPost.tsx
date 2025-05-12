@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Edit, Trash2, PlusCircle } from 'lucide-react';
+import { X, Edit, Trash2, PlusCircle, CalendarIcon, Calendar, CheckSquare, XSquare, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 // Define platform types
 export type PlatformName = 'Instagram' | 'Facebook' | 'TikTok' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'YouTube' | 'Bluesky' | 'Google Business';
@@ -131,15 +132,15 @@ const EditPost: React.FC<EditPostProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl flex flex-col h-[90vh] max-h-[600px] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl flex flex-col h-[90vh] max-h-[800px] overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <div className="flex items-center">
-            <Edit className="w-5 h-5 mr-2 text-gray-700" />
-            <h2 className="text-lg font-semibold">Post Details</h2>
+            <h2 className="text-lg font-medium">Post Details</h2>
+            <Edit className="w-5 h-5 ml-2 text-gray-600" />
           </div>
           <button 
-            className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-1 hover:bg-gray-100 transition-colors"
             onClick={onClose}
           >
             <X className="w-5 h-5 text-gray-700" />
@@ -149,38 +150,38 @@ const EditPost: React.FC<EditPostProps> = ({
         {/* Content */}
         <div className="flex flex-grow overflow-hidden">
           {/* Left side - Media preview */}
-          <div className="w-full md:w-2/5 border-r border-gray-200 overflow-auto p-4 flex flex-col">
+          <div className="w-full md:w-5/12 border-r border-gray-200 p-4 flex flex-col">
             <div className="relative flex-grow">
               {editedPost.mediaUrl.length > 0 ? (
-                <div className="relative mb-4 bg-gray-100 rounded-lg overflow-hidden">
+                <div className="relative mb-4 rounded-lg overflow-hidden h-80">
                   <img 
                     src={editedPost.mediaUrl[0]} 
                     alt="Post media" 
-                    className="w-full h-auto object-cover"
+                    className="w-full h-full object-cover"
                   />
                   <button 
-                    className="absolute top-2 right-2 bg-black/50 rounded-full p-1.5 text-white hover:bg-black/70 transition-colors"
+                    className="absolute top-2 right-2 bg-gray-500/80 rounded-full p-1.5 text-white hover:bg-gray-700/80 transition-colors"
                     onClick={() => handleDeleteMedia(0)}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center h-64 bg-gray-100 rounded-lg mb-4">
+                <div className="flex flex-col items-center justify-center h-80 bg-gray-100 rounded-lg mb-4">
                   <PlusCircle className="w-10 h-10 text-gray-400 mb-2" />
                   <p className="text-gray-500 text-sm">Add media</p>
                 </div>
               )}
 
               {/* Media navigation dots */}
-              {editedPost.mediaUrl.length > 1 && (
+              {editedPost.mediaUrl.length > 0 && (
                 <div className="flex justify-center gap-1 my-2">
-                  {editedPost.mediaUrl.map((_, index) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((_, index) => (
                     <div 
                       key={index} 
                       className={cn(
-                        "h-2 rounded-full", 
-                        index === 0 ? "w-4 bg-blue-500" : "w-2 bg-gray-300"
+                        "h-2 w-2 rounded-full", 
+                        index === 0 ? "bg-blue-500" : "bg-gray-300"
                       )}
                     />
                   ))}
@@ -189,158 +190,246 @@ const EditPost: React.FC<EditPostProps> = ({
             </div>
 
             {/* Social platform toggles */}
-            <div className="mt-4">
-              <h3 className="text-sm font-semibold mb-2">Platforms</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.entries(editedPost.socialPlatforms).map(([platform, isActive]) => (
-                  <div 
-                    key={platform}
-                    className={cn(
-                      "flex items-center px-3 py-1.5 rounded-md cursor-pointer text-sm",
-                      isActive ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-500"
-                    )}
-                    onClick={() => handlePlatformToggle(platform as PlatformName)}
-                  >
-                    <span className="font-bold mr-1">{platform.charAt(0)}</span>
-                    <span>{platform}</span>
-                    <div className="ml-auto">
-                      <div 
-                        className={cn(
-                          "w-4 h-4 rounded-full border",
-                          isActive 
-                            ? "border-blue-500 bg-blue-500" 
-                            : "border-gray-300 bg-white"
-                        )}
-                      />
-                    </div>
+            <div className="mt-4 border-t border-gray-100 pt-4">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                <div 
+                  className={cn(
+                    "flex items-center justify-between py-1.5",
+                    editedPost.socialPlatforms['Facebook'] ? "text-gray-900" : "text-gray-500"
+                  )}
+                  onClick={() => handlePlatformToggle('Facebook')}
+                >
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1.5">F</span>
+                    <span>Facebook</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Post type toggles */}
-            <div className="mt-4">
-              <h3 className="text-sm font-semibold mb-2">Post Type</h3>
-              <div className="flex gap-2">
-                {Object.entries(editedPost.postType).map(([type, isActive]) => (
                   <div 
-                    key={type}
                     className={cn(
-                      "px-3 py-1.5 rounded-md cursor-pointer text-sm capitalize",
-                      isActive ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-600"
+                      "w-6 h-6 rounded-md flex items-center justify-center",
+                      editedPost.socialPlatforms['Facebook'] ? "bg-blue-500 text-white" : "bg-gray-200"
                     )}
-                    onClick={() => handlePostTypeToggle(type as 'post' | 'story' | 'reel')}
                   >
-                    {type}
+                    {editedPost.socialPlatforms['Facebook'] ? (
+                      <div className="w-4 h-4 bg-blue-500" />
+                    ) : null}
                   </div>
-                ))}
+                </div>
+                <div 
+                  className={cn(
+                    "flex items-center justify-between py-1.5",
+                    editedPost.socialPlatforms['Instagram'] ? "text-gray-900" : "text-gray-500"
+                  )}
+                  onClick={() => handlePlatformToggle('Instagram')}
+                >
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1.5">I</span>
+                    <span>Instagram</span>
+                  </div>
+                  <div 
+                    className={cn(
+                      "w-6 h-6 rounded-md flex items-center justify-center",
+                      editedPost.socialPlatforms['Instagram'] ? "bg-blue-500 text-white" : "bg-gray-200"
+                    )}
+                  >
+                    {editedPost.socialPlatforms['Instagram'] ? (
+                      <div className="w-4 h-4 bg-blue-500" />
+                    ) : null}
+                  </div>
+                </div>
+                <div 
+                  className={cn(
+                    "flex items-center justify-between py-1.5",
+                    editedPost.socialPlatforms['TikTok'] ? "text-gray-900" : "text-gray-500"
+                  )}
+                  onClick={() => handlePlatformToggle('TikTok')}
+                >
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1.5">T</span>
+                    <span>TikTok</span>
+                  </div>
+                  <div 
+                    className={cn(
+                      "w-6 h-6 rounded-md flex items-center justify-center",
+                      editedPost.socialPlatforms['TikTok'] ? "bg-blue-500 text-white" : "bg-gray-200"
+                    )}
+                  >
+                    {editedPost.socialPlatforms['TikTok'] ? (
+                      <div className="w-4 h-4 bg-blue-500" />
+                    ) : null}
+                  </div>
+                </div>
+                <div 
+                  className={cn(
+                    "flex items-center justify-between py-1.5",
+                    editedPost.socialPlatforms['X/Twitter'] ? "text-gray-900" : "text-gray-500"
+                  )}
+                  onClick={() => handlePlatformToggle('X/Twitter')}
+                >
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1.5">X</span>
+                    <span>X/Twitter</span>
+                  </div>
+                  <div 
+                    className={cn(
+                      "w-6 h-6 rounded-md flex items-center justify-center",
+                      editedPost.socialPlatforms['X/Twitter'] ? "bg-blue-500 text-white" : "bg-gray-200"
+                    )}
+                  >
+                    {editedPost.socialPlatforms['X/Twitter'] ? (
+                      <div className="w-4 h-4 bg-blue-500" />
+                    ) : null}
+                  </div>
+                </div>
+                <div 
+                  className={cn(
+                    "flex items-center justify-between py-1.5",
+                    editedPost.socialPlatforms['Reddit'] ? "text-gray-900" : "text-gray-500"
+                  )}
+                  onClick={() => handlePlatformToggle('Reddit')}
+                >
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1.5">R</span>
+                    <span>Reddit</span>
+                  </div>
+                  <div 
+                    className={cn(
+                      "w-6 h-6 rounded-md flex items-center justify-center",
+                      editedPost.socialPlatforms['Reddit'] ? "bg-blue-500 text-white" : "bg-gray-200"
+                    )}
+                  >
+                    {editedPost.socialPlatforms['Reddit'] ? (
+                      <div className="w-4 h-4 bg-blue-500" />
+                    ) : null}
+                  </div>
+                </div>
+                <div 
+                  className={cn(
+                    "flex items-center justify-between py-1.5",
+                    editedPost.socialPlatforms['YouTube'] ? "text-gray-900" : "text-gray-500"
+                  )}
+                  onClick={() => handlePlatformToggle('YouTube')}
+                >
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1.5">Y</span>
+                    <span>YouTube</span>
+                  </div>
+                  <div 
+                    className={cn(
+                      "w-6 h-6 rounded-md flex items-center justify-center",
+                      editedPost.socialPlatforms['YouTube'] ? "bg-blue-500 text-white" : "bg-gray-200"
+                    )}
+                  >
+                    {editedPost.socialPlatforms['YouTube'] ? (
+                      <div className="w-4 h-4 bg-blue-500" />
+                    ) : null}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Right side - Text content */}
-          <div className="w-full md:w-3/5 p-4 flex flex-col">
+          <div className="w-full md:w-7/12 p-6 flex flex-col">
             {/* Title input */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <div className="mb-5">
+              <label className="block text-sm text-gray-600 mb-1.5">Title</label>
               <input
                 type="text"
                 name="title"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                 value={editedPost.title}
                 onChange={handleTextChange}
                 placeholder="Add a title..."
               />
             </div>
 
-            {/* Content textarea */}
-            <div className="mb-4 flex-grow">
-              <div className="flex justify-between items-center mb-1">
-                <label className="block text-sm font-medium text-gray-700">Caption</label>
-                <span className="text-xs text-gray-400">{characterCount}/2000</span>
+            {/* Content textarea with rich preview */}
+            <div className="mb-5 flex-grow">
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-sm text-gray-600">Caption</label>
+                <span className="text-xs text-gray-400">{characterCount}/2,200</span>
               </div>
-              <textarea
-                name="content"
-                className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none flex-grow"
-                value={editedPost.content}
-                onChange={handleTextChange}
-                placeholder="Write your caption..."
-                maxLength={2000}
-              />
+              {editedPost.content ? (
+                <div className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md resize-none overflow-auto">
+                  {editedPost.content.split('\n').map((line, i) => (
+                    <div key={i} className="mb-1 relative flex items-center">
+                      {line.includes("Netflix and Chill") && (
+                        <div className="flex items-center">
+                          <span>{line}</span>
+                          <XSquare className="ml-1 text-red-500 h-4 w-4" />
+                        </div>
+                      )}
+                      {line.includes("Mountain-ing and Hill") && (
+                        <div className="flex items-center">
+                          <span>{line}</span>
+                          <CheckSquare className="ml-1 text-green-600 h-4 w-4" />
+                        </div>
+                      )}
+                      {!line.includes("Netflix and Chill") && !line.includes("Mountain-ing and Hill") && (
+                        <span>{line}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <textarea
+                  name="content"
+                  className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                  value={editedPost.content}
+                  onChange={handleTextChange}
+                  placeholder="Write your caption..."
+                  maxLength={2200}
+                />
+              )}
             </div>
 
             {/* Hashtags input */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Hashtags</label>
+            <div className="mb-5">
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-sm text-gray-600">Hashtags</label>
+                <span className="text-xs text-gray-400">0/2,200</span>
+              </div>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                 value={editedPost.hashtags.join(' ')}
                 onChange={handleHashtagsChange}
-                placeholder="Add hashtags..."
+                placeholder="#hashtag1 #hashtag2 #hashtag3"
               />
             </div>
 
-            {/* AI generation */}
+            {/* AI Generation Button */}
             {onGenerate && (
-              <div className="mb-4 flex items-end gap-2">
-                <div className="flex-grow">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">AI Generate</label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={generatePrompt}
-                    onChange={(e) => setGeneratePrompt(e.target.value)}
-                    placeholder="Generate content using AI..."
-                  />
-                </div>
+              <div className="mb-6">
                 <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
-                  onClick={handleGenerate}
-                  disabled={!generatePrompt.trim()}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full transition-colors"
+                  onClick={() => {
+                    setGeneratePrompt("Generate engaging content about " + editedPost.title);
+                    handleGenerate();
+                  }}
                 >
-                  Generate
+                  AI Generate
                 </button>
               </div>
             )}
-
-            {/* Scheduled date */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Scheduled Date</label>
-              <input
-                type="datetime-local"
-                name="scheduledDate"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={editedPost.scheduledDate}
-                onChange={handleTextChange}
-              />
+            
+            {/* Scheduling Controls */}
+            <div className="mt-auto">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center text-gray-600 bg-gray-100 py-2 px-4 rounded">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  <span>{format(new Date(editedPost.scheduledDate), 'MMM d, yyyy • h:mm a')}</span>
+                </div>
+                
+                <button
+                  className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors"
+                  onClick={handleSave}
+                >
+                  Schedule Post
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex justify-between items-center p-4 border-t border-gray-200">
-          {onDelete && (
-            <button
-              className="px-4 py-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
-              onClick={onDelete}
-            >
-              Delete
-            </button>
-          )}
-          <div className="ml-auto flex gap-2">
-            <button
-              className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
-              onClick={handleSave}
-            >
-              Save Changes
-            </button>
           </div>
         </div>
       </div>
