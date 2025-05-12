@@ -47,8 +47,8 @@ export const useEditPost = () => {
   const { toast } = useToast();
 
   // Open the edit modal with a specific post
-  const onOpen = useCallback(async (postId?: number | string) => {
-    if (postId) {
+  const onOpen = useCallback(async (postIdOrEvent?: number | string) => {
+    if (postIdOrEvent) {
       setIsLoading(true);
       try {
         // In a real app, you would fetch the post data from your API
@@ -58,14 +58,47 @@ export const useEditPost = () => {
         // For now, we'll use a mock implementation
         // In the future, replace this with actual API calls
         setTimeout(() => {
-          const mockPost: PostData = {
-            ...DEFAULT_POST,
-            id: postId,
-            title: 'Sample Post Title',
-            content: 'This is a sample post content that would be loaded from the server.',
-            hashtags: ['#sample', '#post', '#content'],
-            scheduledDate: new Date().toISOString().slice(0, 16)
-          };
+          // Check if this is a calendar event by looking for the event in our mock calendar data
+          // In a real app, you would have a more robust way to identify the event type
+          const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+          const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
+          
+          let mockPost: PostData;
+          
+          if (calendarEvent) {
+            // This is a calendar event, convert it to PostData format
+            mockPost = {
+              ...DEFAULT_POST,
+              id: postIdOrEvent,
+              title: calendarEvent.title || 'Calendar Event',
+              content: calendarEvent.content || 'Content from calendar event',
+              // Parse hashtags from content if they exist or use default
+              hashtags: calendarEvent.hashtags || ['#event', '#scheduled'],
+              // Use the scheduled time from the event
+              scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
+              // Convert platforms array to socialPlatforms object
+              socialPlatforms: {
+                ...DEFAULT_POST.socialPlatforms,
+                ...(calendarEvent.platforms || []).reduce((acc: any, platform: string) => {
+                  acc[platform] = true;
+                  return acc;
+                }, {})
+              },
+              // Use media URLs if they exist
+              mediaUrl: calendarEvent.mediaUrl || []
+            };
+          } else {
+            // Regular post, use default mock data
+            mockPost = {
+              ...DEFAULT_POST,
+              id: postIdOrEvent,
+              title: 'Sample Post Title',
+              content: 'This is a sample post content that would be loaded from the server.',
+              hashtags: ['#sample', '#post', '#content'],
+              scheduledDate: new Date().toISOString().slice(0, 16)
+            };
+          }
+          
           setPost(mockPost);
           setIsLoading(false);
         }, 500);

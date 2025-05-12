@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Calendar, { EventData } from '../components/Calendar';
 import ChatPanel from '../components/dashboard/ChatPanel';
@@ -40,13 +40,13 @@ export default function CalendarRoute() {
       id: 1,
       title: "Morning Strategy Meeting",
       scheduled_time: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(),
-      platforms: ["Instagram", "Twitter"]
+      platforms: ["Instagram", "X/Twitter"]
     },
     {
       id: 2,
       title: "Social Media Campaign Launch",
       scheduled_time: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(),
-      platforms: ["Facebook", "LinkedIn", "Instagram"]
+      platforms: ["Facebook", "Instagram"]
     },
     {
       id: 3,
@@ -91,6 +91,8 @@ export default function CalendarRoute() {
   // This function will be called when events are updated via drag and drop
   const handleEventsChange = (updatedEvents: EventData[]) => {
     setEvents(updatedEvents);
+    // Save to localStorage for persistence
+    localStorage.setItem('calendarEvents', JSON.stringify(updatedEvents));
     console.log("Events updated:", updatedEvents);
   };
   
@@ -99,6 +101,13 @@ export default function CalendarRoute() {
     // Open the EditPost modal with the clicked event
     onOpen(eventId);
   };
+  
+  // Initialize localStorage on component mount if it doesn't exist
+  useEffect(() => {
+    if (!localStorage.getItem('calendarEvents')) {
+      localStorage.setItem('calendarEvents', JSON.stringify(events));
+    }
+  }, []);
 
   return (
     <DashboardLayout>
