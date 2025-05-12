@@ -338,7 +338,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                         onClick={handleSend}
                         disabled={!inputValue.trim() || isThinking} // Disable send when thinking
                     >
-                        <SendIcon className="w-5 h-5" />
+                        <SendIcon className="w-5 h-5 transform rotate-90" />
                     </button>
                 </div>
             </div>
