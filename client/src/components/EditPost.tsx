@@ -322,7 +322,7 @@ const EditPost: React.FC<EditPostProps> = ({
           </button>
 
           <div className="flex items-center">
-            <h2 className="text-lg font-medium mr-2">Post Details</h2>
+            <h2 className="text-lg font-medium mr-2 text-gray-800">Post Details</h2>
             <button 
               className={cn(
                 "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
@@ -338,9 +338,9 @@ const EditPost: React.FC<EditPostProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex flex-col md:flex-row flex-grow overflow-hidden">
-          {/* Left side - Media preview */}
-          <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-200 p-4 flex flex-col">
+        <div className="flex flex-col md:flex-row flex-grow overflow-auto">
+          {/* Left side - Media preview (desktop) */}
+          <div className="hidden md:flex w-1/2 border-r border-gray-200 p-4 flex-col">
             <div className="relative flex-grow">
               {editedPost.mediaUrl.length > 0 ? (
                 <div className="relative mb-4 rounded-lg overflow-hidden h-80">
@@ -462,7 +462,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   <button
                     key={type}
                     className={cn(
-                      "px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex-1",
+                      "px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex-1",
                       isSelected 
                         ? "bg-blue-500 text-white" 
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200",
@@ -475,11 +475,172 @@ const EditPost: React.FC<EditPostProps> = ({
                   </button>
                 ))}
               </div>
+              
+              {/* Calendar and Schedule buttons - smaller for responsive */}
+              <div className="mt-auto flex space-x-2">
+                <button 
+                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-xs"
+                  disabled={!isEditing}
+                >
+                  <Calendar className="w-3 h-3 mr-1" />
+                  <span>Calendar</span>
+                </button>
+                <button 
+                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-xs"
+                  disabled={!isEditing}
+                >
+                  <Clock className="w-3 h-3 mr-1" />
+                  <span>Schedule</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Right side - Post details */}
-          <div className="w-full md:w-1/2 p-4 flex flex-col h-full md:overflow-y-auto">
+          {/* Mobile view: stacked layout */}
+          <div className="md:hidden flex flex-col w-full">
+            {/* Media preview for mobile */}
+            <div className="mb-4 px-4">
+              {editedPost.mediaUrl.length > 0 ? (
+                <div className="relative rounded-lg overflow-hidden h-64">
+                  <img 
+                    src={editedPost.mediaUrl[0]} 
+                    alt="Post media" 
+                    className="object-cover w-full h-full"
+                  />
+                  {isEditing && (
+                    <button 
+                      className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white"
+                      onClick={() => handleDeleteMedia(0)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className={cn(
+                  "flex flex-col items-center justify-center h-64 rounded-lg border-2 border-dashed border-gray-300",
+                  isEditing ? "bg-gray-100 cursor-pointer hover:bg-gray-200" : "bg-gray-50 opacity-75"
+                )}>
+                  <PlusCircle className={cn("w-10 h-10 mb-2", isEditing ? "text-gray-400" : "text-gray-300")} />
+                  <p className={cn("text-sm", isEditing ? "text-gray-500" : "text-gray-400")}>
+                    {isEditing ? "Click to upload media" : "No media"}
+                  </p>
+                  {isEditing && (
+                    <input 
+                      type="file" 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const url = URL.createObjectURL(file);
+                          setEditedPost(prev => ({
+                            ...prev,
+                            mediaUrl: [...prev.mediaUrl, url]
+                          }));
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Mobile Social Platforms section */}
+            <div className="px-4 mb-4">
+              <h3 className="text-sm text-gray-700 font-medium mb-2">Platforms</h3>
+              
+              {/* Platform toggles - Row 1 (Mobile) */}
+              <div className="grid grid-cols-5 gap-2 mb-2">
+                {Object.entries(editedPost.socialPlatforms)
+                  .slice(0, 5)
+                  .map(([platform, isSelected]) => (
+                    <button
+                      key={platform}
+                      className={cn(
+                        "flex items-center justify-center px-2 py-1.5 rounded-md text-xs font-medium transition-colors",
+                        isSelected 
+                          ? "bg-blue-500 text-white" 
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                        !isEditing && "cursor-default"
+                      )}
+                      onClick={() => isEditing && handlePlatformToggle(platform as PlatformName)}
+                      disabled={!isEditing}
+                    >
+                      {platform === 'X/Twitter' ? 'X' : 
+                       platform === 'Google Business' ? 'Google' : platform}
+                    </button>
+                  ))
+                }
+              </div>
+              
+              {/* Platform toggles - Row 2 (Mobile) */}
+              <div className="grid grid-cols-5 gap-2 mb-4">
+                {Object.entries(editedPost.socialPlatforms)
+                  .slice(5)
+                  .map(([platform, isSelected]) => (
+                    <button
+                      key={platform}
+                      className={cn(
+                        "flex items-center justify-center px-2 py-1.5 rounded-md text-xs font-medium transition-colors",
+                        isSelected 
+                          ? "bg-blue-500 text-white" 
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                        !isEditing && "cursor-default"
+                      )}
+                      onClick={() => isEditing && handlePlatformToggle(platform as PlatformName)}
+                      disabled={!isEditing}
+                    >
+                      {platform === 'X/Twitter' ? 'X' : 
+                       platform === 'Google Business' ? 'Google' : platform}
+                    </button>
+                  ))
+                }
+              </div>
+              
+              {/* Post Type Selection (Mobile) */}
+              <h3 className="text-sm text-gray-700 font-medium mb-2">Post Type</h3>
+              <div className="flex gap-2 mb-4">
+                {Object.entries(editedPost.postType).map(([type, isSelected]) => (
+                  <button
+                    key={type}
+                    className={cn(
+                      "px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex-1",
+                      isSelected 
+                        ? "bg-blue-500 text-white" 
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                      !isEditing && "cursor-default"
+                    )}
+                    onClick={() => isEditing && handlePostTypeToggle(type as 'post' | 'story' | 'reel')}
+                    disabled={!isEditing}
+                  >
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </button>
+                ))}
+              </div>
+              
+              {/* Mobile Calendar and Schedule buttons */}
+              <div className="flex space-x-2 mb-4">
+                <button 
+                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-3 py-2 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow"
+                  disabled={!isEditing}
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  <span>Calendar</span>
+                </button>
+                <button 
+                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-3 py-2 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow"
+                  disabled={!isEditing}
+                >
+                  <Clock className="w-4 h-4 mr-2" />
+                  <span>Schedule</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - Post details (desktop) */}
+          <div className="w-full md:w-1/2 p-4 flex flex-col h-full overflow-y-auto">
             {/* Title input */}
             <div className="mb-3">
               <label className="block text-sm text-gray-600 mb-1">Title</label>
