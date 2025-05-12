@@ -311,7 +311,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl flex flex-col h-[80vh] max-h-[700px] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xl w-[60%] flex flex-col h-[80vh] max-h-[700px] overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <button 
@@ -322,10 +322,10 @@ const EditPost: React.FC<EditPostProps> = ({
           </button>
 
           <div className="flex items-center">
-            <h2 className="text-lg font-medium">Edit Post</h2>
+            <h2 className="text-lg font-medium mr-2">Post Details</h2>
             <button 
               className={cn(
-                "ml-2 text-gray-600 hover:text-gray-900 cursor-pointer",
+                "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
                 isEditing && "text-blue-500"
               )}
               onClick={() => setIsEditing(!isEditing)}
@@ -340,7 +340,7 @@ const EditPost: React.FC<EditPostProps> = ({
         {/* Content */}
         <div className="flex flex-grow overflow-hidden">
           {/* Left side - Media preview */}
-          <div className="w-full md:w-5/12 border-r border-gray-200 p-4 flex flex-col">
+          <div className="w-full md:w-1/2 border-r border-gray-200 p-4 flex flex-col">
             <div className="relative flex-grow">
               {editedPost.mediaUrl.length > 0 ? (
                 <div className="relative mb-4 rounded-lg overflow-hidden h-80">
@@ -479,7 +479,7 @@ const EditPost: React.FC<EditPostProps> = ({
           </div>
 
           {/* Right side - Post details */}
-          <div className="w-full md:w-7/12 p-4 flex flex-col h-full overflow-y-auto">
+          <div className="w-full md:w-1/2 p-4 flex flex-col h-full overflow-y-auto">
             {/* Title input */}
             <div className="mb-3">
               <label className="block text-sm text-gray-600 mb-1">Title</label>
@@ -487,7 +487,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 type="text"
                 name="title"
                 className={cn(
-                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500",
+                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
                   !isEditing && "opacity-75 bg-gray-50 cursor-default"
                 )}
                 value={editedPost.title}
@@ -505,7 +505,7 @@ const EditPost: React.FC<EditPostProps> = ({
               </div>
               {!isEditing || editedPost.content.includes("Netflix and Chill") ? (
                 <div className={cn(
-                  "w-full px-3 py-2 border border-gray-300 rounded-md resize-none max-h-40 overflow-y-auto",
+                  "w-full px-3 py-2 border border-gray-300 rounded-md resize-none max-h-40 overflow-y-auto text-gray-800",
                   !isEditing && "opacity-75 bg-gray-50"
                 )}>
                   {editedPost.content.split('\n').map((line, i) => (
@@ -531,7 +531,7 @@ const EditPost: React.FC<EditPostProps> = ({
               ) : (
                 <textarea
                   name="content"
-                  className="w-full h-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                  className="w-full h-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none text-gray-800"
                   value={editedPost.content}
                   onChange={handleTextChange}
                   placeholder="Write your caption..."
@@ -550,7 +550,7 @@ const EditPost: React.FC<EditPostProps> = ({
               <input
                 type="text"
                 className={cn(
-                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500",
+                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
                   !isEditing && "opacity-75 bg-gray-50 cursor-default"
                 )}
                 value={editedPost.hashtags.map(tag => `#${tag}`).join(' ')}
