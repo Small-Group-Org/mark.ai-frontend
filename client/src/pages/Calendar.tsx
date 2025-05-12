@@ -8,6 +8,7 @@ import {
   PanelResizeHandle 
 } from 'react-resizable-panels';
 import Header from '../components/dashboard/Header';
+import { useEditPostContext } from '@/context/EditPostProvider';
 // Define platform names type
 type PlatformName = 'Bluesky' | 'Facebook' | 'Google Business' | 'Instagram' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'TikTok' | 'YouTube';
 
@@ -19,6 +20,9 @@ interface Message {
 }
 
 export default function CalendarRoute() {
+  // Get access to the EditPost component functions
+  const { onOpen } = useEditPostContext();
+  
   // Layout states
   const [leftPanelSize, setLeftPanelSize] = useState(30); // 30% of the width
   const [rightPanelSize, setRightPanelSize] = useState(70); // 70% of the width
@@ -186,10 +190,28 @@ export default function CalendarRoute() {
             >
               <div className="p-6 h-full flex flex-col bg-white">
                 <div className="mb-6">
-                  <h1 className="text-3xl font-bold text-blue-400">Content Calendar</h1>
-                  <p className="text-gray-400 mt-1">
-                    Manage your scheduled content across platforms
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h1 className="text-3xl font-bold text-blue-400">Content Calendar</h1>
+                      <p className="text-gray-400 mt-1">
+                        Manage your scheduled content across platforms
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => onOpen()} 
+                        className="bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2 transition-colors flex items-center"
+                      >
+                        <span>Create Post</span>
+                      </button>
+                      <button
+                        onClick={() => onOpen(events[0].id)} 
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md px-4 py-2 transition-colors flex items-center"
+                      >
+                        <span>Edit Post</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">

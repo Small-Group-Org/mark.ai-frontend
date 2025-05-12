@@ -13,6 +13,7 @@ import { AuthModalProvider } from "@/components/auth/AuthModalProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuthInit } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import EditPostProvider from "@/context/EditPostProvider";
 
 // AuthInitializer component to load auth state on app start
 function AuthInitializer({ children }: { children: React.ReactNode }) {
@@ -52,10 +53,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthModalProvider>
-          <Toaster />
-          <AuthInitializer>
-            <Router />
-          </AuthInitializer>
+          <EditPostProvider>
+            <Toaster />
+            <AuthInitializer>
+              <Router />
+            </AuthInitializer>
+          </EditPostProvider>
         </AuthModalProvider>
       </TooltipProvider>
     </QueryClientProvider>
