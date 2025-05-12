@@ -482,14 +482,14 @@ const EditPost: React.FC<EditPostProps> = ({
                   className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-xs"
                   disabled={!isEditing}
                 >
-                  <Calendar className="w-3 h-3 mr-1" />
+                  <CalendarIcon className="w-3 h-3 mr-1" />
                   <span>Calendar</span>
                 </button>
                 <button 
                   className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-xs"
                   disabled={!isEditing}
                 >
-                  <Clock className="w-3 h-3 mr-1" />
+                  <CalendarIcon className="w-3 h-3 mr-1" />
                   <span>Schedule</span>
                 </button>
               </div>
@@ -625,14 +625,14 @@ const EditPost: React.FC<EditPostProps> = ({
                   className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-3 py-2 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow"
                   disabled={!isEditing}
                 >
-                  <Calendar className="w-4 h-4 mr-2" />
+                  <CalendarIcon className="w-4 h-4 mr-2" />
                   <span>Calendar</span>
                 </button>
                 <button 
                   className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-3 py-2 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow"
                   disabled={!isEditing}
                 >
-                  <Clock className="w-4 h-4 mr-2" />
+                  <CalendarIcon className="w-4 h-4 mr-2" />
                   <span>Schedule</span>
                 </button>
               </div>
