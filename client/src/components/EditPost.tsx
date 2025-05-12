@@ -311,7 +311,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4">
-      <div className="bg-white rounded-xl shadow-xl w-[60%] flex flex-col h-[80vh] max-h-[700px] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xl w-[95%] sm:w-[85%] md:w-[80%] lg:w-[70%] xl:w-[60%] flex flex-col h-[90vh] md:h-[80vh] max-h-[700px] overflow-auto md:overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <button 
@@ -338,9 +338,9 @@ const EditPost: React.FC<EditPostProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex flex-grow overflow-hidden">
+        <div className="flex flex-col md:flex-row flex-grow overflow-hidden">
           {/* Left side - Media preview */}
-          <div className="w-full md:w-1/2 border-r border-gray-200 p-4 flex flex-col">
+          <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-200 p-4 flex flex-col">
             <div className="relative flex-grow">
               {editedPost.mediaUrl.length > 0 ? (
                 <div className="relative mb-4 rounded-lg overflow-hidden h-80">
@@ -479,7 +479,7 @@ const EditPost: React.FC<EditPostProps> = ({
           </div>
 
           {/* Right side - Post details */}
-          <div className="w-full md:w-1/2 p-4 flex flex-col h-full overflow-y-auto">
+          <div className="w-full md:w-1/2 p-4 flex flex-col h-full md:overflow-y-auto">
             {/* Title input */}
             <div className="mb-3">
               <label className="block text-sm text-gray-600 mb-1">Title</label>
