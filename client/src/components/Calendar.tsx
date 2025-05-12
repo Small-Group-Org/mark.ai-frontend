@@ -32,7 +32,7 @@ const HourRow = ({ hour, days, events, onDragStart, handleEventClick }: {
   days: Date[], 
   events: EventData[],
   onDragStart: (e: React.MouseEvent, event: EventData) => void, 
-  handleEventClick: (eventId: number | string) => void
+  handleEventClick?: (eventId: number | string) => void
 }) => {
   const timeLabel = hour === 0 
     ? '12 AM' 
@@ -105,7 +105,9 @@ const HourRow = ({ hour, days, events, onDragStart, handleEventClick }: {
                     onClick={(e) => {
                       // Prevent event propagation to avoid triggering drag
                       e.stopPropagation();
-                      handleEventClick(event.id);
+                      if (handleEventClick) {
+                        handleEventClick(event.id);
+                      }
                     }}
                   >
                     <div className="drag-handle-indicator absolute top-1 right-1 w-6 h-6 flex items-center justify-center"
@@ -174,7 +176,9 @@ const MonthDay = ({ day, events, currentMonth, handleEventClick }: {
           className="text-xs p-1 my-1 overflow-hidden bg-blue-100 text-blue-800 border-l-2 border-blue-500 rounded-sm cursor-pointer hover:bg-blue-200 transition-colors"
           onClick={(e) => {
             e.stopPropagation();
-            handleEventClick(event.id);
+            if (handleEventClick) {
+              handleEventClick(event.id);
+            }
           }}
         >
           <div className="font-medium truncate">
