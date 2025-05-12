@@ -46,6 +46,19 @@ const EditPost: React.FC<EditPostProps> = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [selectedButtonType, setSelectedButtonType] = useState<'schedule' | 'draft'>('schedule');
+  
+  // Calendar and time selection state
+  const [date, setDate] = useState<Date>(new Date(post.scheduledDate));
+  const [inputHour, setInputHour] = useState<string>(format(new Date(post.scheduledDate), 'h'));
+  const [inputMinute, setInputMinute] = useState<string>(format(new Date(post.scheduledDate), 'mm'));
+  const [inputAmPm, setInputAmPm] = useState<string>(format(new Date(post.scheduledDate), 'a').toUpperCase());
+  
+  // Hour/minute options for dropdowns
+  const hourOptions = Array.from({ length: 12 }, (_, i) => ((i + 1).toString()));
+  const minuteOptions = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'];
+  const allMinuteOptions = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+  
   const calendarRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -181,19 +194,85 @@ const EditPost: React.FC<EditPostProps> = ({
     });
   };
   
-  // Toggle dropdown option
+  // Handle date change functions
+  const handleDateChange = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
+  
+  const handleSelectDate = (selectedDate: Date | undefined) => {
+    if (!selectedDate) return;
+    
+    // Keep the time but update the date
+    const currentDate = new Date(editedPost.scheduledDate);
+    const newDate = new Date(selectedDate);
+    
+    // Extract hours and minutes based on the AM/PM format
+    let hours = parseInt(inputHour);
+    if (inputAmPm === 'PM' && hours < 12) hours += 12;
+    if (inputAmPm === 'AM' && hours === 12) hours = 0;
+    
+    newDate.setHours(hours);
+    newDate.setMinutes(parseInt(inputMinute));
+    
+    // Update both the internal calendar state and the post data
+    setDate(newDate);
+    setEditedPost(prev => ({
+      ...prev,
+      scheduledDate: newDate.toISOString()
+    }));
+  };
+  
+  const handleHourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setInputHour(e.target.value);
+    updateTimeInDate(e.target.value, inputMinute, inputAmPm);
+  };
+  
+  const handleMinuteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setInputMinute(e.target.value);
+    updateTimeInDate(inputHour, e.target.value, inputAmPm);
+  };
+  
+  const handleAmPmChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setInputAmPm(e.target.value);
+    updateTimeInDate(inputHour, inputMinute, e.target.value);
+  };
+  
+  const updateTimeInDate = (hour: string, minute: string, ampm: string) => {
+    const currentDate = new Date(editedPost.scheduledDate);
+    
+    // Convert hour to 24-hour format if needed
+    let hours = parseInt(hour);
+    if (ampm === 'PM' && hours < 12) hours += 12;
+    if (ampm === 'AM' && hours === 12) hours = 0;
+    
+    currentDate.setHours(hours);
+    currentDate.setMinutes(parseInt(minute));
+    
+    setDate(currentDate);
+    setEditedPost(prev => ({
+      ...prev,
+      scheduledDate: currentDate.toISOString()
+    }));
+  };
+  
+  // Handle toggle between Schedule and Draft
   const handleToggleDropdownOption = (option: 'schedule' | 'draft') => {
-    // Update button type based on option
+    setSelectedButtonType(option);
     setIsDropdownOpen(false);
   };
   
-  // Handle save
-  const handleSave = () => {
+  // Handle schedule button click
+  const handleSchedulePost = () => {
+    if (!isEditing) return;
+    
+    // Update post with current settings
     onSave(editedPost);
     setIsEditing(false);
+    
+    const actionText = selectedButtonType === 'schedule' ? 'scheduled' : 'saved as draft';
     toast({
-      title: "Post Saved",
-      description: `Your post has been ${editedPost.scheduledDate ? 'scheduled' : 'saved as draft'}.`,
+      title: selectedButtonType === 'schedule' ? "Post Scheduled" : "Draft Saved",
+      description: `Your post has been ${actionText}.`,
     });
     
     // Notify calendar of the update if this is a calendar event
@@ -204,6 +283,9 @@ const EditPost: React.FC<EditPostProps> = ({
       document.dispatchEvent(event);
     }
   };
+  
+  // Original save function - keeping for compatibility
+  const handleSave = handleSchedulePost;
 
   // Handle delete
   const handleDelete = () => {
@@ -229,26 +311,30 @@ const EditPost: React.FC<EditPostProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-auto p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl flex flex-col h-[90vh] max-h-[800px] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl flex flex-col h-[80vh] max-h-[700px] overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
-          <div className="flex items-center">
-            <h2 className="text-lg font-medium">Post Details</h2>
-            {!isEditing && (
-              <button 
-                className="ml-2 text-gray-600 hover:text-gray-900 cursor-pointer"
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit className="w-5 h-5" />
-              </button>
-            )}
-          </div>
           <button 
             className="p-1 hover:bg-gray-100 transition-colors"
             onClick={onClose}
           >
             <X className="w-5 h-5 text-gray-700" />
           </button>
+
+          <div className="flex items-center">
+            <h2 className="text-lg font-medium">Edit Post</h2>
+            <button 
+              className={cn(
+                "ml-2 text-gray-600 hover:text-gray-900 cursor-pointer",
+                isEditing && "text-blue-500"
+              )}
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              <Edit className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="w-5 h-5"></div> {/* Empty space for alignment */}
         </div>
 
         {/* Content */}
@@ -274,13 +360,30 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
               ) : (
                 <div className={cn(
-                  "flex flex-col items-center justify-center h-80 rounded-lg mb-4",
-                  isEditing ? "bg-gray-100 cursor-pointer" : "bg-gray-50 opacity-75"
+                  "flex flex-col items-center justify-center h-80 rounded-lg mb-4 border-2 border-dashed border-gray-300",
+                  isEditing ? "bg-gray-100 cursor-pointer hover:bg-gray-200" : "bg-gray-50 opacity-75"
                 )}>
                   <PlusCircle className={cn("w-10 h-10 mb-2", isEditing ? "text-gray-400" : "text-gray-300")} />
                   <p className={cn("text-sm", isEditing ? "text-gray-500" : "text-gray-400")}>
-                    {isEditing ? "Add media" : "No media"}
+                    {isEditing ? "Click to upload media" : "No media"}
                   </p>
+                  {isEditing && (
+                    <input 
+                      type="file" 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const url = URL.createObjectURL(file);
+                          setEditedPost(prev => ({
+                            ...prev,
+                            mediaUrl: [...prev.mediaUrl, url]
+                          }));
+                        }
+                      }}
+                    />
+                  )}
                 </div>
               )}
 
@@ -487,10 +590,10 @@ const EditPost: React.FC<EditPostProps> = ({
                     "flex items-center bg-gray-200 rounded-md px-3 py-2 space-x-2",
                     isEditing ? "cursor-pointer hover:bg-gray-300" : "opacity-75 bg-gray-100"
                   )}
-                  onClick={() => isEditing && setIsCalendarOpen(!isCalendarOpen)}
+                  onClick={() => isEditing && handleDateChange()}
                 >
                   <span className="text-sm text-gray-700 font-medium whitespace-nowrap">
-                    {format(new Date(editedPost.scheduledDate), 'MMM d, yyyy • h:mm a')}
+                    {format(date, 'MMM d, yyyy')} • {inputHour}:{inputMinute} {inputAmPm}
                   </span>
                   <CalendarIcon className="text-gray-700 h-4 w-4" />
                 </div>
@@ -502,10 +605,10 @@ const EditPost: React.FC<EditPostProps> = ({
                       "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none",
                       isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
                     )}
-                    onClick={() => isEditing && handleSave()}
+                    onClick={() => isEditing && handleSchedulePost()}
                     disabled={!isEditing}
                   >
-                    Schedule Post
+                    {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
                   </button>
                   <button 
                     className={cn(
@@ -527,7 +630,6 @@ const EditPost: React.FC<EditPostProps> = ({
                       <div className="py-1">
                         <button
                           onClick={() => {
-                            setIsDropdownOpen(false);
                             handleToggleDropdownOption('schedule');
                           }}
                           className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
@@ -541,7 +643,6 @@ const EditPost: React.FC<EditPostProps> = ({
                         
                         <button
                           onClick={() => {
-                            setIsDropdownOpen(false);
                             handleToggleDropdownOption('draft');
                           }}
                           className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
@@ -562,60 +663,52 @@ const EditPost: React.FC<EditPostProps> = ({
               {isCalendarOpen && (
                 <div 
                   ref={calendarRef}
-                  className="absolute right-10 bottom-16 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
+                  className="fixed right-1/4 top-1/3 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-3"
                 >
                   <div className="flex flex-col">
                     <DayPicker
                       mode="single"
-                      selected={new Date(editedPost.scheduledDate)}
-                      onSelect={handleDateSelect}
-                      className="border-b border-gray-200 pb-3"
+                      selected={date}
+                      onSelect={handleSelectDate}
+                      className="rounded-md border"
                     />
-                    
-                    {/* Time selector */}
-                    <div className="pt-3">
-                      <h3 className="text-sm font-medium text-gray-700 mb-2">Time</h3>
-                      <div className="flex items-center space-x-2">
-                        {/* Hour selector */}
-                        <select 
-                          className="w-16 p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-                          value={new Date(editedPost.scheduledDate).getHours()}
-                          onChange={(e) => {
-                            const hour = parseInt(e.target.value);
-                            const date = new Date(editedPost.scheduledDate);
-                            const minutes = date.getMinutes();
-                            handleTimeChange(hour, minutes);
-                          }}
-                        >
-                          {Array.from({length: 24}, (_, i) => (
-                            <option key={i} value={i}>{i.toString().padStart(2, '0')}</option>
-                          ))}
-                        </select>
-                        
-                        <span className="text-gray-700">:</span>
-                        
-                        {/* Minute selector */}
-                        <select 
-                          className="w-16 p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
-                          value={new Date(editedPost.scheduledDate).getMinutes()}
-                          onChange={(e) => {
-                            const minutes = parseInt(e.target.value);
-                            const date = new Date(editedPost.scheduledDate);
-                            const hour = date.getHours();
-                            handleTimeChange(hour, minutes);
-                          }}
-                        >
-                          {Array.from({length: 12}, (_, i) => i * 5).map(minute => (
-                            <option key={minute} value={minute}>{minute.toString().padStart(2, '0')}</option>
-                          ))}
-                          <option value="custom" disabled style={{fontStyle: 'italic', color: '#aaa'}}>───────────</option>
-                          {Array.from({length: 60}, (_, i) => i)
-                            .filter(m => m % 5 !== 0) // Only show minutes not already in the list
-                            .map(minute => (
-                              <option key={`all-${minute}`} value={minute}>{minute.toString().padStart(2, '0')}</option>
-                            ))}
-                        </select>
-                      </div>
+                    <div className="mt-3 border-t pt-3">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Select Time:</h4>
+                        <div className="flex items-center space-x-2">
+                            {/* Hour Dropdown */}
+                            <select 
+                                value={inputHour} 
+                                onChange={handleHourChange} 
+                                className="hour-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
+                                size={1}
+                            >
+                                {hourOptions.map(h => <option key={h} value={h}>{h}</option>)}
+                            </select>
+                            <span className="text-gray-700">:</span>
+                            {/* Minute Dropdown with controlled height */}
+                            <select 
+                                value={inputMinute} 
+                                onChange={handleMinuteChange} 
+                                className="minute-select w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm time-select"
+                                size={1}
+                            >
+                                {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+                                {/* Add a "Custom..." option that shows all minutes */}
+                                <option value="custom" disabled style={{fontStyle: 'italic', color: '#aaa'}}>───────────</option>
+                                {allMinuteOptions
+                                    .filter(m => !minuteOptions.includes(m)) // Only show minutes not already in the list
+                                    .map(m => <option key={`all-${m}`} value={m}>{m}</option>)}
+                            </select>
+                            {/* AM/PM Selector */}
+                            <select 
+                                value={inputAmPm} 
+                                onChange={handleAmPmChange} 
+                                className="w-auto p-1.5 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                            >
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
                     </div>
                   </div>
                 </div>
