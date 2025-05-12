@@ -224,6 +224,7 @@ export default function CalendarRoute() {
                   <Calendar 
                     events={events} 
                     onEventsChange={handleEventsChange}
+                    onEventClick={handleEventClick}
                   />
                 </div>
               </div>
@@ -268,6 +269,7 @@ export default function CalendarRoute() {
                 <Calendar 
                   events={events} 
                   onEventsChange={handleEventsChange}
+                  onEventClick={handleEventClick}
                 />
               </div>
             </div>

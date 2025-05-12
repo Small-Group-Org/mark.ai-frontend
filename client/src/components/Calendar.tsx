@@ -261,6 +261,13 @@ export default function Calendar({ events, onEventsChange, onEventClick }: Calen
     }
   }, [currentDate, view]);
 
+  // Pass the onEventClick prop to the HourRow component
+  const handleEventClick = (eventId: number | string) => {
+    if (onEventClick) {
+      onEventClick(eventId);
+    }
+  };
+
   // Handle event dragging (start)
   const handleDragStart = (e: React.MouseEvent, eventData: EventData) => {
     if (view !== "week") return;
@@ -532,6 +539,7 @@ export default function Calendar({ events, onEventsChange, onEventClick }: Calen
             day={day}
             events={events}
             currentMonth={currentDate}
+            onEventClick={onEventClick}
           />
         ))
       ))}
