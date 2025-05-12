@@ -40,25 +40,37 @@ export default function CalendarRoute() {
       id: 1,
       title: "Morning Strategy Meeting",
       scheduled_time: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(),
-      platforms: ["Instagram", "X/Twitter"]
+      platforms: ["Instagram", "X/Twitter"],
+      content: "Discuss campaign performance and plan next steps.",
+      hashtags: ["#strategy", "#marketing"],
+      mediaUrl: []
     },
     {
       id: 2,
       title: "Social Media Campaign Launch",
       scheduled_time: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(),
-      platforms: ["Facebook", "Instagram"]
+      platforms: ["Facebook", "Instagram"],
+      content: "Launch our summer collection campaign across all platforms.",
+      hashtags: ["#summer", "#launch", "#campaign"],
+      mediaUrl: []
     },
     {
       id: 3,
       title: "Content Review Session",
       scheduled_time: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
-      platforms: ["Facebook", "YouTube"]
+      platforms: ["Facebook", "YouTube"],
+      content: "Review all scheduled content for the upcoming week.",
+      hashtags: ["#content", "#review"],
+      mediaUrl: []
     },
     {
       id: 4,
       title: "Weekly Analytics Report",
       scheduled_time: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString(),
-      platforms: ["Email", "Slack"]
+      platforms: ["X/Twitter", "Facebook"],
+      content: "Share weekly engagement and performance metrics with the team.",
+      hashtags: ["#analytics", "#report", "#metrics"],
+      mediaUrl: []
     }
   ]);
 
@@ -107,6 +119,30 @@ export default function CalendarRoute() {
     if (!localStorage.getItem('calendarEvents')) {
       localStorage.setItem('calendarEvents', JSON.stringify(events));
     }
+  }, []);
+  
+  // Listen for calendar updates from EditPost
+  useEffect(() => {
+    const handleCalendarUpdated = () => {
+      // Load the updated events from localStorage
+      const savedEventsStr = localStorage.getItem('calendarEvents');
+      if (savedEventsStr) {
+        try {
+          const savedEvents = JSON.parse(savedEventsStr);
+          setEvents(savedEvents);
+        } catch (e) {
+          console.error('Error loading updated events', e);
+        }
+      }
+    };
+    
+    // Add event listener
+    window.addEventListener('calendarUpdated', handleCalendarUpdated);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('calendarUpdated', handleCalendarUpdated);
+    };
   }, []);
 
   return (

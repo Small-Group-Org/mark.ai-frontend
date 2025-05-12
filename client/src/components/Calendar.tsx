@@ -13,6 +13,9 @@ export interface EventData {
   title: string;
   scheduled_time: string; // ISO format
   platforms: string[];
+  content?: string;
+  hashtags?: string[];
+  mediaUrl?: string[];
 }
 
 interface CalendarProps {

@@ -138,7 +138,45 @@ export const useEditPost = () => {
       //   await axios.post('/api/posts', updatedPost);
       // }
       
-      // For now, we'll use a mock implementation
+      // Check if this might be a calendar event by getting saved events
+      const savedEventsStr = localStorage.getItem('calendarEvents');
+      if (savedEventsStr && updatedPost.id) {
+        try {
+          const savedEvents = JSON.parse(savedEventsStr);
+          // Look for an event with the same ID
+          const eventIndex = savedEvents.findIndex((event: any) => event.id === updatedPost.id);
+          
+          if (eventIndex !== -1) {
+            // This is a calendar event, so update it
+            const updatedEvent = {
+              ...savedEvents[eventIndex],
+              title: updatedPost.title,
+              content: updatedPost.content,
+              hashtags: updatedPost.hashtags,
+              // Extract active platforms from socialPlatforms object
+              platforms: Object.entries(updatedPost.socialPlatforms)
+                .filter(([_, isActive]) => isActive)
+                .map(([platform]) => platform),
+              // Convert scheduledDate to ISO format for calendar
+              scheduled_time: new Date(updatedPost.scheduledDate).toISOString(),
+              mediaUrl: updatedPost.mediaUrl
+            };
+            
+            // Update the event in the array
+            savedEvents[eventIndex] = updatedEvent;
+            
+            // Save the updated events back to localStorage
+            localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
+            
+            // Refresh the calendar view by dispatching a custom event
+            window.dispatchEvent(new CustomEvent('calendarUpdated'));
+          }
+        } catch (e) {
+          console.error('Error handling calendar event update', e);
+        }
+      }
+      
+      // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
       
       toast({
@@ -167,7 +205,30 @@ export const useEditPost = () => {
       // In a real app, you would send a delete request to your API
       // await axios.delete(`/api/posts/${post.id}`);
       
-      // For now, we'll use a mock implementation
+      // Check if this might be a calendar event
+      const savedEventsStr = localStorage.getItem('calendarEvents');
+      if (savedEventsStr) {
+        try {
+          const savedEvents = JSON.parse(savedEventsStr);
+          // Look for an event with the same ID
+          const eventIndex = savedEvents.findIndex((event: any) => event.id === post.id);
+          
+          if (eventIndex !== -1) {
+            // This is a calendar event, so remove it
+            savedEvents.splice(eventIndex, 1);
+            
+            // Save the updated events back to localStorage
+            localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
+            
+            // Refresh the calendar view by dispatching a custom event
+            window.dispatchEvent(new CustomEvent('calendarUpdated'));
+          }
+        } catch (e) {
+          console.error('Error handling calendar event deletion', e);
+        }
+      }
+      
+      // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
       
       toast({
