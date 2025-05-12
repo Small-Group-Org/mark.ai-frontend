@@ -1,0 +1,109 @@
+**Objective:**
+
+Recreate the "Edit Post" popup UI component using React and CSS Modules within the Replit environment. The component must support two states: **Read-Only** (initial view) and **Edit Mode**. The goal is to achieve a high degree of visual fidelity ("pixel-perfect") compared to the provided reference image *while incorporating the state change*. Use the supplied CSS snippet (`EditPostComp.module.css`) primarily as a source for *specific values* but structure the component semantically and use more readable class names.
+
+**Environment:**
+
+*   Platform: Replit
+*   Framework/Library: React (using functional components and hooks)
+*   Styling: CSS Modules (`EditPostPopup.module.css`)
+*   Language: TypeScript (preferred, adapt if using JavaScript)
+
+**Component State Management:**
+
+*   Introduce a React state variable to manage the mode:
+    ```typescript
+    const [isEditing, setIsEditing] = useState(false);
+    ```
+*   This state will control the appearance and interactivity of various elements.
+
+**Component Structure (`EditPostPopup.tsx`):**
+
+Create a functional component named `EditPostPopup`.
+
+**Styling File (`EditPostPopup.module.css`):**
+
+Create a corresponding CSS Module file.
+
+**Detailed Implementation Steps:**
+
+1.  **Overall Popup Container:**
+    *   (Same as before) Create a main `div` wrapper.
+    *   **Style:** White background (`#fff`), `border-radius: 12px`, `width: 802px`, `height: 553px`, `display: flex`, `flex-direction: column`, `overflow: hidden`. (Optional shadow).
+
+2.  **Popup Header:**
+    *   Create a `div` for the header.
+    *   **Layout:** `display: flex`, `align-items: center`, `justify-content: space-between`.
+    *   **Style:** `height: 43px`, `border-bottom: 1px solid #dbdbdb`, horizontal padding (e.g., `padding: 0 16px;`).
+    *   **Elements:**
+        *   **Title Area:** Use a `div` with `display: flex`, `align-items: center`, `gap: 8px;`.
+            *   **Title Text (`Post Details`):** `span` or `h2`. Style: Poppins, 600, ~15.4px, line-height 20px, color `#000`.
+            *   **Edit Icon:** Conditionally render an Edit SVG icon (`button` wrapper) *only* when `!isEditing`.
+                *   **Action:** Add `onClick={() => setIsEditing(true)}` to this button.
+                *   **Style:** Size: `20px` x `20px` (ref: `.EditFill_316_1796`). Cursor pointer.
+        *   **Close Button (X):** (Same as before) `button` with SVG icon. Size `18px`. Always visible and active.
+
+3.  **Main Content Area (Below Header):**
+    *   (Same as before) `div` with `display: flex`, `flex-direction: row`, `flex-grow: 1`.
+
+4.  **Left Column (Image & Toggles):**
+    *   (Largely the same) Create a `div`, flex column, align center.
+    *   **Style:** `width: 367px`, padding (e.g., `24px`), background white.
+    *   **Elements:**
+        *   **Image Preview:** `img` or `div`. `width: 320px`, `height: 299px`. `position: relative`.
+        *   **Delete Button (on Image):** `button` inside image wrapper. Position absolute, styled as before. Should remain active regardless of `isEditing` state.
+        *   **Pagination Dots:** `div` below image, styled as before.
+        *   **Social Toggles Container:** `div` below dots. Grid layout, styled as before.
+        *   **Individual Toggle Row:** Reusable component/structure. **Crucially:** These toggles should remain interactive regardless of the `isEditing` state. Style as before (icons, names, toggle switches).
+
+5.  **Right Column (Post Details):**
+    *   Create a `div` for the right column.
+    *   **Layout:** `display: flex`, `flex-direction: column`.
+    *   **Style:** `width: 435px`, background white, `border-left: 1px solid #dbdbdb`, `padding: 24px 32px;`.
+    *   **Elements (Layout with flex column, gap: ~16-20px):**
+        *   **General Field Styling (Read-Only State):** Create a modifier class in your CSS module (e.g., `.readOnlyField`) that sets `opacity: 0.5;` and potentially `cursor: default;` and a slightly different background/border if needed (e.g., `background-color: #f8f8f8; border-color: transparent;`).
+        *   **Title Field:**
+            *   Label (`Title`): Style as before.
+            *   Input: HTML `input`.
+                *   **Props:** Add `readOnly={!isEditing}`.
+                *   **Style:** Apply base input styles (background `#F9FAFB`, border `#E4E4E7`, etc.) and conditionally add the `.readOnlyField` class: `className={\`\${styles.textInput} \${!isEditing ? styles.readOnlyField : ''}\`}`. Ensure text color is legible but perhaps slightly faded in read-only.
+        *   **Caption Field:**
+            *   Label (`Caption`): Style as before.
+            *   Textarea: HTML `textarea`.
+                *   **Props:** Add `readOnly={!isEditing}`.
+                *   **Style:** Apply base textarea styles and conditionally add the `.readOnlyField` class as done for the input. Handle height/rows/resize.
+        *   **Character Count:** Style as before. Visibility shouldn't change.
+        *   **Hashtags Field:**
+            *   Label (`Hashtags`): Style as before.
+            *   Input: HTML `input`.
+                *   **Props:** Add `readOnly={!isEditing}`.
+                *   **Style:** Apply base input styles and conditionally add the `.readOnlyField` class.
+        *   **AI Generate Button:** `button` aligned left.
+            *   **Props:** Add `disabled={!isEditing}`.
+            *   **Style:** Apply base styles (blue background, white text, etc.). Add specific `:disabled` styles in your CSS: `opacity: 0.5; cursor: not-allowed; background-color: #cccccc; /* or a faded blue */`. (Ref: `.Button_316_1820`).
+        *   **Scheduling & Action Row:** `div` at the bottom, flex, space-between, align-center. `margin-top: auto;`.
+            *   **Date/Time Picker:** Styled `div` or component. Might also need a disabled state visually if editing date/time is only allowed when `isEditing` is true. Add `disabled={!isEditing}` if it's an interactive element and style accordingly.
+            *   **Schedule Post Button:** `button`.
+                *   **Props:** Add `disabled={!isEditing}`.
+                *   **Style:** Apply base styles (teal background, white text). Add specific `:disabled` styles: `opacity: 0.5; cursor: not-allowed; background-color: #a0a0a0; /* or a faded teal */`.
+
+6.  **Fonts:**
+    *   (Same as before) Ensure Poppins and Inter are imported.
+
+7.  **Interactivity:**
+    *   Include the `isEditing` state hook.
+    *   Implement the `onClick` for the Edit icon to set `isEditing` to `true`.
+    *   `onChange` handlers for inputs/textarea should update their respective state variables (these will only fire when `isEditing` is true because of the `readOnly` prop).
+    *   Other `onClick` handlers (Close, Delete, Toggles, AI Generate, Schedule) - ensure AI Generate and Schedule only trigger their logic if `!isEditing` is false (or rely on the `disabled` prop preventing clicks).
+
+**Refinement:**
+
+*   Thoroughly test both the **Read-Only** state (`isEditing = false`) and the **Edit Mode** (`isEditing = true`).
+*   Verify that fields are not interactive in read-only mode.
+*   Verify that the Edit icon appears/disappears correctly.
+*   Verify that disabled buttons (AI Generate, Schedule Post) look and act disabled.
+*   Fine-tune the appearance of read-only fields (`opacity`, `background`, `cursor`) to match the desired look.
+
+**Start Building:**
+
+Create/update `EditPostPopup.tsx` and `EditPostPopup.module.css` in Replit, incorporating the `isEditing` state logic and conditional styles/props as outlined above.

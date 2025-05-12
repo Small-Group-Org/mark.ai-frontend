@@ -42,6 +42,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const [activeTab, setActiveTab] = useState<'content' | 'schedule'>('content');
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const { toast } = useToast();
 
   // Update character count when content changes
@@ -121,6 +122,7 @@ const EditPost: React.FC<EditPostProps> = ({
   // Handle save
   const handleSave = () => {
     onSave(editedPost);
+    setIsEditing(false);
     toast({
       title: "Post Saved",
       description: "Your post has been saved successfully.",
@@ -137,7 +139,14 @@ const EditPost: React.FC<EditPostProps> = ({
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <div className="flex items-center">
             <h2 className="text-lg font-medium">Post Details</h2>
-            <Edit className="w-5 h-5 ml-2 text-gray-600" />
+            {!isEditing && (
+              <button 
+                className="ml-2 text-gray-600 hover:text-gray-900 cursor-pointer"
+                onClick={() => setIsEditing(true)}
+              >
+                <Edit className="w-5 h-5" />
+              </button>
+            )}
           </div>
           <button 
             className="p-1 hover:bg-gray-100 transition-colors"
@@ -336,10 +345,14 @@ const EditPost: React.FC<EditPostProps> = ({
               <input
                 type="text"
                 name="title"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={cn(
+                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500",
+                  !isEditing && "opacity-75 bg-gray-50 cursor-default"
+                )}
                 value={editedPost.title}
                 onChange={handleTextChange}
                 placeholder="Add a title..."
+                readOnly={!isEditing}
               />
             </div>
 
@@ -349,8 +362,11 @@ const EditPost: React.FC<EditPostProps> = ({
                 <label className="block text-sm text-gray-600">Caption</label>
                 <span className="text-xs text-gray-400">{characterCount}/2,200</span>
               </div>
-              {editedPost.content ? (
-                <div className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md resize-none overflow-auto">
+              {!isEditing || editedPost.content.includes("Netflix and Chill") ? (
+                <div className={cn(
+                  "w-full h-32 px-3 py-2 border border-gray-300 rounded-md resize-none overflow-auto",
+                  !isEditing && "opacity-75 bg-gray-50"
+                )}>
                   {editedPost.content.split('\n').map((line, i) => (
                     <div key={i} className="mb-1 relative flex items-center">
                       {line.includes("Netflix and Chill") && (
@@ -379,6 +395,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   onChange={handleTextChange}
                   placeholder="Write your caption..."
                   maxLength={2200}
+                  readOnly={!isEditing}
                 />
               )}
             </div>
@@ -391,10 +408,14 @@ const EditPost: React.FC<EditPostProps> = ({
               </div>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className={cn(
+                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500",
+                  !isEditing && "opacity-75 bg-gray-50 cursor-default"
+                )}
                 value={editedPost.hashtags.join(' ')}
                 onChange={handleHashtagsChange}
                 placeholder="#hashtag1 #hashtag2 #hashtag3"
+                readOnly={!isEditing}
               />
             </div>
 
@@ -402,11 +423,17 @@ const EditPost: React.FC<EditPostProps> = ({
             {onGenerate && (
               <div className="mb-6">
                 <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full transition-colors"
+                  className={cn(
+                    "bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full transition-colors",
+                    isEditing ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed bg-blue-400"
+                  )}
                   onClick={() => {
-                    setGeneratePrompt("Generate engaging content about " + editedPost.title);
-                    handleGenerate();
+                    if (isEditing) {
+                      setGeneratePrompt("Generate engaging content about " + editedPost.title);
+                      handleGenerate();
+                    }
                   }}
+                  disabled={!isEditing}
                 >
                   AI Generate
                 </button>
@@ -416,14 +443,21 @@ const EditPost: React.FC<EditPostProps> = ({
             {/* Scheduling Controls */}
             <div className="mt-auto">
               <div className="flex justify-between items-center">
-                <div className="flex items-center text-gray-600 bg-gray-100 py-2 px-4 rounded">
+                <div className={cn(
+                  "flex items-center text-gray-600 py-2 px-4 rounded",
+                  !isEditing ? "bg-gray-50 opacity-75" : "bg-gray-100"
+                )}>
                   <Calendar className="h-4 w-4 mr-2" />
                   <span>{format(new Date(editedPost.scheduledDate), 'MMM d, yyyy • h:mm a')}</span>
                 </div>
                 
                 <button
-                  className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors"
-                  onClick={handleSave}
+                  className={cn(
+                    "flex items-center bg-blue-500 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors",
+                    isEditing ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed bg-blue-400"
+                  )}
+                  onClick={() => isEditing && handleSave()}
+                  disabled={!isEditing}
                 >
                   Schedule Post
                   <ChevronDown className="w-4 h-4 ml-2" />
