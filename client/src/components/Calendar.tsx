@@ -27,11 +27,12 @@ const cn = (...classes: (string | boolean | undefined)[]) => {
 };
 
 // Hour Row Component
-const HourRow = ({ hour, days, events, onDragStart }: { 
+const HourRow = ({ hour, days, events, onDragStart, handleEventClick }: { 
   hour: number, 
   days: Date[], 
   events: EventData[],
-  onDragStart: (e: React.MouseEvent, event: EventData) => void 
+  onDragStart: (e: React.MouseEvent, event: EventData) => void, 
+  handleEventClick: (eventId: number | string) => void
 }) => {
   const timeLabel = hour === 0 
     ? '12 AM' 
@@ -104,10 +105,7 @@ const HourRow = ({ hour, days, events, onDragStart }: {
                     onClick={(e) => {
                       // Prevent event propagation to avoid triggering drag
                       e.stopPropagation();
-                      // If onEventClick prop is provided, call it
-                      if (onEventClick) {
-                        onEventClick(event.id);
-                      }
+                      handleEventClick(event.id);
                     }}
                   >
                     <div className="drag-handle-indicator absolute top-1 right-1 w-6 h-6 flex items-center justify-center"
@@ -145,11 +143,11 @@ const HourRow = ({ hour, days, events, onDragStart }: {
 };
 
 // Month Day Component
-const MonthDay = ({ day, events, currentMonth, onEventClick }: { 
+const MonthDay = ({ day, events, currentMonth, handleEventClick }: { 
   day: Date, 
   events: EventData[],
   currentMonth: Date,
-  onEventClick?: (eventId: number | string) => void
+  handleEventClick: (eventId: number | string) => void
 }) => {
   const dayEvents = events.filter(event => {
     const eventDate = parseISO(event.scheduled_time);
@@ -176,9 +174,7 @@ const MonthDay = ({ day, events, currentMonth, onEventClick }: {
           className="text-xs p-1 my-1 overflow-hidden bg-blue-100 text-blue-800 border-l-2 border-blue-500 rounded-sm cursor-pointer hover:bg-blue-200 transition-colors"
           onClick={(e) => {
             e.stopPropagation();
-            if (onEventClick) {
-              onEventClick(event.id);
-            }
+            handleEventClick(event.id);
           }}
         >
           <div className="font-medium truncate">
@@ -509,6 +505,7 @@ export default function Calendar({ events, onEventsChange, onEventClick }: Calen
           days={daysToShow}
           events={events}
           onDragStart={handleDragStart}
+          handleEventClick={handleEventClick}
         />
       ))}
     </div>
@@ -539,7 +536,7 @@ export default function Calendar({ events, onEventsChange, onEventClick }: Calen
             day={day}
             events={events}
             currentMonth={currentDate}
-            onEventClick={onEventClick}
+            handleEventClick={handleEventClick}
           />
         ))
       ))}
