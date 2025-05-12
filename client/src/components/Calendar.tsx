@@ -101,6 +101,14 @@ const HourRow = ({ hour, days, events, onDragStart }: {
                       zIndex: 11
                     }}
                     onMouseDown={(e) => onDragStart(e, event)}
+                    onClick={(e) => {
+                      // Prevent event propagation to avoid triggering drag
+                      e.stopPropagation();
+                      // If onEventClick prop is provided, call it
+                      if (onEventClick) {
+                        onEventClick(event.id);
+                      }
+                    }}
                   >
                     <div className="drag-handle-indicator absolute top-1 right-1 w-6 h-6 flex items-center justify-center"
                       style={{
@@ -137,10 +145,11 @@ const HourRow = ({ hour, days, events, onDragStart }: {
 };
 
 // Month Day Component
-const MonthDay = ({ day, events, currentMonth }: { 
+const MonthDay = ({ day, events, currentMonth, onEventClick }: { 
   day: Date, 
   events: EventData[],
-  currentMonth: Date
+  currentMonth: Date,
+  onEventClick?: (eventId: number | string) => void
 }) => {
   const dayEvents = events.filter(event => {
     const eventDate = parseISO(event.scheduled_time);
@@ -164,7 +173,13 @@ const MonthDay = ({ day, events, currentMonth }: {
       {dayEvents.map(event => (
         <div 
           key={`month-event-${event.id}`}
-          className="text-xs p-1 my-1 overflow-hidden bg-blue-100 text-blue-800 border-l-2 border-blue-500 rounded-sm"
+          className="text-xs p-1 my-1 overflow-hidden bg-blue-100 text-blue-800 border-l-2 border-blue-500 rounded-sm cursor-pointer hover:bg-blue-200 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onEventClick) {
+              onEventClick(event.id);
+            }
+          }}
         >
           <div className="font-medium truncate">
             {format(parseISO(event.scheduled_time), 'h:mm a')} - {event.title}
