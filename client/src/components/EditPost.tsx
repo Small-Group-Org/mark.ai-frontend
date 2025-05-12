@@ -168,17 +168,24 @@ const EditPost: React.FC<EditPostProps> = ({
                     alt="Post media" 
                     className="w-full h-full object-cover"
                   />
-                  <button 
-                    className="absolute top-2 right-2 bg-gray-500/80 rounded-full p-1.5 text-white hover:bg-gray-700/80 transition-colors"
-                    onClick={() => handleDeleteMedia(0)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {isEditing && (
+                    <button 
+                      className="absolute top-2 right-2 bg-gray-500/80 rounded-full p-1.5 text-white hover:bg-gray-700/80 transition-colors"
+                      onClick={() => handleDeleteMedia(0)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center h-80 bg-gray-100 rounded-lg mb-4">
-                  <PlusCircle className="w-10 h-10 text-gray-400 mb-2" />
-                  <p className="text-gray-500 text-sm">Add media</p>
+                <div className={cn(
+                  "flex flex-col items-center justify-center h-80 rounded-lg mb-4",
+                  isEditing ? "bg-gray-100 cursor-pointer" : "bg-gray-50 opacity-75"
+                )}>
+                  <PlusCircle className={cn("w-10 h-10 mb-2", isEditing ? "text-gray-400" : "text-gray-300")} />
+                  <p className={cn("text-sm", isEditing ? "text-gray-500" : "text-gray-400")}>
+                    {isEditing ? "Add media" : "No media"}
+                  </p>
                 </div>
               )}
 
