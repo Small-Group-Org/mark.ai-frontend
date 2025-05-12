@@ -43,6 +43,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const [activeTab, setActiveTab] = useState<'content' | 'schedule'>('content');
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
+  const [showGeneratePrompt, setShowGeneratePrompt] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -322,7 +323,7 @@ const EditPost: React.FC<EditPostProps> = ({
           </button>
 
           <div className="flex items-center">
-            <h2 className="text-lg font-medium mr-2 text-gray-800">Post Details</h2>
+            <h2 className="text-lg font-medium mr-2 text-gray-800 dark:text-gray-100">Post Details</h2>
             <button 
               className={cn(
                 "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
@@ -408,14 +409,14 @@ const EditPost: React.FC<EditPostProps> = ({
               <h3 className="text-sm text-gray-700 font-medium mb-3">Platforms</h3>
               
               {/* Platform toggles - Row 1 */}
-              <div className="grid grid-cols-5 gap-2 mb-2">
+              <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 gap-2 mb-2">
                 {Object.entries(editedPost.socialPlatforms)
                   .slice(0, 5)
                   .map(([platform, isSelected]) => (
                     <button
                       key={platform}
                       className={cn(
-                        "flex items-center justify-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
+                        "flex items-center justify-center px-1 py-1.5 rounded-md text-xs font-medium transition-colors",
                         isSelected 
                           ? "bg-blue-500 text-white" 
                           : "bg-gray-100 text-gray-600 hover:bg-gray-200",
@@ -425,21 +426,22 @@ const EditPost: React.FC<EditPostProps> = ({
                       disabled={!isEditing}
                     >
                       {platform === 'X/Twitter' ? 'X' : 
-                       platform === 'Google Business' ? 'Google' : platform}
+                       platform === 'Google Business' ? 'Google' :
+                       platform === 'Instagram' ? 'IG' : platform}
                     </button>
                   ))
                 }
               </div>
               
               {/* Platform toggles - Row 2 */}
-              <div className="grid grid-cols-5 gap-2 mb-4">
+              <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-3 gap-2 mb-4">
                 {Object.entries(editedPost.socialPlatforms)
                   .slice(5)
                   .map(([platform, isSelected]) => (
                     <button
                       key={platform}
                       className={cn(
-                        "flex items-center justify-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
+                        "flex items-center justify-center px-1 py-1.5 rounded-md text-xs font-medium transition-colors",
                         isSelected 
                           ? "bg-blue-500 text-white" 
                           : "bg-gray-100 text-gray-600 hover:bg-gray-200",
@@ -449,7 +451,8 @@ const EditPost: React.FC<EditPostProps> = ({
                       disabled={!isEditing}
                     >
                       {platform === 'X/Twitter' ? 'X' : 
-                       platform === 'Google Business' ? 'Google' : platform}
+                       platform === 'Google Business' ? 'Google' :
+                       platform === 'Instagram' ? 'IG' : platform}
                     </button>
                   ))
                 }
@@ -479,25 +482,25 @@ const EditPost: React.FC<EditPostProps> = ({
               {/* Calendar and Schedule buttons - smaller for responsive */}
               <div className="mt-auto flex space-x-2">
                 <button 
-                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-xs"
+                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-1 md:px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-[10px] md:text-xs"
                   disabled={!isEditing}
                 >
-                  <CalendarIcon className="w-3 h-3 mr-1" />
-                  <span>Calendar</span>
+                  <CalendarIcon className="w-3 h-3 md:mr-1" />
+                  <span className="hidden sm:inline">Calendar</span>
                 </button>
                 <button 
-                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-xs"
+                  className="flex items-center justify-center text-gray-700 hover:text-gray-900 px-1 md:px-2 py-1.5 rounded bg-gray-100 hover:bg-gray-200 transition-colors flex-grow text-[10px] md:text-xs"
                   disabled={!isEditing}
                 >
-                  <CalendarIcon className="w-3 h-3 mr-1" />
-                  <span>Schedule</span>
+                  <CalendarIcon className="w-3 h-3 md:mr-1" />
+                  <span className="hidden sm:inline">Schedule</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Mobile view: stacked layout */}
-          <div className="md:hidden flex flex-col w-full">
+          <div className="md:hidden flex flex-col w-full overflow-y-auto">
             {/* Media preview for mobile */}
             <div className="mb-4 px-4">
               {editedPost.mediaUrl.length > 0 ? (
@@ -546,7 +549,105 @@ const EditPost: React.FC<EditPostProps> = ({
               )}
             </div>
             
-            {/* Mobile Social Platforms section */}
+            {/* Title input (Mobile) */}
+            <div className="mb-3 px-4">
+              <label className="block text-sm text-gray-600 mb-1">Title</label>
+              <input
+                type="text"
+                name="title"
+                className={cn(
+                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
+                  !isEditing && "opacity-75 bg-gray-50 cursor-default"
+                )}
+                value={editedPost.title}
+                onChange={handleTextChange}
+                placeholder="Enter post title"
+                readOnly={!isEditing}
+              />
+            </div>
+            
+            {/* Content textarea (Mobile) */}
+            <div className="mb-3 px-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm text-gray-600">Caption</label>
+                <span className="text-xs text-gray-400">{characterCount}/2,200</span>
+              </div>
+              {!isEditing || editedPost.content.includes("Netflix and Chill") ? (
+                <div className={cn(
+                  "w-full px-3 py-2 border border-gray-300 rounded-md resize-none max-h-40 overflow-y-auto text-gray-800",
+                  !isEditing && "opacity-75 bg-gray-50"
+                )}>
+                  {editedPost.content.split('\n').map((line, i) => (
+                    <div key={i} className="mb-1 relative flex items-center">
+                      {line.includes("Netflix and Chill") && (
+                        <div className="flex items-center">
+                          <span>{line}</span>
+                          <XSquare className="ml-1 text-red-500 h-4 w-4" />
+                        </div>
+                      )}
+                      {line.includes("Mountain-ing and Hill") && (
+                        <div className="flex items-center">
+                          <span>{line}</span>
+                          <CheckSquare className="ml-1 text-green-600 h-4 w-4" />
+                        </div>
+                      )}
+                      {!line.includes("Netflix and Chill") && !line.includes("Mountain-ing and Hill") && (
+                        <span>{line}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <textarea
+                  name="content"
+                  className="w-full h-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none text-gray-800"
+                  value={editedPost.content}
+                  onChange={handleTextChange}
+                  placeholder="Write your caption..."
+                  maxLength={2200}
+                  readOnly={!isEditing}
+                />
+              )}
+            </div>
+            
+            {/* Hashtags input (Mobile) */}
+            <div className="mb-4 px-4">
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm text-gray-600">Hashtags</label>
+                <span className="text-xs text-gray-400">0/2,200</span>
+              </div>
+              <input
+                type="text"
+                className={cn(
+                  "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
+                  !isEditing && "opacity-75 bg-gray-50 cursor-default"
+                )}
+                value={editedPost.hashtags.map(tag => `#${tag}`).join(' ')}
+                onChange={handleHashtagsChange}
+                placeholder="#hashtag1 #hashtag2 #hashtag3"
+                readOnly={!isEditing}
+              />
+            </div>
+            
+            {/* AI Generation Button (Mobile) */}
+            {onGenerate && (
+              <div className="mb-4 px-4">
+                <button 
+                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={() => {
+                    if (onGenerate) {
+                      onGenerate(editedPost.content);
+                    }
+                  }}
+                  disabled={!isEditing}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  AI Generate
+                </button>
+              </div>
+            )}
+
+            {/* Social Media Platforms (Mobile) */}
             <div className="px-4 mb-4">
               <h3 className="text-sm text-gray-700 font-medium mb-2">Platforms</h3>
               
