@@ -93,6 +93,12 @@ export default function CalendarRoute() {
     setEvents(updatedEvents);
     console.log("Events updated:", updatedEvents);
   };
+  
+  // Handle clicking on an event in the calendar
+  const handleEventClick = (eventId: number | string) => {
+    // Open the EditPost modal with the clicked event
+    onOpen(eventId);
+  };
 
   return (
     <DashboardLayout>
@@ -217,7 +223,7 @@ export default function CalendarRoute() {
                 <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
                   <Calendar 
                     events={events} 
-                    onEventsChange={handleEventsChange} 
+                    onEventsChange={handleEventsChange}
                   />
                 </div>
               </div>
@@ -261,7 +267,7 @@ export default function CalendarRoute() {
               <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
                 <Calendar 
                   events={events} 
-                  onEventsChange={handleEventsChange} 
+                  onEventsChange={handleEventsChange}
                 />
               </div>
             </div>

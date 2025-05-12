@@ -18,6 +18,7 @@ export interface EventData {
 interface CalendarProps {
   events: EventData[];
   onEventsChange: (updatedEvents: EventData[]) => void;
+  onEventClick?: (eventId: number | string) => void;
 }
 
 // Helper function for class name management
@@ -88,14 +89,14 @@ const HourRow = ({ hour, days, events, onDragStart }: {
                 >
                   {/* Make the entire event draggable */}
                   <div 
-                    className="event-drag-area absolute inset-0 cursor-move p-1"
+                    className="event-drag-area absolute inset-0 cursor-pointer p-1"
                     style={{
                       position: "absolute",
                       top: 0,
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      cursor: "grab",
+                      cursor: "pointer",
                       padding: "4px",
                       zIndex: 11
                     }}
@@ -175,7 +176,7 @@ const MonthDay = ({ day, events, currentMonth }: {
 };
 
 // Main Calendar Component
-export default function Calendar({ events, onEventsChange }: CalendarProps) {
+export default function Calendar({ events, onEventsChange, onEventClick }: CalendarProps) {
   const [view, setView] = useState<"week" | "month">("week");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [draggingEvent, setDraggingEvent] = useState<EventData | null>(null);
