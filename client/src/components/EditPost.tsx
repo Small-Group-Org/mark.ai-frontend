@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Edit, Trash2, PlusCircle, CalendarIcon, Calendar, CheckSquare, XSquare, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
+import { format, parse, addDays } from 'date-fns';
+import { DayPicker } from 'react-day-picker';
 
 // Define platform types
 export type PlatformName = 'Instagram' | 'Facebook' | 'TikTok' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'YouTube' | 'Bluesky' | 'Google Business';
@@ -43,6 +44,10 @@ const EditPost: React.FC<EditPostProps> = ({
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Update character count when content changes
@@ -54,6 +59,33 @@ const EditPost: React.FC<EditPostProps> = ({
   useEffect(() => {
     setEditedPost(post);
   }, [post]);
+  
+  // Handle clicks outside calendar and dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setIsCalendarOpen(false);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsCalendarOpen(false);
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscapeKey);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, []);
 
   // Handle text input changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -119,14 +151,58 @@ const EditPost: React.FC<EditPostProps> = ({
     }
   };
 
+  // Handle calendar date selection
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      const currentDate = new Date(editedPost.scheduledDate);
+      const hours = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+      
+      date.setHours(hours);
+      date.setMinutes(minutes);
+      
+      setEditedPost({
+        ...editedPost,
+        scheduledDate: date.toISOString()
+      });
+      setIsCalendarOpen(false);
+    }
+  };
+  
+  // Handle time change
+  const handleTimeChange = (hours: number, minutes: number) => {
+    const scheduledDate = new Date(editedPost.scheduledDate);
+    scheduledDate.setHours(hours);
+    scheduledDate.setMinutes(minutes);
+    
+    setEditedPost({
+      ...editedPost,
+      scheduledDate: scheduledDate.toISOString()
+    });
+  };
+  
+  // Toggle dropdown option
+  const handleToggleDropdownOption = (option: 'schedule' | 'draft') => {
+    // Update button type based on option
+    setIsDropdownOpen(false);
+  };
+  
   // Handle save
   const handleSave = () => {
     onSave(editedPost);
     setIsEditing(false);
     toast({
       title: "Post Saved",
-      description: "Your post has been saved successfully.",
+      description: `Your post has been ${editedPost.scheduledDate ? 'scheduled' : 'saved as draft'}.`,
     });
+    
+    // Notify calendar of the update if this is a calendar event
+    if (editedPost.id) {
+      const event = new CustomEvent('calendarUpdated', { 
+        detail: { type: 'update', eventId: editedPost.id }
+      });
+      document.dispatchEvent(event);
+    }
   };
 
   // If modal is not open, don't render anything
@@ -364,14 +440,14 @@ const EditPost: React.FC<EditPostProps> = ({
             </div>
 
             {/* Content textarea with rich preview */}
-            <div className="mb-5 flex-grow">
-              <div className="flex justify-between items-center mb-1.5">
+            <div className="mb-3">
+              <div className="flex justify-between items-center mb-1">
                 <label className="block text-sm text-gray-600">Caption</label>
                 <span className="text-xs text-gray-400">{characterCount}/2,200</span>
               </div>
               {!isEditing || editedPost.content.includes("Netflix and Chill") ? (
                 <div className={cn(
-                  "w-full h-32 px-3 py-2 border border-gray-300 rounded-md resize-none overflow-auto",
+                  "w-full px-3 py-2 border border-gray-300 rounded-md resize-none max-h-40 overflow-y-auto",
                   !isEditing && "opacity-75 bg-gray-50"
                 )}>
                   {editedPost.content.split('\n').map((line, i) => (
@@ -397,7 +473,7 @@ const EditPost: React.FC<EditPostProps> = ({
               ) : (
                 <textarea
                   name="content"
-                  className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                  className="w-full h-24 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                   value={editedPost.content}
                   onChange={handleTextChange}
                   placeholder="Write your caption..."
@@ -408,8 +484,8 @@ const EditPost: React.FC<EditPostProps> = ({
             </div>
 
             {/* Hashtags input */}
-            <div className="mb-5">
-              <div className="flex justify-between items-center mb-1.5">
+            <div className="mb-3">
+              <div className="flex justify-between items-center mb-1">
                 <label className="block text-sm text-gray-600">Hashtags</label>
                 <span className="text-xs text-gray-400">0/2,200</span>
               </div>
@@ -431,7 +507,7 @@ const EditPost: React.FC<EditPostProps> = ({
               <div className="mb-6">
                 <button
                   className={cn(
-                    "bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full transition-colors",
+                    "bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center w-auto transition-colors",
                     isEditing ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed bg-blue-400"
                   )}
                   onClick={() => {
@@ -450,25 +526,42 @@ const EditPost: React.FC<EditPostProps> = ({
             {/* Scheduling Controls */}
             <div className="mt-auto">
               <div className="flex justify-between items-center">
-                <div className={cn(
-                  "flex items-center text-gray-600 py-2 px-4 rounded",
-                  !isEditing ? "bg-gray-50 opacity-75" : "bg-gray-100"
-                )}>
-                  <Calendar className="h-4 w-4 mr-2" />
-                  <span>{format(new Date(editedPost.scheduledDate), 'MMM d, yyyy • h:mm a')}</span>
+                {/* Calendar Date Picker */}
+                <div 
+                  className={cn(
+                    "flex items-center bg-gray-200 rounded-md px-3 py-2 space-x-2",
+                    isEditing ? "cursor-pointer hover:bg-gray-300" : "opacity-75 bg-gray-100"
+                  )}
+                  onClick={() => isEditing && setIsCalendarOpen && setIsCalendarOpen(!isCalendarOpen)}
+                >
+                  <span className="text-sm text-gray-700 font-medium whitespace-nowrap">
+                    {format(new Date(editedPost.scheduledDate), 'MMM d, yyyy • h:mm a')}
+                  </span>
+                  <CalendarIcon className="text-gray-700 h-4 w-4" />
                 </div>
                 
-                <button
-                  className={cn(
-                    "flex items-center bg-blue-500 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors",
-                    isEditing ? "hover:bg-blue-600" : "opacity-50 cursor-not-allowed bg-blue-400"
-                  )}
-                  onClick={() => isEditing && handleSave()}
-                  disabled={!isEditing}
-                >
-                  Schedule Post
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                </button>
+                {/* Schedule Button with Dropdown */}
+                <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
+                  <button 
+                    className={cn(
+                      "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none",
+                      isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
+                    )}
+                    onClick={() => isEditing && handleSave()}
+                    disabled={!isEditing}
+                  >
+                    Schedule Post
+                  </button>
+                  <button 
+                    className={cn(
+                      "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
+                      isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
+                    )}
+                    disabled={!isEditing}
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
