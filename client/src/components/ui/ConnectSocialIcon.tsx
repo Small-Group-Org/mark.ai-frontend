@@ -10,15 +10,17 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
   isConnected,
 }) => {
   return (
-    <div className="relative h-full flex items-center justify-center cursor-pointer p-[2px] rounded-full border border-gray-200 ">
+    <div className="relative h-full flex items-center justify-center cursor-pointer p-[2px] rounded-full border border-gray-700 ">
       <img
         src={image}
         alt="Social Icon"
-        className={`h-full w-full rounded-full object-cover ${!isConnected ? "grayscale" : ""}`}
+        className={`h-full w-full rounded-full object-cover ${
+          !isConnected ? "grayscale" : ""
+        }`}
       />
       {!isConnected && (
-        <span className="absolute bottom-[-4px] right-[-8px] w-7 h-7 text-lg bg-gray-700 rounded-full flex items-center justify-center border-2 border-white pb-[1px] pl-[1px]">
-          +
+        <span className="absolute bottom-[-2px] right-[-6px] w-6 h-6 text-lg bg-gray-700 rounded-full flex items-center justify-center border border-white pb-[2px] pl-[0.5px]">
+          <span>+</span>
         </span>
       )}
     </div>
