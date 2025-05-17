@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/Layout';
 import { ResizablePanel, ResizablePanelGroup, Panel } from '@/components/ui/resizable';
-import Header from '@/components/dashboard/Header';
+import Header from '@/components/layout/Header';
 import Calendar from '@/components/Calendar';
 import ChatPanel from '@/components/dashboard/ChatPanel';
 import { EditPostProvider, useEditPostContext } from '@/context/EditPostProvider';

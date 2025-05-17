@@ -14,6 +14,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuthInit } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import EditPostProvider from "@/context/EditPostProvider";
+import Layout from "./components/layout/Layout";
 
 // AuthInitializer component to load auth state on app start
 function AuthInitializer({ children }: { children: React.ReactNode }) {
@@ -33,16 +34,15 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
-      {/* Public routes */}
       <Route path="/" component={Home} />
-      
-      {/* Protected routes - require authentication */}
+      <Layout>
+
       <ProtectedRoute path="/create" component={MarkAiCreatePost} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/calendar" component={Calendar} />
       <ProtectedRoute path="/mind" component={Mind} />
+      </Layout>
       
-      {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
   );

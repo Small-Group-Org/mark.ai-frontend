@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import DashboardLayout from '../components/layout/DashboardLayout';
+import DashboardLayout from '../components/layout/Layout';
 
 export default function DashboardRoute() {
   const [loading, setLoading] = useState(true);
@@ -14,8 +14,6 @@ export default function DashboardRoute() {
   }, []);
 
   return (
-    <DashboardLayout>
-      {/* Dashboard Content */}
       <div className="p-6 h-full flex items-center justify-center">
         {loading ? (
           <div className="flex flex-col items-center">
@@ -29,6 +27,5 @@ export default function DashboardRoute() {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 }
