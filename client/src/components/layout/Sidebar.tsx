@@ -49,14 +49,14 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = "create" }) => {
           </Link>
         ))}
       </nav>
-
+{/* 
       <Link href="#">
         <div className="mt-auto group text-gray-300 hover:text-white flex-shrink-0 pb-4 cursor-pointer">
           <div className="p-3 rounded-lg group-hover:bg-white/5">
             <SettingsIcon />
           </div>
         </div>
-      </Link>
+      </Link> */}
     </aside>
   );
 };

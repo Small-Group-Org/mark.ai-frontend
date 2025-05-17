@@ -168,13 +168,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <TabsList className="grid grid-cols-2 mx-6 mb-6 rounded-lg overflow-hidden ring-0 border border-slate-700 bg-slate-800 p-0">
             <TabsTrigger 
               value="signin" 
-              className={cn("py-3 rounded-none", view === 'signin' ? tabActive : tabInactive)}
+              className={cn("rounded-none h-full", view === 'signin' ? tabActive : tabInactive)}
             >
               Sign In
             </TabsTrigger>
             <TabsTrigger 
               value="signup" 
-              className={cn("py-3 rounded-none", view === 'signup' ? tabActive : tabInactive)}
+              className={cn("rounded-none h-full", view === 'signup' ? tabActive : tabInactive)}
             >
               Sign Up
             </TabsTrigger>
@@ -396,14 +396,14 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 className={accentText + " hover:underline font-medium"}
                 onClick={() => setView('signin')}
               >
-                Sign in
+                Sign In
               </button>
             </div>
           </TabsContent>
         </Tabs>
 
         {/* Social login options */}
-        <div className="px-6 pb-6">
+        {/* <div className="px-6 pb-6">
           <div className="relative flex items-center py-2">
             <div className="flex-grow border-t border-gray-700"></div>
             <span className="flex-shrink mx-3 text-gray-400 text-xs">OR CONTINUE WITH</span>
@@ -465,7 +465,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <span>Facebook</span>
             </Button>
           </div>
-        </div>
+        </div> */}
       </DialogContent>
     </Dialog>
   );

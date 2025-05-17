@@ -1,3 +1,5 @@
+import { MessageType } from "@/components/ChatInterface";
+
 export interface PostType {
     id: 'post' | 'story' | 'reel';
     label: string;
@@ -45,3 +47,21 @@ export const socialMedia = [
         label: "Instagram"
     },
 ]
+
+export const initialMessages: MessageType[] = [
+    {
+      id: '1',
+      text: '👋 Hi! I\'m Mark, your potential social media manager.',
+      sender: 'system',
+    },
+    {
+      id: '2',
+      text: 'I\'d love to learn about your business and social media goals.',
+      sender: 'system',
+    },
+    {
+      id: '3',
+      text: 'What\'s your biggest social media challenge right now?',
+      sender: 'system',
+    }
+  ];

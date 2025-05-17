@@ -4,6 +4,7 @@ import { LogOut } from 'lucide-react';
 import markAiLogo from '../../assets/logo.png'; // Corrected file name to logo.png
 import { socialMedia } from '@/commons/constant';
 import ConnectSocialIcon from '../ui/ConnectSocialIcon';
+import { Link } from 'wouter';
 
 const Header = () => {
     // Header background in Figma seems slightly darker than the Chat Panel overlay bg.
@@ -22,13 +23,13 @@ const Header = () => {
 
     return (
         <header className={`h-[70px] ${headerBg} text-white flex items-center justify-between px-4 border-b ${headerBorder} shrink-0`}>
-            <div className="relative flex-shrink-0 w-[220px] flex items-center">
+            <Link href='/' className="relative flex-shrink-0 w-[220px] flex items-center cursor-pointer">
                 <img
                     src={markAiLogo}
                     alt="Mark.ai Logo"
                     style={{ height: '65px', objectFit: 'contain' }}
                 />
-            </div>
+            </Link>
 
             <div className="flex items-center gap-4 h-[50px]">
               {socialMedia.map(({img, isConnected}, idx) => (

@@ -4,6 +4,7 @@ import {
     PaperclipIcon,
     SendIcon
 } from './IconComponents';
+import {ThreeDots} from "react-loader-spinner"
 
 // Define message structure (can be moved to types file)
 interface Message {
@@ -157,10 +158,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
     // Scroll to bottom whenever messages change - Use props
     useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        if (chatContainerRef.current || isThinking) {
+            // Use a timeout to ensure DOM updates before scrolling
+            setTimeout(() => {
+                chatContainerRef.current!.scrollTop = chatContainerRef.current!.scrollHeight;
+            }, 50);
         }
-    }, [messages]); // Depend on messages prop
+    }, [messages, isThinking]);
 
     const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(e.target.value);
@@ -177,7 +181,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 text: messageText,
                 sender: 'user'
             };
-            setMessages(prevMessages => [...prevMessages, newMessage]); // Use prop setter
+            setMessages(prevMessages => [...prevMessages, newMessage]);
             setInputValue('');
 
             const textarea = document.getElementById('chat-textarea') as HTMLTextAreaElement;
@@ -185,7 +189,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 textarea.style.height = 'auto';
             }
 
-            setIsThinking(true); // Use prop setter
+            // Show the loader after a delay (e.g., 1500ms)
+            const thinkingTimeout = setTimeout(() => {
+                setIsThinking(true);
+            }, 1500);
 
             try {
                 const requestBody = {
@@ -214,7 +221,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
 
                 console.log("API Response Data:", response.data);
 
-                setIsThinking(false); // Use prop setter
+                clearTimeout(thinkingTimeout);
+                setIsThinking(false);
                 const responseData = response.data;
 
                 if (responseData?.output?.post && responseData?.output?.message) {
@@ -258,7 +266,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 }
 
             } catch (error) {
-                setIsThinking(false); // Use prop setter
+                clearTimeout(thinkingTimeout);
+                setIsThinking(false);
                 console.error('Axios Error:', error);
                 let errorMessage = 'Error: Could not connect to the AI service.';
                 if (axios.isAxiosError(error)) {
@@ -295,7 +304,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 <h2 className="font-semibold text-sm">Chat with Mark</h2>
             </div>
 
-            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-5 space-y-4">
+            <div
+                ref={chatContainerRef}
+                className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar"
+            >
                 {(messages || []).map((message) => ( // Use messages from props, add fallback
                     <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${message.sender === 'user'
@@ -313,7 +325,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({
                 {isThinking && (
                     <div className="flex justify-start">
                         <div className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${chatBubbleGradient} text-white`}>
-                            Thinking...
+                            <ThreeDots
+                                visible={true}
+                                height="20"
+                                width="40"
+                                color="#fff"
+                                radius="9"
+                                ariaLabel="three-dots-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""/>
                         </div>
                     </div>
                 )}

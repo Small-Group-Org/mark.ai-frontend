@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
+import { SecondMessageModal } from '@/components/SignUpPromptModal';
 import markImage from '../assets/mark.png';
 import { useAuthModal } from '@/hooks/use-auth-modal';
 import { useAuth } from '@/hooks/use-auth';
 import { useLocation } from 'wouter';
+import { initialMessages } from '@/commons/constant';
 
 export default function Home() {
   // State for mobile menu
@@ -13,29 +15,12 @@ export default function Home() {
   const { onOpen, setView } = useAuthModal();
   const { user, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
-  // Initial state with just the first three system messages (without user message)
-  const initialMessages: MessageType[] = [
-    {
-      id: '1',
-      text: '👋 Hi! I\'m Mark, your potential social media manager.',
-      sender: 'system',
-    },
-    {
-      id: '2',
-      text: 'I\'d love to learn about your business and social media goals.',
-      sender: 'system',
-    },
-    {
-      id: '3',
-      text: 'What\'s your biggest social media challenge right now?',
-      sender: 'system',
-    }
-  ];
 
   // State to control animation of messages
   const [visibleMessages, setVisibleMessages] = useState<MessageType[]>([]);
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [messageIndex, setMessageIndex] = useState(0);
+  const [showSecondMessageModal, setShowSecondMessageModal] = useState(false);
 
   // Animation effect to show messages one by one with delay
   useEffect(() => {
@@ -61,6 +46,13 @@ export default function Home() {
     setMessages(prev => [...prev, newMessage]);
     setVisibleMessages(prev => [...prev, newMessage]);
     
+    // Show modal after second message
+    const userMessages = [...messages, newMessage].filter((msg) => msg.sender === "user")
+    if (userMessages.length >= 2) {
+      setShowSecondMessageModal(true);
+      return;
+    }
+    
     // Simulate system response
     setTimeout(() => {
       const systemResponse: MessageType = {
@@ -73,6 +65,12 @@ export default function Home() {
       setMessages(prev => [...prev, systemResponse]);
       setVisibleMessages(prev => [...prev, systemResponse]);
     }, 1000);
+  };
+
+  const handleSignIn = () => {
+    setShowSecondMessageModal(false);
+    setView('signin');
+    onOpen();
   };
 
   return (
@@ -889,6 +887,13 @@ export default function Home() {
           }
         `
       }} />
+      
+      {/* Add SecondMessageModal */}
+      <SecondMessageModal 
+        isOpen={showSecondMessageModal}
+        onClose={() => setShowSecondMessageModal(false)}
+        onSignIn={handleSignIn}
+      />
     </div>
   );
 }
