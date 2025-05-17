@@ -9,13 +9,13 @@ import tiktokIcon from '../assets/icons/tiktok.png';
 import linkedinIcon from '../assets/icons/linkedin.png';
 import facebookIcon from '../assets/icons/facebook.png';
 import youtubeIcon from '../assets/icons/youtube.png';
-import defaultImage from '../assets/default-image.png'; // Add a default image
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('past');
   const [filteredPosts, setFilteredPosts] = useState([]);
 
   useEffect(() => {
+    console.log(`Active Tab: ${activeTab}`);
     filterPosts(activeTab);
   }, [activeTab]);
 
@@ -25,7 +25,9 @@ const Dashboard = () => {
       upcoming: post => post.status === 'schedule',
       drafts: post => post.status === 'draft'
     };
-    setFilteredPosts(dummyData.filter(filters[activeTab] || (() => false)));
+    const uniquePosts = dummyData.filter(filters[tab] || (() => false));
+    console.log(`Filtered Posts for ${tab}:`, uniquePosts);
+    setFilteredPosts(uniquePosts);
   };
 
   const formatDate = (dateString) => {
@@ -50,76 +52,71 @@ const Dashboard = () => {
       facebook: facebookIcon,
       youtube: youtubeIcon
     };
-    
+
     if (platform && platformIcons[platform]) {
       return (
-        <img 
-          src={platformIcons[platform]} 
-          alt={platform} 
-          className="platform-icon" 
+        <img
+          src={platformIcons[platform]}
+          alt={platform}
+          className="platform-icon"
         />
       );
     }
     return null;
   };
 
-  const renderMedia = (mediaUrl) => {
-    if (!mediaUrl || mediaUrl.length === 0) {
-      return (
-        <div className="post-media">
-          <img src={defaultImage} alt="Default content" className="media-image" />
-        </div>
-      );
-    }
-
-    // Take the first media item (you can extend this to handle multiple)
-    const media = mediaUrl[0];
-    const isVideo = media?.endsWith('.mp4') || media?.endsWith('.mov');
-
-    return (
-      <div className="post-media">
-        {isVideo ? (
-          <video controls className="media-image">
-            <source src={media} type="video/mp4" />
-          </video>
-        ) : (
-          <img src={media || defaultImage} alt="Post content" className="media-image" />
-        )}
-      </div>
-    );
-  };
-
   return (
-    <div id="posts-container">
-      <div id="posts-tabs">
-        {['past', 'upcoming', 'drafts'].map(tab => (
-          <button
-            key={tab}
-            id={activeTab === tab ? 'active-tab-button' : 'tab-button'}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)} Posts
-          </button>
-        ))}
-      </div>
+    <div className="post-container">
+      <div id="posts-container">
+        <div id="posts-tabs">
+          {['past', 'upcoming', 'drafts'].map(tab => (
+            <button
+              key={tab}
+              id={activeTab === tab ? 'active-tab-button' : 'tab-button'}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)} Posts
+            </button>
+          ))}
+        </div>
 
-      <div id="posts-list">
-        {filteredPosts.map((post, index) => (
-          <div
-            key={post._id}
-            id="post-item"
-            className={index % 2 ? 'odd' : 'even'}
-          >
-            {renderMedia(post.mediaUrl)}
-            <div className="post-content">
-              <h4 id="post-title">{post.title}</h4>
-              <p id="post-date">
-                {formatDate(post.scheduleDate || post.createdAt)}
-              </p>
-            </div>
-            {getPlatformIcon(post.platform)}
-          </div>
-        ))}
+        <div id="posts-list">
+          {filteredPosts.map((post, index) => {
+            const media = post.mediaUrl?.[0];
+            const isImage = media && /\.(jpg|jpeg|png|gif)$/i.test(media);
+            const isVideo = media && /\.(mp4|mov|webm)$/i.test(media);
+
+            return (
+              <div
+                key={post._id}
+                id="post-item"
+                className={index % 2 ? 'odd' : 'even'}
+              >
+                <div className="post-media-preview">
+                  {isImage && (
+                    <img src={media} alt="Media Preview" className="media-thumbnail" />
+                  )}
+                  {isVideo && (
+                    <video className="media-thumbnail" muted>
+                      <source src={media} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                </div>
+
+                <div className="post-content">
+                  <h4 id="post-title">{post.title}</h4>
+                  <p id="post-date">
+                    {formatDate(post.scheduleDate || post.createdAt)}
+                  </p>
+                </div>
+
+                {getPlatformIcon(post.platform)}
+              </div>
+            );
+          })}
+        </div>
+        
       </div>
     </div>
   );
