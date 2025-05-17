@@ -34,7 +34,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (chatContainerRef.current) {
         setTimeout(() => {
             if(chatContainerRef.current){
-              chatContainerRef.current!.scrollTop = chatContainerRef.current.scrollHeight;
+              // chatContainerRef.current!.scrollTop = chatContainerRef.current.scrollHeight;
             }
         }, 50);
     }

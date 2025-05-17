@@ -14,6 +14,7 @@ interface Message {
 }
 
 const ChatPanel = () => {
+    
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<Message[]>([
         // Initial messages from the design

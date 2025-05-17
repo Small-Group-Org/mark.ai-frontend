@@ -15,6 +15,8 @@ import { useAuthInit } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
 import EditPostProvider from "@/context/EditPostProvider";
 import Layout from "./components/layout/Layout";
+import PostPreviewPanel from "./components/dashboard/PostPreviewPanel";
+import CreatePost from "./pages/CreatePost";
 
 // AuthInitializer component to load auth state on app start
 function AuthInitializer({ children }: { children: React.ReactNode }) {
@@ -37,7 +39,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Layout>
 
-      <ProtectedRoute path="/create" component={MarkAiCreatePost} />
+      <ProtectedRoute path="/create" component={CreatePost} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/calendar" component={Calendar} />
       <ProtectedRoute path="/mind" component={Mind} />
