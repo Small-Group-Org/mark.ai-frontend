@@ -80,7 +80,7 @@ const ScheduleActionButton = ({
                 setIsDropdownOpen(false);
                 if (onToggleOptions) onToggleOptions();
               }}
-              className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+              className="group outline-none flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
               role="menuitem"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

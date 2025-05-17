@@ -114,12 +114,12 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
       <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 w-full">
         {/* Post Header with User Info */}
         {!hideHeader && (
-          <div className="p-4 border-b border-gray-100 flex items-center">
+          <div className="px-4 py-2 border-b border-gray-100 flex items-center">
             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-3">
               {userInitials}
             </div>
             <div>
-              <h3 className="font-medium text-gray-900">{userName}</h3>
+              <h3 className="font-medium text-sm text-gray-900">{userName}</h3>
               <p className="text-xs text-gray-500">{userHandle} • {userTitle}</p>
             </div>
           </div>

@@ -3,7 +3,7 @@ import {
   CreateIcon,
   CalendarIcon,
   MindIcon,
-} from "../dashboard/IconComponents";
+} from "../components/dashboard/IconComponents";
 
 interface NavItem {
   path: string;

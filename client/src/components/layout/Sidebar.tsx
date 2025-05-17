@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "wouter";
 import { SettingsIcon } from "../dashboard/IconComponents";
-import { navItems } from "./layoutConstant";
+import { navItems } from "../../commons/routes";
 import markPng from "../../assets/mark.png";
 
 interface SidebarProps {
