@@ -19,18 +19,15 @@ const Header = () => {
     };
 
     return (
-        <header className={`h-[70px] ${headerBg} text-white flex items-center justify-between px-6 border-b ${headerBorder} shrink-0`}>
-            {/* Logo */}
+        <header className={`h-[70px] ${headerBg} text-white flex items-center justify-between px-4 border-b ${headerBorder} shrink-0`}>
             <div className="relative flex-shrink-0 w-[220px] flex items-center">
-                {/* We're using a text placeholder instead of Image since we don't have the actual logo */}
                 <img
-                    src={markAiLogo} // Changed to use imported logo
+                    src={markAiLogo}
                     alt="Mark.ai Logo"
-                    style={{ width: '200px', height: '45px', objectFit: 'contain' }} // Removed marginLeft: '-10px'
+                    style={{ height: '65px', objectFit: 'contain' }}
                 />
             </div>
 
-            {/* Sign out button */}
             <button 
               onClick={handleLogout}
               className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors"
