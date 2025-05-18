@@ -44,6 +44,7 @@ export const useAuth = () => {
         description: "You have been logged in successfully!",
       });
       setIsOpen(false);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
       toast({
@@ -73,6 +74,7 @@ export const useAuth = () => {
 
       const response = await handleSignUp(userData);
       setUserDetails(response.user);
+      localStorage.setItem("auth_token", response.token);
       setIsAuth(true);
 
       toast({
@@ -80,6 +82,7 @@ export const useAuth = () => {
         description: "Your account has been created successfully!",
       });
       setIsOpen(false);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Registration error:", error);
       toast({
@@ -96,7 +99,7 @@ export const useAuth = () => {
   const validateFields = (flow: "signin" | "signup") => {
     const { email, password, firstName, lastName, confirmPassword, agreeToTerms } = userCredential;
 
-    if(flow === "signin"){
+    if(flow === "signup"){
       if (!email || !password || !firstName || !lastName || !confirmPassword) {
         toast({
           title: "Missing Fields",
@@ -145,12 +148,13 @@ export const useAuth = () => {
     
     setUserCredential(prev => ({
       ...prev,
-      [name]: checked !== undefined ? checked : value
+      [name]: value === undefined ? checked : value
     }));
   };
 
   const logoutHandler = () => {
     setIsAuth(false);
+    localStorage.removeItem("auth_token");
   };
 
   return {
