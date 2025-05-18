@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../components/layout/Layout';
+import { getPosts } from '@/services/postServices';
 
 export default function DashboardRoute() {
   const [loading, setLoading] = useState(true);
@@ -10,8 +11,16 @@ export default function DashboardRoute() {
       setLoading(false);
     }, 800); // Simulate 800ms loading time
 
+    fetchPosts();
+
     return () => clearTimeout(timer);
   }, []);
+
+  const fetchPosts = async () => {
+    const posts = await getPosts({});
+
+    console.log("[]", posts);
+}
 
   return (
       <div className="p-6 h-full flex items-center justify-center">
