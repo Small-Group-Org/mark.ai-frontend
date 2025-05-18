@@ -5,17 +5,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
-import MarkAiCreatePost from "@/components/MarkAiCreatePost";
 import Dashboard from "@/pages/Dashboard";
 import Calendar from "@/pages/Calendar";
 import Mind from "@/pages/Mind";
-import { AuthModalProvider } from "@/components/auth/AuthModalProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { useAuthInit } from "@/hooks/use-auth";
+import { useAuthInit } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import EditPostProvider from "@/context/EditPostProvider";
 import Layout from "./components/layout/Layout";
-import PostPreviewPanel from "./components/dashboard/PostPreviewPanel";
 import CreatePost from "./pages/CreatePost";
 
 // AuthInitializer component to load auth state on app start
@@ -54,14 +51,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AuthModalProvider>
           <EditPostProvider>
             <Toaster />
             <AuthInitializer>
               <Router />
             </AuthInitializer>
           </EditPostProvider>
-        </AuthModalProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

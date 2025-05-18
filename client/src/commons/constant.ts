@@ -1,9 +1,8 @@
 import { MessageType } from "@/components/ChatInterface";
+import { PostType } from "@/types";
 
-export interface PostType {
-    id: 'post' | 'story' | 'reel';
-    label: string;
-}
+export const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://34.135.194.8:8000';
+
 
 export const postTypes: PostType[] = [
     {

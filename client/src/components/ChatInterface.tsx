@@ -30,14 +30,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [inputValue, setInputValue] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (chatContainerRef.current) {
-        setTimeout(() => {
-            if(chatContainerRef.current){
-              // chatContainerRef.current!.scrollTop = chatContainerRef.current.scrollHeight;
-            }
-        }, 50);
-    }
+useEffect(() => {
+  const scrollTimeout = setTimeout(() => {
+      if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTo({
+              top: chatContainerRef.current.scrollHeight,
+              behavior: 'smooth'
+          });
+      }
+  }, 0);
+  
+  return () => clearTimeout(scrollTimeout);
 }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {

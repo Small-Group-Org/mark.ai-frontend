@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
 import { SecondMessageModal } from '@/components/SignUpPromptModal';
 import markImage from '../assets/mark.png';
-import { useAuthModal } from '@/hooks/use-auth-modal';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { initialMessages } from '@/commons/constant';
+import { useAuthStore } from '@/store/useAuthStore';
+import { AuthModal } from '@/components/auth/AuthModal';
 
 export default function Home() {
   // State for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Auth states
-  const { onOpen, setView } = useAuthModal();
+  const { setIsOpen: onOpen, setView } = useAuthStore();
   const { user, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -70,7 +71,7 @@ export default function Home() {
   const handleSignIn = () => {
     setShowSecondMessageModal(false);
     setView('signin');
-    onOpen();
+    onOpen(true);
   };
 
   return (
@@ -194,7 +195,7 @@ export default function Home() {
               <button 
                 onClick={() => {
                   setView('signin');
-                  onOpen();
+                  onOpen(true);
                 }}
                 style={{ 
                   backgroundColor: '#1e293b', 
@@ -209,7 +210,7 @@ export default function Home() {
               <button 
                 onClick={() => {
                   setView('signup');
-                  onOpen();
+                  onOpen(true);
                 }}
                 style={{ 
                   backgroundColor: '#2563eb', 
@@ -287,7 +288,7 @@ export default function Home() {
                   <button 
                     onClick={() => {
                       setView('signin');
-                      onOpen();
+                      onOpen(true);
                       setMobileMenuOpen(false);
                     }}
                     style={{ 
@@ -303,7 +304,7 @@ export default function Home() {
                   <button 
                     onClick={() => {
                       setView('signup');
-                      onOpen();
+                      onOpen(true);
                       setMobileMenuOpen(false);
                     }}
                     style={{ 
@@ -894,6 +895,8 @@ export default function Home() {
         onClose={() => setShowSecondMessageModal(false)}
         onSignIn={handleSignIn}
       />
+
+      <AuthModal />
     </div>
   );
 }

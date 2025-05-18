@@ -145,16 +145,18 @@ const ChatPanel = () => {
     }
   }, []);
 
-  // Scroll to bottom whenever messages change - Use props
   useEffect(() => {
-    if (chatContainerRef.current || isThinking) {
-      // Use a timeout to ensure DOM updates before scrolling
-      setTimeout(() => {
-        chatContainerRef.current!.scrollTop =
-          chatContainerRef.current!.scrollHeight;
-      }, 50);
-    }
-  }, [messages, isThinking]);
+    const scrollTimeout = setTimeout(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }, 0);
+    
+    return () => clearTimeout(scrollTimeout);
+}, [messages, isThinking]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);

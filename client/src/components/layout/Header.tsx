@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/useAuth';
 import { LogOut } from 'lucide-react';
 import markAiLogo from '../../assets/logo.png'; // Corrected file name to logo.png
 import { socialMedia } from '@/commons/constant';
