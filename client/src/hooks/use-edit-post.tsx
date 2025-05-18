@@ -51,75 +51,44 @@ export const useEditPost = () => {
     if (postIdOrEvent) {
       setIsLoading(true);
       try {
-        // In a real app, you would fetch the post data from your API
-        // const response = await axios.get(`/api/posts/${postId}`);
-        // setPost(response.data);
+        // Check if this is a calendar event by looking for the event in our mock calendar data
+        const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+        const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
         
-        // For now, we'll use a mock implementation
-        // In the future, replace this with actual API calls
-        setTimeout(() => {
-          // Check if this is a calendar event by looking for the event in our mock calendar data
-          // In a real app, you would have a more robust way to identify the event type
-          const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
-          const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
-          
-          let mockPost: PostData;
-          
-          if (calendarEvent) {
-            // Special handling for Tea Garden demo event
-            if (calendarEvent.title === "Tea Garden") {
-              mockPost = {
-                ...DEFAULT_POST,
-                id: postIdOrEvent,
-                title: "Tea Garden",
-                content: "Netflix and Chill\nMountain-ing and Hill\nAbsolutely loved the greens",
-                hashtags: ["#kudremukh", "#mausam", "#karnataka"],
-                scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
-                socialPlatforms: {
-                  ...DEFAULT_POST.socialPlatforms,
-                  Instagram: true,
-                  "X/Twitter": true,
-                },
-                mediaUrl: ["https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3"]
-              };
-            } else {
-              // This is a regular calendar event, convert it to PostData format
-              mockPost = {
-                ...DEFAULT_POST,
-                id: postIdOrEvent,
-                title: calendarEvent.title || 'Calendar Event',
-                content: calendarEvent.content || 'Content from calendar event',
-                // Parse hashtags from content if they exist or use default
-                hashtags: calendarEvent.hashtags || ['#event', '#scheduled'],
-                // Use the scheduled time from the event
-                scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
-                // Convert platforms array to socialPlatforms object
-                socialPlatforms: {
-                  ...DEFAULT_POST.socialPlatforms,
-                  ...(calendarEvent.platforms || []).reduce((acc: any, platform: string) => {
-                    acc[platform] = true;
-                    return acc;
-                  }, {})
-                },
-                // Use media URLs if they exist
-                mediaUrl: calendarEvent.mediaUrl || []
-              };
-            }
-          } else {
-            // Regular post, use default mock data
-            mockPost = {
-              ...DEFAULT_POST,
-              id: postIdOrEvent,
-              title: 'Sample Post Title',
-              content: 'This is a sample post content that would be loaded from the server.',
-              hashtags: ['#sample', '#post', '#content'],
-              scheduledDate: new Date().toISOString().slice(0, 16)
-            };
-          }
-          
-          setPost(mockPost);
-          setIsLoading(false);
-        }, 500);
+        let mockPost: PostData;
+        
+        if (calendarEvent) {
+          // Convert calendar event to PostData format
+          mockPost = {
+            ...DEFAULT_POST,
+            id: postIdOrEvent,
+            title: calendarEvent.title || 'Calendar Event',
+            content: calendarEvent.content || 'Content from calendar event',
+            hashtags: calendarEvent.hashtags || ['#event', '#scheduled'],
+            scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
+            socialPlatforms: {
+              ...DEFAULT_POST.socialPlatforms,
+              ...(calendarEvent.platforms || []).reduce((acc: any, platform: string) => {
+                acc[platform] = true;
+                return acc;
+              }, {})
+            },
+            mediaUrl: calendarEvent.mediaUrl || []
+          };
+        } else {
+          // Regular post, use default mock data
+          mockPost = {
+            ...DEFAULT_POST,
+            id: postIdOrEvent,
+            title: 'Sample Post Title',
+            content: 'This is a sample post content that would be loaded from the server.',
+            hashtags: ['#sample', '#post', '#content'],
+            scheduledDate: new Date().toISOString().slice(0, 16)
+          };
+        }
+        
+        setPost(mockPost);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch post', error);
         toast({

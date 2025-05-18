@@ -18,17 +18,8 @@ const DayColumnWeek: React.FC<DayColumnWeekProps> = ({
   postsMap,
   isToday,
   onPostClick,
-  onTimeSlotClick
 }) => {
   const hours = getHoursArray();
-  
-  const handleTimeSlotClick = (hour: number) => {
-    if (onTimeSlotClick) {
-      const slotDate = new Date(date);
-      slotDate.setHours(hour, 0, 0, 0);
-      onTimeSlotClick(slotDate, hour);
-    }
-  };
   
   return (
     <div className="relative flex-1 border-r border-slate-200">
@@ -42,7 +33,6 @@ const DayColumnWeek: React.FC<DayColumnWeekProps> = ({
               key={hour} 
               className="h-[60px] border-b border-slate-200 relative cursor-pointer hover:bg-gray-50"
               data-hour={hour}
-              onClick={() => handleTimeSlotClick(hour)}
             >
               {/* Render posts for this hour */}
               <div className="space-y-1 p-1">

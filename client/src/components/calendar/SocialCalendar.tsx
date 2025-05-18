@@ -5,6 +5,7 @@ import MonthView from './month/MonthView';
 import WeekView from './week/WeekView';
 import { useToast } from '@/hooks/use-toast';
 import { formatHourLabel } from '@/utils/dateUtils';
+import { useEditPostContext } from '@/context/EditPostProvider';
 
 interface SocialCalendarProps {
   initialDate?: Date;
@@ -27,6 +28,7 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   const [currentView, setCurrentView] = useState<CalendarView>('month');
   const [displayDate, setDisplayDate] = useState<Date>(initialDate);
   const { toast } = useToast();
+  const editPostContext = useEditPostContext();
   
   const handleViewChange = (view: CalendarView) => {
     setCurrentView(view);
@@ -55,23 +57,22 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   const handlePostClick = (postId: string | number) => {
     const post = posts.find(p => p.postId === postId);
     if (post) {
-      console.log('Clicked Post Details:', JSON.stringify(post, null, 2));
-      toast({
-        title: `${post.status === 'scheduled' ? 'Scheduled' : 'Draft'} Post`,
-        description: `Post ID: ${post.postId}, Time: ${post.scheduledDate.toLocaleString()}`,
-      });
+      // Convert Post type to PostData type expected by EditPost
+      const postData = {
+        id: post.postId,
+        title: post.title,
+        content: post.content || '',
+        hashtags: [post.hashtag], // Convert single hashtag to array
+        mediaUrl: post.mediaUrls || [],
+        socialPlatforms: post.socialPlatforms,
+        postType: { post: true, story: false, reel: false }, // default values
+        scheduledDate: post.scheduledDate.toISOString()
+      };
+      
+      editPostContext.onOpen(post.postId);
     }
     
     onPostClick(postId);
-  };
-
-  const handleTimeSlotClick = (date: Date) => {
-    // Show toast with both date and time
-    toast({
-      title: 'Time Slot Selected',
-      description: `${date.toLocaleDateString()} : ${formatHourLabel(date.getHours())}-${formatHourLabel(date.getHours()+1)}`,
-    });
-    
   };
   
   return (
@@ -102,7 +103,6 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
           displayDate={displayDate}
           posts={posts}
           onPostClick={handlePostClick}
-          onTimeSlotClick={handleTimeSlotClick}
           timeZoneLabel={timeZoneLabel}
         />
       )}

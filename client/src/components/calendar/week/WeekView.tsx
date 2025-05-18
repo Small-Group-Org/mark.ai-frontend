@@ -36,19 +36,6 @@ const WeekView: React.FC<WeekViewProps> = ({
   console.log("Total Post count: ", posts.length);
   console.log("Post Map: ", postsMap);
   
-  const handleTimeSlotClick = (date: Date, hour: number) => {
-    const dayName = DAYS_OF_WEEK[date.getDay()];
-    const timeLabel = formatHourLabel(hour);
-    
-    // Create a new date object with the selected hour
-    const selectedDateTime = new Date(date);
-    selectedDateTime.setHours(hour, 0, 0, 0);
-    
-    if (onTimeSlotClick) {
-      onTimeSlotClick(selectedDateTime);
-    }
-  };
-  
   return (
     <>
     <div className="text-xs text-gray-500 font-poppins px-4 py-2 border-b border-slate-200 text-left">
@@ -81,7 +68,6 @@ const WeekView: React.FC<WeekViewProps> = ({
             postsMap={postsMap}
             isToday={isToday(date)}
             onPostClick={onPostClick}
-            onTimeSlotClick={handleTimeSlotClick}
             />
           ))}
         </div>
