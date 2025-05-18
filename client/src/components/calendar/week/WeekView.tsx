@@ -70,7 +70,7 @@ const WeekView: React.FC<WeekViewProps> = ({
       </div>
       
       {/* Week grid with scrollable content */}
-      <ScrollArea className="h-[500px]">
+      <ScrollArea className="h-[60vh]">
         <div className="grid grid-cols-[60px,repeat(7,1fr)] relative" style={{ height: '1440px' }}>
           <TimeGutter />
           
