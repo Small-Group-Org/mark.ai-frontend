@@ -50,21 +50,21 @@ const WeekView: React.FC<WeekViewProps> = ({
   };
   
   return (
+    <>
+    <div className="text-xs text-gray-500 font-poppins px-4 py-2 border-b border-slate-200 text-left">
+      {timeZoneLabel}
+    </div>
     <div className="flex flex-col border border-slate-200 rounded-lg overflow-hidden animate-view-switch bg-white">
-      {/* Time zone label */}
-      <div className="px-4 py-2 border-b border-slate-200">
-        <span className="text-xs text-gray-500 font-poppins">{timeZoneLabel}</span>
-      </div>
       
       {/* Header row */}
       <div className="grid grid-cols-[60px,repeat(7,1fr)] border-b border-slate-200">
         <div className="border-r border-slate-200"></div>
         {weekDates.map((date, index) => (
           <DayHeaderCellWeek
-            key={index}
-            day={DAYS_OF_WEEK[date.getDay()]}
-            date={date.getDate()}
-            isToday={isToday(date)}
+          key={index}
+          day={DAYS_OF_WEEK[date.getDay()]}
+          date={date.getDate()}
+          isToday={isToday(date)}
           />
         ))}
       </div>
@@ -76,17 +76,18 @@ const WeekView: React.FC<WeekViewProps> = ({
           
           {weekDates.map((date, index) => (
             <DayColumnWeek
-              key={index}
-              date={date}
-              postsMap={postsMap}
-              isToday={isToday(date)}
-              onPostClick={onPostClick}
-              onTimeSlotClick={handleTimeSlotClick}
+            key={index}
+            date={date}
+            postsMap={postsMap}
+            isToday={isToday(date)}
+            onPostClick={onPostClick}
+            onTimeSlotClick={handleTimeSlotClick}
             />
           ))}
         </div>
       </ScrollArea>
     </div>
+    </>
   );
 };
 

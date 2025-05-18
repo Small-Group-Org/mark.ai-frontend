@@ -35,7 +35,6 @@ const DayCellMonth: React.FC<DayCellMonthProps> = ({
         isToday ? "today-cell bg-white" : "",
         !isCurrentMonth ? "other-month bg-gray-50" : "bg-white"
       )}
-      onClick={handleClick}
     >
       <div className="mb-2">
         {isFirstOfMonth ? (

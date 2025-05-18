@@ -67,6 +67,7 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   const handlePostClick = (postId: string | number) => {
     const post = posts.find(p => p.postId === postId);
     if (post) {
+      console.log('Clicked Post Details:', JSON.stringify(post, null, 2));
       toast({
         title: `${post.status === 'scheduled' ? 'Scheduled' : 'Draft'} Post`,
         description: `Post ID: ${post.postId}, Time: ${post.scheduledDate.toLocaleString()}`,
@@ -106,6 +107,7 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
           posts={posts}
           onPostClick={handlePostClick}
           onDateSelect={onDateSelect}
+          timeZoneLabel={timeZoneLabel}
         />
       ) : (
         <WeekView
