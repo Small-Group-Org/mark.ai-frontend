@@ -14,6 +14,7 @@ interface Message {
 }
 
 const ChatPanel = () => {
+    
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<Message[]>([
         // Initial messages from the design
@@ -35,11 +36,17 @@ const ChatPanel = () => {
     const userChatBubbleBg = 'bg-white';
     const userChatBubbleText = 'text-gray-700'; // text-[#334155]
 
-    // Scroll to bottom whenever messages change
     useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
+        const scrollTimeout = setTimeout(() => {
+            if (chatContainerRef.current) {
+                chatContainerRef.current.scrollTo({
+                    top: chatContainerRef.current.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+        }, 0);
+        
+        return () => clearTimeout(scrollTimeout);
     }, [messages]);
 
     const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

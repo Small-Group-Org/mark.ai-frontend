@@ -1,41 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
+import { SecondMessageModal } from '@/components/SignUpPromptModal';
 import markImage from '../assets/mark.png';
-import { useAuthModal } from '@/hooks/use-auth-modal';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
+import { initialMessages } from '@/commons/constant';
+import { useAuthStore } from '@/store/useAuthStore';
+import { AuthModal } from '@/components/auth/AuthModal';
 
 export default function Home() {
   // State for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Auth states
-  const { onOpen, setView } = useAuthModal();
+  const { setIsOpen: onOpen, setView } = useAuthStore();
   const { user, isAuthenticated, logout } = useAuth();
   const [, setLocation] = useLocation();
-  // Initial state with just the first three system messages (without user message)
-  const initialMessages: MessageType[] = [
-    {
-      id: '1',
-      text: '👋 Hi! I\'m Mark, your potential social media manager.',
-      sender: 'system',
-    },
-    {
-      id: '2',
-      text: 'I\'d love to learn about your business and social media goals.',
-      sender: 'system',
-    },
-    {
-      id: '3',
-      text: 'What\'s your biggest social media challenge right now?',
-      sender: 'system',
-    }
-  ];
 
   // State to control animation of messages
   const [visibleMessages, setVisibleMessages] = useState<MessageType[]>([]);
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
   const [messageIndex, setMessageIndex] = useState(0);
+  const [showSecondMessageModal, setShowSecondMessageModal] = useState(false);
 
   // Animation effect to show messages one by one with delay
   useEffect(() => {
@@ -61,6 +47,13 @@ export default function Home() {
     setMessages(prev => [...prev, newMessage]);
     setVisibleMessages(prev => [...prev, newMessage]);
     
+    // Show modal after second message
+    const userMessages = [...messages, newMessage].filter((msg) => msg.sender === "user")
+    if (userMessages.length >= 2) {
+      setShowSecondMessageModal(true);
+      return;
+    }
+    
     // Simulate system response
     setTimeout(() => {
       const systemResponse: MessageType = {
@@ -73,6 +66,12 @@ export default function Home() {
       setMessages(prev => [...prev, systemResponse]);
       setVisibleMessages(prev => [...prev, systemResponse]);
     }, 1000);
+  };
+
+  const handleSignIn = () => {
+    setShowSecondMessageModal(false);
+    setView('signin');
+    onOpen(true);
   };
 
   return (
@@ -196,7 +195,7 @@ export default function Home() {
               <button 
                 onClick={() => {
                   setView('signin');
-                  onOpen();
+                  onOpen(true);
                 }}
                 style={{ 
                   backgroundColor: '#1e293b', 
@@ -211,7 +210,7 @@ export default function Home() {
               <button 
                 onClick={() => {
                   setView('signup');
-                  onOpen();
+                  onOpen(true);
                 }}
                 style={{ 
                   backgroundColor: '#2563eb', 
@@ -289,7 +288,7 @@ export default function Home() {
                   <button 
                     onClick={() => {
                       setView('signin');
-                      onOpen();
+                      onOpen(true);
                       setMobileMenuOpen(false);
                     }}
                     style={{ 
@@ -305,7 +304,7 @@ export default function Home() {
                   <button 
                     onClick={() => {
                       setView('signup');
-                      onOpen();
+                      onOpen(true);
                       setMobileMenuOpen(false);
                     }}
                     style={{ 
@@ -889,6 +888,15 @@ export default function Home() {
           }
         `
       }} />
+      
+      {/* Add SecondMessageModal */}
+      <SecondMessageModal 
+        isOpen={showSecondMessageModal}
+        onClose={() => setShowSecondMessageModal(false)}
+        onSignIn={handleSignIn}
+      />
+
+      <AuthModal />
     </div>
   );
 }

@@ -1,0 +1,145 @@
+.dashboard-header {
+  position: relative;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dashboard-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  /* margin: 0; */
+  padding-left: 44px;
+  padding-top: 28px;
+}
+
+.date-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 40px;
+  padding-top: 3px;
+  padding-bottom: 20px;
+}
+
+.month-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.arrow {
+  font-size: 18px;
+  color: #000000;
+  cursor: pointer;
+}
+
+.date {
+  font-size: 16px;
+  color: #333;
+}
+
+.timeframe-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.active-timeframe {
+  padding: 8px 15px;
+  background-color: #3E96EF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.inactive-timeframe {
+  padding: 8px 15px;
+  background-color: #E0E7EE;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.stats-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-partition {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+}
+
+.stat-card {
+  flex: 1;
+  background-color: #FF89004D; /* 30% opacity */
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-card.post-created{
+    flex: none;
+    width: 246px;
+    height: 108px;
+    margin-left: 40px;
+}
+
+.stat-card.post-scheduled {
+  flex: none;
+  width: 246px;
+  height: 108px;
+  margin-left: 40px;
+}
+
+.stat-card.analytics {
+  flex: none;
+  width: 500px;
+  height: 247px;
+  text-align: left;
+}
+
+.stat-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.stat-card p {
+  font-size: 14px;
+  color: #333;
+  margin: 5px 0;
+}
+
+.analytics-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80%;
+}
+
+.graph-placeholder {
+  width: 150px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.analytics-data {
+  margin-top: 10px;
+}

@@ -1,6 +1,7 @@
 // @ts-nocheck
 "use client";
 import React, { useState, useEffect } from 'react';
+import DashboardHeader from './DashboardHeader';
 import dummyData from './dummy_data.json';
 import './Dashboard.css';
 import twitterIcon from '../assets/icons/twitter.png';
@@ -13,21 +14,30 @@ import youtubeIcon from '../assets/icons/youtube.png';
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('past');
   const [filteredPosts, setFilteredPosts] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(4); // 0-based index for May
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   useEffect(() => {
-    console.log(`Active Tab: ${activeTab}`);
-    filterPosts(activeTab);
-  }, [activeTab]);
+    filterPosts(activeTab, selectedMonth, selectedYear);
+  }, [activeTab, selectedMonth, selectedYear]);
 
-  const filterPosts = (tab) => {
+  const filterPosts = (tab, month, year) => {
     const filters = {
       past: post => post.status === 'public',
       upcoming: post => post.status === 'schedule',
       drafts: post => post.status === 'draft'
     };
-    const uniquePosts = dummyData.filter(filters[tab] || (() => false));
-    console.log(`Filtered Posts for ${tab}:`, uniquePosts);
-    setFilteredPosts(uniquePosts);
+
+    const statusFilteredPosts = dummyData.filter(filters[tab] || (() => false));
+
+    // Filter posts by selected month and year
+    const monthFilteredPosts = statusFilteredPosts.filter(post => {
+      const postDate = new Date(post.scheduleDate || post.createdAt);
+      return postDate.getMonth() === month && postDate.getFullYear() === year;
+    });
+
+    setFilteredPosts(monthFilteredPosts);
   };
 
   const formatDate = (dateString) => {
@@ -67,6 +77,13 @@ const Dashboard = () => {
 
   return (
     <div className="post-container">
+      <DashboardHeader
+        selectedMonth={selectedMonth}
+        setSelectedMonth={setSelectedMonth}
+        selectedYear={selectedYear}
+        setSelectedYear={setSelectedYear}
+        selectedPost={selectedPost}
+      />
       <div id="posts-container">
         <div id="posts-tabs">
           {['past', 'upcoming', 'drafts'].map(tab => (
@@ -91,6 +108,8 @@ const Dashboard = () => {
                 key={post._id}
                 id="post-item"
                 className={index % 2 ? 'odd' : 'even'}
+                onClick={() => setSelectedPost(post)} // Set the selected post on click
+                style={{ cursor: 'pointer' }}
               >
                 <div className="post-media-preview">
                   {isImage && (
@@ -116,7 +135,6 @@ const Dashboard = () => {
             );
           })}
         </div>
-        
       </div>
     </div>
   );
