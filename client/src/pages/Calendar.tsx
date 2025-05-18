@@ -32,11 +32,6 @@ export default function CalendarRoute() {
     <div className="p-6 h-full flex flex-col bg-white">
       
       <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
-        {/* <Calendar 
-          events={events} 
-          onEventsChange={handleEventsChange}
-          onEventClick={handleEventClick}
-        /> */}
         <SocialCalendar
           initialDate={today}
           posts={posts}
