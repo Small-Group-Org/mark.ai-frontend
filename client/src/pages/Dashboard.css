@@ -9,6 +9,11 @@ body {
 }
 
 #posts-container {
+  position: absolute;
+  top: 450px; /* Adjusted to appear below the header section */
+  left: 50%;
+  transform: translateX(-50%); /* Center the container */
+  width: 80%; /* Set to 80% of the parent container's width */
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -117,17 +122,16 @@ body {
 }
 
 .post-container {
-  margin: 0 auto;
-  max-width: 700px;
-  height: 500px;
-  padding: 20px;
+  width: 100%;
+  height: 100%;
+  /* padding: 20px; */
   border: 1px solid #ccc;
-  border-radius: 8px;
   background-color: #f9f9f9;
   overflow-y: auto;
   box-sizing: border-box;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  position: relative;
 }
 
 .post-container::-webkit-scrollbar {
