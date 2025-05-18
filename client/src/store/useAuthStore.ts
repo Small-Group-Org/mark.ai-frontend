@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { User } from '@/types';
+import { removeValue, STORAGE_KEYS } from '@/commons/storage';
 
 interface PostState {
   isAuth: boolean;
@@ -12,6 +13,7 @@ interface PostState {
   setView: (view: 'signin' | 'signup') => void;
   token?: string;
   setToken: (token: string) => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<PostState>((set) => ({
@@ -23,4 +25,8 @@ export const useAuthStore = create<PostState>((set) => ({
   view: 'signin',
   setView: (view) => set({ view }),
   setToken: (token: string) => set({token}),
+  logout: () => {
+    set({isAuth: false});
+    removeValue(STORAGE_KEYS.TOKEN);
+  }
 }));

@@ -8,6 +8,7 @@ import {
 import { useLocation } from "wouter";
 import { UserCredential } from "@/types";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { setValue, STORAGE_KEYS } from "@/commons/storage";
 
 export const useAuth = () => {
   const { toast } = useToast();
@@ -37,7 +38,7 @@ export const useAuth = () => {
       const response = await loginUser({ email, password });
       setUserDetails(response.user);
       setIsAuth(true);
-      localStorage.setItem("auth_token", response.token);
+      setValue(STORAGE_KEYS.TOKEN, response.token);
 
       toast({
         title: "Success",
@@ -74,7 +75,7 @@ export const useAuth = () => {
 
       const response = await handleSignUp(userData);
       setUserDetails(response.user);
-      localStorage.setItem("auth_token", response.token);
+      setValue(STORAGE_KEYS.TOKEN, response.token)
       setIsAuth(true);
 
       toast({
@@ -152,16 +153,10 @@ export const useAuth = () => {
     }));
   };
 
-  const logoutHandler = () => {
-    setIsAuth(false);
-    localStorage.removeItem("auth_token");
-  };
-
   return {
     userCredential,
     setUserCredential,
     isSubmitting,
-    logoutHandler,
     handleLoginSubmit,
     handleRegisterSubmit,
     userInputHandler,
