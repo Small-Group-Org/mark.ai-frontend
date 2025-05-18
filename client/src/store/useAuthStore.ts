@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { User } from '@/types';
 import { removeValue, STORAGE_KEYS } from '@/commons/storage';
+import { resetPostState } from './usePostStore';
 
 interface PostState {
   isAuth: boolean;
@@ -28,5 +29,6 @@ export const useAuthStore = create<PostState>((set) => ({
   logout: () => {
     set({isAuth: false});
     removeValue(STORAGE_KEYS.TOKEN);
+    resetPostState();
   }
 }));
