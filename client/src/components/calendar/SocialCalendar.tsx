@@ -6,18 +6,6 @@ import WeekView from './week/WeekView';
 import { useToast } from '@/hooks/use-toast';
 import { formatHourLabel } from '@/utils/dateUtils';
 
-// Type definitions
-export interface EventData {
-  postId: number | string;
-  title: string;
-  scheduledDate: Date;
-  status: string;
-  platforms: string[];
-  content?: string;
-  hashtags?: string[];
-  mediaUrl?: string[];
-}
-
 interface SocialCalendarProps {
   initialDate?: Date;
   posts: Post[];
