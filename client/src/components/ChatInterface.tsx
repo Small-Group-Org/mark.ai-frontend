@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export type MessageType = {
   id: string;
@@ -28,6 +28,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   placeholderText = 'Type your message...'
 }) => {
   const [inputValue, setInputValue] = useState('');
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+useEffect(() => {
+  const scrollTimeout = setTimeout(() => {
+      if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTo({
+              top: chatContainerRef.current.scrollHeight,
+              behavior: 'smooth'
+          });
+      }
+  }, 0);
+  
+  return () => clearTimeout(scrollTimeout);
+}, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,13 +94,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
       
       {/* Chat Messages */}
-      <div style={{ 
-        padding: '16px', 
-        maxHeight: '250px', 
-        minHeight: '250px',
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column'
+      <div 
+        ref={chatContainerRef}
+        style={{ 
+          padding: '16px', 
+          maxHeight: '250px', 
+          minHeight: '250px',
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column'
       }}>
         {messages.map((message) => (
           <div 

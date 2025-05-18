@@ -4,11 +4,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { format, parse, addDays } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
-
-// Define platform types
-export type PlatformName = 'Instagram' | 'Facebook' | 'TikTok' | 'X/Twitter' | 'Reddit' | 'Telegram' | 'Threads' | 'YouTube' | 'Bluesky' | 'Google Business';
-
-// Define post data interface
+import { PlatformName } from '@/types';
 export interface PostData {
   id?: number | string;
   title: string;
