@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import Calendar, { EventData } from '../components/Calendar';
 import { useEditPostContext } from '@/context/EditPostProvider';
+import SocialCalendar from '@/components/calendar/SocialCalendar';
+import { generateMockPosts } from '@/utils/mockPosts';
+import { Post } from '@/types/calendar';
+import { useToast } from '@/hooks/use-toast';
+
 
 export default function CalendarRoute() {
   // Get access to the EditPost component functions
+  const today = new Date();
   const { onOpen } = useEditPostContext();
+  const { toast } = useToast();
+  const [posts] = useState<Post[]>(() => generateMockPosts(today, 50));
+  
+  const handlePostClick = (postId: string | number) => {
+    const post = posts.find(p => p.postId === postId);
+    if (post) {
+      const postType = post.status === 'scheduled' ? 'Scheduled' : 'Draft';
+      toast({
+        title: `${postType} Post Clicked`,
+        description: `Post ID: ${post.postId}`,
+      });
+    }
+  };
+
+  const handleDateSelect = (date: Date) => {
+    toast({
+      title: 'Date Selected',
+      description: `You selected: ${date.toLocaleDateString()}`,
+    });
+  };
   
   // Calendar events state
   const [events, setEvents] = useState<EventData[]>([
@@ -110,36 +136,19 @@ export default function CalendarRoute() {
 
   return (
     <div className="p-6 h-full flex flex-col bg-white">
-      <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-blue-400">Content Calendar</h1>
-            <p className="text-gray-400 mt-1">
-              Manage your scheduled content across platforms
-            </p>
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => onOpen()} 
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2 transition-colors flex items-center"
-            >
-              <span>Create Post</span>
-            </button>
-            <button
-              onClick={() => onOpen(events[0].id)} 
-              className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md px-4 py-2 transition-colors flex items-center"
-            >
-              <span>Edit Post</span>
-            </button>
-          </div>
-        </div>
-      </div>
       
       <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
-        <Calendar 
+        {/* <Calendar 
           events={events} 
           onEventsChange={handleEventsChange}
           onEventClick={handleEventClick}
+        /> */}
+        <SocialCalendar
+          initialDate={today}
+          posts={posts}
+          onPostClick={handlePostClick}
+          onDateSelect={handleDateSelect}
+          timeZoneLabel="GMT+05:30"
         />
       </div>
     </div>
