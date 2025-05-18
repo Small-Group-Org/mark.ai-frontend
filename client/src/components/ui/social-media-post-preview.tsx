@@ -3,6 +3,8 @@ import { CalendarIcon, ChevronDown } from "lucide-react";
 import DatePickerButton from "./date-picker-button";
 import ScheduleActionButton from "./schedule-action-button";
 import { usePostStore } from "@/store/usePostStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { User } from "@/types";
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -43,8 +45,6 @@ interface SocialMediaPostPreviewProps {
  */
 const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   // User data with defaults
-  userInitials = "SC",
-  userName = "Stephen Conley",
   userHandle = "@steveconley",
   userTitle = "Product Designer",
 
@@ -66,6 +66,9 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   uploadedImageFile,
 }) => {
   const { postContent, postHashtags: hashtags, postTitle } = usePostStore();
+  const { userDetails= {} } = useAuthStore();
+  const { name: userName } = userDetails as User;
+  const userInitials = userName.split(" ")[0][0] + userName.split(" ")?.pop()?.[0];
 
   // State for handling dropdown menu
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
