@@ -364,7 +364,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
           <div className="flex items-center">
             <h2 className="text-lg font-medium mr-2 text-gray-800 dark:text-gray-100">Post Details</h2>
-            {!isEditing && <button 
+            {editedPost.status !== 'scheduled' && !isEditing && <button 
               className={cn(
                 "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
                 isEditing && "text-blue-500"
