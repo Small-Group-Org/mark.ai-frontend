@@ -59,12 +59,14 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
     if (post) {
       // Convert Post type to PostData type expected by EditPost
       const postData = {
-        id: post.postId,
+        postId: post.postId,
+        userId: post.userId,
         title: post.title,
         content: post.content || '',
-        hashtags: [post.hashtag], // Convert single hashtag to array
+        hashtag: post.hashtag,
         mediaUrl: post.mediaUrls || [],
         socialPlatforms: post.socialPlatforms,
+        status: post.status,
         postType: { post: true, story: false, reel: false }, // default values
         scheduledDate: post.scheduledDate.toISOString()
       };

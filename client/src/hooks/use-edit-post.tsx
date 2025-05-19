@@ -33,7 +33,7 @@ export interface EditPostStore {
   isOpen: boolean;
   post: PostData;
   isLoading: boolean;
-  onOpen: (postId?: number | string) => void;
+  onOpen: (postId?: number | string, postData?: PostData) => void;
   onClose: () => void;
   onSave: (post: PostData) => Promise<void>;
   onDelete: () => Promise<void>;
@@ -47,7 +47,13 @@ export const useEditPost = () => {
   const { toast } = useToast();
 
   // Open the edit modal with a specific post
-  const onOpen = useCallback(async (postIdOrEvent?: number | string) => {
+  const onOpen = useCallback(async (postIdOrEvent?: number | string, postData?: PostData) => {
+    if (postData) {
+      setPost(postData);
+      setIsOpen(true);
+      return;
+    }
+
     if (postIdOrEvent) {
       setIsLoading(true);
       try {
