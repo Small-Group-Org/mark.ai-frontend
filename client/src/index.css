@@ -304,3 +304,120 @@ select option {
   }
 }
 
+/* Calendar specific styles */
+.calendar-container {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.month-grid, .week-grid {
+  display: grid;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+.month-grid {
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: auto repeat(6, 1fr);
+}
+
+.week-grid {
+  grid-template-columns: 60px repeat(7, 1fr);
+}
+
+.today-cell .date-number {
+  background-color: #0B57D0;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.other-month .date-number {
+  color: #B0B0B0;
+}
+
+.post-indicator {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  margin: 2px 0;
+  height: 24px;
+  position: relative;
+}
+
+.post-indicator.scheduled {
+  background-color: rgba(105, 201, 208, 0.5);
+}
+
+.post-indicator.draft {
+  background-color: rgba(219, 219, 219, 0.5);
+}
+
+.post-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 4px;
+  object-fit: cover;
+  background-color: #FFFFFF;
+}
+
+.post-time {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  color: #323B43;
+  margin-left: auto;
+}
+
+.current-time-indicator {
+  position: absolute;
+  height: 2px;
+  background-color: #DB372D;
+  width: 100%;
+  z-index: 2;
+}
+
+.current-time-circle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #DB372D;
+  transform: translateY(-4px);
+  z-index: 3;
+}
+
+/* View toggle styles */
+.view-toggle {
+  display: flex;
+  background-color: #EBF3F5;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 2px;
+  width: fit-content;
+}
+
+.view-toggle button {
+  padding: 6px 16px;
+  border-radius: 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.view-toggle button.active {
+  background-color: #0891B2;
+  color: #FFFFFF;
+}
+
+.view-toggle button:not(.active) {
+  color: #1F2937;
+}

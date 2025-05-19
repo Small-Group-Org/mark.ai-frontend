@@ -1,0 +1,117 @@
+import React, { useState } from 'react';
+import { Post, CalendarView } from '@/types/calendar';
+import CalendarHeader from './CalendarHeader';
+import MonthView from './month/MonthView';
+import WeekView from './week/WeekView';
+import { useToast } from '@/hooks/use-toast';
+import { formatHourLabel } from '@/utils/dateUtils';
+import { useEditPostContext } from '@/context/EditPostProvider';
+
+interface SocialCalendarProps {
+  initialDate?: Date;
+  posts: Post[];
+  onDateSelect?: (date: Date) => void;
+  timeZoneLabel?: string;
+  minWidth?: string | number;
+  maxWidth?: string | number;
+}
+
+const SocialCalendar: React.FC<SocialCalendarProps> = ({
+  initialDate = new Date(),
+  posts = [],
+  onDateSelect = () => {},
+  timeZoneLabel = 'GMT+00:00',
+  minWidth = '300px',
+}) => {
+  const [currentView, setCurrentView] = useState<CalendarView>('month');
+  const [displayDate, setDisplayDate] = useState<Date>(initialDate);
+  const { toast } = useToast();
+  const editPostContext = useEditPostContext();
+  
+  const handleViewChange = (view: CalendarView) => {
+    setCurrentView(view);
+  };
+  
+  const handleNavigatePrev = () => {
+    const newDate = new Date(displayDate);
+    if (currentView === 'month') {
+      newDate.setMonth(newDate.getMonth() - 1);
+    } else {
+      newDate.setDate(newDate.getDate() - 7);
+    }
+    setDisplayDate(newDate);
+  };
+  
+  const handleNavigateNext = () => {
+    const newDate = new Date(displayDate);
+    if (currentView === 'month') {
+      newDate.setMonth(newDate.getMonth() + 1);
+    } else {
+      newDate.setDate(newDate.getDate() + 7);
+    }
+    setDisplayDate(newDate);
+  };
+  
+  const handlePostClick = (postId: string | number) => {
+    const post = posts.find(p => p.postId === postId);
+    if (post) {
+      // Convert Post type to PostData type expected by EditPost
+      const postData = {
+        postId: post.postId,
+        userId: post.userId,
+        title: post.title,
+        content: post.content || '',
+        hashtag: post.hashtag,
+        hashtags: post.hashtags,
+        mediaUrls: post.mediaUrls || [],
+        socialPlatforms: {
+          facebook: post.socialPlatforms.facebook,
+          instagram: post.socialPlatforms.instagram,
+          twitter: post.socialPlatforms.twitter,
+          linkedin: post.socialPlatforms.linkedin
+        },
+        status: post.status,
+        scheduledDate: post.scheduledDate.toISOString().slice(0, 16),
+        postType: post.postType || { post: true, story: false, reel: false }
+      };
+      console.log("Post clicked: ", postData);
+      editPostContext.onOpen(post.postId, postData, timeZoneLabel);
+    }
+  };
+  
+  return (
+    <div 
+      className="calendar-container bg-calendar-bg p-4 rounded-xl"
+      style={{ 
+        minWidth, 
+      }}
+    >
+      <CalendarHeader
+        currentView={currentView}
+        displayDate={displayDate}
+        onViewChange={handleViewChange}
+        onNavigatePrev={handleNavigatePrev}
+        onNavigateNext={handleNavigateNext}
+      />
+      
+      {currentView === 'month' ? (
+        <MonthView
+          displayDate={displayDate}
+          posts={posts}
+          onPostClick={handlePostClick}
+          onDateSelect={onDateSelect}
+          timeZoneLabel={timeZoneLabel}
+        />
+      ) : (
+        <WeekView
+          displayDate={displayDate}
+          posts={posts}
+          onPostClick={handlePostClick}
+          timeZoneLabel={timeZoneLabel}
+        />
+      )}
+    </div>
+  );
+};
+
+export default SocialCalendar;

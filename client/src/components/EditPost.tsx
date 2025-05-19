@@ -5,15 +5,29 @@ import { useToast } from '@/hooks/use-toast';
 import { format, parse, addDays } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import { PlatformName } from '@/types';
+import { useEditPostContext } from '@/context/EditPostProvider';
+
 export interface PostData {
-  id?: number | string;
+  postId: string | number;
+  userId: string | number;
   title: string;
   content: string;
-  hashtags: string[];
-  mediaUrl: string[];
-  socialPlatforms: Record<PlatformName, boolean>;
-  postType: { post: boolean; story: boolean; reel: boolean; };
+  hashtag: string;
+  hashtags?: string[];
+  mediaUrls: string[];
+  socialPlatforms: {
+    facebook: boolean;
+    instagram: boolean;
+    twitter: boolean;
+    linkedin: boolean;
+  };
+  status: 'draft' | 'scheduled' | 'published' | 'failed';
   scheduledDate: string;
+  postType: {
+    post: boolean;
+    story: boolean;
+    reel: boolean;
+  };
 }
 
 // Define component props
@@ -34,6 +48,7 @@ const EditPost: React.FC<EditPostProps> = ({
   onDelete,
   onGenerate
 }) => {
+  const { timeZoneLabel = 'GMT+00:00' } = useEditPostContext();
   // Component state
   const [editedPost, setEditedPost] = useState<PostData>(post);
   const [activeTab, setActiveTab] = useState<'content' | 'schedule'>('content');
@@ -67,8 +82,25 @@ const EditPost: React.FC<EditPostProps> = ({
 
   // Initialize edited post when post prop changes
   useEffect(() => {
-    setEditedPost(post);
-  }, [post]);
+    if (post) {
+      setEditedPost(post);
+      // Initialize date and time fields
+      const postDate = new Date(post.scheduledDate);
+      
+      // Convert to local time based on timezone offset
+      const timeZoneOffset = timeZoneLabel.replace('GMT', '');
+      const [hours, minutes] = timeZoneOffset.split(':').map(Number);
+      const offsetInMinutes = (hours * 60) + (minutes * (hours < 0 ? -1 : 1));
+      
+      // Adjust the time based on timezone
+      const localDate = new Date(postDate.getTime() + (offsetInMinutes * 60 * 1000));
+      
+      setDate(localDate);
+      setInputHour(format(localDate, 'h'));
+      setInputMinute(format(localDate, 'mm'));
+      setInputAmPm(format(localDate, 'a').toUpperCase());
+    }
+  }, [post, timeZoneLabel]);
   
   // Handle clicks outside calendar and dropdown
   useEffect(() => {
@@ -107,7 +139,7 @@ const EditPost: React.FC<EditPostProps> = ({
   };
   
   // Handle platform toggle
-  const handlePlatformToggle = (platform: PlatformName) => {
+  const handlePlatformToggle = (platform: keyof typeof editedPost.socialPlatforms) => {
     setEditedPost(prev => ({
       ...prev,
       socialPlatforms: {
@@ -145,7 +177,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const handleDeleteMedia = (index: number) => {
     setEditedPost(prev => ({
       ...prev,
-      mediaUrl: prev.mediaUrl.filter((_, i) => i !== index)
+      mediaUrls: prev.mediaUrls.filter((_, i) => i !== index)
     }));
   };
 
@@ -181,13 +213,19 @@ const EditPost: React.FC<EditPostProps> = ({
   
   // Handle time change
   const handleTimeChange = (hours: number, minutes: number) => {
-    const scheduledDate = new Date(editedPost.scheduledDate);
-    scheduledDate.setHours(hours);
-    scheduledDate.setMinutes(minutes);
+    const timeZoneOffset = timeZoneLabel.replace('GMT', '');
+    const [offsetHours, offsetMinutes] = timeZoneOffset.split(':').map(Number);
+    const offsetInMinutes = (offsetHours * 60) + (offsetMinutes * (offsetHours < 0 ? -1 : 1));
+    
+    // Convert local time back to UTC
+    const localDate = new Date(date);
+    localDate.setHours(hours);
+    localDate.setMinutes(minutes);
+    const utcDate = new Date(localDate.getTime() - (offsetInMinutes * 60 * 1000));
     
     setEditedPost({
       ...editedPost,
-      scheduledDate: scheduledDate.toISOString()
+      scheduledDate: utcDate.toISOString()
     });
   };
   
@@ -273,9 +311,9 @@ const EditPost: React.FC<EditPostProps> = ({
     });
     
     // Notify calendar of the update if this is a calendar event
-    if (editedPost.id) {
+    if (editedPost.postId) {
       const event = new CustomEvent('calendarUpdated', { 
-        detail: { type: 'update', eventId: editedPost.id }
+        detail: { type: 'update', eventId: editedPost.postId }
       });
       document.dispatchEvent(event);
     }
@@ -294,9 +332,9 @@ const EditPost: React.FC<EditPostProps> = ({
       });
       
       // Notify calendar of the deletion if this is a calendar event
-      if (editedPost.id) {
+      if (editedPost.postId) {
         const event = new CustomEvent('calendarUpdated', { 
-          detail: { type: 'delete', eventId: editedPost.id }
+          detail: { type: 'delete', eventId: editedPost.postId }
         });
         document.dispatchEvent(event);
       }
@@ -326,7 +364,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
           <div className="flex items-center">
             <h2 className="text-lg font-medium mr-2 text-gray-800 dark:text-gray-100">Post Details</h2>
-            {!isEditing && <button 
+            {editedPost.status !== 'scheduled' && !isEditing && <button 
               className={cn(
                 "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
                 isEditing && "text-blue-500"
@@ -356,10 +394,10 @@ const EditPost: React.FC<EditPostProps> = ({
           {/* Left side - Media preview (desktop) */}
           <div className="hidden md:flex w-1/2 border-r border-gray-200 p-4 flex-col">
             <div className="relative flex-grow">
-              {editedPost.mediaUrl.length > 0 ? (
+              {editedPost.mediaUrls.length > 0 ? (
                 <div className="relative mb-4 rounded-lg overflow-hidden h-64 md:h-72 lg:h-80">
                   <img 
-                    src={editedPost.mediaUrl[0]} 
+                    src={editedPost.mediaUrls[0]} 
                     alt="Post media" 
                     className="object-cover w-full h-full"
                   />
@@ -391,7 +429,7 @@ const EditPost: React.FC<EditPostProps> = ({
                             const url = URL.createObjectURL(file);
                             setEditedPost(prev => ({
                               ...prev,
-                              mediaUrl: [...prev.mediaUrl, url]
+                              mediaUrls: [...prev.mediaUrls, url]
                             }));
                           }
                         }}
@@ -407,7 +445,7 @@ const EditPost: React.FC<EditPostProps> = ({
               )}
 
               {/* Media navigation dots */}
-              {editedPost.mediaUrl.length > 0 && (
+              {editedPost.mediaUrls.length > 0 && (
                 <div className="flex justify-center gap-1 my-2">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((_, index) => (
                     <div 
@@ -461,7 +499,7 @@ const EditPost: React.FC<EditPostProps> = ({
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200",
                       !isEditing && "cursor-default"
                     )}
-                    onClick={() => isEditing && handlePlatformToggle(platform as PlatformName)}
+                    onClick={() => isEditing && handlePlatformToggle(platform as keyof typeof editedPost.socialPlatforms)}
                     disabled={!isEditing}
                   >
                     {platform === 'X/Twitter' ? 'X' : 
@@ -479,10 +517,10 @@ const EditPost: React.FC<EditPostProps> = ({
               <div className="flex-1" onClick={(e) => e.stopPropagation()}>
                 {/* Media preview for mobile */}
                 <div className="my-4 mx-4 relative">
-                  {editedPost.mediaUrl.length > 0 ? (
+                  {editedPost.mediaUrls.length > 0 ? (
                     <div className="relative rounded-lg overflow-hidden h-64">
                       <img 
-                        src={editedPost.mediaUrl[0]} 
+                        src={editedPost.mediaUrls[0]} 
                         alt="Post media" 
                         className="object-cover w-full h-full"
                       />
@@ -522,7 +560,7 @@ const EditPost: React.FC<EditPostProps> = ({
                                   const url = URL.createObjectURL(file);
                                   setEditedPost(prev => ({
                                     ...prev,
-                                    mediaUrl: [...prev.mediaUrl, url]
+                                    mediaUrls: [...prev.mediaUrls, url]
                                   }));
                                 }
                               }}
@@ -617,7 +655,7 @@ const EditPost: React.FC<EditPostProps> = ({
                       "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
                       !isEditing && "bg-gray-50 cursor-default"
                     )}
-                    value={editedPost.hashtags.map(tag => `#${tag}`).join(' ')}
+                    value={editedPost.hashtags?.map(tag => `#${tag}`).join(' ') || ''}
                     onChange={handleHashtagsChange}
                     placeholder="#hashtag1 #hashtag2 #hashtag3"
                     readOnly={!isEditing}
@@ -668,7 +706,7 @@ const EditPost: React.FC<EditPostProps> = ({
                             : "bg-gray-100 text-gray-600",
                           !isEditing && "cursor-default"
                         )}
-                        onClick={() => isEditing && handlePlatformToggle(platform as PlatformName)}
+                        onClick={() => isEditing && handlePlatformToggle(platform as keyof typeof editedPost.socialPlatforms)}
                         disabled={!isEditing}
                       >
                         {platform === 'X/Twitter' ? 'X' : 
@@ -704,6 +742,9 @@ const EditPost: React.FC<EditPostProps> = ({
 
             {/* Scheduling Controls for mobile - Fixed at bottom */}
             <div className="px-4 py-3 border-t border-gray-200 bg-white">
+              <div className="text-xs text-gray-500 mb-1">
+                {timeZoneLabel}
+              </div>  
               <div className="flex flex-col space-y-2">
                 {/* Calendar Date Picker */}
                 <div 
@@ -720,28 +761,39 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
                 
                 {/* Schedule Button with Dropdown */}
-                <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
-                  <button 
-                    className={cn(
-                      "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none flex-1",
-                      isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
-                    )}
-                    onClick={() => isEditing && handleSchedulePost()}
-                    disabled={!isEditing}
-                  >
-                    {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
-                  </button>
-                  <button 
-                    className={cn(
-                      "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
-                      isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
-                    )}
-                    onClick={() => isEditing && setIsDropdownOpen(!isDropdownOpen)}
-                    disabled={!isEditing}
-                  >
-                    <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                </div>
+                {editedPost.status === 'scheduled' ? (
+                  <div className="flex justify-center">
+                    <button
+                      className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  ) : (
+                  <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
+                    <button 
+                      className={cn(
+                        "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none flex-1",
+                        isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
+                      )}
+                      onClick={() => isEditing && handleSchedulePost()}
+                      disabled={!isEditing}
+                    >
+                      {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
+                    </button>
+                    <button 
+                      className={cn(
+                        "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
+                        isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
+                      )}
+                      onClick={() => isEditing && setIsDropdownOpen(!isDropdownOpen)}
+                      disabled={!isEditing}
+                    >
+                      <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -820,7 +872,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
                   !isEditing && "opacity-75 bg-gray-50 cursor-default"
                 )}
-                value={editedPost.hashtags.map(tag => `#${tag}`).join(' ')}
+                value={editedPost.hashtags?.map(tag => `#${tag}`).join(' ') || ''}
                 onChange={handleHashtagsChange}
                 placeholder="#hashtag1 #hashtag2 #hashtag3"
                 readOnly={!isEditing}
@@ -853,7 +905,12 @@ const EditPost: React.FC<EditPostProps> = ({
             
             {/* Scheduling Controls - Made responsive */}
             <div className="mt-auto">
+              {/* Timezone Label */}
+              <div className="text-xs text-gray-500 mb-1">
+                {timeZoneLabel}
+              </div>  
               <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center space-y-2 lg:space-y-0 lg:space-x-2">
+                
                 {/* Calendar Date Picker */}
                 <div 
                   className={cn(
@@ -869,6 +926,16 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
                 
                 {/* Schedule Button with Dropdown */}
+                {editedPost.status === 'scheduled' ? (
+                  <div className="flex justify-center">
+                    <button
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  ) : (
                 <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial", !isEditing && "opacity-70")}>
                   <button 
                     className={cn(
@@ -890,7 +957,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   >
                     <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
-                </div>
+                </div>)}
               </div>
             </div>
           </div>

@@ -61,6 +61,20 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Calendar specific colors
+				'calendar-bg': '#F9FAFB',
+				'calendar-grid': '#FFFFFF',
+				'today-bg': '#0B57D0',
+				'today-text': '#FFFFFF',
+				'toggle-active': '#0891B2',
+				'toggle-inactive': '#EBF3F5',
+				'toggle-active-text': '#FFFFFF',
+				'toggle-inactive-text': '#1F2937',
+				'day-text': '#1F1F1F',
+				'scheduled-post': '#69C9D0',
+				'draft-post': '#DBDBDB',
+				'post-time': '#323B43',
+				'current-time': '#DB372D',
       },
       keyframes: {
         "accordion-down": {
