@@ -3,6 +3,13 @@ import { PostType } from "@/types";
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://34.135.194.8:8000';
 
+export const API_METHODS = {
+    GET: "GET",
+    POST: "POST",
+    DELETE: "DELETE",
+    PUT: "PUT",
+  };
+  
 
 export const postTypes: PostType[] = [
     {

@@ -77,3 +77,5 @@ export const usePostStore = create<PostState>((set) => ({
   // Reset all post state
   resetPostState: () => set(initialState),
 }));
+
+export const resetPostState = usePostStore.getState().resetPostState;

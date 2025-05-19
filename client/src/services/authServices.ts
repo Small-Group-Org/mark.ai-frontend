@@ -2,11 +2,24 @@ import axios from 'axios';
 import { User } from '@/types';
 import { LoginRequest, SignUpRequest } from '@/types/requestTypes';
 import { BASE_URL } from '@/commons/constant';
+import { doPOST } from '@/commons/serviceUtils';
 
 interface AuthResponse {
     user: User;
     token: string;
 }
+
+export const verifyToken = async (token: string) => {
+    try {
+        const response = await doPOST( `${BASE_URL}/auth/me`, {token})
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(error.response?.data?.message || 'Signup failed');
+        }
+        throw error;
+    }
+}   
 
 export const handleSignUp = async (userData: SignUpRequest): Promise<AuthResponse> => {
     try {

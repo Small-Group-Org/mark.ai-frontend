@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import ChatInterface, { MessageType } from '@/components/ChatInterface';
 import { SecondMessageModal } from '@/components/SignUpPromptModal';
 import markImage from '../assets/mark.png';
-import { useAuth } from '@/hooks/useAuth';
 import { useLocation } from 'wouter';
 import { initialMessages } from '@/commons/constant';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -13,8 +12,7 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Auth states
-  const { setIsOpen: onOpen, setView } = useAuthStore();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { setIsOpen: onOpen, setView, logout, isAuth, userDetails: user } = useAuthStore();
   const [, setLocation] = useLocation();
 
   // State to control animation of messages
@@ -161,7 +159,7 @@ export default function Home() {
           <a href="#" style={{ color: '#d1d5db', textDecoration: 'none', fontSize: 'clamp(14px, 4vw, 16px)' }}>FAQ</a>
           
           {/* Show different buttons based on authentication status */}
-          {isAuthenticated ? (
+          {isAuth ? (
             <>
               <button 
                 onClick={() => setLocation('/dashboard')}
@@ -253,7 +251,7 @@ export default function Home() {
               marginTop: '8px',
               justifyContent: 'center'
             }}>
-              {isAuthenticated ? (
+              {isAuth ? (
                 <>
                   <button 
                     onClick={() => setLocation('/dashboard')}
@@ -353,8 +351,8 @@ export default function Home() {
           animation: 'fadeIn 1.2s ease-in-out',
           width: '100%'
         }}>
-          {isAuthenticated && user ? (
-            <>Welcome back, {user.firstName}! Your 24/7 Social Media Expert</>
+          {isAuth && user ? (
+            <>Welcome back, {user.name}! Your 24/7 Social Media Expert</>
           ) : (
             <>Your 24/7 Social Media Expert</>
           )}
