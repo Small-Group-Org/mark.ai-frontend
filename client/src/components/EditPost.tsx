@@ -6,14 +6,26 @@ import { format, parse, addDays } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import { PlatformName } from '@/types';
 export interface PostData {
-  id?: number | string;
+  postId: string | number;
+  userId: string | number;
   title: string;
   content: string;
-  hashtags: string[];
-  mediaUrl: string[];
-  socialPlatforms: Record<PlatformName, boolean>;
-  postType: { post: boolean; story: boolean; reel: boolean; };
+  hashtag: string;
+  hashtags?: string[];
+  mediaUrls: string[];
+  socialPlatforms: {
+    facebook: boolean;
+    instagram: boolean;
+    twitter: boolean;
+    linkedin: boolean;
+  };
+  status: 'draft' | 'scheduled' | 'published' | 'failed';
   scheduledDate: string;
+  postType: {
+    post: boolean;
+    story: boolean;
+    reel: boolean;
+  };
 }
 
 // Define component props
@@ -67,7 +79,15 @@ const EditPost: React.FC<EditPostProps> = ({
 
   // Initialize edited post when post prop changes
   useEffect(() => {
-    setEditedPost(post);
+    if (post) {
+      setEditedPost(post);
+      // Initialize date and time fields
+      const postDate = new Date(post.scheduledDate);
+      setDate(postDate);
+      setInputHour(format(postDate, 'h'));
+      setInputMinute(format(postDate, 'mm'));
+      setInputAmPm(format(postDate, 'a').toUpperCase());
+    }
   }, [post]);
   
   // Handle clicks outside calendar and dropdown
@@ -107,7 +127,7 @@ const EditPost: React.FC<EditPostProps> = ({
   };
   
   // Handle platform toggle
-  const handlePlatformToggle = (platform: PlatformName) => {
+  const handlePlatformToggle = (platform: keyof typeof editedPost.socialPlatforms) => {
     setEditedPost(prev => ({
       ...prev,
       socialPlatforms: {
@@ -145,7 +165,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const handleDeleteMedia = (index: number) => {
     setEditedPost(prev => ({
       ...prev,
-      mediaUrl: prev.mediaUrl.filter((_, i) => i !== index)
+      mediaUrls: prev.mediaUrls.filter((_, i) => i !== index)
     }));
   };
 
@@ -273,9 +293,9 @@ const EditPost: React.FC<EditPostProps> = ({
     });
     
     // Notify calendar of the update if this is a calendar event
-    if (editedPost.id) {
+    if (editedPost.postId) {
       const event = new CustomEvent('calendarUpdated', { 
-        detail: { type: 'update', eventId: editedPost.id }
+        detail: { type: 'update', eventId: editedPost.postId }
       });
       document.dispatchEvent(event);
     }
@@ -294,9 +314,9 @@ const EditPost: React.FC<EditPostProps> = ({
       });
       
       // Notify calendar of the deletion if this is a calendar event
-      if (editedPost.id) {
+      if (editedPost.postId) {
         const event = new CustomEvent('calendarUpdated', { 
-          detail: { type: 'delete', eventId: editedPost.id }
+          detail: { type: 'delete', eventId: editedPost.postId }
         });
         document.dispatchEvent(event);
       }
@@ -356,10 +376,10 @@ const EditPost: React.FC<EditPostProps> = ({
           {/* Left side - Media preview (desktop) */}
           <div className="hidden md:flex w-1/2 border-r border-gray-200 p-4 flex-col">
             <div className="relative flex-grow">
-              {editedPost.mediaUrl.length > 0 ? (
+              {editedPost.mediaUrls.length > 0 ? (
                 <div className="relative mb-4 rounded-lg overflow-hidden h-64 md:h-72 lg:h-80">
                   <img 
-                    src={editedPost.mediaUrl[0]} 
+                    src={editedPost.mediaUrls[0]} 
                     alt="Post media" 
                     className="object-cover w-full h-full"
                   />
@@ -391,7 +411,7 @@ const EditPost: React.FC<EditPostProps> = ({
                             const url = URL.createObjectURL(file);
                             setEditedPost(prev => ({
                               ...prev,
-                              mediaUrl: [...prev.mediaUrl, url]
+                              mediaUrls: [...prev.mediaUrls, url]
                             }));
                           }
                         }}
@@ -407,7 +427,7 @@ const EditPost: React.FC<EditPostProps> = ({
               )}
 
               {/* Media navigation dots */}
-              {editedPost.mediaUrl.length > 0 && (
+              {editedPost.mediaUrls.length > 0 && (
                 <div className="flex justify-center gap-1 my-2">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((_, index) => (
                     <div 
@@ -461,7 +481,7 @@ const EditPost: React.FC<EditPostProps> = ({
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200",
                       !isEditing && "cursor-default"
                     )}
-                    onClick={() => isEditing && handlePlatformToggle(platform as PlatformName)}
+                    onClick={() => isEditing && handlePlatformToggle(platform as keyof typeof editedPost.socialPlatforms)}
                     disabled={!isEditing}
                   >
                     {platform === 'X/Twitter' ? 'X' : 
@@ -479,10 +499,10 @@ const EditPost: React.FC<EditPostProps> = ({
               <div className="flex-1" onClick={(e) => e.stopPropagation()}>
                 {/* Media preview for mobile */}
                 <div className="my-4 mx-4 relative">
-                  {editedPost.mediaUrl.length > 0 ? (
+                  {editedPost.mediaUrls.length > 0 ? (
                     <div className="relative rounded-lg overflow-hidden h-64">
                       <img 
-                        src={editedPost.mediaUrl[0]} 
+                        src={editedPost.mediaUrls[0]} 
                         alt="Post media" 
                         className="object-cover w-full h-full"
                       />
@@ -522,7 +542,7 @@ const EditPost: React.FC<EditPostProps> = ({
                                   const url = URL.createObjectURL(file);
                                   setEditedPost(prev => ({
                                     ...prev,
-                                    mediaUrl: [...prev.mediaUrl, url]
+                                    mediaUrls: [...prev.mediaUrls, url]
                                   }));
                                 }
                               }}
@@ -617,7 +637,7 @@ const EditPost: React.FC<EditPostProps> = ({
                       "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
                       !isEditing && "bg-gray-50 cursor-default"
                     )}
-                    value={editedPost.hashtags.map(tag => `#${tag}`).join(' ')}
+                    value={editedPost.hashtags?.map(tag => `#${tag}`).join(' ') || ''}
                     onChange={handleHashtagsChange}
                     placeholder="#hashtag1 #hashtag2 #hashtag3"
                     readOnly={!isEditing}
@@ -668,7 +688,7 @@ const EditPost: React.FC<EditPostProps> = ({
                             : "bg-gray-100 text-gray-600",
                           !isEditing && "cursor-default"
                         )}
-                        onClick={() => isEditing && handlePlatformToggle(platform as PlatformName)}
+                        onClick={() => isEditing && handlePlatformToggle(platform as keyof typeof editedPost.socialPlatforms)}
                         disabled={!isEditing}
                       >
                         {platform === 'X/Twitter' ? 'X' : 
@@ -820,7 +840,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800",
                   !isEditing && "opacity-75 bg-gray-50 cursor-default"
                 )}
-                value={editedPost.hashtags.map(tag => `#${tag}`).join(' ')}
+                value={editedPost.hashtags?.map(tag => `#${tag}`).join(' ') || ''}
                 onChange={handleHashtagsChange}
                 placeholder="#hashtag1 #hashtag2 #hashtag3"
                 readOnly={!isEditing}

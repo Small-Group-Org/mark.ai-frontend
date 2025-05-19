@@ -10,7 +10,6 @@ import { useEditPostContext } from '@/context/EditPostProvider';
 interface SocialCalendarProps {
   initialDate?: Date;
   posts: Post[];
-  onPostClick?: (postId: string | number) => void;
   onDateSelect?: (date: Date) => void;
   timeZoneLabel?: string;
   minWidth?: string | number;
@@ -20,7 +19,6 @@ interface SocialCalendarProps {
 const SocialCalendar: React.FC<SocialCalendarProps> = ({
   initialDate = new Date(),
   posts = [],
-  onPostClick = () => {},
   onDateSelect = () => {},
   timeZoneLabel = 'GMT+00:00',
   minWidth = '300px',
@@ -64,17 +62,21 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
         title: post.title,
         content: post.content || '',
         hashtag: post.hashtag,
-        mediaUrl: post.mediaUrls || [],
-        socialPlatforms: post.socialPlatforms,
+        hashtags: post.hashtags,
+        mediaUrls: post.mediaUrls || [],
+        socialPlatforms: {
+          facebook: post.socialPlatforms.facebook,
+          instagram: post.socialPlatforms.instagram,
+          twitter: post.socialPlatforms.twitter,
+          linkedin: post.socialPlatforms.linkedin
+        },
         status: post.status,
-        postType: { post: true, story: false, reel: false }, // default values
-        scheduledDate: post.scheduledDate.toISOString()
+        scheduledDate: post.scheduledDate.toISOString().slice(0, 16),
+        postType: post.postType || { post: true, story: false, reel: false }
       };
       
-      editPostContext.onOpen(post.postId);
+      editPostContext.onOpen(post.postId, postData);
     }
-    
-    onPostClick(postId);
   };
   
   return (
