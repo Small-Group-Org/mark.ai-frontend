@@ -33,8 +33,6 @@ const WeekView: React.FC<WeekViewProps> = ({
   
   // Preprocess posts once and memoize the result
   const postsMap = useMemo(() => preprocessPosts(posts), [posts]);
-  console.log("Total Post count: ", posts.length);
-  console.log("Post Map: ", postsMap);
   
   return (
     <>

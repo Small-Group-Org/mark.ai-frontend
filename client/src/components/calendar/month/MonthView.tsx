@@ -41,7 +41,6 @@ const MonthView: React.FC<MonthViewProps> = ({
         {/* Day cells */}
         {calendarDates.map((date, index) => {
           const postsForDay = getPostsForDay(posts, date);
-          // console.log(index, " MonthView postsForDay: ", postsForDay)
           return (
             <DayCellMonth
               key={index}
