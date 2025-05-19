@@ -5,22 +5,20 @@ import axios from 'axios';
 
 // Define the empty/default post structure
 const DEFAULT_POST: PostData = {
+  postId: '',
+  userId: '',
   title: '',
   content: '',
+  hashtag: '',
   hashtags: [],
-  mediaUrl: [],
+  mediaUrls: [],
   socialPlatforms: {
-    'Instagram': false,
-    'Facebook': false,
-    'TikTok': false,
-    'X/Twitter': false,
-    'Reddit': false,
-    'Telegram': false,
-    'Threads': false,
-    'YouTube': false,
-    'Bluesky': false,
-    'Google Business': false
+    facebook: false,
+    instagram: false,
+    twitter: false,
+    linkedin: false
   },
+  status: 'draft',
   postType: {
     post: true,
     story: false,
@@ -33,7 +31,7 @@ export interface EditPostStore {
   isOpen: boolean;
   post: PostData;
   isLoading: boolean;
-  onOpen: (postId?: number | string) => void;
+  onOpen: (postId?: number | string, postData?: PostData) => void;
   onClose: () => void;
   onSave: (post: PostData) => Promise<void>;
   onDelete: () => Promise<void>;
@@ -47,79 +45,57 @@ export const useEditPost = () => {
   const { toast } = useToast();
 
   // Open the edit modal with a specific post
-  const onOpen = useCallback(async (postIdOrEvent?: number | string) => {
+  const onOpen = useCallback(async (postIdOrEvent?: number | string, postData?: PostData) => {
+    if (postData) {
+      setPost(postData);
+      setIsOpen(true);
+      return;
+    }
+
     if (postIdOrEvent) {
       setIsLoading(true);
       try {
-        // In a real app, you would fetch the post data from your API
-        // const response = await axios.get(`/api/posts/${postId}`);
-        // setPost(response.data);
+        // Check if this is a calendar event by looking for the event in our mock calendar data
+        const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+        const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
         
-        // For now, we'll use a mock implementation
-        // In the future, replace this with actual API calls
-        setTimeout(() => {
-          // Check if this is a calendar event by looking for the event in our mock calendar data
-          // In a real app, you would have a more robust way to identify the event type
-          const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
-          const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
-          
-          let mockPost: PostData;
-          
-          if (calendarEvent) {
-            // Special handling for Tea Garden demo event
-            if (calendarEvent.title === "Tea Garden") {
-              mockPost = {
-                ...DEFAULT_POST,
-                id: postIdOrEvent,
-                title: "Tea Garden",
-                content: "Netflix and Chill\nMountain-ing and Hill\nAbsolutely loved the greens",
-                hashtags: ["#kudremukh", "#mausam", "#karnataka"],
-                scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
-                socialPlatforms: {
-                  ...DEFAULT_POST.socialPlatforms,
-                  Instagram: true,
-                  "X/Twitter": true,
-                },
-                mediaUrl: ["https://images.unsplash.com/photo-1501084291732-13b1ba8f0ebc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3"]
-              };
-            } else {
-              // This is a regular calendar event, convert it to PostData format
-              mockPost = {
-                ...DEFAULT_POST,
-                id: postIdOrEvent,
-                title: calendarEvent.title || 'Calendar Event',
-                content: calendarEvent.content || 'Content from calendar event',
-                // Parse hashtags from content if they exist or use default
-                hashtags: calendarEvent.hashtags || ['#event', '#scheduled'],
-                // Use the scheduled time from the event
-                scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
-                // Convert platforms array to socialPlatforms object
-                socialPlatforms: {
-                  ...DEFAULT_POST.socialPlatforms,
-                  ...(calendarEvent.platforms || []).reduce((acc: any, platform: string) => {
-                    acc[platform] = true;
-                    return acc;
-                  }, {})
-                },
-                // Use media URLs if they exist
-                mediaUrl: calendarEvent.mediaUrl || []
-              };
-            }
-          } else {
-            // Regular post, use default mock data
-            mockPost = {
-              ...DEFAULT_POST,
-              id: postIdOrEvent,
-              title: 'Sample Post Title',
-              content: 'This is a sample post content that would be loaded from the server.',
-              hashtags: ['#sample', '#post', '#content'],
-              scheduledDate: new Date().toISOString().slice(0, 16)
-            };
-          }
-          
-          setPost(mockPost);
-          setIsLoading(false);
-        }, 500);
+        let mockPost: PostData;
+        
+        if (calendarEvent) {
+          // Convert calendar event to PostData format
+          mockPost = {
+            ...DEFAULT_POST,
+            postId: postIdOrEvent,
+            title: calendarEvent.title || 'Calendar Event',
+            content: calendarEvent.content || 'Content from calendar event',
+            hashtag: calendarEvent.hashtag || '',
+            hashtags: calendarEvent.hashtags || [],
+            mediaUrls: calendarEvent.mediaUrls || [],
+            socialPlatforms: {
+              facebook: calendarEvent.platforms?.includes('facebook') || false,
+              instagram: calendarEvent.platforms?.includes('instagram') || false,
+              twitter: calendarEvent.platforms?.includes('twitter') || false,
+              linkedin: calendarEvent.platforms?.includes('linkedin') || false
+            },
+            status: calendarEvent.status || 'draft',
+            scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
+            postType: calendarEvent.postType || DEFAULT_POST.postType
+          };
+        } else {
+          // Regular post, use default mock data
+          mockPost = {
+            ...DEFAULT_POST,
+            postId: postIdOrEvent,
+            title: 'Sample Post Title',
+            content: 'This is a sample post content that would be loaded from the server.',
+            hashtag: '#sample',
+            hashtags: ['sample', 'post', 'content'],
+            scheduledDate: new Date().toISOString().slice(0, 16)
+          };
+        }
+        
+        setPost(mockPost);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch post', error);
         toast({
@@ -149,20 +125,13 @@ export const useEditPost = () => {
   const onSave = useCallback(async (updatedPost: PostData) => {
     setIsLoading(true);
     try {
-      // In a real app, you would send the updated post to your API
-      // if (updatedPost.id) {
-      //   await axios.put(`/api/posts/${updatedPost.id}`, updatedPost);
-      // } else {
-      //   await axios.post('/api/posts', updatedPost);
-      // }
-      
       // Check if this might be a calendar event by getting saved events
       const savedEventsStr = localStorage.getItem('calendarEvents');
-      if (savedEventsStr && updatedPost.id) {
+      if (savedEventsStr && updatedPost.postId) {
         try {
           const savedEvents = JSON.parse(savedEventsStr);
           // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event.id === updatedPost.id);
+          const eventIndex = savedEvents.findIndex((event: any) => event.id === updatedPost.postId);
           
           if (eventIndex !== -1) {
             // This is a calendar event, so update it
@@ -170,6 +139,7 @@ export const useEditPost = () => {
               ...savedEvents[eventIndex],
               title: updatedPost.title,
               content: updatedPost.content,
+              hashtag: updatedPost.hashtag,
               hashtags: updatedPost.hashtags,
               // Extract active platforms from socialPlatforms object
               platforms: Object.entries(updatedPost.socialPlatforms)
@@ -177,7 +147,9 @@ export const useEditPost = () => {
                 .map(([platform]) => platform),
               // Convert scheduledDate to ISO format for calendar
               scheduled_time: new Date(updatedPost.scheduledDate).toISOString(),
-              mediaUrl: updatedPost.mediaUrl
+              mediaUrls: updatedPost.mediaUrls,
+              status: updatedPost.status,
+              postType: updatedPost.postType
             };
             
             // Update the event in the array
@@ -199,7 +171,7 @@ export const useEditPost = () => {
       
       toast({
         title: 'Success',
-        description: updatedPost.id ? 'Post updated successfully' : 'Post created successfully',
+        description: updatedPost.postId ? 'Post updated successfully' : 'Post created successfully',
       });
       setIsLoading(false);
       setIsOpen(false);
@@ -216,20 +188,17 @@ export const useEditPost = () => {
 
   // Delete the post
   const onDelete = useCallback(async () => {
-    if (!post.id) return;
+    if (!post.postId) return;
     
     setIsLoading(true);
     try {
-      // In a real app, you would send a delete request to your API
-      // await axios.delete(`/api/posts/${post.id}`);
-      
       // Check if this might be a calendar event
       const savedEventsStr = localStorage.getItem('calendarEvents');
       if (savedEventsStr) {
         try {
           const savedEvents = JSON.parse(savedEventsStr);
           // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event.id === post.id);
+          const eventIndex = savedEvents.findIndex((event: any) => event.id === post.postId);
           
           if (eventIndex !== -1) {
             // This is a calendar event, so remove it
@@ -264,16 +233,12 @@ export const useEditPost = () => {
       });
       setIsLoading(false);
     }
-  }, [post.id, toast]);
+  }, [post.postId, toast]);
 
   // Generate content with AI
   const onGenerate = useCallback(async (prompt: string) => {
     setIsLoading(true);
     try {
-      // In a real app, you would send the prompt to your AI generation API
-      // const response = await axios.post('/api/generate', { prompt });
-      // const generatedContent = response.data.content;
-      
       // For now, we'll use a mock implementation
       await new Promise(resolve => setTimeout(resolve, 1000));
       const mockGeneratedContent = `Generated content based on: "${prompt}". This would be replaced with actual AI-generated content.`;

@@ -5,18 +5,32 @@ import { verifyToken } from '@/services/authServices';
 import { getValue, STORAGE_KEYS } from '@/commons/storage';
 import { useLocation } from 'wouter';
 import { useAuthStore } from '@/store/useAuthStore';
+import { PostData } from '@/components/EditPost';
+
+interface EditPostContextType {
+  isOpen: boolean;
+  post: PostData;
+  isLoading: boolean;
+  onOpen: (postId?: number | string, postData?: PostData, timeZoneLabel?: string) => void;
+  onClose: () => void;
+  onSave: (post: PostData) => Promise<void>;
+  onDelete: () => Promise<void>;
+  onGenerate: (prompt: string) => Promise<void>;
+  timeZoneLabel?: string;
+}
 
 // Create context
-export const EditPostContext = createContext<EditPostStore | null>(null);
+const EditPostContext = createContext<EditPostContextType | undefined>(undefined);
 
 // Provider component
 export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({ 
   children 
 }) => {
-  const editPostStore = useEditPost();
+  const editPost = useEditPost();
   const token = getValue(STORAGE_KEYS.TOKEN) || "";
   const [, navigate] = useLocation();
   const { setIsAuth, setUserDetails } = useAuthStore()
+  const [timeZoneLabel, setTimeZoneLabel] = React.useState<string>('GMT+00:00');
 
   useEffect(() => {
     if(token){
@@ -36,15 +50,22 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
+  const onOpen = (postId?: number | string, postData?: PostData, timeZone?: string) => {
+    if (timeZone) {
+      setTimeZoneLabel(timeZone);
+    }
+    editPost.onOpen(postId, postData);
+  };
+
   return (
-    <EditPostContext.Provider value={editPostStore}>
+    <EditPostContext.Provider value={{ ...editPost, onOpen, timeZoneLabel }}>
       <EditPost 
-        isOpen={editPostStore.isOpen}
-        onClose={editPostStore.onClose}
-        post={editPostStore.post}
-        onSave={editPostStore.onSave}
-        onDelete={editPostStore.onDelete}
-        onGenerate={editPostStore.onGenerate}
+        isOpen={editPost.isOpen}
+        onClose={editPost.onClose}
+        post={editPost.post}
+        onSave={editPost.onSave}
+        onDelete={editPost.onDelete}
+        onGenerate={editPost.onGenerate}
       />
       {children}
     </EditPostContext.Provider>
@@ -54,7 +75,7 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
 // Hook for consuming the context
 export const useEditPostContext = () => {
   const context = useContext(EditPostContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useEditPostContext must be used within an EditPostProvider');
   }
   return context;
