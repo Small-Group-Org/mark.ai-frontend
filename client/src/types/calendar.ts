@@ -19,10 +19,16 @@ export interface Post {
   title: string;
   content: string;
   hashtag: string;
+  hashtags?: string[];
   mediaUrls: string[];
   socialPlatforms: SocialPlatforms;
   status: PostStatus;
   scheduledDate: Date; // Date object for scheduled date and time
+  postType?: {
+    post: boolean;
+    story: boolean;
+    reel: boolean;
+  };
 }
 
 export type CalendarView = 'month' | 'week';

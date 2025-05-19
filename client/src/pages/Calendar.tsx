@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import Calendar, { EventData } from '../components/Calendar';
+import React, { useState } from 'react';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
 import { generateMockPosts } from '@/utils/mockPosts';
