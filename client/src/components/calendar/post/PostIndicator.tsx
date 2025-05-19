@@ -3,12 +3,12 @@ import { Post } from '@/types/calendar';
 import { formatTime12Hour } from '@/utils/dateUtils';
 import { cn } from '@/lib/utils';
 
-interface PostIndicatorMonthProps {
+interface PostIndicatorProps {
   post: Post;
   onClick: (postId: string | number) => void;
 }
 
-const PostIndicatorMonth: React.FC<PostIndicatorMonthProps> = ({ post, onClick }) => {
+const PostIndicator: React.FC<PostIndicatorProps> = ({ post, onClick }) => {
   const handleClick = () => {
     onClick(post.postId);
   };
@@ -38,4 +38,4 @@ const PostIndicatorMonth: React.FC<PostIndicatorMonthProps> = ({ post, onClick }
   );
 };
 
-export default PostIndicatorMonth;
+export default PostIndicator; 

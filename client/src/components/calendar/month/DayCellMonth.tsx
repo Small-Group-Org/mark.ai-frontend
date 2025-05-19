@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Post } from '@/types/calendar';
-import PostIndicatorMonth from '../post/PostIndicatorMonth';
+import PostIndicator from '../post/PostIndicator';
 import { cn } from '@/lib/utils';
 import { MONTHS } from '@/utils/dateUtils';
 
@@ -61,7 +61,7 @@ const DayCellMonth: React.FC<DayCellMonthProps> = ({
       
       <div className="space-y-1 max-h-[80px] overflow-y-auto">
         {posts.map((post) => (
-          <PostIndicatorMonth
+          <PostIndicator
             key={post.postId}
             post={post}
             onClick={onPostClick}

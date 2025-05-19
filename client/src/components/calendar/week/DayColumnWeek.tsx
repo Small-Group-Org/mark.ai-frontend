@@ -3,7 +3,7 @@ import { Post } from '@/types/calendar';
 import CurrentTimeIndicator from './CurrentTimeIndicator';
 import { getHoursArray } from '@/utils/dateUtils';
 import { PostsByDateTime, getPostsForDateTime } from '@/utils/postUtils';
-import PostIndicatorWeek from '../post/PostIndicatorWeek';
+import PostIndicator from '../post/PostIndicator';
 
 interface DayColumnWeekProps {
   date: Date;
@@ -37,7 +37,7 @@ const DayColumnWeek: React.FC<DayColumnWeekProps> = ({
               {/* Render posts for this hour */}
               <div className="space-y-1 p-1">
                 {postsForHour.map((post) => (
-                  <PostIndicatorWeek
+                  <PostIndicator
                     key={post.postId}
                     post={post}
                     onClick={onPostClick}
