@@ -12,13 +12,15 @@ const isFormData = (value: unknown): value is FormData => value instanceof FormD
 const apiHandler = async (endPoint: any, method: string, data = null) => {
     try {
         const contentType: string = isFormData(data) ? "multipart/form-data" : "application/json";
+        const token = getValue(STORAGE_KEYS.TOKEN);
+        
         const response = await api({
             method: method,
             url: endPoint,
             ...(![API_METHODS.GET].includes(method) && { data: data }),
             headers: {
                 "Content-Type": contentType,
-                "token" : `${getValue(STORAGE_KEYS.TOKEN)}`,
+                "Authorization": `Bearer ${token}`,
                 "Accept": "application/json",
             },
         });
