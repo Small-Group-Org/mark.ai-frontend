@@ -74,8 +74,8 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
         scheduledDate: post.scheduledDate.toISOString().slice(0, 16),
         postType: post.postType || { post: true, story: false, reel: false }
       };
-      
-      editPostContext.onOpen(post.postId, postData);
+      console.log("Post clicked: ", postData);
+      editPostContext.onOpen(post.postId, postData, timeZoneLabel);
     }
   };
   

@@ -5,6 +5,8 @@ import { useToast } from '@/hooks/use-toast';
 import { format, parse, addDays } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import { PlatformName } from '@/types';
+import { useEditPostContext } from '@/context/EditPostProvider';
+
 export interface PostData {
   postId: string | number;
   userId: string | number;
@@ -46,6 +48,7 @@ const EditPost: React.FC<EditPostProps> = ({
   onDelete,
   onGenerate
 }) => {
+  const { timeZoneLabel = 'GMT+00:00' } = useEditPostContext();
   // Component state
   const [editedPost, setEditedPost] = useState<PostData>(post);
   const [activeTab, setActiveTab] = useState<'content' | 'schedule'>('content');
@@ -83,12 +86,21 @@ const EditPost: React.FC<EditPostProps> = ({
       setEditedPost(post);
       // Initialize date and time fields
       const postDate = new Date(post.scheduledDate);
-      setDate(postDate);
-      setInputHour(format(postDate, 'h'));
-      setInputMinute(format(postDate, 'mm'));
-      setInputAmPm(format(postDate, 'a').toUpperCase());
+      
+      // Convert to local time based on timezone offset
+      const timeZoneOffset = timeZoneLabel.replace('GMT', '');
+      const [hours, minutes] = timeZoneOffset.split(':').map(Number);
+      const offsetInMinutes = (hours * 60) + (minutes * (hours < 0 ? -1 : 1));
+      
+      // Adjust the time based on timezone
+      const localDate = new Date(postDate.getTime() + (offsetInMinutes * 60 * 1000));
+      
+      setDate(localDate);
+      setInputHour(format(localDate, 'h'));
+      setInputMinute(format(localDate, 'mm'));
+      setInputAmPm(format(localDate, 'a').toUpperCase());
     }
-  }, [post]);
+  }, [post, timeZoneLabel]);
   
   // Handle clicks outside calendar and dropdown
   useEffect(() => {
@@ -201,13 +213,19 @@ const EditPost: React.FC<EditPostProps> = ({
   
   // Handle time change
   const handleTimeChange = (hours: number, minutes: number) => {
-    const scheduledDate = new Date(editedPost.scheduledDate);
-    scheduledDate.setHours(hours);
-    scheduledDate.setMinutes(minutes);
+    const timeZoneOffset = timeZoneLabel.replace('GMT', '');
+    const [offsetHours, offsetMinutes] = timeZoneOffset.split(':').map(Number);
+    const offsetInMinutes = (offsetHours * 60) + (offsetMinutes * (offsetHours < 0 ? -1 : 1));
+    
+    // Convert local time back to UTC
+    const localDate = new Date(date);
+    localDate.setHours(hours);
+    localDate.setMinutes(minutes);
+    const utcDate = new Date(localDate.getTime() - (offsetInMinutes * 60 * 1000));
     
     setEditedPost({
       ...editedPost,
-      scheduledDate: scheduledDate.toISOString()
+      scheduledDate: utcDate.toISOString()
     });
   };
   
@@ -724,6 +742,9 @@ const EditPost: React.FC<EditPostProps> = ({
 
             {/* Scheduling Controls for mobile - Fixed at bottom */}
             <div className="px-4 py-3 border-t border-gray-200 bg-white">
+              <div className="text-xs text-gray-500 mb-1">
+                {timeZoneLabel}
+              </div>  
               <div className="flex flex-col space-y-2">
                 {/* Calendar Date Picker */}
                 <div 
@@ -740,28 +761,39 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
                 
                 {/* Schedule Button with Dropdown */}
-                <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
-                  <button 
-                    className={cn(
-                      "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none flex-1",
-                      isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
-                    )}
-                    onClick={() => isEditing && handleSchedulePost()}
-                    disabled={!isEditing}
-                  >
-                    {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
-                  </button>
-                  <button 
-                    className={cn(
-                      "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
-                      isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
-                    )}
-                    onClick={() => isEditing && setIsDropdownOpen(!isDropdownOpen)}
-                    disabled={!isEditing}
-                  >
-                    <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                </div>
+                {editedPost.status === 'scheduled' ? (
+                  <div className="flex justify-center">
+                    <button
+                      className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  ) : (
+                  <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
+                    <button 
+                      className={cn(
+                        "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none flex-1",
+                        isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
+                      )}
+                      onClick={() => isEditing && handleSchedulePost()}
+                      disabled={!isEditing}
+                    >
+                      {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
+                    </button>
+                    <button 
+                      className={cn(
+                        "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
+                        isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
+                      )}
+                      onClick={() => isEditing && setIsDropdownOpen(!isDropdownOpen)}
+                      disabled={!isEditing}
+                    >
+                      <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -873,7 +905,12 @@ const EditPost: React.FC<EditPostProps> = ({
             
             {/* Scheduling Controls - Made responsive */}
             <div className="mt-auto">
+              {/* Timezone Label */}
+              <div className="text-xs text-gray-500 mb-1">
+                {timeZoneLabel}
+              </div>  
               <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center space-y-2 lg:space-y-0 lg:space-x-2">
+                
                 {/* Calendar Date Picker */}
                 <div 
                   className={cn(
@@ -889,6 +926,16 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
                 
                 {/* Schedule Button with Dropdown */}
+                {editedPost.status === 'scheduled' ? (
+                  <div className="flex justify-center">
+                    <button
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  ) : (
                 <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial", !isEditing && "opacity-70")}>
                   <button 
                     className={cn(
@@ -910,7 +957,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   >
                     <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
-                </div>
+                </div>)}
               </div>
             </div>
           </div>
