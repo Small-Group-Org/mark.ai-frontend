@@ -72,6 +72,12 @@ export default function Home() {
     onOpen(true);
   };
 
+  const handleSignUp = () => {
+    setShowSecondMessageModal(false);
+    setView('signup');
+    onOpen(true);
+  };
+
   return (
     <div style={{ 
       position: "relative", 
@@ -892,6 +898,7 @@ export default function Home() {
         isOpen={showSecondMessageModal}
         onClose={() => setShowSecondMessageModal(false)}
         onSignIn={handleSignIn}
+        onSignUp={handleSignUp}
       />
 
       <AuthModal />

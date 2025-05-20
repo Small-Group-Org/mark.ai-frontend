@@ -40,8 +40,8 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const checkUserAuthentication = async () => {
     try{
-      const response = await verifyToken(token);
-      setUserDetails(response.user);
+      const response = await verifyToken();
+      setUserDetails(response.data);
       setIsAuth(true);
       navigate("/dashboard");
     } catch (error){
