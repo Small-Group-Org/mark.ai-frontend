@@ -35,7 +35,7 @@ export const useAuth = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await loginUser({ email, password });
+      const {data: response} = await loginUser({ email, password });
       setUserDetails(response.user);
       setIsAuth(true);
       setValue(STORAGE_KEYS.TOKEN, response.token);
@@ -73,7 +73,7 @@ export const useAuth = () => {
         name: `${firstName} ${lastName}`,
       };
 
-      const response = await handleSignUp(userData);
+      const {data: response} = await handleSignUp(userData);
       setUserDetails(response.user);
       setValue(STORAGE_KEYS.TOKEN, response.token)
       setIsAuth(true);
