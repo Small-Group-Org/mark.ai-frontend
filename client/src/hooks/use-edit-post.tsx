@@ -55,23 +55,23 @@ export const useEditPost = () => {
     if (postIdOrEvent) {
       setIsLoading(true);
       try {
-        // Check if this is a calendar event by looking for the event in our mock calendar data
-        const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
-        const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
-        
-        let mockPost: PostData;
-        
-        if (calendarEvent) {
+          // Check if this is a calendar event by looking for the event in our mock calendar data
+          const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+          const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
+          
+          let mockPost: PostData;
+          
+          if (calendarEvent) {
           // Convert calendar event to PostData format
-          mockPost = {
-            ...DEFAULT_POST,
+              mockPost = {
+                ...DEFAULT_POST,
             postId: postIdOrEvent,
-            title: calendarEvent.title || 'Calendar Event',
-            content: calendarEvent.content || 'Content from calendar event',
+                title: calendarEvent.title || 'Calendar Event',
+                content: calendarEvent.content || 'Content from calendar event',
             hashtag: calendarEvent.hashtag || '',
             hashtags: calendarEvent.hashtags || [],
             mediaUrls: calendarEvent.mediaUrls || [],
-            socialPlatforms: {
+                socialPlatforms: {
               facebook: calendarEvent.platforms?.includes('facebook') || false,
               instagram: calendarEvent.platforms?.includes('instagram') || false,
               twitter: calendarEvent.platforms?.includes('twitter') || false,
@@ -81,21 +81,21 @@ export const useEditPost = () => {
             scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
             postType: calendarEvent.postType || DEFAULT_POST.postType
           };
-        } else {
-          // Regular post, use default mock data
-          mockPost = {
-            ...DEFAULT_POST,
+          } else {
+            // Regular post, use default mock data
+            mockPost = {
+              ...DEFAULT_POST,
             postId: postIdOrEvent,
-            title: 'Sample Post Title',
-            content: 'This is a sample post content that would be loaded from the server.',
+              title: 'Sample Post Title',
+              content: 'This is a sample post content that would be loaded from the server.',
             hashtag: '#sample',
             hashtags: ['sample', 'post', 'content'],
-            scheduledDate: new Date().toISOString().slice(0, 16)
-          };
-        }
-        
-        setPost(mockPost);
-        setIsLoading(false);
+              scheduledDate: new Date().toISOString().slice(0, 16)
+            };
+          }
+          
+          setPost(mockPost);
+          setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch post', error);
         toast({

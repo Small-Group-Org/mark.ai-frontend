@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 interface ScheduleActionButtonProps {
   onSchedule?: () => void;
+  onDraft?: () => void;
   onToggleOptions?: () => void;
   buttonType?: 'schedule' | 'draft';
   className?: string;
@@ -10,39 +11,42 @@ interface ScheduleActionButtonProps {
 
 const ScheduleActionButton = ({
   onSchedule,
+  onDraft,
   onToggleOptions,
   buttonType = 'schedule',
   className = '',
 }: ScheduleActionButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<'schedule' | 'draft'>(buttonType);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const handleDropdownToggle = (event: React.MouseEvent) => {
-    // Stop propagation to prevent the click outside handler from firing
+    event.preventDefault();
     event.stopPropagation();
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleOptionSelect = (type: 'schedule' | 'draft') => {
+    setSelectedType(type);
+    setIsDropdownOpen(false);
+    if (onToggleOptions) onToggleOptions();
+  };
+
+  const handleMainButtonClick = () => {
+    if (selectedType === 'schedule') {
+      onSchedule?.();
+    } else {
+      onDraft?.();
+    }
   };
 
   return (
     <div className={`flex rounded-lg shadow-sm relative ${className}`}>
       <button 
         className="px-6 py-2 text-sm font-medium bg-cyan-500 text-white hover:bg-cyan-600 whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
-        onClick={onSchedule}
+        onClick={handleMainButtonClick}
       >
-        {buttonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
+        {selectedType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
       </button>
       <button 
         className="px-2 py-2 bg-cyan-500 text-white hover:bg-cyan-700 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
@@ -62,10 +66,7 @@ const ScheduleActionButton = ({
         >
           <div className="py-1" role="none">
             <button
-              onClick={() => {
-                setIsDropdownOpen(false);
-                if (onToggleOptions) onToggleOptions();
-              }}
+              onClick={() => handleOptionSelect('schedule')}
               className="group flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
               role="menuitem"
             >
@@ -76,10 +77,7 @@ const ScheduleActionButton = ({
             </button>
             
             <button
-              onClick={() => {
-                setIsDropdownOpen(false);
-                if (onToggleOptions) onToggleOptions();
-              }}
+              onClick={() => handleOptionSelect('draft')}
               className="group outline-none flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700"
               role="menuitem"
             >

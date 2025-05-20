@@ -444,20 +444,6 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
               )}
 
-              {/* Media navigation dots */}
-              {editedPost.mediaUrls.length > 0 && (
-                <div className="flex justify-center gap-1 my-2">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((_, index) => (
-                    <div 
-                      key={index} 
-                      className={cn(
-                        "h-2 w-2 rounded-full", 
-                        index === 0 ? "bg-blue-500" : "bg-gray-300"
-                      )}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
 
             {/* Post Type Selection - Moved from bottom to top */}

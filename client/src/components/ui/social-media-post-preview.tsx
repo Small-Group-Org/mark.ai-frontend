@@ -25,6 +25,7 @@ interface SocialMediaPostPreviewProps {
   // Scheduling options
   scheduledDate?: string;
   onSchedule?: () => void;
+  onDraft?: () => void;
   onDateChange?: () => void;
   onToggleOptions?: () => void; // For dropdown toggle
   buttonType?: "schedule" | "draft"; // Button type to display
@@ -52,6 +53,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   imageUrl,
   scheduledDate,
   onSchedule,
+  onDraft,
   onDateChange,
   onToggleOptions,
   buttonType = "schedule",
@@ -224,6 +226,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
           <DatePickerButton date={scheduledDate || ""} onClick={onDateChange} />
           <ScheduleActionButton
             onSchedule={onSchedule}
+            onDraft={onDraft}
             onToggleOptions={onToggleOptions}
             buttonType={buttonType}
           />

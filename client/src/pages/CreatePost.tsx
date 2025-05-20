@@ -6,6 +6,7 @@ import { PlatformName } from "@/types";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";
+import { useToast } from "@/hooks/use-toast";
 
 // Simple ChevronDownIcon (can be moved to IconComponents later)
 const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -38,6 +39,8 @@ const CreatePost = () => {
     setPostType,
     setMediaUrl,
   } = usePostStore();
+
+  const { toast } = useToast();
 
   // --- Local UI State Only ---
   const [date, setDate] = useState<Date | undefined>(new Date()); // Initialize with current date
@@ -289,65 +292,60 @@ const CreatePost = () => {
     }
   };
 
-  // Modified handler to handle either scheduling or drafting based on selected type
+  // Modified handler to handle scheduling
   const handleSchedulePost = async () => {
     try {
-      // Check which action to perform based on the selected button type
-      if (selectedButtonType === "schedule") {
-        // Schedule post action
-        let responseData;
-        if (uploadedImageFile) {
-          const formData = new FormData();
-          formData.append("image", uploadedImageFile);
-          formData.append("title", postTitle || "");
-          formData.append("content", postContent || "");
-          formData.append("hashtags", JSON.stringify(postHashtags));
-          formData.append("socialPlatforms", JSON.stringify(socialPlatforms));
-          formData.append("postType", JSON.stringify(postType));
-          formData.append("scheduledDate", scheduledDate);
-          // TODO: Replace with your actual API endpoint
-          const response = await fetch("/api/schedule-post", {
-            method: "POST",
-            body: formData,
-          });
-          responseData = await response.json();
-        } else {
-          // Fallback: send as JSON if no image
-          const response = await fetch("/api/schedule-post", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: postTitle,
-              content: postContent,
-              hashtags: postHashtags,
-              socialPlatforms,
-              postType,
-              scheduledDate,
-            }),
-          });
-          responseData = await response.json();
-        }
-        // If backend returns image URL, update mediaUrl and clear local file
-        if (responseData && responseData.url) {
-          setUploadedImageFile(null);
-          setLocalImageUrl(null);
-          if (responseData.url) {
-            // Assuming setMediaUrl is available via props (if not, lift state up)
-            if (typeof setMediaUrl === "function")
-              setMediaUrl([responseData.url]);
-          }
-        }
-        alert(`Post successfully scheduled for: ${displayDate}`);
+      let responseData;
+      if (uploadedImageFile) {
+        const formData = new FormData();
+        formData.append("image", uploadedImageFile);
+        formData.append("title", postTitle || "");
+        formData.append("content", postContent || "");
+        formData.append("hashtags", JSON.stringify(postHashtags));
+        formData.append("socialPlatforms", JSON.stringify(socialPlatforms));
+        formData.append("postType", JSON.stringify(postType));
+        formData.append("scheduledDate", scheduledDate);
+        // TODO: Replace with your actual API endpoint
+        const response = await fetch("/api/schedule-post", {
+          method: "POST",
+          body: formData,
+        });
+        responseData = await response.json();
       } else {
-        // This is a draft action
-        handleSaveDraft();
+        // Fallback: send as JSON if no image
+        const response = await fetch("/api/schedule-post", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: postTitle,
+            content: postContent,
+            hashtags: postHashtags,
+            socialPlatforms,
+            postType,
+            scheduledDate,
+          }),
+        });
+        responseData = await response.json();
       }
+      // If backend returns image URL, update mediaUrl and clear local file
+      if (responseData && responseData.url) {
+        setUploadedImageFile(null);
+        setLocalImageUrl(null);
+        if (responseData.url) {
+          if (typeof setMediaUrl === "function")
+            setMediaUrl([responseData.url]);
+        }
+      }
+      toast({
+        title: "Success",
+        description: `Post successfully scheduled for: ${displayDate}`,
+      });
     } catch (error) {
-      if (selectedButtonType === "schedule") {
-        alert("Failed to schedule post.");
-      } else {
-        alert("Failed to save draft.");
-      }
+      toast({
+        title: "Error",
+        description: "Failed to schedule post.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -364,7 +362,7 @@ const CreatePost = () => {
     );
   };
 
-  // Handle the actual draft post saving when button is clicked
+  // Handle the actual draft post saving
   const handleSaveDraft = () => {
     try {
       // Save draft post logic
@@ -390,11 +388,17 @@ const CreatePost = () => {
       });
       localStorage.setItem("postDrafts", JSON.stringify(existingDrafts));
 
-      console.log("[PostPreviewPanel] Post saved as draft:", draftData);
-      alert("Post saved as draft!");
+      toast({
+        title: "Success",
+        description: "Post saved as draft!",
+      });
     } catch (error) {
       console.error("Error saving draft:", error);
-      alert("Failed to save draft.");
+      toast({
+        title: "Error",
+        description: "Failed to save draft.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -543,14 +547,15 @@ const CreatePost = () => {
             userName="Stephen Conley"
             userHandle="@steveconley"
             userTitle="Product Designer"
-            scheduledDate={displayDate} // Use local display state
+            scheduledDate={displayDate}
             onSchedule={handleSchedulePost}
+            onDraft={handleSaveDraft}
             onDateChange={handleDateChange}
             onToggleOptions={handleToggleDropdownOption}
             hideFooter={false}
             onImageUpload={handleImageUpload}
             uploadedImageFile={uploadedImageFile}
-            buttonType={selectedButtonType} // Pass the selected button type
+            buttonType={selectedButtonType}
           />
 
           {isCalendarOpen && (
