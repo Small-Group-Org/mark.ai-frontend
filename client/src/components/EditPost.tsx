@@ -6,6 +6,7 @@ import { format, parse, addDays } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import { PlatformName } from '@/types';
 import { useEditPostContext } from '@/context/EditPostProvider';
+import ScheduleActionButton from "@/components/ui/schedule-action-button";
 
 export interface PostData {
   postId: string | number;
@@ -304,10 +305,9 @@ const EditPost: React.FC<EditPostProps> = ({
     onSave(editedPost);
     setIsEditing(false);
     
-    const actionText = selectedButtonType === 'schedule' ? 'scheduled' : 'saved as draft';
     toast({
-      title: selectedButtonType === 'schedule' ? "Post Scheduled" : "Draft Saved",
-      description: `Your post has been ${actionText}.`,
+      title: "Post Scheduled",
+      description: `Your post has been scheduled for ${format(date, 'MMM d, yyyy')} at ${inputHour}:${inputMinute} ${inputAmPm}.`,
     });
     
     // Notify calendar of the update if this is a calendar event
@@ -319,8 +319,27 @@ const EditPost: React.FC<EditPostProps> = ({
     }
   };
   
-  // Original save function - keeping for compatibility
-  const handleSave = handleSchedulePost;
+  // Handle draft save
+  const handleSaveDraft = () => {
+    if (!isEditing) return;
+    
+    // Update post with current settings
+    onSave(editedPost);
+    setIsEditing(false);
+    
+    toast({
+      title: "Draft Saved",
+      description: "Your post has been saved as a draft.",
+    });
+    
+    // Notify calendar of the update if this is a calendar event
+    if (editedPost.postId) {
+      const event = new CustomEvent('calendarUpdated', { 
+        detail: { type: 'update', eventId: editedPost.postId }
+      });
+      document.dispatchEvent(event);
+    }
+  };
 
   // Handle delete
   const handleDelete = () => {
@@ -758,26 +777,11 @@ const EditPost: React.FC<EditPostProps> = ({
                   </div>
                   ) : (
                   <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
-                    <button 
-                      className={cn(
-                        "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none flex-1",
-                        isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
-                      )}
-                      onClick={() => isEditing && handleSchedulePost()}
-                      disabled={!isEditing}
-                    >
-                      {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
-                    </button>
-                    <button 
-                      className={cn(
-                        "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
-                        isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
-                      )}
-                      onClick={() => isEditing && setIsDropdownOpen(!isDropdownOpen)}
-                      disabled={!isEditing}
-                    >
-                      <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
+                    <ScheduleActionButton
+                      onSchedule={() => isEditing && handleSchedulePost()}
+                      onDraft={() => isEditing && handleSaveDraft()}
+                      className={!isEditing ? "opacity-70" : ""}
+                    />
                   </div>
                 )}
               </div>
@@ -923,26 +927,11 @@ const EditPost: React.FC<EditPostProps> = ({
                   </div>
                   ) : (
                 <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial", !isEditing && "opacity-70")}>
-                  <button 
-                    className={cn(
-                      "px-6 py-2 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none flex-1 lg:flex-initial",
-                      isEditing ? "hover:bg-cyan-600" : "bg-cyan-400 cursor-not-allowed"
-                    )}
-                    onClick={() => isEditing && handleSchedulePost()}
-                    disabled={!isEditing}
-                  >
-                    {selectedButtonType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
-                  </button>
-                  <button 
-                    className={cn(
-                      "px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none",
-                      isEditing ? "hover:bg-cyan-700" : "bg-cyan-400 cursor-not-allowed"
-                    )}
-                    onClick={() => isEditing && setIsDropdownOpen(!isDropdownOpen)}
-                    disabled={!isEditing}
-                  >
-                    <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
+                  <ScheduleActionButton
+                    onSchedule={() => isEditing && handleSchedulePost()}
+                    onDraft={() => isEditing && handleSaveDraft()}
+                    className={!isEditing ? "opacity-70" : ""}
+                  />
                 </div>)}
               </div>
             </div>
