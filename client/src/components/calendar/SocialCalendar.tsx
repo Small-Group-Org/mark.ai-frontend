@@ -14,6 +14,7 @@ interface SocialCalendarProps {
   timeZoneLabel?: string;
   minWidth?: string | number;
   maxWidth?: string | number;
+  isLoading?: boolean;
 }
 
 const SocialCalendar: React.FC<SocialCalendarProps> = ({
@@ -22,6 +23,7 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   onDateSelect = () => {},
   timeZoneLabel = 'GMT+00:00',
   minWidth = '300px',
+  isLoading = false,
 }) => {
   const [currentView, setCurrentView] = useState<CalendarView>('month');
   const [displayDate, setDisplayDate] = useState<Date>(initialDate);
@@ -55,27 +57,13 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   const handlePostClick = (postId: string | number) => {
     const post = posts.find(p => p.postId === postId);
     if (post) {
-      // Convert Post type to PostData type expected by EditPost
-      const postData = {
-        postId: post.postId,
-        userId: post.userId,
-        title: post.title,
-        content: post.content || '',
-        hashtag: post.hashtag,
-        hashtags: post.hashtags,
-        mediaUrls: post.mediaUrls || [],
-        socialPlatforms: {
-          facebook: post.socialPlatforms.facebook,
-          instagram: post.socialPlatforms.instagram,
-          twitter: post.socialPlatforms.twitter,
-          linkedin: post.socialPlatforms.linkedin
-        },
-        status: post.status,
+      // Convert only the necessary fields while keeping the rest of the post object
+      const postWithRequiredFields = {
+        ...post,
         scheduledDate: post.scheduledDate.toISOString().slice(0, 16),
         postType: post.postType || { post: true, story: false, reel: false }
       };
-      console.log("Post clicked: ", postData);
-      editPostContext.onOpen(post.postId, postData, timeZoneLabel);
+      editPostContext.onOpen(post.postId, postWithRequiredFields, timeZoneLabel);
     }
   };
   
@@ -94,7 +82,11 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
         onNavigateNext={handleNavigateNext}
       />
       
-      {currentView === 'month' ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      ) : currentView === 'month' ? (
         <MonthView
           displayDate={displayDate}
           posts={posts}

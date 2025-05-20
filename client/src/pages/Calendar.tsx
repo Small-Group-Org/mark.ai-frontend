@@ -1,13 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
 import { generateMockPosts } from '@/utils/mockPosts';
 import { Post } from '@/types/calendar';
 import { useToast } from '@/hooks/use-toast';
+import { getPosts } from '@/services/postServices';
 
 export default function CalendarRoute() {
   const today = new Date();
   const { toast } = useToast();
-  const [posts] = useState<Post[]>(() => generateMockPosts(today, 50));
+  const [posts, setPosts] = useState<Post[]>(() => generateMockPosts(today, 50));
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Function to fetch posts from API
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      const startDate = new Date(today);
+      startDate.setMonth(startDate.getMonth() - 1); // Get posts from last month
+      
+      const endDate = new Date(today);
+      endDate.setMonth(endDate.getMonth() + 1); // Get posts till next month
+
+      const response = await getPosts({
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      });
+
+      if (response && response.length > 0) {
+        setPosts(response);
+      } else {
+        // Fallback to mock posts if no data from API
+        setPosts(generateMockPosts(today, 50));
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch posts. Using mock data instead.',
+        variant: 'destructive'
+      });
+      // Fallback to mock posts on error
+      setPosts(generateMockPosts(today, 50));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch posts on component mount
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const handleDateSelect = (date: Date) => {
     toast({
@@ -24,6 +66,7 @@ export default function CalendarRoute() {
           posts={posts}
           onDateSelect={handleDateSelect}
           timeZoneLabel="GMT+05:30"
+          isLoading={isLoading}
         />
       </div>
     </div>
