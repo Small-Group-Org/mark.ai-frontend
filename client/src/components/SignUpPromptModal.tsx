@@ -8,9 +8,10 @@ interface SecondMessageModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSignIn: () => void;
+  onSignUp: () => void;
 }
 
-export function SecondMessageModal({ isOpen, onClose, onSignIn }: SecondMessageModalProps) {
+export function SecondMessageModal({ isOpen, onClose, onSignIn, onSignUp }: SecondMessageModalProps) {
   // Cosmic theme colors with gradient background
   const primaryBg = 'bg-gradient-to-bl from-slate-800 to-blue-950';
   const primaryText = 'text-white';
@@ -60,7 +61,7 @@ export function SecondMessageModal({ isOpen, onClose, onSignIn }: SecondMessageM
                 Sign In
               </Button>
               <Button 
-                onClick={onClose}
+                onClick={onSignUp}
                 variant="outline"
                 className="w-full border-gray-700 bg-slate-800 text-white hover:bg-slate-700"
               >
