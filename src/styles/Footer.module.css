@@ -1,0 +1,52 @@
+@import "https://fonts.googleapis.com/css?family=Inter:0,700;0,400;0,500&display=swap";
+
+.Footer_2_415 {
+  border-top: 1px solid var(--color-azure-17, #1e293b);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 25px 48px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Container_2_416 {
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1280px;
+  height: 20px;
+  display: flex;
+}
+
+.BuiltByTheHoneymoonersClub_2_418 {
+  color: var(--color-azure-47, #64748b);
+  font-family: var(--font-family-Font-1, Inter);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  display: inline-block;
+}
+
+.Component_3_2_419,
+.Component_3_2_421,
+.Component_3_2_423 {
+  flex-direction: column;
+  align-items: flex-start;
+  height: 20px;
+  display: inline-flex;
+  margin-left: 24px;
+  cursor: pointer;
+}
+
+.Text_2_35 {
+  color: var(--color-azure-47, #64748b);
+  font-family: var(--font-family-Font-1, Inter);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  display: inline-block;
+}

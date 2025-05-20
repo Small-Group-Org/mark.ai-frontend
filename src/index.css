@@ -1,0 +1,423 @@
+@import url('https://fonts.googleapis.com/css?family=Inter:0,400;0,500;0,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Calendar specific styles */
+.time-slot.drag-over {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+body.dragging-active {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing !important;
+}
+
+/* For browsers that don't support :has() */
+.calendar-event {
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.calendar-event:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  z-index: 15;
+}
+
+:root {
+  /* Base theme colors */
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 60 4.8% 95.9%;
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 60 4.8% 95.9%;
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 20 14.3% 4.1%;
+  --radius: 0.5rem;
+
+  /* Figma design variables */
+  --font-family-Font-1: 'Inter', sans-serif;
+  --font-weight-400: 400;
+  --font-weight-500: 500;
+  --font-weight-700: 700;
+  --font-size-14: 14px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-60: 60px;
+  --line-height-20: 20px;
+  --line-height-24: 24px;
+  --line-height-28: 28px;
+  --line-height-32: 32px;
+  --item-spacing-12: 12px;
+  --stroke-weight-1: 1px;
+  --width-528_7: 528.7px;
+
+  /* Colors from Figma */
+  --color-white-solid: #fff;
+  --color-azure-11: #0f172a;
+  --color-azure-17: #1e293b;
+  --color-azure-27: #334155;
+  --color-azure-47: #64748b;
+  --color-azure-53: #2563eb;
+  --color-azure-60: #3b82f6;
+  --color-azure-65: #94a3b8;
+  --color-azure-68: #60a5fa;
+  --color-azure-78: #93c5fd;
+  --color-azure-84: #d1d5db;
+  
+  /* Dashboard colors */
+  --sidebar-bg: #0E2D60;
+  --sidebar-active: rgba(255, 255, 255, 0.1);
+  --left-panel-bg: #4673A1;
+  --right-panel-bg: #ECECEC;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 207 90% 54%;
+  --primary-foreground: 211 100% 99%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-azure-11);
+    color: var(--color-white-solid);
+    font-family: var(--font-family-Font-1);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+/* Media queries for responsive design */
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* Animation for mobile menu */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu {
+  animation: slideDown 0.3s ease-out;
+  transform-origin: top center;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-only {
+    display: block !important;
+  }
+  
+  .hamburger-menu {
+    display: block !important;
+  }
+  
+  .footer-content {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  
+  /* For organizing features in 2 rows with 2 items per row - Only for mobile! */
+  .features-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: auto auto !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 5px !important;
+  }
+  
+  .feature-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 2px 5px !important;
+    border-radius: 8px !important;
+    justify-content: flex-start !important;
+    white-space: nowrap !important;
+    font-size: 9px !important;
+    box-sizing: border-box !important;
+    padding-left: 10px !important;
+  }
+  
+  /* Adjust icon and text size for mobile only */
+  .feature-item svg {
+    width: 10px !important;
+    height: 10px !important;
+  }
+  
+  .feature-item span {
+    font-size: 9px !important;
+  }
+}
+
+/* Dashboard specific styles */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Responsive styles for dashboard */
+@media (max-width: 1280px) {
+  .dashboard-panels {
+    flex-direction: column;
+  }
+  
+  .left-panel, .right-panel {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* Mobile dashboard specific styles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px !important;
+  }
+  
+  .sidebar-item-label {
+    font-size: 10px !important;
+  }
+  
+  .sidebar-icon {
+    transform: scale(0.8);
+  }
+}
+
+/* Fix for long dropdowns (like minute selector) */
+select option {
+  font-size: 14px;
+}
+
+/* Time selectors */
+select.time-select {
+  width: auto;
+  max-height: 40px;
+}
+
+/* Specific styles for minute dropdown */
+.minute-select {
+  scrollbar-width: thin;
+}
+
+/* This targets Webkit browsers (Chrome, Safari, newer Edge) */
+.minute-select::-webkit-scrollbar {
+  width: 6px;
+}
+
+.minute-select::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+/* This limits the height of dropdown options in supported browsers */
+@supports (-moz-appearance:none) {
+  /* Firefox-specific styles */
+  .minute-select {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+}
+
+/* Microsoft Edge and IE */
+@supports (-ms-ime-align:auto) {
+  .minute-select {
+    max-height: 200px;
+  }
+}
+
+/* General attempt to limit dropdown height across browsers */
+select option {
+  max-height: 300px;
+}
+
+/* Explicitly limit the visible dropdown height when opened */
+.minute-select option {
+  max-height: 200px !important;
+}
+
+/* For select in Chrome/Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select {
+    appearance: menulist-button;
+    height: 30px;
+  }
+  
+  /* Ensure the dropdown doesn't go offscreen */
+  select.minute-select {
+    background-position: 90% center;
+  }
+}
+
+/* Calendar specific styles */
+.calendar-container {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.month-grid, .week-grid {
+  display: grid;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+.month-grid {
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: auto repeat(6, 1fr);
+}
+
+.week-grid {
+  grid-template-columns: 60px repeat(7, 1fr);
+}
+
+.today-cell .date-number {
+  background-color: #0B57D0;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.other-month .date-number {
+  color: #B0B0B0;
+}
+
+.post-indicator {
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  margin: 2px 0;
+  height: 24px;
+  position: relative;
+}
+
+.post-indicator.scheduled {
+  background-color: rgba(105, 201, 208, 0.5);
+}
+
+.post-indicator.draft {
+  background-color: rgba(219, 219, 219, 0.5);
+}
+
+.post-avatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 4px;
+  object-fit: cover;
+  background-color: #FFFFFF;
+}
+
+.post-time {
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  color: #323B43;
+  margin-left: auto;
+}
+
+.current-time-indicator {
+  position: absolute;
+  height: 2px;
+  background-color: #DB372D;
+  width: 100%;
+  z-index: 2;
+}
+
+.current-time-circle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #DB372D;
+  transform: translateY(-4px);
+  z-index: 3;
+}
+
+/* View toggle styles */
+.view-toggle {
+  display: flex;
+  background-color: #EBF3F5;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 2px;
+  width: fit-content;
+}
+
+.view-toggle button {
+  padding: 6px 16px;
+  border-radius: 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.view-toggle button.active {
+  background-color: #0891B2;
+  color: #FFFFFF;
+}
+
+.view-toggle button:not(.active) {
+  color: #1F2937;
+}
