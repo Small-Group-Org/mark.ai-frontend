@@ -27,8 +27,6 @@ interface SocialMediaPostPreviewProps {
   onSchedule?: () => void;
   onDraft?: () => void;
   onDateChange?: () => void;
-  onToggleOptions?: () => void; // For dropdown toggle
-  buttonType?: "schedule" | "draft"; // Button type to display
 
   // Customization options
   hideHeader?: boolean;
@@ -55,8 +53,6 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   onSchedule,
   onDraft,
   onDateChange,
-  onToggleOptions,
-  buttonType = "schedule",
 
   // Customization options
   hideHeader = false,
@@ -227,8 +223,6 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
           <ScheduleActionButton
             onSchedule={onSchedule}
             onDraft={onDraft}
-            onToggleOptions={onToggleOptions}
-            buttonType={buttonType}
           />
         </div>
       )}

@@ -4,20 +4,16 @@ import { ChevronDown } from 'lucide-react';
 interface ScheduleActionButtonProps {
   onSchedule?: () => void;
   onDraft?: () => void;
-  onToggleOptions?: () => void;
-  buttonType?: 'schedule' | 'draft';
   className?: string;
 }
 
 const ScheduleActionButton = ({
   onSchedule,
   onDraft,
-  onToggleOptions,
-  buttonType = 'schedule',
   className = '',
 }: ScheduleActionButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState<'schedule' | 'draft'>(buttonType);
+  const [selectedType, setSelectedType] = useState<'schedule' | 'draft'>('schedule');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleDropdownToggle = (event: React.MouseEvent) => {
@@ -29,7 +25,6 @@ const ScheduleActionButton = ({
   const handleOptionSelect = (type: 'schedule' | 'draft') => {
     setSelectedType(type);
     setIsDropdownOpen(false);
-    if (onToggleOptions) onToggleOptions();
   };
 
   const handleMainButtonClick = () => {

@@ -8,22 +8,6 @@ import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
 
-// Simple ChevronDownIcon (can be moved to IconComponents later)
-const ChevronDownIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    {...props}
-  >
-    <path
-      fillRule="evenodd"
-      d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
 // Component receives props now
 const CreatePost = () => {
   const {
@@ -54,9 +38,6 @@ const CreatePost = () => {
 
   // State for schedule options dropdown
   const [isScheduleOptionsOpen, setIsScheduleOptionsOpen] = useState(false);
-  const [selectedButtonType, setSelectedButtonType] = useState<
-    "schedule" | "draft"
-  >("schedule");
   const scheduleButtonRef = useRef<HTMLDivElement>(null); // For closing dropdown on outside click
 
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -349,19 +330,6 @@ const CreatePost = () => {
     }
   };
 
-  // Handlers for dropdown menu
-  const handleToggleScheduleOptions = () => {
-    setIsScheduleOptionsOpen(!isScheduleOptionsOpen);
-  };
-
-  // Handle dropdown option toggle - this is called by SocialMediaPostPreview component
-  const handleToggleDropdownOption = () => {
-    // Toggle between 'schedule' and 'draft'
-    setSelectedButtonType((prev) =>
-      prev === "schedule" ? "draft" : "schedule"
-    );
-  };
-
   // Handle the actual draft post saving
   const handleSaveDraft = () => {
     try {
@@ -551,11 +519,9 @@ const CreatePost = () => {
             onSchedule={handleSchedulePost}
             onDraft={handleSaveDraft}
             onDateChange={handleDateChange}
-            onToggleOptions={handleToggleDropdownOption}
             hideFooter={false}
             onImageUpload={handleImageUpload}
             uploadedImageFile={uploadedImageFile}
-            buttonType={selectedButtonType}
           />
 
           {isCalendarOpen && (
