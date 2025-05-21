@@ -5,6 +5,7 @@ import ScheduleActionButton from "./schedule-action-button";
 import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { User } from "@/types";
+import DatePickerWithButton from "./date-picker-with-button";
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -26,7 +27,7 @@ interface SocialMediaPostPreviewProps {
   scheduledDate?: string;
   onSchedule?: () => void;
   onDraft?: () => void;
-  onDateChange?: () => void;
+  onDateChange: (date: Date) => void;
 
   // Customization options
   hideHeader?: boolean;
@@ -219,11 +220,16 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
       {/* Footer with Schedule Options */}
       {!hideFooter && (
         <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end flex-wrap gap-4 w-full">
-          <DatePickerButton date={scheduledDate || ""} onClick={onDateChange} />
-          <ScheduleActionButton
-            onSchedule={onSchedule}
-            onDraft={onDraft}
-          />
+          <div className="flex items-center gap-2">
+            <DatePickerWithButton
+              date={scheduledDate || ""}
+              onDateChange={(date) => onDateChange(date)}
+            />
+            <ScheduleActionButton
+              onSchedule={onSchedule}
+              onDraft={onDraft}
+            />
+          </div>
         </div>
       )}
     </div>
