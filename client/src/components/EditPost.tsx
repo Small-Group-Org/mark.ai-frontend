@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
+import DatePickerWithButton from "./ui/date-picker-with-button";
 
 export interface PostData {
   postId: string | number;
@@ -55,15 +56,11 @@ const EditPost: React.FC<EditPostProps> = ({
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [showGeneratePrompt, setShowGeneratePrompt] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedButtonType, setSelectedButtonType] = useState<'schedule' | 'draft'>('schedule');
   
   // Calendar and time selection state
   const [date, setDate] = useState<Date>(new Date(post.scheduledDate));
-  const [inputHour, setInputHour] = useState<string>(format(new Date(post.scheduledDate), 'h'));
-  const [inputMinute, setInputMinute] = useState<string>(format(new Date(post.scheduledDate), 'mm'));
-  const [inputAmPm, setInputAmPm] = useState<string>(format(new Date(post.scheduledDate), 'a').toUpperCase());
   
   const calendarRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -90,9 +87,6 @@ const EditPost: React.FC<EditPostProps> = ({
       const localDate = new Date(postDate.getTime() + (offsetInMinutes * 60 * 1000));
       
       setDate(localDate);
-      setInputHour(format(localDate, 'h'));
-      setInputMinute(format(localDate, 'mm'));
-      setInputAmPm(format(localDate, 'a').toUpperCase());
     }
   }, [post, timeZoneLabel]);
   
@@ -100,16 +94,12 @@ const EditPost: React.FC<EditPostProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-        setIsCalendarOpen(false);
-      }
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
     
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsCalendarOpen(false);
         setIsDropdownOpen(false);
       }
     };
@@ -188,8 +178,8 @@ const EditPost: React.FC<EditPostProps> = ({
   };
   
   // Handle date change functions
-  const handleDateChange = () => {
-    setIsCalendarOpen(!isCalendarOpen);
+  const handleDateChange = (newDate: Date) => {
+    setDate(newDate);
   };
   
   // Handle schedule button click
@@ -202,7 +192,7 @@ const EditPost: React.FC<EditPostProps> = ({
     
     toast({
       title: "Post Scheduled",
-      description: `Your post has been scheduled for ${format(date, 'MMM d, yyyy')} at ${inputHour}:${inputMinute} ${inputAmPm}.`,
+      description: `Your post has been scheduled for ${format(date, 'MMM d, yyyy')} at ${format(date, 'h:mm a')}.`,
     });
     
     // Notify calendar of the update if this is a calendar event
@@ -646,19 +636,12 @@ const EditPost: React.FC<EditPostProps> = ({
                 {timeZoneLabel}
               </div>  
               <div className="flex flex-col space-y-2">
-                {/* Calendar Date Picker */}
-                <div 
-                  className={cn(
-                    "flex items-center bg-gray-200 rounded-md px-3 py-2 space-x-2 w-full",
-                    isEditing ? "cursor-pointer hover:bg-gray-300" : "opacity-75 bg-gray-100"
-                  )}
-                  onClick={() => isEditing && handleDateChange()}
-                >
-                  <span className="text-sm text-gray-700 font-medium">
-                    {format(date, 'MMM d, yyyy')} • {inputHour}:{inputMinute} {inputAmPm}
-                  </span>
-                  <CalendarIcon className="text-gray-700 h-4 w-4 flex-shrink-0 ml-auto" />
-                </div>
+                <label className="text-sm font-medium text-gray-700">Schedule Date</label>
+                <DatePickerWithButton
+                  date={date}
+                  onDateChange={handleDateChange}
+                  className="w-full"
+                />
                 
                 {/* Schedule Button with Dropdown */}
                 {editedPost.status === 'scheduled' ? (
@@ -797,17 +780,15 @@ const EditPost: React.FC<EditPostProps> = ({
               <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center space-y-2 lg:space-y-0 lg:space-x-2">
                 
                 {/* Calendar Date Picker */}
-                <div 
-                  className={cn(
-                    "flex items-center bg-gray-200 rounded-md px-3 py-2 space-x-2 w-full lg:w-auto",
-                    isEditing ? "cursor-pointer hover:bg-gray-300" : "opacity-75 bg-gray-100"
-                  )}
-                  onClick={() => isEditing && handleDateChange()}
-                >
-                  <span className="text-sm text-gray-700 font-medium whitespace-nowrap">
-                    {format(date, 'MMM d, yyyy')} • {inputHour}:{inputMinute} {inputAmPm}
-                  </span>
-                  <CalendarIcon className="text-gray-700 h-4 w-4 flex-shrink-0" />
+                <div className="w-full lg:w-auto">
+                  <DatePickerWithButton
+                    date={date}
+                    onDateChange={handleDateChange}
+                    className={cn(
+                      "w-full",
+                      !isEditing && "opacity-75"
+                    )}
+                  />
                 </div>
                 
                 {/* Schedule Button with Dropdown */}

@@ -138,7 +138,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           mode="single"
           selected={selectedDate}
           onSelect={handleSelectDate}
-          className="rounded-md border"
+          className="rounded-md border bg-white text-gray-900 [&_button]:text-gray-900 [&_button]:bg-white [&_button:hover]:bg-gray-100 [&_button:focus]:bg-gray-200 [&_button[aria-current='date']]:bg-gray-100 [&_button[aria-selected='true']]:bg-blue-500 [&_button[aria-selected='true']]:text-white [&_button[aria-selected='true']:hover]:bg-blue-600"
         />
         <div className="mt-3 border-t pt-3">
           <h4 className="text-sm font-medium text-gray-700 mb-2">
