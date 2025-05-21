@@ -62,7 +62,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   onImageUpload,
   uploadedImageFile,
 }) => {
-  const { postContent, postHashtags: hashtags, postTitle } = usePostStore();
+  const { postContent, hashtag, postTitle } = usePostStore();
   const { userDetails= {} } = useAuthStore();
   const { name: userName } = userDetails as User;
   const userInitials = userName.split(" ")[0][0] + userName.split(" ")?.pop()?.[0];
@@ -108,6 +108,9 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   React.useEffect(() => {
     setImageError(false);
   }, [imageUrl]);
+
+  // For hashtags display:
+  const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
 
   return (
     <div className={`flex flex-col ${className}`}>

@@ -1,35 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
 import { generateMockPosts } from '@/utils/mockPosts';
-import { Post } from '@/types/calendar';
 import { useToast } from '@/hooks/use-toast';
 import { getPosts } from '@/services/postServices';
+import { usePostStore } from '@/store/usePostStore';
+import { mockPostsApiResponse } from '@/utils/postresponse';
 
 export default function CalendarRoute() {
   const today = new Date();
   const { toast } = useToast();
-  const [posts, setPosts] = useState<Post[]>(() => generateMockPosts(today, 50));
-  const [isLoading, setIsLoading] = useState(false);
+  const posts = usePostStore((state) => state.posts);
+  const setPosts = usePostStore((state) => state.setPosts);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  useEffect(() => {
+    setPosts(generateMockPosts(today, 50));
+    fetchPosts();
+  }, []);
 
   // Function to fetch posts from API
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
       const startDate = new Date(today);
-      startDate.setMonth(startDate.getMonth() - 1); // Get posts from last month
-      
+      startDate.setMonth(startDate.getMonth() - 1);
       const endDate = new Date(today);
-      endDate.setMonth(endDate.getMonth() + 1); // Get posts till next month
+      endDate.setMonth(endDate.getMonth() + 1);
 
-      const response = await getPosts({
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString()
+      const startDateStr = startDate.toISOString().slice(0, 10);
+      const endDateStr = endDate.toISOString().slice(0, 10);
+
+      let response = await getPosts({
+        startDate: startDateStr,
+        endDate: endDateStr
       });
 
-      if (response && response.length > 0) {
-        setPosts(response);
+      // Simulate API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // response = mockPostsApiResponse;
+
+      if (response && response.success && response.data && response.data.data && response.data.data.length > 0) {
+        setPosts(response.data.data);
       } else {
-        // Fallback to mock posts if no data from API
         setPosts(generateMockPosts(today, 50));
       }
     } catch (error) {
@@ -39,17 +51,11 @@ export default function CalendarRoute() {
         description: 'Failed to fetch posts. Using mock data instead.',
         variant: 'destructive'
       });
-      // Fallback to mock posts on error
       setPosts(generateMockPosts(today, 50));
     } finally {
       setIsLoading(false);
     }
   };
-
-  // Fetch posts on component mount
-  useEffect(() => {
-    fetchPosts();
-  }, []);
 
   const handleDateSelect = (date: Date) => {
     toast({

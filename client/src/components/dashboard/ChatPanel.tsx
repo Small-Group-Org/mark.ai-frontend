@@ -12,19 +12,19 @@ const ChatPanel = () => {
     setIsThinking,
     postTitle,
     postContent,
-    postHashtags,
+    hashtag,
     mediaUrl,
-    socialPlatforms,
+    platform,
     postType,
-    scheduledDate,
+    scheduleDate,
     setMediaUrl, 
     setMessages, 
     setPostContent, 
-    setPostHashtags, 
+    setHashtag, 
     setPostTitle,
     setPostType, 
-    setScheduledDate,
-    setSocialPlatforms
+    setScheduleDate,
+    setPlatform
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
@@ -52,17 +52,13 @@ const ChatPanel = () => {
         message: "Hi There!", // Initial greeting message
         post: {
           userId: 123, // Hardcoded as per example
-          title: postTitle, // Use initial prop value
-          content: postContent, // Use initial prop value
-          mediaUrl: mediaUrl, // Use initial prop value
-          hashtags: postHashtags, // Use initial prop value
-          socialPlatforms: socialPlatforms, // Use initial prop value
-          postType: {
-            post: postType.post,
-            story: postType.story,
-            reel: postType.reel,
-          }, // Use new keys
-          scheduledDate: scheduledDate, // Use initial prop value
+          title: postTitle,
+          content: postContent,
+          mediaUrl: mediaUrl,
+          hashtag: hashtag,
+          platform: platform,
+          postType: postType,
+          scheduleDate: scheduleDate,
         },
       };
 
@@ -89,22 +85,15 @@ const ChatPanel = () => {
             // Update post state from initial response
             setPostTitle(initialPost.title ?? "");
             setPostContent(initialPost.content ?? "");
-            setPostHashtags(initialPost.hashtags ?? []);
+            setHashtag(initialPost.hashtag ?? "");
             setMediaUrl(initialPost.mediaUrl ?? []);
-            // Update toggles if API provides them initially
-            if (initialPost.socialPlatforms)
-              setSocialPlatforms(initialPost.socialPlatforms);
+            if (initialPost.platform)
+              setPlatform(initialPost.platform);
             if (initialPost.postType) {
-              const apiPostType = initialPost.postType as any;
-              const transformedPostType = {
-                post: apiPostType.Post ?? false, // Directly use Post, default to false
-                story: apiPostType.Story ?? false, // Directly use Story, default to false
-                reel: apiPostType.reel ?? false, // Directly use reel, default to false
-              };
-              setPostType(transformedPostType);
+              setPostType(initialPost.postType);
             }
-            if (initialPost.scheduledDate)
-              setScheduledDate(initialPost.scheduledDate);
+            if (initialPost.scheduleDate)
+              setScheduleDate(new Date(initialPost.scheduleDate));
 
             // Set the initial AI message
             const aiResponseMessage: Message = {
@@ -200,14 +189,10 @@ const ChatPanel = () => {
             title: postTitle,
             content: postContent,
             mediaUrl: mediaUrl,
-            hashtags: postHashtags,
-            socialPlatforms: socialPlatforms,
-            postType: {
-              post: postType.post,
-              story: postType.story,
-              reel: postType.reel,
-            }, // Use new keys
-            scheduledDate: scheduledDate,
+            hashtag: hashtag,
+            platform: platform,
+            postType: postType,
+            scheduleDate: scheduleDate,
           },
         };
         console.log(
@@ -234,30 +219,15 @@ const ChatPanel = () => {
           // Update post state using prop setters
           setPostTitle(updatedPost.title ?? "");
           setPostContent(updatedPost.content ?? "");
-          setPostHashtags(updatedPost.hashtags ?? []);
+          setHashtag(updatedPost.hashtag ?? "");
           setMediaUrl(updatedPost.mediaUrl ?? []);
-          // Update toggles if API provides them
-          if (updatedPost.socialPlatforms)
-            setSocialPlatforms(updatedPost.socialPlatforms);
+          if (updatedPost.platform)
+            setPlatform(updatedPost.platform);
           if (updatedPost.postType) {
-            const apiPostType = updatedPost.postType as any; // Cast to allow any keys
-            console.log(
-              "[ChatPanel] Received from API - raw apiPostType:",
-              apiPostType
-            );
-            const transformedPostType = {
-              post: apiPostType.Post ?? false, // Directly use Post, default to false
-              story: apiPostType.Story ?? false, // Directly use Story, default to false
-              reel: apiPostType.reel ?? false, // Directly use reel, default to false
-            };
-            console.log(
-              "[ChatPanel] Transformed postType for state update:",
-              transformedPostType
-            );
-            setPostType(transformedPostType);
+            setPostType(updatedPost.postType);
           }
-          if (updatedPost.scheduledDate)
-            setScheduledDate(updatedPost.scheduledDate);
+          if (updatedPost.scheduleDate)
+            setScheduleDate(new Date(updatedPost.scheduleDate));
 
           const aiResponseMessage: Message = {
             id: Date.now().toString(),
