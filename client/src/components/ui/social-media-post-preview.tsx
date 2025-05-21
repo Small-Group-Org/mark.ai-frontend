@@ -24,7 +24,7 @@ interface SocialMediaPostPreviewProps {
   imageUrl?: string;
 
   // Scheduling options
-  scheduledDate?: string;
+  scheduledDate?: Date;
   onSchedule?: () => void;
   onDraft?: () => void;
   onDateChange: (date: Date) => void;
@@ -222,7 +222,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
         <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end flex-wrap gap-4 w-full">
           <div className="flex items-center gap-2">
             <DatePickerWithButton
-              date={scheduledDate || ""}
+              date={scheduledDate || new Date()}
               onDateChange={(date) => onDateChange(date)}
             />
             <ScheduleActionButton

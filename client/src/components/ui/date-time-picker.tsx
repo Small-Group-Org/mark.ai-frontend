@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 
 interface DateTimePickerProps {
   selectedDate: Date | undefined;
@@ -78,8 +77,11 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
   // Handle date selection from calendar
   const handleSelectDate = (newDate: Date | undefined) => {
-    if (newDate && selectedDate) {
-      // Preserve the time from the current selectedDate
+    if (newDate) {
+      // Create a new date object to avoid mutating the input
+      const updatedDate = new Date(newDate);
+      
+      // Get current time values
       const hours = parseInt(inputHour, 10);
       const minutes = parseInt(inputMinute, 10);
       let hours24 = hours;
@@ -87,8 +89,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       if (inputAmPm === "PM" && hours < 12) hours24 += 12;
       if (inputAmPm === "AM" && hours === 12) hours24 = 0;
 
-      newDate.setHours(hours24, minutes, 0, 0);
-      onDateChange(newDate);
+      // Set the time on the new date
+      updatedDate.setHours(hours24, minutes, 0, 0);
+      onDateChange(updatedDate);
     }
   };
 
@@ -112,13 +115,15 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   const updateDateTime = (hour: string, minute: string, ampm: "AM" | "PM") => {
     if (!selectedDate) return;
 
+    // Create a new date object to avoid mutating the input
+    const updatedDate = new Date(selectedDate);
+    
     let hours24 = parseInt(hour, 10);
     if (ampm === "PM" && hours24 < 12) hours24 += 12;
     if (ampm === "AM" && hours24 === 12) hours24 = 0;
 
-    const newDate = new Date(selectedDate);
-    newDate.setHours(hours24, parseInt(minute, 10), 0, 0);
-    onDateChange(newDate);
+    updatedDate.setHours(hours24, parseInt(minute, 10), 0, 0);
+    onDateChange(updatedDate);
   };
 
   if (!isOpen) return null;

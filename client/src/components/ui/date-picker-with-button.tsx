@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import DateTimePicker from "./date-time-picker";
 
 interface DatePickerWithButtonProps {
-  date: string;
+  date: Date;
   onDateChange: (date: Date) => void;
   className?: string;
 }
@@ -20,17 +20,22 @@ const DatePickerWithButton: React.FC<DatePickerWithButtonProps> = ({
   };
 
   const handleDateChange = (newDate: Date) => {
+    console.log("3 > DatePickerWithButton handleDateChange", newDate);
     onDateChange(newDate);
     setIsCalendarOpen(false);
   };
 
+  // Format the date for display
+  const displayDate = date ? format(date, "MMMM d, yyyy • h:mm aa") : "Select Date";
+  console.log("3 > DatePickerWithButton displayDate", displayDate);
+  
   return (
     <>
       <button
         onClick={handleButtonClick}
         className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 ${className}`}
       >
-        {date || "Select Date"}
+        {displayDate}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -51,7 +56,7 @@ const DatePickerWithButton: React.FC<DatePickerWithButtonProps> = ({
       </button>
 
       <DateTimePicker
-        selectedDate={date ? new Date(date) : new Date()}
+        selectedDate={date}
         onDateChange={handleDateChange}
         isOpen={isCalendarOpen}
         onClose={() => setIsCalendarOpen(false)}

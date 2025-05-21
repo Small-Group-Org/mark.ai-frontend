@@ -1,13 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { format, parseISO } from "date-fns";
+import React, { useState, useEffect } from "react";
+import { parseISO } from "date-fns";
 import { usePostStore } from "@/store/usePostStore";
 import { PlatformName } from "@/types";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
-import DateTimePicker from "@/components/ui/date-time-picker";
 
 // Component receives props now
 const CreatePost = () => {
@@ -29,9 +27,7 @@ const CreatePost = () => {
 
   // --- Local UI State Only ---
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [displayDate, setDisplayDate] = useState("");
 
-  const calendarRef = useRef<HTMLDivElement>(null);
   const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null);
   const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
 
@@ -54,14 +50,6 @@ const CreatePost = () => {
       setDate(now);
     }
   }, [scheduledDate]);
-
-  // Effect to update the display date string whenever the main 'date' object changes
-  // useEffect(() => {
-  //   if (date) {
-  //     // Format date to "MMMM d, yyyy • h:mm aa" (e.g., May 10, 2025 • 9:30 AM)
-  //     setDisplayDate(format(date, "MMMM d, yyyy • h:mm aa"));
-  //   }
-  // }, [date]); // Re-run when the main date object changes
 
   // Clean up local object URL when file changes
   useEffect(() => {
@@ -94,9 +82,7 @@ const CreatePost = () => {
   // Update the date change handler
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
-    console.log("newDate", newDate);
     setScheduledDate(newDate.toISOString());
-    setDisplayDate(format(newDate, "MMMM d, yyyy • h:mm aa"));
   };
 
   // Image upload handler
@@ -153,7 +139,7 @@ const CreatePost = () => {
       }
       toast({
         title: "Success",
-        description: `Post successfully scheduled for: ${displayDate}`,
+        description: `Post successfully scheduled for: ${date}`,
       });
     } catch (error) {
       toast({
@@ -269,7 +255,7 @@ const CreatePost = () => {
             userName="Stephen Conley"
             userHandle="@steveconley"
             userTitle="Product Designer"
-            scheduledDate={displayDate}
+            scheduledDate={date}
             onSchedule={handleSchedulePost}
             onDraft={handleSaveDraft}
             onDateChange={handleDateChange}
