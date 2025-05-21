@@ -4,6 +4,7 @@ import { generateMockPosts } from '@/utils/mockPosts';
 import { useToast } from '@/hooks/use-toast';
 import { getPosts } from '@/services/postServices';
 import { usePostStore } from '@/store/usePostStore';
+import { mockPostsApiResponse } from '@/utils/postresponse';
 
 export default function CalendarRoute() {
   const today = new Date();
@@ -29,13 +30,17 @@ export default function CalendarRoute() {
       const startDateStr = startDate.toISOString().slice(0, 10);
       const endDateStr = endDate.toISOString().slice(0, 10);
 
-      const response = await getPosts({
+      let response = await getPosts({
         startDate: startDateStr,
         endDate: endDateStr
       });
 
-      if (response && response.length > 0) {
-        setPosts(response);
+      // Simulate API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      response = mockPostsApiResponse;
+
+      if (response && response.success && response.data && response.data.data && response.data.data.length > 0) {
+        setPosts(response.data.data);
       } else {
         setPosts(generateMockPosts(today, 50));
       }
