@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Edit, Trash2, PlusCircle, CalendarIcon, CheckSquare, XSquare, ChevronDown, Image } from 'lucide-react';
+import { X, Edit, Trash2, PlusCircle, CalendarIcon, CheckSquare, XSquare, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { format, parse, addDays } from 'date-fns';
-import { DayPicker } from 'react-day-picker';
-import { PlatformName } from '@/types';
+import { format } from 'date-fns';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 
@@ -66,11 +64,6 @@ const EditPost: React.FC<EditPostProps> = ({
   const [inputHour, setInputHour] = useState<string>(format(new Date(post.scheduledDate), 'h'));
   const [inputMinute, setInputMinute] = useState<string>(format(new Date(post.scheduledDate), 'mm'));
   const [inputAmPm, setInputAmPm] = useState<string>(format(new Date(post.scheduledDate), 'a').toUpperCase());
-  
-  // Hour/minute options for dropdowns
-  const hourOptions = Array.from({ length: 12 }, (_, i) => ((i + 1).toString()));
-  const minuteOptions = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'];
-  const allMinuteOptions = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
   
   const calendarRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -193,108 +186,10 @@ const EditPost: React.FC<EditPostProps> = ({
       });
     }
   };
-
-  // Handle calendar date selection
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      const currentDate = new Date(editedPost.scheduledDate);
-      const hours = currentDate.getHours();
-      const minutes = currentDate.getMinutes();
-      
-      date.setHours(hours);
-      date.setMinutes(minutes);
-      
-      setEditedPost({
-        ...editedPost,
-        scheduledDate: date.toISOString()
-      });
-      setIsCalendarOpen(false);
-    }
-  };
-  
-  // Handle time change
-  const handleTimeChange = (hours: number, minutes: number) => {
-    const timeZoneOffset = timeZoneLabel.replace('GMT', '');
-    const [offsetHours, offsetMinutes] = timeZoneOffset.split(':').map(Number);
-    const offsetInMinutes = (offsetHours * 60) + (offsetMinutes * (offsetHours < 0 ? -1 : 1));
-    
-    // Convert local time back to UTC
-    const localDate = new Date(date);
-    localDate.setHours(hours);
-    localDate.setMinutes(minutes);
-    const utcDate = new Date(localDate.getTime() - (offsetInMinutes * 60 * 1000));
-    
-    setEditedPost({
-      ...editedPost,
-      scheduledDate: utcDate.toISOString()
-    });
-  };
   
   // Handle date change functions
   const handleDateChange = () => {
     setIsCalendarOpen(!isCalendarOpen);
-  };
-  
-  const handleSelectDate = (selectedDate: Date | undefined) => {
-    if (!selectedDate) return;
-    
-    // Keep the time but update the date
-    const currentDate = new Date(editedPost.scheduledDate);
-    const newDate = new Date(selectedDate);
-    
-    // Extract hours and minutes based on the AM/PM format
-    let hours = parseInt(inputHour);
-    if (inputAmPm === 'PM' && hours < 12) hours += 12;
-    if (inputAmPm === 'AM' && hours === 12) hours = 0;
-    
-    newDate.setHours(hours);
-    newDate.setMinutes(parseInt(inputMinute));
-    
-    // Update both the internal calendar state and the post data
-    setDate(newDate);
-    setEditedPost(prev => ({
-      ...prev,
-      scheduledDate: newDate.toISOString()
-    }));
-  };
-  
-  const handleHourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setInputHour(e.target.value);
-    updateTimeInDate(e.target.value, inputMinute, inputAmPm);
-  };
-  
-  const handleMinuteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setInputMinute(e.target.value);
-    updateTimeInDate(inputHour, e.target.value, inputAmPm);
-  };
-  
-  const handleAmPmChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setInputAmPm(e.target.value);
-    updateTimeInDate(inputHour, inputMinute, e.target.value);
-  };
-  
-  const updateTimeInDate = (hour: string, minute: string, ampm: string) => {
-    const currentDate = new Date(editedPost.scheduledDate);
-    
-    // Convert hour to 24-hour format if needed
-    let hours = parseInt(hour);
-    if (ampm === 'PM' && hours < 12) hours += 12;
-    if (ampm === 'AM' && hours === 12) hours = 0;
-    
-    currentDate.setHours(hours);
-    currentDate.setMinutes(parseInt(minute));
-    
-    setDate(currentDate);
-    setEditedPost(prev => ({
-      ...prev,
-      scheduledDate: currentDate.toISOString()
-    }));
-  };
-  
-  // Handle toggle between Schedule and Draft
-  const handleToggleDropdownOption = (option: 'schedule' | 'draft') => {
-    setSelectedButtonType(option);
-    setIsDropdownOpen(false);
   };
   
   // Handle schedule button click
