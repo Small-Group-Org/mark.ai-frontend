@@ -26,6 +26,9 @@ interface PostState {
   scheduledDate: string;
   setScheduledDate: (date: string) => void;
 
+  posts: any[];
+  setPosts: (posts: any[]) => void;
+
   resetPostState: () => void;
 }
 
@@ -56,6 +59,7 @@ const initialState = {
     reel: false,
   },
   scheduledDate: new Date().toISOString(),
+  posts: [],
 };
 
 export const usePostStore = create<PostState>((set) => ({
@@ -73,6 +77,8 @@ export const usePostStore = create<PostState>((set) => ({
   setSocialPlatforms: (socialPlatforms) => set({ socialPlatforms }),
   setPostType: (postType) => set({ postType }),
   setScheduledDate: (scheduledDate) => set({ scheduledDate }),
+
+  setPosts: (posts) => set({ posts }),
 
   // Reset all post state
   resetPostState: () => set(initialState),
