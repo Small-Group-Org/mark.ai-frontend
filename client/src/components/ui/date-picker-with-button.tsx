@@ -6,17 +6,19 @@ interface DatePickerWithButtonProps {
   date: Date;
   onDateChange: (date: Date) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 const DatePickerWithButton: React.FC<DatePickerWithButtonProps> = ({
   date,
   onDateChange,
   className = "",
+  disabled = false,
 }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleButtonClick = () => {
-    setIsCalendarOpen(!isCalendarOpen);
+    if (!disabled) setIsCalendarOpen(!isCalendarOpen);
   };
 
   const handleDateChange = (newDate: Date) => {
@@ -30,7 +32,8 @@ const DatePickerWithButton: React.FC<DatePickerWithButtonProps> = ({
     <>
       <button
         onClick={handleButtonClick}
-        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 ${className}`}
+        disabled={disabled}
+        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 ${className} ${disabled ? "cursor-not-allowed opacity-75" : ""}`}
       >
         {displayDate}
         <svg
@@ -43,7 +46,7 @@ const DatePickerWithButton: React.FC<DatePickerWithButtonProps> = ({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-gray-500"
+          className="text-gray-600"
         >
           <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
           <line x1="16" x2="16" y1="2" y2="6" />

@@ -640,7 +640,8 @@ const EditPost: React.FC<EditPostProps> = ({
                 <DatePickerWithButton
                   date={date}
                   onDateChange={handleDateChange}
-                  className="w-full"
+                  disabled={!isEditing}
+                  className={cn("w-full", !isEditing && "opacity-75")}
                 />
                 
                 {/* Schedule Button with Dropdown */}
@@ -654,11 +655,12 @@ const EditPost: React.FC<EditPostProps> = ({
                     </button>
                   </div>
                   ) : (
-                  <div className={cn("flex rounded-lg shadow-sm relative", !isEditing && "opacity-70")}>
+                  <div className={cn("flex rounded-lg shadow-sm relative")}>
                     <ScheduleActionButton
                       onSchedule={() => isEditing && handleSchedulePost()}
                       onDraft={() => isEditing && handleSaveDraft()}
                       className={!isEditing ? "opacity-70" : ""}
+                      disabled={!isEditing}
                     />
                   </div>
                 )}
@@ -784,10 +786,8 @@ const EditPost: React.FC<EditPostProps> = ({
                   <DatePickerWithButton
                     date={date}
                     onDateChange={handleDateChange}
-                    className={cn(
-                      "w-full",
-                      !isEditing && "opacity-75"
-                    )}
+                    disabled={!isEditing}
+                    className={cn("w-full", !isEditing && "opacity-75")}
                   />
                 </div>
                 
@@ -802,11 +802,12 @@ const EditPost: React.FC<EditPostProps> = ({
                     </button>
                   </div>
                   ) : (
-                <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial", !isEditing && "opacity-70")}>
+                <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
                   <ScheduleActionButton
                     onSchedule={() => isEditing && handleSchedulePost()}
                     onDraft={() => isEditing && handleSaveDraft()}
                     className={!isEditing ? "opacity-70" : ""}
+                    disabled={!isEditing}
                   />
                 </div>)}
               </div>
