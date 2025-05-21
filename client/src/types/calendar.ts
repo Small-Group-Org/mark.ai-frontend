@@ -4,31 +4,37 @@ export interface PostUser {
   name?: string;
 }
 
-export type PostStatus = 'draft' | 'scheduled' | 'published' | 'failed';
+export type PlatformType =
+  | "bluesky"
+  | "facebook"
+  | "gmb"
+  | "instagram"
+  | "linkedin"
+  | "pinterest"
+  | "reddit"
+  | "telegram"
+  | "threads"
+  | "tiktok"
+  | "twitter"
+  | "youtube";
 
-export interface SocialPlatforms {
-  facebook: boolean;
-  instagram: boolean;
-  twitter: boolean;
-  linkedin: boolean;
-}
+export type PostStatus = 'draft' | 'schedule' | 'public' | 'published' | 'deleted';
 
 export interface Post {
-  postId: string | number;
-  userId: string | number;
+  _id?: string;
+  userId: string | Record<string, any>;
   title: string;
   content: string;
   hashtag: string;
-  hashtags?: string[];
-  mediaUrls: string[];
-  socialPlatforms: SocialPlatforms;
+  mediaUrl: string[];
+  platform: PlatformType[];
+  postType: string;
   status: PostStatus;
-  scheduledDate: Date; // Date object for scheduled date and time
-  postType?: {
-    post: boolean;
-    story: boolean;
-    reel: boolean;
-  };
+  scheduleDate: Date;
+  publish: string;
+  platformId?: string;
+  createdAt: Date;
+  ayrshareId: string;
 }
 
 export type CalendarView = 'month' | 'week';

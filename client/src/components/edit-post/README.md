@@ -117,20 +117,38 @@ interface EditPostProps {
 The component uses the following data structure for posts:
 
 ```typescript
-interface PostData {
-  id?: number | string;         // Optional for new posts
+interface Post {
+  _id?: string;                 // Optional for new posts
+  userId: string | Record<string, any>;
   title: string;                // Post title
   content: string;              // Post content/caption
-  hashtags: string[];           // Array of hashtags
+  hashtag: string;              // Space-separated hashtags
   mediaUrl: string[];           // Array of media URLs
-  socialPlatforms: Record<PlatformName, boolean>; // Enabled platforms
-  postType: {                   // Type of post
-    post: boolean;
-    story: boolean;
-    reel: boolean;
-  };
-  scheduledDate: string;        // Scheduled date in ISO format
+  platform: PlatformType[];     // Array of enabled platforms
+  postType: string;             // Type of post ('post', 'story', 'reel')
+  status: PostStatus;           // Post status ('draft', 'schedule', 'public', 'published', 'deleted')
+  scheduleDate: Date;           // Scheduled date
+  publish: string;              // Publish date/time
+  platformId?: string;          // Optional platform-specific ID
+  createdAt: Date;              // Creation date
+  ayrshareId: string;           // Ayrshare integration ID
 }
+
+type PlatformType =
+  | "bluesky"
+  | "facebook"
+  | "gmb"
+  | "instagram"
+  | "linkedin"
+  | "pinterest"
+  | "reddit"
+  | "telegram"
+  | "threads"
+  | "tiktok"
+  | "twitter"
+  | "youtube";
+
+type PostStatus = 'draft' | 'schedule' | 'public' | 'published' | 'deleted';
 ```
 
 ## Customization
