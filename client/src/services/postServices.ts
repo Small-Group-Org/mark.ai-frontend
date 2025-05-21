@@ -1,45 +1,48 @@
 import { BASE_URL } from '@/commons/constant';
 import { doGET, doPOST, doPUT, doDELETE } from '@/commons/serviceUtils';
 import axios from 'axios';
+import { PlatformType, PostStatus } from '@/types/calendar';
 
 // Interface for create post request
 interface CreatePostRequest {
   title: string;
   content: string;
-  platform: string[];
-  status: 'draft' | 'scheduled' | 'published';
+  platform: PlatformType[];
+  status: PostStatus;
   hashtag: string;
   mediaUrl: string[];
-  postType: 'text' | 'image' | 'video';
-  scheduleDate: string;
-  publish: boolean;
+  postType: string;
+  scheduleDate: string; // ISO string
+  publish?: string;
   ayrshareId?: string;
+  platformId?: string;
 }
 
 // Interface for update post request
 interface UpdatePostRequest {
-  postId: string;
+  _id: string;
   title?: string;
   content?: string;
-  platform?: string[];
-  status?: 'draft' | 'scheduled' | 'published';
+  platform?: PlatformType[];
+  status?: PostStatus;
   hashtag?: string;
   mediaUrl?: string[];
-  postType?: 'text' | 'image' | 'video';
+  postType?: string;
   scheduleDate?: string;
-  publish?: boolean;
+  publish?: string;
   ayrshareId?: string;
+  platformId?: string;
 }
 
 // Interface for delete post request
 interface DeletePostRequest {
-  postId: string;
+  _id: string;
 }
 
 // Interface for get posts filters
 interface GetPostsFilters {
-  platform?: string[];
-  status?: string;
+  platform?: PlatformType[];
+  status?: PostStatus;
   startDate?: string;
   endDate?: string;
 }
@@ -104,7 +107,7 @@ export const updatePost = async (postData: UpdatePostRequest) => {
 export const deletePost = async (postData: DeletePostRequest) => {
   try {
     const response = await doDELETE(
-      `${BASE_URL}/post/delete/${postData.postId}`
+      `${BASE_URL}/post/delete/${postData._id}`
     );
     return response.data;
   } catch (error) {

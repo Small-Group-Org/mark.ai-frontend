@@ -55,15 +55,15 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   };
   
   const handlePostClick = (postId: string | number) => {
-    const post = posts.find(p => p.postId === postId);
+    const post = posts.find(p => p._id === postId);
     if (post) {
       // Convert only the necessary fields while keeping the rest of the post object
       const postWithRequiredFields = {
         ...post,
-        scheduledDate: post.scheduledDate.toISOString().slice(0, 16),
-        postType: post.postType || { post: true, story: false, reel: false }
+        scheduleDate: post.scheduleDate.toISOString().slice(0, 16),
+        postType: post.postType || 'post'
       };
-      editPostContext.onOpen(post.postId, postWithRequiredFields, timeZoneLabel);
+      editPostContext.onOpen(post._id, postWithRequiredFields, timeZoneLabel);
     }
   };
   

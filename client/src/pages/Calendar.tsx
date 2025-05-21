@@ -37,7 +37,7 @@ export default function CalendarRoute() {
 
       // Simulate API
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      response = mockPostsApiResponse;
+      // response = mockPostsApiResponse;
 
       if (response && response.success && response.data && response.data.data && response.data.data.length > 0) {
         setPosts(response.data.data);

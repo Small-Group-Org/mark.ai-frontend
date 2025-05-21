@@ -1,101 +1,89 @@
 import { useState, useCallback } from 'react';
-import { PostData } from '@/components/EditPost';
+import { Post, PlatformType, PostStatus } from '@/types/calendar';
 import { useToast } from '@/hooks/use-toast';
 import axios from 'axios';
 
 // Define the empty/default post structure
-const DEFAULT_POST: PostData = {
-  postId: '',
+const DEFAULT_POST: Post = {
+  _id: undefined,
   userId: '',
   title: '',
   content: '',
   hashtag: '',
-  hashtags: [],
-  mediaUrls: [],
-  socialPlatforms: {
-    facebook: false,
-    instagram: false,
-    twitter: false,
-    linkedin: false
-  },
+  mediaUrl: [],
+  platform: [],
+  postType: 'post',
   status: 'draft',
-  postType: {
-    post: true,
-    story: false,
-    reel: false,
-  },
-  scheduledDate: new Date().toISOString().slice(0, 16) // Current date/time in format for datetime-local input
+  scheduleDate: new Date(),
+  publish: '',
+  platformId: undefined,
+  createdAt: new Date(),
+  ayrshareId: '',
 };
 
 export interface EditPostStore {
   isOpen: boolean;
-  post: PostData;
+  post: Post;
   isLoading: boolean;
-  onOpen: (postId?: number | string, postData?: PostData) => void;
+  onOpen: (postId?: string, postData?: Post) => void;
   onClose: () => void;
-  onSave: (post: PostData) => Promise<void>;
+  onSave: (post: Post) => Promise<void>;
   onDelete: () => Promise<void>;
   onGenerate: (prompt: string) => Promise<void>;
 }
 
 export const useEditPost = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [post, setPost] = useState<PostData>(DEFAULT_POST);
+  const [post, setPost] = useState<Post>(DEFAULT_POST);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   // Open the edit modal with a specific post
-  const onOpen = useCallback(async (postIdOrEvent?: number | string, postData?: PostData) => {
+  const onOpen = useCallback(async (postId?: string, postData?: Post) => {
     if (postData) {
       setPost(postData);
       setIsOpen(true);
       return;
     }
 
-    if (postIdOrEvent) {
+    if (postId) {
       setIsLoading(true);
       try {
-          // Check if this is a calendar event by looking for the event in our mock calendar data
-          const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
-          const calendarEvent = mockEvents.find((event: any) => event.id === postIdOrEvent);
-          
-          let mockPost: PostData;
-          
-          if (calendarEvent) {
-          // Convert calendar event to PostData format
-              mockPost = {
-                ...DEFAULT_POST,
-            postId: postIdOrEvent,
-                title: calendarEvent.title || 'Calendar Event',
-                content: calendarEvent.content || 'Content from calendar event',
+        // Try to load from localStorage mock (calendarEvents)
+        const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+        const calendarEvent = mockEvents.find((event: any) => event._id === postId);
+        let mockPost: Post;
+        if (calendarEvent) {
+          mockPost = {
+            ...DEFAULT_POST,
+            _id: calendarEvent._id,
+            userId: calendarEvent.userId || '',
+            title: calendarEvent.title || 'Calendar Event',
+            content: calendarEvent.content || 'Content from calendar event',
             hashtag: calendarEvent.hashtag || '',
-            hashtags: calendarEvent.hashtags || [],
-            mediaUrls: calendarEvent.mediaUrls || [],
-                socialPlatforms: {
-              facebook: calendarEvent.platforms?.includes('facebook') || false,
-              instagram: calendarEvent.platforms?.includes('instagram') || false,
-              twitter: calendarEvent.platforms?.includes('twitter') || false,
-              linkedin: calendarEvent.platforms?.includes('linkedin') || false
-            },
+            mediaUrl: calendarEvent.mediaUrl || [],
+            platform: calendarEvent.platform || [],
+            postType: calendarEvent.postType || 'post',
             status: calendarEvent.status || 'draft',
-            scheduledDate: new Date(calendarEvent.scheduled_time).toISOString().slice(0, 16),
-            postType: calendarEvent.postType || DEFAULT_POST.postType
+            scheduleDate: calendarEvent.scheduleDate ? new Date(calendarEvent.scheduleDate) : new Date(),
+            publish: calendarEvent.publish || '',
+            platformId: calendarEvent.platformId,
+            createdAt: calendarEvent.createdAt ? new Date(calendarEvent.createdAt) : new Date(),
+            ayrshareId: calendarEvent.ayrshareId || '',
           };
-          } else {
-            // Regular post, use default mock data
-            mockPost = {
-              ...DEFAULT_POST,
-            postId: postIdOrEvent,
-              title: 'Sample Post Title',
-              content: 'This is a sample post content that would be loaded from the server.',
+        } else {
+          // Regular post, use default mock data
+          mockPost = {
+            ...DEFAULT_POST,
+            _id: postId,
+            title: 'Sample Post Title',
+            content: 'This is a sample post content that would be loaded from the server.',
             hashtag: '#sample',
-            hashtags: ['sample', 'post', 'content'],
-              scheduledDate: new Date().toISOString().slice(0, 16)
-            };
-          }
-          
-          setPost(mockPost);
-          setIsLoading(false);
+            scheduleDate: new Date(),
+          };
+        }
+        setPost(mockPost);
+        setIsLoading(false);
       } catch (error) {
         console.error('Failed to fetch post', error);
         toast({
@@ -122,17 +110,16 @@ export const useEditPost = () => {
   }, []);
 
   // Save the post
-  const onSave = useCallback(async (updatedPost: PostData) => {
+  const onSave = useCallback(async (updatedPost: Post) => {
     setIsLoading(true);
     try {
       // Check if this might be a calendar event by getting saved events
       const savedEventsStr = localStorage.getItem('calendarEvents');
-      if (savedEventsStr && updatedPost.postId) {
+      if (savedEventsStr && updatedPost._id) {
         try {
           const savedEvents = JSON.parse(savedEventsStr);
           // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event.id === updatedPost.postId);
-          
+          const eventIndex = savedEvents.findIndex((event: any) => event._id === updatedPost._id);
           if (eventIndex !== -1) {
             // This is a calendar event, so update it
             const updatedEvent = {
@@ -140,24 +127,20 @@ export const useEditPost = () => {
               title: updatedPost.title,
               content: updatedPost.content,
               hashtag: updatedPost.hashtag,
-              hashtags: updatedPost.hashtags,
-              // Extract active platforms from socialPlatforms object
-              platforms: Object.entries(updatedPost.socialPlatforms)
-                .filter(([_, isActive]) => isActive)
-                .map(([platform]) => platform),
-              // Convert scheduledDate to ISO format for calendar
-              scheduled_time: new Date(updatedPost.scheduledDate).toISOString(),
-              mediaUrls: updatedPost.mediaUrls,
+              platform: updatedPost.platform,
+              scheduleDate: updatedPost.scheduleDate,
+              mediaUrl: updatedPost.mediaUrl,
               status: updatedPost.status,
-              postType: updatedPost.postType
+              postType: updatedPost.postType,
+              publish: updatedPost.publish,
+              platformId: updatedPost.platformId,
+              createdAt: updatedPost.createdAt,
+              ayrshareId: updatedPost.ayrshareId,
             };
-            
             // Update the event in the array
             savedEvents[eventIndex] = updatedEvent;
-            
             // Save the updated events back to localStorage
             localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
-            
             // Refresh the calendar view by dispatching a custom event
             window.dispatchEvent(new CustomEvent('calendarUpdated'));
           }
@@ -165,13 +148,11 @@ export const useEditPost = () => {
           console.error('Error handling calendar event update', e);
         }
       }
-      
       // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
-      
       toast({
         title: 'Success',
-        description: updatedPost.postId ? 'Post updated successfully' : 'Post created successfully',
+        description: updatedPost._id ? 'Post updated successfully' : 'Post created successfully',
       });
       setIsLoading(false);
       setIsOpen(false);
@@ -188,8 +169,7 @@ export const useEditPost = () => {
 
   // Delete the post
   const onDelete = useCallback(async () => {
-    if (!post.postId) return;
-    
+    if (!post._id) return;
     setIsLoading(true);
     try {
       // Check if this might be a calendar event
@@ -198,15 +178,12 @@ export const useEditPost = () => {
         try {
           const savedEvents = JSON.parse(savedEventsStr);
           // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event.id === post.postId);
-          
+          const eventIndex = savedEvents.findIndex((event: any) => event._id === post._id);
           if (eventIndex !== -1) {
             // This is a calendar event, so remove it
             savedEvents.splice(eventIndex, 1);
-            
             // Save the updated events back to localStorage
             localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
-            
             // Refresh the calendar view by dispatching a custom event
             window.dispatchEvent(new CustomEvent('calendarUpdated'));
           }
@@ -214,10 +191,8 @@ export const useEditPost = () => {
           console.error('Error handling calendar event deletion', e);
         }
       }
-      
       // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
-      
       toast({
         title: 'Success',
         description: 'Post deleted successfully',
@@ -233,7 +208,7 @@ export const useEditPost = () => {
       });
       setIsLoading(false);
     }
-  }, [post.postId, toast]);
+  }, [post._id, toast]);
 
   // Generate content with AI
   const onGenerate = useCallback(async (prompt: string) => {
@@ -242,14 +217,12 @@ export const useEditPost = () => {
       // For now, we'll use a mock implementation
       await new Promise(resolve => setTimeout(resolve, 1000));
       const mockGeneratedContent = `Generated content based on: "${prompt}". This would be replaced with actual AI-generated content.`;
-      
       setPost(prev => ({
         ...prev,
         content: prev.content 
           ? `${prev.content}\n\n${mockGeneratedContent}` 
           : mockGeneratedContent
       }));
-      
       toast({
         title: 'Content Generated',
         description: 'AI-generated content has been added to your post',
