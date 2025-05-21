@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CalendarIcon, ChevronDown } from "lucide-react";
-import DatePickerButton from "./date-picker-button";
 import ScheduleActionButton from "./schedule-action-button";
 import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -175,7 +173,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
               <img
                 src={localPreviewUrl || imageUrl}
                 alt="Post visual content"
-                className="object-cover h-full w-full"
+                className="object-contain h-full w-full"
                 onError={() => setImageError(true)}
                 onLoad={() => setImageError(false)}
               />

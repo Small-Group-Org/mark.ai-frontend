@@ -84,7 +84,7 @@ const CreatePost = () => {
     setDate(newDate);
     setScheduledDate(newDate.toISOString());
   };
-
+  
   // Image upload handler
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,7 +92,7 @@ const CreatePost = () => {
       setUploadedImageFile(file);
     }
   };
-
+  
   // Modified handler to handle scheduling
   const handleSchedulePost = async () => {
     try {
@@ -149,7 +149,7 @@ const CreatePost = () => {
       });
     }
   };
-
+  
   // Handle the actual draft post saving
   const handleSaveDraft = () => {
     try {
@@ -159,12 +159,12 @@ const CreatePost = () => {
         content: postContent,
         hashtags: postHashtags,
         platforms: Object.entries(socialPlatforms)
-          .filter(([_, isActive]) => isActive)
-          .map(([name]) => name),
+        .filter(([_, isActive]) => isActive)
+        .map(([name]) => name),
         scheduledDate: scheduledDate,
         postType: postType,
       };
-
+      
       // Save draft to localStorage for persistence
       const existingDrafts = JSON.parse(
         localStorage.getItem("postDrafts") || "[]"
@@ -175,7 +175,7 @@ const CreatePost = () => {
         createdAt: new Date().toISOString(),
       });
       localStorage.setItem("postDrafts", JSON.stringify(existingDrafts));
-
+      
       toast({
         title: "Success",
         description: "Post saved as draft!",
@@ -189,7 +189,7 @@ const CreatePost = () => {
       });
     }
   };
-
+  
   // --- Render using props and local UI state ---
   // Color definitions (remain the same)
   const previewPanelBg = "bg-gray-100";
@@ -197,7 +197,7 @@ const CreatePost = () => {
   const scheduleButtonBg = "bg-cyan-500";
   const datePickerBg = "bg-gray-200";
   const datePickerText = "text-gray-700";
-
+  
   // Platform Data (remain the same)
   const platformsRow1: { name: PlatformName; icon: string }[] = [
     { name: "Instagram", icon: "I" },
@@ -206,7 +206,8 @@ const CreatePost = () => {
     { name: "TikTok", icon: "♪" },
     { name: "YouTube", icon: "▶" },
   ];
-
+  
+  console.log("CreatePost handleDateChange", date);
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
       {/* Header (remains the same) */}

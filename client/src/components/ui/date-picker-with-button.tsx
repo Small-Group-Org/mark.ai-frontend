@@ -20,14 +20,11 @@ const DatePickerWithButton: React.FC<DatePickerWithButtonProps> = ({
   };
 
   const handleDateChange = (newDate: Date) => {
-    console.log("3 > DatePickerWithButton handleDateChange", newDate);
     onDateChange(newDate);
-    setIsCalendarOpen(false);
   };
 
   // Format the date for display
   const displayDate = date ? format(date, "MMMM d, yyyy • h:mm aa") : "Select Date";
-  console.log("3 > DatePickerWithButton displayDate", displayDate);
   
   return (
     <>
