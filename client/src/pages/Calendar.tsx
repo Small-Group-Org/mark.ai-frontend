@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
-import { generateMockPosts } from '@/utils/mockPosts';
 import { useToast } from '@/hooks/use-toast';
-import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 // import { mockPostsApiResponse } from '@/utils/postresponse';
 
@@ -12,18 +10,6 @@ export default function CalendarRoute() {
   const posts = usePostStore((state) => state.posts);
   const setPosts = usePostStore((state) => state.setPosts);
   const [isLoading, setIsLoading] = React.useState(false);
-
-  useEffect(() => {
-    setPosts(generateMockPosts(today, 50));
-    fetchPosts();
-  }, []);
-
-  // Function to fetch posts from API
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    await syncPostsFromDB(today);
-    setIsLoading(false);
-  };
 
   const handleDateSelect = (date: Date) => {
     toast({
@@ -41,6 +27,7 @@ export default function CalendarRoute() {
           onDateSelect={handleDateSelect}
           timeZoneLabel="GMT+05:30"
           isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       </div>
     </div>
