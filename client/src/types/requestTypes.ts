@@ -38,6 +38,11 @@ export interface ChatResponse {
   };
 }
 
-export interface GenerateAyrshareTokenRequest {
-  platform: string;
+export interface GenerateAyrshareTokenResponse {
+    status: string;
+    title: string;
+    token: string;
+    url: string;
+    emailSent: boolean;
+    expiresIn: string;
 }
