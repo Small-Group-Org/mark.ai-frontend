@@ -4,6 +4,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { usePostStore } from "@/store/usePostStore";
 import { Message } from "@/types";
 import { chatWithMark } from "@/services/chatServices";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const ChatPanel = () => {
   const {
@@ -29,6 +30,7 @@ const ChatPanel = () => {
   
   const [inputValue, setInputValue] = React.useState("");
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const {isAuth} = useAuthStore();
 
   const chatPanelBg = "bg-[#11132f]";
   const chatHeaderBorder = "border-gray-600/60";
@@ -42,7 +44,7 @@ const ChatPanel = () => {
 
   // Initialize chat with first AI message
   useEffect(() => {
-    if (messages && messages.length === 0) {
+    if (messages && messages.length === 0 && isAuth) {
       setIsThinking(true);
       handleChatResponse("Hi There!");
     }
