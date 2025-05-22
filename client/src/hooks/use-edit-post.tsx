@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Post, PlatformType, PostStatus } from '@/types/post';
+import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
-import axios from 'axios';
 
 // Define the empty/default post structure
 const DEFAULT_POST: Post = {

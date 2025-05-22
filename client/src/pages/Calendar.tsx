@@ -4,7 +4,7 @@ import { generateMockPosts } from '@/utils/mockPosts';
 import { useToast } from '@/hooks/use-toast';
 import { getPosts } from '@/services/postServices';
 import { usePostStore } from '@/store/usePostStore';
-import { mockPostsApiResponse } from '@/utils/postresponse';
+// import { mockPostsApiResponse } from '@/utils/postresponse';
 
 export default function CalendarRoute() {
   const today = new Date();
@@ -35,14 +35,13 @@ export default function CalendarRoute() {
         endDate: endDateStr
       });
 
-      // Simulate API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // response = mockPostsApiResponse;
-
       if (response && response.success && response.data && response.data.data && response.data.data.length > 0) {
-        setPosts(response.data.data);
-      } else {
-        setPosts(generateMockPosts(today, 50));
+        const parsedPosts = response.data.data.map((post: any) => ({
+          ...post,
+          scheduleDate: post.scheduleDate ? new Date(post.scheduleDate) : undefined,
+          createdAt: post.createdAt ? new Date(post.createdAt) : undefined,
+        }));
+        setPosts(parsedPosts);
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -51,7 +50,7 @@ export default function CalendarRoute() {
         description: 'Failed to fetch posts. Using mock data instead.',
         variant: 'destructive'
       });
-      setPosts(generateMockPosts(today, 50));
+      // setPosts(generateMockPosts(today, 50));
     } finally {
       setIsLoading(false);
     }

@@ -63,7 +63,7 @@ export const getPosts = async (filters: GetPostsFilters) => {
     if (filters.endDate) queryParams.append('endDate', filters.endDate);
 
     const response = await doGET(
-      `${BASE_URL}/post/getByUser?${queryParams.toString()}`
+      `${BASE_URL}/post/user?${queryParams.toString()}`
     );
     return response.data;
   } catch (error) {
