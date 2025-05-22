@@ -3,14 +3,21 @@ import React from "react";
 interface ConnectSocialIconProps {
   image: string;
   isConnected: boolean;
+  label: string;
+  handleAyrshareConnection: (label: string) => void;
 }
 
 const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
   image,
   isConnected,
+  label,
+  handleAyrshareConnection,
 }) => {
   return (
-    <div className="relative h-full flex items-center justify-center cursor-pointer p-[2px] rounded-full border border-gray-700 ">
+    <div
+      className="relative h-full flex items-center justify-center cursor-pointer p-[2px] rounded-full border border-gray-700 "
+      onClick={() => handleAyrshareConnection(label)}
+    >
       <img
         src={image}
         alt="Social Icon"
