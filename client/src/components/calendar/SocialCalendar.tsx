@@ -4,7 +4,6 @@ import CalendarHeader from './CalendarHeader';
 import MonthView from './month/MonthView';
 import WeekView from './week/WeekView';
 import { useToast } from '@/hooks/use-toast';
-import { formatHourLabel } from '@/utils/dateUtils';
 import { useEditPostContext } from '@/context/EditPostProvider';
 
 interface SocialCalendarProps {
