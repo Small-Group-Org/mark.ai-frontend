@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { usePostStore } from "@/store/usePostStore";
-import { PlatformType } from "@/types/calendar";
+import { PlatformType } from "@/types/post";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";

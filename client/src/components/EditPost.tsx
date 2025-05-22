@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
-import { Post, PlatformType, PostStatus } from '@/types/calendar';
+import { Post, PlatformType, PostStatus } from '@/types/post';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [

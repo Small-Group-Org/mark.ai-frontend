@@ -1,5 +1,5 @@
 import React from 'react';
-import { Post } from '@/types/calendar';
+import { Post } from '@/types/post';
 import { formatTime12Hour } from '@/utils/dateUtils';
 import { cn } from '@/lib/utils';
 

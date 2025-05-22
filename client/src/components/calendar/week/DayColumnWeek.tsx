@@ -1,5 +1,5 @@
 import React from 'react';
-import { Post } from '@/types/calendar';
+import { Post } from '@/types/post';
 import CurrentTimeIndicator from './CurrentTimeIndicator';
 import { getHoursArray } from '@/utils/dateUtils';
 import { PostsByDateTime, getPostsForDateTime } from '@/utils/postUtils';

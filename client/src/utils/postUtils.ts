@@ -1,5 +1,5 @@
 import { format, parseISO, startOfDay, addHours, isSameDay, isSameHour } from 'date-fns';
-import { Post } from '@/types/calendar';
+import { Post } from '@/types/post';
 
 // Type for the preprocessed posts map
 export type PostsByDateTime = Map<string, Post[]>;

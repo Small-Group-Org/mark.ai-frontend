@@ -1,4 +1,4 @@
-import { Post, PostStatus, PlatformType } from '@/types/calendar';
+import { Post, PostStatus, PlatformType } from '@/types/post';
 
 // Sample media URLs
 const mediaUrls = [
