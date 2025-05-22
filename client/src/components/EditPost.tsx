@@ -7,6 +7,7 @@ import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
 import { Post, PlatformType, PostStatus } from '@/types/post';
+import { createPost } from '@/services/postServices';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [
@@ -133,14 +134,10 @@ const EditPost: React.FC<EditPostProps> = ({
   // Handle hashtags input
   const handleHashtagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const hashtagsText = e.target.value;
-    const hashtagsList = hashtagsText.split(' ')
-      .map(tag => tag.startsWith('#') ? tag.substring(1) : tag)
-      .filter(tag => tag.length > 0)
-      .join(' ');
     
     setEditedPost(prev => ({
       ...prev,
-      hashtag: hashtagsList
+      hashtag: hashtagsText
     }));
   };
 
@@ -169,33 +166,6 @@ const EditPost: React.FC<EditPostProps> = ({
     setDate(newDate);
   };
   
-  // Handle schedule button click
-  const handleSchedulePost = () => {
-    if (!isEditing) return;
-    
-    // Update post with current settings
-    const updatedPost = {
-      ...editedPost,
-      scheduleDate: date,
-      status: 'schedule' as PostStatus
-    };
-    onSave(updatedPost);
-    setIsEditing(false);
-    
-    toast({
-      title: "Post Scheduled",
-      description: `Your post has been scheduled for ${format(date, 'MMM d, yyyy')} at ${format(date, 'h:mm a')}.`,
-    });
-    
-    // Notify calendar of the update if this is a calendar event
-    if (editedPost._id) {
-      const event = new CustomEvent('calendarUpdated', { 
-        detail: { type: 'update', eventId: editedPost._id }
-      });
-      document.dispatchEvent(event);
-    }
-  };
-  
   // Handle draft save
   const handleSaveDraft = () => {
     if (!isEditing) return;
@@ -208,19 +178,20 @@ const EditPost: React.FC<EditPostProps> = ({
     };
     onSave(updatedPost);
     setIsEditing(false);
+  };
+
+  // Handle schedule save
+  const handleSchedule = () => {
+    if (!isEditing) return;
     
-    toast({
-      title: "Draft Saved",
-      description: "Your post has been saved as a draft.",
-    });
-    
-    // Notify calendar of the update if this is a calendar event
-    if (editedPost._id) {
-      const event = new CustomEvent('calendarUpdated', { 
-        detail: { type: 'update', eventId: editedPost._id }
-      });
-      document.dispatchEvent(event);
-    }
+    // Update post with current settings
+    const updatedPost = {
+      ...editedPost,
+      scheduleDate: date,
+      status: 'schedule' as PostStatus
+    };
+    onSave(updatedPost);
+    setIsEditing(false);
   };
 
   const handleClose = () => {
@@ -635,7 +606,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   ) : (
                   <div className={cn("flex rounded-lg shadow-sm relative")}>
                     <ScheduleActionButton
-                      onSchedule={() => isEditing && handleSchedulePost()}
+                      onSchedule={() => isEditing && handleSchedule()}
                       onDraft={() => isEditing && handleSaveDraft()}
                       className={!isEditing ? "opacity-70" : ""}
                       disabled={!isEditing}
@@ -782,7 +753,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   ) : (
                 <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
                   <ScheduleActionButton
-                    onSchedule={() => isEditing && handleSchedulePost()}
+                    onSchedule={() => isEditing && handleSchedule()}
                     onDraft={() => isEditing && handleSaveDraft()}
                     className={!isEditing ? "opacity-70" : ""}
                     disabled={!isEditing}

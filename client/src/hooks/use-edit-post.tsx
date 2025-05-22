@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
-import { deletePost } from '@/services/postServices';
+import { deletePost, updatePost, createPost } from '@/services/postServices';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 
@@ -66,24 +66,61 @@ export const useEditPost = () => {
   const onSave = useCallback(async (updatedPost: Post) => {
     setIsLoading(true);
     try {
-      // Call your API to save/update the post here
-      // await updatePostApi(updatedPost); // Example if you have an updatePost API
-      toast({
-        title: 'Success',
-        description: updatedPost._id ? 'Post updated successfully' : 'Post created successfully',
-      });
-      setIsLoading(false);
-      setIsOpen(false);
+      // Format the date as YYYY-MM-DD
+      const formattedDate = updatedPost.scheduleDate.toISOString();
+      
+      let response;
+      if (updatedPost.status === 'draft' && updatedPost._id) {
+        response = await updatePost({
+          postId: updatedPost._id,
+          title: updatedPost.title,
+          content: updatedPost.content,
+          platform: updatedPost.platform,
+          status: updatedPost.status,
+          hashtag: updatedPost.hashtag,
+          mediaUrl: updatedPost.mediaUrl,
+          postType: updatedPost.postType,
+          scheduleDate: formattedDate,
+          publish: 'true',
+          ayrshareId: updatedPost.ayrshareId || '',
+          platformId: updatedPost.platformId
+        });
+      } else {
+        response = await createPost({
+          title: updatedPost.title,
+          content: updatedPost.content,
+          platform: updatedPost.platform,
+          status: updatedPost.status,
+          hashtag: updatedPost.hashtag,
+          mediaUrl: updatedPost.mediaUrl,
+          postType: updatedPost.postType,
+          scheduleDate: formattedDate,
+          publish: 'true',
+          ayrshareId: updatedPost.ayrshareId || ''
+        });
+      }
+
+      if (response && response.success) {
+        toast({
+          title: 'Success',
+          description: updatedPost.status === 'schedule' ? 'Post scheduled successfully!' : 'Post saved as draft!',
+        });
+        await syncPostsFromDB(displayDate);
+        setIsOpen(false);
+      } else {
+        throw new Error('Failed to save post');
+      }
     } catch (error) {
-      console.error('Failed to save post', error);
+      console.error('Failed to save post:', error);
       toast({
         title: 'Error',
         description: 'Failed to save post',
         variant: 'destructive',
       });
+    } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, displayDate]);
 
   // Delete the post
   const onDelete = useCallback(async () => {
