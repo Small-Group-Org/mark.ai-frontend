@@ -6,6 +6,7 @@ import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
 import { Post, PlatformType, PostStatus } from '@/types/post';
+import { ENABLE_AI_GENERATE } from '@/commons/constant';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [
@@ -39,8 +40,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const [editedPost, setEditedPost] = useState<Post>(post);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft');
   
   // Calendar and time selection state
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
@@ -69,32 +69,11 @@ const EditPost: React.FC<EditPostProps> = ({
       const localDate = new Date(postDate.getTime() + (offsetInMinutes * 60 * 1000));
       
       setDate(postDate);
+      // Set isEditing based on post status
+      setIsEditing(post.status === 'draft');
     }
   }, [post, timeZoneLabel]);
   
-  // Handle clicks outside calendar and dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsDropdownOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscapeKey);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, []);
-
   // Handle text input changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -208,7 +187,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
           <div className="flex items-center">
             <h2 className="text-lg font-medium mr-2 text-gray-800 dark:text-gray-100">Post Details</h2>
-            {editedPost.status !== 'schedule' && !isEditing && <button 
+            {editedPost.status === 'schedule' && !isEditing && <button 
               className={cn(
                 "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
                 isEditing && "text-blue-500"
@@ -493,7 +472,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
                 
                 {/* AI Generation Button (Mobile) */}
-                {onGenerate && (
+                {onGenerate && ENABLE_AI_GENERATE && (
                   <div className={cn(
                     "mb-4 px-4",
                     !isEditing && "opacity-50"
@@ -690,7 +669,7 @@ const EditPost: React.FC<EditPostProps> = ({
             </div>
 
             {/* AI Generation Button */}
-            {onGenerate && (
+            {onGenerate && ENABLE_AI_GENERATE && (
               <div className="mb-6">
                 <button
                   className={cn(

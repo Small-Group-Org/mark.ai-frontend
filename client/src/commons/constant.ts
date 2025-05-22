@@ -67,3 +67,5 @@ export const initialMessages: MessageType[] = [
       sender: 'system',
     }
   ];
+
+  export const ENABLE_AI_GENERATE = false;
