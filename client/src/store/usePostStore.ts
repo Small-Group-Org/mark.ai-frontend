@@ -26,6 +26,9 @@ interface PostState {
   posts: Post[];
   setPosts: (posts: Post[]) => void;
 
+  displayDate: Date;
+  setDisplayDate: (date: Date) => void;
+
   resetPostState: () => void;
 }
 
@@ -42,6 +45,7 @@ const initialState = {
   postType: 'post',
   scheduleDate: new Date(),
   posts: [],
+  displayDate: new Date(),
 };
 
 export const usePostStore = create<PostState>((set) => ({
@@ -61,6 +65,8 @@ export const usePostStore = create<PostState>((set) => ({
   setScheduleDate: (scheduleDate) => set({ scheduleDate }),
 
   setPosts: (posts) => set({ posts }),
+
+  setDisplayDate: (date) => set({ displayDate: date }),
 
   // Reset all post state
   resetPostState: () => set(initialState),

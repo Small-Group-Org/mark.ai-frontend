@@ -7,21 +7,15 @@ import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
 import { Post, PlatformType, PostStatus } from '@/types/post';
+import { createPost } from '@/services/postServices';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [
-  'bluesky',
   'facebook',
-  'gmb',
   'instagram',
-  'linkedin',
-  'pinterest',
-  'reddit',
-  'telegram',
   'threads',
-  'tiktok',
   'twitter',
-  'youtube'
+  'youtube',
 ];
 
 // Define component props
@@ -30,7 +24,7 @@ interface EditPostProps {
   onClose: () => void;
   post: Post;
   onSave: (updatedPost: Post) => void;
-  onDelete?: () => void;
+  onDelete: () => void;
   onGenerate?: (prompt: string) => void;
 }
 
@@ -45,19 +39,15 @@ const EditPost: React.FC<EditPostProps> = ({
   const { timeZoneLabel = 'GMT+00:00' } = useEditPostContext();
   // Component state
   const [editedPost, setEditedPost] = useState<Post>(post);
-  const [activeTab, setActiveTab] = useState<'content' | 'schedule'>('content');
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
-  const [showGeneratePrompt, setShowGeneratePrompt] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedButtonType, setSelectedButtonType] = useState<'schedule' | 'draft'>('schedule');
   
   // Calendar and time selection state
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
   
   const calendarRef = useRef<HTMLDivElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Update character count when content changes
@@ -80,7 +70,7 @@ const EditPost: React.FC<EditPostProps> = ({
       // Adjust the time based on timezone
       const localDate = new Date(postDate.getTime() + (offsetInMinutes * 60 * 1000));
       
-      setDate(localDate);
+      setDate(postDate);
     }
   }, [post, timeZoneLabel]);
   
@@ -137,14 +127,10 @@ const EditPost: React.FC<EditPostProps> = ({
   // Handle hashtags input
   const handleHashtagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const hashtagsText = e.target.value;
-    const hashtagsList = hashtagsText.split(' ')
-      .map(tag => tag.startsWith('#') ? tag.substring(1) : tag)
-      .filter(tag => tag.length > 0)
-      .join(' ');
     
     setEditedPost(prev => ({
       ...prev,
-      hashtag: hashtagsList
+      hashtag: hashtagsText
     }));
   };
 
@@ -173,33 +159,6 @@ const EditPost: React.FC<EditPostProps> = ({
     setDate(newDate);
   };
   
-  // Handle schedule button click
-  const handleSchedulePost = () => {
-    if (!isEditing) return;
-    
-    // Update post with current settings
-    const updatedPost = {
-      ...editedPost,
-      scheduleDate: date,
-      status: 'schedule' as PostStatus
-    };
-    onSave(updatedPost);
-    setIsEditing(false);
-    
-    toast({
-      title: "Post Scheduled",
-      description: `Your post has been scheduled for ${format(date, 'MMM d, yyyy')} at ${format(date, 'h:mm a')}.`,
-    });
-    
-    // Notify calendar of the update if this is a calendar event
-    if (editedPost._id) {
-      const event = new CustomEvent('calendarUpdated', { 
-        detail: { type: 'update', eventId: editedPost._id }
-      });
-      document.dispatchEvent(event);
-    }
-  };
-  
   // Handle draft save
   const handleSaveDraft = () => {
     if (!isEditing) return;
@@ -212,38 +171,20 @@ const EditPost: React.FC<EditPostProps> = ({
     };
     onSave(updatedPost);
     setIsEditing(false);
-    
-    toast({
-      title: "Draft Saved",
-      description: "Your post has been saved as a draft.",
-    });
-    
-    // Notify calendar of the update if this is a calendar event
-    if (editedPost._id) {
-      const event = new CustomEvent('calendarUpdated', { 
-        detail: { type: 'update', eventId: editedPost._id }
-      });
-      document.dispatchEvent(event);
-    }
   };
 
-  // Handle delete
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete();
-      toast({
-        title: "Post Deleted",
-        description: "Your post has been deleted.",
-      });
-      
-      // Notify calendar of the deletion if this is a calendar event
-      if (editedPost._id) {
-        const event = new CustomEvent('calendarUpdated', { 
-          detail: { type: 'delete', eventId: editedPost._id }
-        });
-        document.dispatchEvent(event);
-      }
-    }
+  // Handle schedule save
+  const handleSchedule = () => {
+    if (!isEditing) return;
+    
+    // Update post with current settings
+    const updatedPost = {
+      ...editedPost,
+      scheduleDate: date,
+      status: 'schedule' as PostStatus
+    };
+    onSave(updatedPost);
+    setIsEditing(false);
   };
 
   const handleClose = () => {
@@ -650,7 +591,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   <div className="flex justify-center">
                     <button
                       className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                      onClick={handleDelete}
+                      onClick={onDelete}
                     >
                       Delete
                     </button>
@@ -658,7 +599,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   ) : (
                   <div className={cn("flex rounded-lg shadow-sm relative")}>
                     <ScheduleActionButton
-                      onSchedule={() => isEditing && handleSchedulePost()}
+                      onSchedule={() => isEditing && handleSchedule()}
                       onDraft={() => isEditing && handleSaveDraft()}
                       className={!isEditing ? "opacity-70" : ""}
                       disabled={!isEditing}
@@ -797,7 +738,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   <div className="flex justify-center">
                     <button
                       className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
-                      onClick={handleDelete}
+                      onClick={onDelete}
                     >
                       Delete
                     </button>
@@ -805,7 +746,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   ) : (
                 <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
                   <ScheduleActionButton
-                    onSchedule={() => isEditing && handleSchedulePost()}
+                    onSchedule={() => isEditing && handleSchedule()}
                     onDraft={() => isEditing && handleSaveDraft()}
                     className={!isEditing ? "opacity-70" : ""}
                     disabled={!isEditing}

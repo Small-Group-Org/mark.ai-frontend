@@ -3,10 +3,9 @@ import { Post } from '@/types/post';
 import { 
   DAYS_OF_WEEK, 
   getWeekDates, 
-  isToday, 
-  formatHourLabel
+  isToday
 } from '@/utils/dateUtils';
-import { preprocessPosts, getPostsForDateTime } from '@/utils/postUtils';
+import { preprocessPosts } from '@/utils/postUtils';
 import DayHeaderCellWeek from './DayHeaderCellWeek';
 import DayColumnWeek from './DayColumnWeek';
 import TimeGutter from './TimeGutter';

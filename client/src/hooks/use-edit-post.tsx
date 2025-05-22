@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
-import { Post, PlatformType, PostStatus } from '@/types/post';
+import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
-import axios from 'axios';
+import { deletePost, updatePost, createPost } from '@/services/postServices';
+import { syncPostsFromDB } from '@/utils/postSync';
+import { usePostStore } from '@/store/usePostStore';
 
 // Define the empty/default post structure
 const DEFAULT_POST: Post = {
@@ -37,6 +39,7 @@ export const useEditPost = () => {
   const [post, setPost] = useState<Post>(DEFAULT_POST);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const displayDate = usePostStore((state) => state.displayDate);
 
   // Open the edit modal with a specific post
   const onOpen = useCallback(async (postId?: string, postData?: Post) => {
@@ -45,58 +48,8 @@ export const useEditPost = () => {
       setIsOpen(true);
       return;
     }
-
-    if (postId) {
-      setIsLoading(true);
-      try {
-        // Try to load from localStorage mock (calendarEvents)
-        const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
-        const calendarEvent = mockEvents.find((event: any) => event._id === postId);
-        let mockPost: Post;
-        if (calendarEvent) {
-          mockPost = {
-            ...DEFAULT_POST,
-            _id: calendarEvent._id,
-            userId: calendarEvent.userId || '',
-            title: calendarEvent.title || 'Calendar Event',
-            content: calendarEvent.content || 'Content from calendar event',
-            hashtag: calendarEvent.hashtag || '',
-            mediaUrl: calendarEvent.mediaUrl || [],
-            platform: calendarEvent.platform || [],
-            postType: calendarEvent.postType || 'post',
-            status: calendarEvent.status || 'draft',
-            scheduleDate: calendarEvent.scheduleDate ? new Date(calendarEvent.scheduleDate) : new Date(),
-            publish: calendarEvent.publish || '',
-            platformId: calendarEvent.platformId,
-            createdAt: calendarEvent.createdAt ? new Date(calendarEvent.createdAt) : new Date(),
-            ayrshareId: calendarEvent.ayrshareId || '',
-          };
-        } else {
-          // Regular post, use default mock data
-          mockPost = {
-            ...DEFAULT_POST,
-            _id: postId,
-            title: 'Sample Post Title',
-            content: 'This is a sample post content that would be loaded from the server.',
-            hashtag: '#sample',
-            scheduleDate: new Date(),
-          };
-        }
-        setPost(mockPost);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch post', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load post data',
-          variant: 'destructive',
-        });
-        setIsLoading(false);
-      }
-    } else {
-      // Create a new post with default values
-      setPost(DEFAULT_POST);
-    }
+    // If no postData, just set default post (or fetch from API if needed)
+    setPost(DEFAULT_POST);
     setIsOpen(true);
   }, [toast]);
 
@@ -113,92 +66,85 @@ export const useEditPost = () => {
   const onSave = useCallback(async (updatedPost: Post) => {
     setIsLoading(true);
     try {
-      // Check if this might be a calendar event by getting saved events
-      const savedEventsStr = localStorage.getItem('calendarEvents');
-      if (savedEventsStr && updatedPost._id) {
-        try {
-          const savedEvents = JSON.parse(savedEventsStr);
-          // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event._id === updatedPost._id);
-          if (eventIndex !== -1) {
-            // This is a calendar event, so update it
-            const updatedEvent = {
-              ...savedEvents[eventIndex],
-              title: updatedPost.title,
-              content: updatedPost.content,
-              hashtag: updatedPost.hashtag,
-              platform: updatedPost.platform,
-              scheduleDate: updatedPost.scheduleDate,
-              mediaUrl: updatedPost.mediaUrl,
-              status: updatedPost.status,
-              postType: updatedPost.postType,
-              publish: updatedPost.publish,
-              platformId: updatedPost.platformId,
-              createdAt: updatedPost.createdAt,
-              ayrshareId: updatedPost.ayrshareId,
-            };
-            // Update the event in the array
-            savedEvents[eventIndex] = updatedEvent;
-            // Save the updated events back to localStorage
-            localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
-            // Refresh the calendar view by dispatching a custom event
-            window.dispatchEvent(new CustomEvent('calendarUpdated'));
-          }
-        } catch (e) {
-          console.error('Error handling calendar event update', e);
-        }
+      // Format the date as YYYY-MM-DD
+      const formattedDate = updatedPost.scheduleDate.toISOString();
+      
+      let response;
+      if (updatedPost.status === 'draft' && updatedPost._id) {
+        response = await updatePost({
+          postId: updatedPost._id,
+          title: updatedPost.title,
+          content: updatedPost.content,
+          platform: updatedPost.platform,
+          status: updatedPost.status,
+          hashtag: updatedPost.hashtag,
+          mediaUrl: updatedPost.mediaUrl,
+          postType: updatedPost.postType,
+          scheduleDate: formattedDate,
+          publish: 'true',
+          ayrshareId: updatedPost.ayrshareId || '',
+          platformId: updatedPost.platformId
+        });
+      } else {
+        response = await createPost({
+          title: updatedPost.title,
+          content: updatedPost.content,
+          platform: updatedPost.platform,
+          status: updatedPost.status,
+          hashtag: updatedPost.hashtag,
+          mediaUrl: updatedPost.mediaUrl,
+          postType: updatedPost.postType,
+          scheduleDate: formattedDate,
+          publish: 'true',
+          ayrshareId: updatedPost.ayrshareId || ''
+        });
       }
-      // Simulate API delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast({
-        title: 'Success',
-        description: updatedPost._id ? 'Post updated successfully' : 'Post created successfully',
-      });
-      setIsLoading(false);
-      setIsOpen(false);
+
+      if (response && response.success) {
+        toast({
+          title: 'Success',
+          description: updatedPost.status === 'schedule' ? 'Post scheduled successfully!' : 'Post saved as draft!',
+        });
+        await syncPostsFromDB(displayDate);
+        setIsOpen(false);
+      } else {
+        throw new Error('Failed to save post');
+      }
     } catch (error) {
-      console.error('Failed to save post', error);
+      console.error('Failed to save post:', error);
       toast({
         title: 'Error',
         description: 'Failed to save post',
         variant: 'destructive',
       });
+    } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, displayDate]);
 
   // Delete the post
   const onDelete = useCallback(async () => {
     if (!post._id) return;
     setIsLoading(true);
     try {
-      // Check if this might be a calendar event
-      const savedEventsStr = localStorage.getItem('calendarEvents');
-      if (savedEventsStr) {
-        try {
-          const savedEvents = JSON.parse(savedEventsStr);
-          // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event._id === post._id);
-          if (eventIndex !== -1) {
-            // This is a calendar event, so remove it
-            savedEvents.splice(eventIndex, 1);
-            // Save the updated events back to localStorage
-            localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
-            // Refresh the calendar view by dispatching a custom event
-            window.dispatchEvent(new CustomEvent('calendarUpdated'));
-          }
-        } catch (e) {
-          console.error('Error handling calendar event deletion', e);
-        }
+      // Call the deletePost API
+      const response = await deletePost({ postId: post._id });
+      if (response && response.success) {
+        toast({
+          title: 'Success',
+          description: 'Post deleted successfully',
+        });
+        await syncPostsFromDB(displayDate);
+        setIsLoading(false);
+        setIsOpen(false);
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to delete post',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
       }
-      // Simulate API delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast({
-        title: 'Success',
-        description: 'Post deleted successfully',
-      });
-      setIsLoading(false);
-      setIsOpen(false);
     } catch (error) {
       console.error('Failed to delete post', error);
       toast({
@@ -208,7 +154,7 @@ export const useEditPost = () => {
       });
       setIsLoading(false);
     }
-  }, [post._id, toast]);
+  }, [post._id, toast, displayDate]);
 
   // Generate content with AI
   const onGenerate = useCallback(async (prompt: string) => {
