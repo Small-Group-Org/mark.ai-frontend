@@ -11,18 +11,11 @@ import { createPost } from '@/services/postServices';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [
-  'bluesky',
   'facebook',
-  'gmb',
   'instagram',
-  'linkedin',
-  'pinterest',
-  'reddit',
-  'telegram',
   'threads',
-  'tiktok',
   'twitter',
-  'youtube'
+  'youtube',
 ];
 
 // Define component props
