@@ -1,7 +1,7 @@
 import { BASE_URL } from '@/commons/constant';
 import { doGET, doPOST, doPUT, doDELETE } from '@/commons/serviceUtils';
 import axios from 'axios';
-import { PlatformType, PostStatus } from '@/types/calendar';
+import { PlatformType, PostStatus } from '@/types/post';
 
 // Interface for create post request
 interface CreatePostRequest {

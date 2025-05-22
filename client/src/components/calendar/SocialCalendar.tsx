@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Post, CalendarView } from '@/types/calendar';
+import { Post, CalendarView } from '@/types/post';
 import CalendarHeader from './CalendarHeader';
 import MonthView from './month/MonthView';
 import WeekView from './week/WeekView';

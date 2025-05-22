@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Post } from '@/types/calendar';
+import { Post } from '@/types/post';
 import PostIndicator from '../post/PostIndicator';
 import { cn } from '@/lib/utils';
 import { MONTHS } from '@/utils/dateUtils';

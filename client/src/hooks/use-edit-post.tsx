@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Post, PlatformType, PostStatus } from '@/types/calendar';
+import { Post, PlatformType, PostStatus } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
 import axios from 'axios';
 
