@@ -91,7 +91,7 @@ export const useEditPost = () => {
     setIsLoading(true);
     try {
       // Call the deletePost API
-      const response = await deletePost({ _id: post._id });
+      const response = await deletePost({ postId: post._id });
       if (response && response.success) {
         toast({
           title: 'Success',
@@ -106,7 +106,6 @@ export const useEditPost = () => {
           description: 'Failed to delete post',
           variant: 'destructive',
         });
-        await syncPostsFromDB(displayDate);
         setIsLoading(false);
       }
     } catch (error) {

@@ -20,7 +20,7 @@ interface CreatePostRequest {
 
 // Interface for update post request
 interface UpdatePostRequest {
-  _id: string;
+  postId: string;
   title?: string;
   content?: string;
   platform?: PlatformType[];
@@ -36,7 +36,7 @@ interface UpdatePostRequest {
 
 // Interface for delete post request
 interface DeletePostRequest {
-  _id: string;
+  postId: string;
 }
 
 // Interface for get posts filters
@@ -107,7 +107,8 @@ export const updatePost = async (postData: UpdatePostRequest) => {
 export const deletePost = async (postData: DeletePostRequest) => {
   try {
     const response = await doDELETE(
-      `${BASE_URL}/post/delete/${postData._id}`
+      `${BASE_URL}/post/delete`,
+      postData
     );
     return response.data;
   } catch (error) {
