@@ -3,6 +3,7 @@ import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
 import { deletePost } from '@/services/postServices';
 import { syncPostsFromDB } from '@/utils/postSync';
+import { usePostStore } from '@/store/usePostStore';
 
 // Define the empty/default post structure
 const DEFAULT_POST: Post = {
@@ -38,6 +39,7 @@ export const useEditPost = () => {
   const [post, setPost] = useState<Post>(DEFAULT_POST);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const displayDate = usePostStore((state) => state.displayDate);
 
   // Open the edit modal with a specific post
   const onOpen = useCallback(async (postId?: string, postData?: Post) => {
@@ -95,7 +97,7 @@ export const useEditPost = () => {
           title: 'Success',
           description: 'Post deleted successfully',
         });
-        await syncPostsFromDB();
+        await syncPostsFromDB(displayDate);
         setIsLoading(false);
         setIsOpen(false);
       } else {
@@ -104,6 +106,7 @@ export const useEditPost = () => {
           description: 'Failed to delete post',
           variant: 'destructive',
         });
+        await syncPostsFromDB(displayDate);
         setIsLoading(false);
       }
     } catch (error) {
@@ -115,7 +118,7 @@ export const useEditPost = () => {
       });
       setIsLoading(false);
     }
-  }, [post._id, toast]);
+  }, [post._id, toast, displayDate]);
 
   // Generate content with AI
   const onGenerate = useCallback(async (prompt: string) => {

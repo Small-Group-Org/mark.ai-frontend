@@ -5,6 +5,7 @@ import MonthView from './month/MonthView';
 import WeekView from './week/WeekView';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import { syncPostsFromDB } from '@/utils/postSync';
+import { usePostStore } from '@/store/usePostStore';
 
 interface SocialCalendarProps {
   initialDate?: Date;
@@ -27,11 +28,19 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   setIsLoading = () => {},
 }) => {
   const [currentView, setCurrentView] = useState<CalendarView>('month');
-  const [displayDate, setDisplayDate] = useState<Date>(initialDate);
+  const displayDate = usePostStore((state) => state.displayDate);
+  const setDisplayDate = usePostStore((state) => state.setDisplayDate);
   const editPostContext = useEditPostContext();
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
   const today = new Date();
+
+  // Initialize displayDate if not set
+  useEffect(() => {
+    if (!displayDate) {
+      setDisplayDate(initialDate);
+    }
+  }, [initialDate, displayDate, setDisplayDate]);
 
   // Debounced sync for both month and week views
   useEffect(() => {
