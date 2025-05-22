@@ -6,6 +6,7 @@ import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
 import { Post, PlatformType, PostStatus } from '@/types/post';
+import { ENABLE_AI_GENERATE } from '@/commons/constant';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [
@@ -39,8 +40,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const [editedPost, setEditedPost] = useState<Post>(post);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft');
   
   // Calendar and time selection state
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
@@ -69,32 +69,11 @@ const EditPost: React.FC<EditPostProps> = ({
       const localDate = new Date(postDate.getTime() + (offsetInMinutes * 60 * 1000));
       
       setDate(postDate);
+      // Set isEditing based on post status
+      setIsEditing(post.status === 'draft');
     }
   }, [post, timeZoneLabel]);
   
-  // Handle clicks outside calendar and dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsDropdownOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscapeKey);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, []);
-
   // Handle text input changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -208,18 +187,17 @@ const EditPost: React.FC<EditPostProps> = ({
 
           <div className="flex items-center">
             <h2 className="text-lg font-medium mr-2 text-gray-800 dark:text-gray-100">Post Details</h2>
-            {editedPost.status !== 'schedule' && !isEditing && <button 
-              className={cn(
-                "text-gray-600 hover:text-gray-900 cursor-pointer flex items-center",
-                isEditing && "text-blue-500"
-              )}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditing(!isEditing);
-              }}
-            >
-              <Edit className="w-5 h-5" />
-            </button>}
+            {false && (
+              <button 
+                className="text-gray-600 hover:text-gray-900 cursor-pointer flex items-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditing(!isEditing);
+                }}
+              >
+                <Edit className="w-5 h-5" />
+              </button>
+            )}
           </div>
           
           <button 
@@ -245,9 +223,9 @@ const EditPost: React.FC<EditPostProps> = ({
                     alt="Post media" 
                     className="object-cover w-full h-full"
                   />
-                  {isEditing && (
+                  {editedPost.status === 'draft' && (
                     <button 
-                      className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white"
+                      className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
                       onClick={() => handleDeleteMedia(0)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -301,8 +279,8 @@ const EditPost: React.FC<EditPostProps> = ({
                       "px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex-1",
                       editedPost.postType === type
                         ? "bg-blue-500 text-white" 
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200",
-                      !isEditing && "cursor-default"
+                        : "bg-gray-100 text-gray-600",
+                      !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
                     )}
                     onClick={() => isEditing && handlePostTypeToggle(type)}
                     disabled={!isEditing}
@@ -326,8 +304,8 @@ const EditPost: React.FC<EditPostProps> = ({
                       "flex items-center justify-center px-1 py-1.5 rounded-md text-xs font-medium transition-colors",
                       editedPost.platform.includes(platform)
                         ? "bg-blue-500 text-white" 
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200",
-                      !isEditing && "cursor-default"
+                        : "bg-gray-100 text-gray-600",
+                      !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
                     )}
                     onClick={() => isEditing && handlePlatformToggle(platform)}
                     disabled={!isEditing}
@@ -354,9 +332,9 @@ const EditPost: React.FC<EditPostProps> = ({
                         alt="Post media" 
                         className="object-cover w-full h-full"
                       />
-                      {isEditing && (
+                      {editedPost.status === 'draft' && (
                         <button 
-                          className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white"
+                          className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteMedia(0);
@@ -493,7 +471,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 </div>
                 
                 {/* AI Generation Button (Mobile) */}
-                {onGenerate && (
+                {onGenerate && ENABLE_AI_GENERATE && (
                   <div className={cn(
                     "mb-4 px-4",
                     !isEditing && "opacity-50"
@@ -534,7 +512,7 @@ const EditPost: React.FC<EditPostProps> = ({
                           editedPost.platform.includes(platform)
                             ? "bg-blue-500 text-white" 
                             : "bg-gray-100 text-gray-600",
-                          !isEditing && "cursor-default"
+                          !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
                         )}
                         onClick={() => isEditing && handlePlatformToggle(platform)}
                         disabled={!isEditing}
@@ -557,7 +535,7 @@ const EditPost: React.FC<EditPostProps> = ({
                           editedPost.postType === type
                             ? "bg-blue-500 text-white" 
                             : "bg-gray-100 text-gray-600",
-                          !isEditing && "cursor-default"
+                          !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
                         )}
                         onClick={() => isEditing && handlePostTypeToggle(type)}
                         disabled={!isEditing}
@@ -690,7 +668,7 @@ const EditPost: React.FC<EditPostProps> = ({
             </div>
 
             {/* AI Generation Button */}
-            {onGenerate && (
+            {onGenerate && ENABLE_AI_GENERATE && (
               <div className="mb-6">
                 <button
                   className={cn(

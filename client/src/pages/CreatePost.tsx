@@ -98,6 +98,12 @@ const CreatePost = () => {
       setUploadedImageFile(file);
     }
   };
+
+  const handleImageDelete = () => {
+    setUploadedImageFile(null);
+    setLocalImageUrl(null);
+    setMediaUrl([]);
+  };
   
   // Modified handler to handle scheduling
   const handleSchedulePost = async () => {
@@ -260,6 +266,7 @@ const CreatePost = () => {
             hideFooter={false}
             onImageUpload={handleImageUpload}
             uploadedImageFile={uploadedImageFile}
+            onImageDelete={handleImageDelete}
           />
         </div>
       </div>
