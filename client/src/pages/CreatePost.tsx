@@ -205,7 +205,6 @@ const CreatePost = () => {
   // For hashtags display:
   const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
   
-  console.log("CreatePost handleDateChange", date);
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
       {/* Header (remains the same) */}
