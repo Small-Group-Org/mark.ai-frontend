@@ -184,7 +184,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
           </div>
 
           {/* Right side - Post Text Content */}
-          <div className="md:w-1/2 p-5">
+          <div className="md:w-1/2 p-5 max-h-[280px] overflow-y-auto">
             {/* Post Title - with placeholder if missing */}
             {postTitle ? (
               <h2 className="font-bold text-lg text-gray-900 mb-2">
@@ -208,7 +208,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
             {/* Hashtags - only show if there are any */}
             {hashtags && hashtags.length > 0 && (
-              <div className="text-blue-500 text-sm space-x-1">
+              <div className="text-blue-500 text-sm space-x-1 flex flex-wrap">
                 {hashtags.map((tag, index) => (
                   <span key={index}>#{tag}</span>
                 ))}

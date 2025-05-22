@@ -16,9 +16,10 @@ export const getPosts = async (params: {
         if (params.endDate) queryParams.append('endDate', params.endDate);
 
         const response = await doGET(
-            `${BASE_URL}/post/getByUser?${queryParams.toString()}`
+            `${BASE_URL}/post/user?${queryParams.toString()}`
         );
-        return response.data;
+
+        return response.data.data.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw new Error(error.response?.data?.message || 'Failed to fetch posts');
