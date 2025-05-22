@@ -1,9 +1,9 @@
 import React, { ChangeEvent, KeyboardEvent, useRef, useEffect } from "react";
-import axios from "axios"; // Import axios
 import { PaperclipIcon, SendIcon } from "./IconComponents";
 import { ThreeDots } from "react-loader-spinner";
 import { usePostStore } from "@/store/usePostStore";
 import { Message } from "@/types";
+import { chatWithMark } from "@/services/chatServices";
 
 const ChatPanel = () => {
   const {
@@ -40,97 +40,11 @@ const ChatPanel = () => {
   const userChatBubbleBg = "bg-white";
   const userChatBubbleText = "text-gray-700";
 
-  // Initialize chat with first AI message - Use props now
-  // --- Restore Initial API Call Logic ---
+  // Initialize chat with first AI message
   useEffect(() => {
     if (messages && messages.length === 0) {
       setIsThinking(true);
-
-      const initialRequestBody = {
-        sessionId: "test-session-initial", // Use a specific initial session ID
-        userId: 103, // Hardcoded
-        message: "Hi There!", // Initial greeting message
-        post: {
-          userId: 123, // Hardcoded as per example
-          title: postTitle,
-          content: postContent,
-          mediaUrl: mediaUrl,
-          hashtag: hashtag,
-          platform: platform,
-          postType: postType,
-          scheduleDate: scheduleDate,
-        },
-      };
-
-      axios
-        .post(
-          "https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073",
-          initialRequestBody, // Send the structured body
-          { headers: { "Content-Type": "application/json" } }
-        )
-        .then((response) => {
-          setIsThinking(false);
-          const systemMessage = messages.filter(msg => msg.sender === "system");
-
-          if(systemMessage.length > 0){
-            return;
-          }
-
-          const responseData = response.data;
-          // Expecting { output: { message: "...", post: { ... } } }
-          if (responseData?.output?.post && responseData?.output?.message) {
-            const { message: aiMessageContent, post: initialPost } =
-              responseData.output;
-
-            // Update post state from initial response
-            setPostTitle(initialPost.title ?? "");
-            setPostContent(initialPost.content ?? "");
-            setHashtag(initialPost.hashtag ?? "");
-            setMediaUrl(initialPost.mediaUrl ?? []);
-            if (initialPost.platform)
-              setPlatform(initialPost.platform);
-            if (initialPost.postType) {
-              setPostType(initialPost.postType);
-            }
-            if (initialPost.scheduleDate)
-              setScheduleDate(new Date(initialPost.scheduleDate));
-
-            // Set the initial AI message
-            const aiResponseMessage: Message = {
-              id: Date.now().toString(),
-              text: aiMessageContent,
-              sender: "system",
-              timestamp: new Date()
-            };
-            setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
-          } else {
-            // Handle potential invalid format in initial call
-            console.error(
-              "Initial API Error: Invalid response format",
-              responseData
-            );
-            const aiErrorResponse: Message = {
-              id: Date.now().toString(),
-              text: "Sorry I am facing some technical issues. Give me some time to understand the problem.",
-              sender: "system",
-              timestamp: new Date()
-            };
-            setMessages((prevMessages: Message[]) => [...prevMessages, aiErrorResponse]);
-          }
-        })
-        .catch((error) => {
-          setIsThinking(false);
-          console.error("Initial API call error:", error);
-          const errorMessage =
-            "Sorry, I couldn't connect. Please try again later.";
-          const aiErrorResponse: Message = {
-            id: Date.now().toString(),
-            text: errorMessage,
-            sender: "system",
-            timestamp: new Date()
-          };
-          setMessages((prevMessages: Message[]) => [...prevMessages, aiErrorResponse]);
-        });
+      handleChatResponse("Hi There!");
     }
   }, []);
 
@@ -145,7 +59,7 @@ const ChatPanel = () => {
     }, 0);
     
     return () => clearTimeout(scrollTimeout);
-}, [messages, isThinking]);
+  }, [messages, isThinking]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
@@ -153,7 +67,54 @@ const ChatPanel = () => {
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
-  // Use props in handleSend
+  const handleChatResponse = async (messageText: string) => {
+    try {
+      const requestBody = {
+        message: messageText
+      };
+
+      const response = await chatWithMark(requestBody);
+
+      if (response?.bot?.text) {
+        const aiResponseMessage: Message = {
+          id: Date.now().toString(),
+          text: response.bot.text,
+          sender: "system",
+          timestamp: new Date()
+        };
+        setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
+
+        // Update post state if available
+        if (response.post) {
+          const { post } = response;
+          setPostTitle(post.title ?? "");
+          setPostContent(post.content ?? "");
+          setHashtag(Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? ""));
+        }
+      } else {
+        const aiErrorResponse: Message = {
+          id: Date.now().toString(),
+          text: "I am sorry, looks like I am not able to process any request. Can you please try again?",
+          sender: "system",
+          timestamp: new Date()
+        };
+        setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error: Could not connect to the AI service.";
+      const aiErrorResponse: Message = {
+        id: Date.now().toString(),
+        text: errorMessage,
+        sender: "system",
+        timestamp: new Date()
+      };
+      setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
+    } finally {
+      setIsThinking(false);
+    }
+  };
+
+
   const handleSend = async () => {
     const messageText = inputValue.trim();
     if (messageText) {
@@ -173,102 +134,13 @@ const ChatPanel = () => {
         textarea.style.height = "auto";
       }
 
-      // Show the loader after a delay (e.g., 1500ms)
+      // Show thinking state after a short delay
       const thinkingTimeout = setTimeout(() => {
         setIsThinking(true);
       }, 1500);
 
-      try {
-        const requestBody = {
-          sessionId: "test-session-3",
-          userId: 103,
-          message: messageText,
-          post: {
-            userId: 123,
-            // Read post details from props
-            title: postTitle,
-            content: postContent,
-            mediaUrl: mediaUrl,
-            hashtag: hashtag,
-            platform: platform,
-            postType: postType,
-            scheduleDate: scheduleDate,
-          },
-        };
-        console.log(
-          "[ChatPanel] Sending to API - postType:",
-          requestBody.post.postType
-        );
-
-        const response = await axios.post(
-          "https://5jsanjhv.rpcl.app/webhook/fcc407ed-9e48-44d0-a1cd-81773a0f4073",
-          requestBody,
-          { headers: { "Content-Type": "application/json" } }
-        );
-
-        console.log("API Response Data:", response.data);
-
-        clearTimeout(thinkingTimeout);
-        setIsThinking(false);
-        const responseData = response.data;
-
-        if (responseData?.output?.post && responseData?.output?.message) {
-          const { message: aiMessageContent, post: updatedPost } =
-            responseData.output;
-
-          // Update post state using prop setters
-          setPostTitle(updatedPost.title ?? "");
-          setPostContent(updatedPost.content ?? "");
-          setHashtag(updatedPost.hashtag ?? "");
-          setMediaUrl(updatedPost.mediaUrl ?? []);
-          if (updatedPost.platform)
-            setPlatform(updatedPost.platform);
-          if (updatedPost.postType) {
-            setPostType(updatedPost.postType);
-          }
-          if (updatedPost.scheduleDate)
-            setScheduleDate(new Date(updatedPost.scheduleDate));
-
-          const aiResponseMessage: Message = {
-            id: Date.now().toString(),
-            text: aiMessageContent,
-            sender: "system",
-            timestamp: new Date()
-          };
-          setMessages((prev: Message[]) => [...prev, aiResponseMessage]);
-        } else {
-          console.error("API Error: Invalid response format", responseData);
-          const aiErrorResponse: Message = {
-            id: Date.now().toString(),
-            text: "Error: Received invalid response format from AI.",
-            sender: "system",
-            timestamp: new Date()
-          };
-          setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
-        }
-      } catch (error) {
-        clearTimeout(thinkingTimeout);
-        setIsThinking(false);
-        console.error("Axios Error:", error);
-        let errorMessage = "Error: Could not connect to the AI service.";
-        if (axios.isAxiosError(error)) {
-          if (error.response) {
-            errorMessage = `Error: Could not get response (${error.response.status})`;
-          } else if (error.request) {
-            errorMessage = "Error: No response received from AI service.";
-          } else {
-            errorMessage = `Error: ${error.message}`;
-          }
-        }
-
-        const aiErrorResponse: Message = {
-          id: Date.now().toString(),
-          text: errorMessage,
-          sender: "system",
-          timestamp: new Date()
-        };
-        setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
-      }
+      await handleChatResponse(messageText);
+      clearTimeout(thinkingTimeout);
     }
   };
 
@@ -279,7 +151,6 @@ const ChatPanel = () => {
     }
   };
 
-  // Render using props
   return (
     <div
       className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}
@@ -294,35 +165,30 @@ const ChatPanel = () => {
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar"
       >
-        {(messages || []).map(
-          (
-            message // Use messages from props, add fallback
-          ) => (
+        {(messages || []).map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${
+              message.sender === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
             <div
-              key={message.id}
-              className={`flex ${
-                message.sender === "user" ? "justify-end" : "justify-start"
+              className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${
+                message.sender === "user"
+                  ? `${userChatBubbleBg} ${userChatBubbleText}`
+                  : `${chatBubbleGradient} text-white`
               }`}
             >
-              <div
-                className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${
-                  message.sender === "user"
-                    ? `${userChatBubbleBg} ${userChatBubbleText}`
-                    : `${chatBubbleGradient} text-white`
-                }`}
-              >
-                {message.text.split("\n").map((line, index) => (
-                  <span key={index}>
-                    {line}
-                    <br />
-                  </span>
-                ))}
-              </div>
+              {message.text.split("\n").map((line, index) => (
+                <span key={index}>
+                  {line}
+                  <br />
+                </span>
+              ))}
             </div>
-          )
-        )}
+          </div>
+        ))}
 
-        {/* Use isThinking from props */}
         {isThinking && (
           <div className="flex justify-start">
             <div
@@ -343,9 +209,7 @@ const ChatPanel = () => {
         )}
       </div>
 
-      {/* Input area - unchanged, uses local inputValue state */}
       <div className={`p-4 border-t ${chatInputBorder} shrink-0`}>
-        {/* ... input textarea and send button ... */}
         <div
           className={`flex items-end ${chatInputBg} rounded-xl border ${chatInputBorder} px-4 py-2`}
         >
@@ -362,7 +226,7 @@ const ChatPanel = () => {
           <button
             className={`ml-3 ${sendButtonBg} rounded-full w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700 flex-shrink-0 self-center mb-0.5 disabled:opacity-50 disabled:cursor-not-allowed`}
             onClick={handleSend}
-            disabled={!inputValue.trim() || isThinking} // Disable send when thinking
+            disabled={!inputValue.trim() || isThinking}
           >
             <SendIcon className="w-5 h-5 transform rotate-90" />
           </button>
