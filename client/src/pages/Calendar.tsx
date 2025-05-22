@@ -2,7 +2,6 @@ import React from 'react';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
 import { useToast } from '@/hooks/use-toast';
 import { usePostStore } from '@/store/usePostStore';
-// import { mockPostsApiResponse } from '@/utils/postresponse';
 
 export default function CalendarRoute() {
   const today = new Date();

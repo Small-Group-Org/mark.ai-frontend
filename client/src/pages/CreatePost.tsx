@@ -6,7 +6,6 @@ import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
 
-// Component receives props now
 const CreatePost = () => {
   const {
     mediaUrl,
@@ -206,7 +205,6 @@ const CreatePost = () => {
   // For hashtags display:
   const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
   
-  console.log("CreatePost handleDateChange", date);
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
       {/* Header (remains the same) */}

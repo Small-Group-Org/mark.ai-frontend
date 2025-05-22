@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Edit, Trash2, PlusCircle, CalendarIcon, CheckSquare, XSquare, Image } from 'lucide-react';
+import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
 import { Post, PlatformType, PostStatus } from '@/types/post';
-import { createPost } from '@/services/postServices';
 
 // Define platform values
 const PLATFORM_VALUES: PlatformType[] = [
