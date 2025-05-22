@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CalendarView } from '@/types/calendar';
+import { CalendarView } from '@/types/post';
 import ViewToggle from './ViewToggle';
 import { getMonthTitle, getWeekTitle } from '@/utils/dateUtils';
 import { Button } from '@/components/ui/button';

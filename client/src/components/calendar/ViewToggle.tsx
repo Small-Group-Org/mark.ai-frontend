@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CalendarView } from '@/types/calendar';
+import { CalendarView } from '@/types/post';
 import { cn } from '@/lib/utils';
 
 interface ViewToggleProps {

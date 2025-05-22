@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { parseISO } from "date-fns";
 import { usePostStore } from "@/store/usePostStore";
-import { PlatformName } from "@/types";
+import { PlatformType } from "@/types/post";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
 
-// Component receives props now
 const CreatePost = () => {
   const {
     mediaUrl,
-    scheduledDate,
-    postContent,
     postTitle,
+    postContent,
+    hashtag,
+    platform,
     postType,
-    socialPlatforms,
-    postHashtags,
-    setScheduledDate,
-    setSocialPlatforms,
-    setPostType,
+    scheduleDate,
+    setPostTitle,
+    setPostContent,
+    setHashtag,
     setMediaUrl,
+    setPlatform,
+    setPostType,
+    setScheduleDate,
   } = usePostStore();
 
   const { toast } = useToast();
@@ -39,17 +40,16 @@ const CreatePost = () => {
   // Effect to parse the ISO scheduledDate prop and set date and time inputs
   useEffect(() => {
     try {
-      if (scheduledDate) {
-        const parsedDate = parseISO(scheduledDate);
-        setDate(parsedDate); // Set the main date object
+      if (scheduleDate) {
+        setDate(scheduleDate); // Set the main date object
       }
     } catch (error) {
-      console.error("Error parsing scheduledDate prop:", error);
-      // Fallback to current time if parse fails or scheduledDate is invalid
+      console.error("Error parsing scheduleDate prop:", error);
+      // Fallback to current time if parse fails or scheduleDate is invalid
       const now = new Date();
       setDate(now);
     }
-  }, [scheduledDate]);
+  }, [scheduleDate]);
 
   // Clean up local object URL when file changes
   useEffect(() => {
@@ -62,27 +62,33 @@ const CreatePost = () => {
     }
   }, [uploadedImageFile]);
 
-  const handlePlatformToggle = (platformName: PlatformName) => {
-    setSocialPlatforms({
-      ...socialPlatforms,
-      [platformName]: !socialPlatforms[platformName],
-    });
+  // Platform Data (remain the same)
+  const platformsRow1: { name: PlatformType; icon: string }[] = [
+    { name: "instagram", icon: "I" },
+    { name: "twitter", icon: "X" },
+    { name: "threads", icon: "@" },
+    { name: "facebook", icon: "f" },
+    { name: "youtube", icon: "▶" },
+  ];
+
+  // Platform toggle handler for array logic
+  const handlePlatformToggle = (platformName: PlatformType) => {
+    if (platform.includes(platformName)) {
+      setPlatform(platform.filter((p) => p !== platformName));
+    } else {
+      setPlatform([...platform, platformName]);
+    }
   };
 
   // Handle post type click - use prop setter
   const handlePostTypeClick = (type: "post" | "story" | "reel") => {
-    setPostType({
-      ...postType,
-      post: type === "post" ? !postType.post : postType.post ?? false,
-      story: type === "story" ? !postType.story : postType.story ?? false,
-      reel: type === "reel" ? !postType.reel : postType.reel ?? false,
-    });
+    setPostType(type);
   };
 
   // Update the date change handler
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
-    setScheduledDate(newDate.toISOString());
+    setScheduleDate(newDate);
   };
   
   // Image upload handler
@@ -91,6 +97,12 @@ const CreatePost = () => {
     if (file) {
       setUploadedImageFile(file);
     }
+  };
+
+  const handleImageDelete = () => {
+    setUploadedImageFile(null);
+    setLocalImageUrl(null);
+    setMediaUrl([]);
   };
   
   // Modified handler to handle scheduling
@@ -102,10 +114,10 @@ const CreatePost = () => {
         formData.append("image", uploadedImageFile);
         formData.append("title", postTitle || "");
         formData.append("content", postContent || "");
-        formData.append("hashtags", JSON.stringify(postHashtags));
-        formData.append("socialPlatforms", JSON.stringify(socialPlatforms));
-        formData.append("postType", JSON.stringify(postType));
-        formData.append("scheduledDate", scheduledDate);
+        formData.append("hashtag", hashtag || "");
+        formData.append("platform", JSON.stringify(platform));
+        formData.append("postType", postType);
+        formData.append("scheduleDate", scheduleDate.toISOString());
         // TODO: Replace with your actual API endpoint
         const response = await fetch("/api/schedule-post", {
           method: "POST",
@@ -120,10 +132,10 @@ const CreatePost = () => {
           body: JSON.stringify({
             title: postTitle,
             content: postContent,
-            hashtags: postHashtags,
-            socialPlatforms,
+            hashtag,
+            platform,
             postType,
-            scheduledDate,
+            scheduleDate: scheduleDate.toISOString(),
           }),
         });
         responseData = await response.json();
@@ -157,12 +169,10 @@ const CreatePost = () => {
       const draftData = {
         title: postTitle,
         content: postContent,
-        hashtags: postHashtags,
-        platforms: Object.entries(socialPlatforms)
-        .filter(([_, isActive]) => isActive)
-        .map(([name]) => name),
-        scheduledDate: scheduledDate,
-        postType: postType,
+        hashtag,
+        platform,
+        postType,
+        scheduleDate: scheduleDate.toISOString(),
       };
       
       // Save draft to localStorage for persistence
@@ -198,16 +208,9 @@ const CreatePost = () => {
   const datePickerBg = "bg-gray-200";
   const datePickerText = "text-gray-700";
   
-  // Platform Data (remain the same)
-  const platformsRow1: { name: PlatformName; icon: string }[] = [
-    { name: "Instagram", icon: "I" },
-    { name: "X/Twitter", icon: "X" },
-    { name: "Threads", icon: "@" },
-    { name: "TikTok", icon: "♪" },
-    { name: "YouTube", icon: "▶" },
-  ];
+  // For hashtags display:
+  const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
   
-  console.log("CreatePost handleDateChange", date);
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
       {/* Header (remains the same) */}
@@ -219,13 +222,13 @@ const CreatePost = () => {
 
       <div className={`px-5 py-2 border-b border-gray-200 bg-gray-50 shrink-0`}>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-4 sm:gap-x-6">
-          {[...platformsRow1].map((platform) => (
+          {platformsRow1.map((platformObj) => (
             <PlatformToggle
-              key={platform.name}
-              label={platform.name}
-              icon={platform.icon}
-              active={socialPlatforms?.[platform.name] ?? false} // Use prop with fallback
-              onToggle={() => handlePlatformToggle(platform.name)} // Calls prop setter
+              key={platformObj.name}
+              label={platformObj.name.charAt(0).toUpperCase() + platformObj.name.slice(1)}
+              icon={platformObj.icon}
+              active={platform.includes(platformObj.name)}
+              onToggle={() => handlePlatformToggle(platformObj.name)}
             />
           ))}
         </div>
@@ -238,7 +241,7 @@ const CreatePost = () => {
           <button
             key={type.id}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium border ${
-              postType?.[type.id]
+              postType === type.id
                 ? "bg-blue-500 text-white border-blue-500"
                 : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
             }`}
@@ -256,13 +259,14 @@ const CreatePost = () => {
             userName="Stephen Conley"
             userHandle="@steveconley"
             userTitle="Product Designer"
-            scheduledDate={date}
+            scheduledDate={scheduleDate}
             onSchedule={handleSchedulePost}
             onDraft={handleSaveDraft}
             onDateChange={handleDateChange}
             hideFooter={false}
             onImageUpload={handleImageUpload}
             uploadedImageFile={uploadedImageFile}
+            onImageDelete={handleImageDelete}
           />
         </div>
       </div>
