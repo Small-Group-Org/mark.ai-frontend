@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { Message, PlatformName } from '@/types';
+import { Message } from '@/types';
+import { Post, PlatformType } from '@/types/post';
 
 interface PostState {
   messages: Message[];
@@ -11,20 +12,22 @@ interface PostState {
   setPostTitle: (title: string) => void;
   postContent: string;
   setPostContent: (content: string) => void;
-  postHashtags: string[];
-  setPostHashtags: (hashtags: string[]) => void;
+  hashtag: string;
+  setHashtag: (hashtag: string) => void;
   mediaUrl: string[];
   setMediaUrl: (urls: string[]) => void;
-  socialPlatforms: Record<PlatformName, boolean>;
-  setSocialPlatforms: (platforms: Record<PlatformName, boolean>) => void;
-  postType: {
-    post: boolean;
-    story: boolean;
-    reel: boolean;
-  };
-  setPostType: (type: { post: boolean; story: boolean; reel: boolean }) => void;
-  scheduledDate: string;
-  setScheduledDate: (date: string) => void;
+  platform: PlatformType[];
+  setPlatform: (platform: PlatformType[]) => void;
+  postType: string;
+  setPostType: (type: string) => void;
+  scheduleDate: Date;
+  setScheduleDate: (date: Date) => void;
+
+  posts: Post[];
+  setPosts: (posts: Post[]) => void;
+
+  displayDate: Date;
+  setDisplayDate: (date: Date) => void;
 
   resetPostState: () => void;
 }
@@ -36,26 +39,13 @@ const initialState = {
   isThinking: false,
   postTitle: "",
   postContent: "",
-  postHashtags: [],
+  hashtag: "",
   mediaUrl: [],
-  socialPlatforms: {
-    'Bluesky': false,
-    'Facebook': false,
-    'Google Business': false,
-    'Instagram': false,
-    'X/Twitter': false,
-    'Reddit': false,
-    'Telegram': false,
-    'Threads': false,
-    'TikTok': false,
-    'YouTube': false,
-  },
-  postType: {
-    post: true,
-    story: false,
-    reel: false,
-  },
-  scheduledDate: new Date().toISOString(),
+  platform: [],
+  postType: 'post',
+  scheduleDate: new Date(),
+  posts: [],
+  displayDate: new Date(),
 };
 
 export const usePostStore = create<PostState>((set) => ({
@@ -68,11 +58,15 @@ export const usePostStore = create<PostState>((set) => ({
   // Post details actions
   setPostTitle: (postTitle) => set({ postTitle }),
   setPostContent: (postContent) => set({ postContent }),
-  setPostHashtags: (postHashtags) => set({ postHashtags }),
+  setHashtag: (hashtag) => set({ hashtag }),
   setMediaUrl: (mediaUrl) => set({ mediaUrl }),
-  setSocialPlatforms: (socialPlatforms) => set({ socialPlatforms }),
+  setPlatform: (platform) => set({ platform }),
   setPostType: (postType) => set({ postType }),
-  setScheduledDate: (scheduledDate) => set({ scheduledDate }),
+  setScheduleDate: (scheduleDate) => set({ scheduleDate }),
+
+  setPosts: (posts) => set({ posts }),
+
+  setDisplayDate: (date) => set({ displayDate: date }),
 
   // Reset all post state
   resetPostState: () => set(initialState),

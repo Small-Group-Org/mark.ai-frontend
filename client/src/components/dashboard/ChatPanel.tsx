@@ -13,19 +13,19 @@ const ChatPanel = () => {
     setIsThinking,
     postTitle,
     postContent,
-    postHashtags,
+    hashtag,
     mediaUrl,
-    socialPlatforms,
+    platform,
     postType,
-    scheduledDate,
+    scheduleDate,
     setMediaUrl, 
     setMessages, 
     setPostContent, 
-    setPostHashtags, 
+    setHashtag, 
     setPostTitle,
     setPostType, 
-    setScheduledDate,
-    setSocialPlatforms
+    setScheduleDate,
+    setPlatform
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
@@ -91,7 +91,7 @@ const ChatPanel = () => {
           const { post } = response;
           setPostTitle(post.title ?? "");
           setPostContent(post.content ?? "");
-          setPostHashtags(post.hashtags ?? []);
+          setHashtag(Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? ""));
         }
       } else {
         const aiErrorResponse: Message = {

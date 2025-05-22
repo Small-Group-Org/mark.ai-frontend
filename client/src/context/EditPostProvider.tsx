@@ -5,15 +5,15 @@ import { verifyToken } from '@/services/authServices';
 import { getValue, STORAGE_KEYS } from '@/commons/storage';
 import { useLocation } from 'wouter';
 import { useAuthStore } from '@/store/useAuthStore';
-import { PostData } from '@/components/EditPost';
+import { Post } from '@/types/post';
 
 interface EditPostContextType {
   isOpen: boolean;
-  post: PostData;
+  post: Post;
   isLoading: boolean;
-  onOpen: (postId?: number | string, postData?: PostData, timeZoneLabel?: string) => void;
+  onOpen: (postId?: string, postData?: Post, timeZoneLabel?: string) => void;
   onClose: () => void;
-  onSave: (post: PostData) => Promise<void>;
+  onSave: (post: Post) => Promise<void>;
   onDelete: () => Promise<void>;
   onGenerate: (prompt: string) => Promise<void>;
   timeZoneLabel?: string;
@@ -53,7 +53,7 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }
 
-  const onOpen = (postId?: number | string, postData?: PostData, timeZone?: string) => {
+  const onOpen = (postId?: string, postData?: Post, timeZone?: string) => {
     if (timeZone) {
       setTimeZoneLabel(timeZone);
     }

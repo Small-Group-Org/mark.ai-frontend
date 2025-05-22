@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CalendarIcon, ChevronDown } from "lucide-react";
-import DatePickerButton from "./date-picker-button";
 import ScheduleActionButton from "./schedule-action-button";
 import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { User } from "@/types";
+import DatePickerWithButton from "./date-picker-with-button";
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -23,11 +22,10 @@ interface SocialMediaPostPreviewProps {
   imageUrl?: string;
 
   // Scheduling options
-  scheduledDate?: string;
+  scheduledDate?: Date;
   onSchedule?: () => void;
-  onDateChange?: () => void;
-  onToggleOptions?: () => void; // For dropdown toggle
-  buttonType?: "schedule" | "draft"; // Button type to display
+  onDraft?: () => void;
+  onDateChange: (date: Date) => void;
 
   // Customization options
   hideHeader?: boolean;
@@ -52,9 +50,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   imageUrl,
   scheduledDate,
   onSchedule,
+  onDraft,
   onDateChange,
-  onToggleOptions,
-  buttonType = "schedule",
 
   // Customization options
   hideHeader = false,
@@ -65,7 +62,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   onImageUpload,
   uploadedImageFile,
 }) => {
-  const { postContent, postHashtags: hashtags, postTitle } = usePostStore();
+  const { postContent, hashtag, postTitle } = usePostStore();
   const { userDetails= {} } = useAuthStore();
   const { name: userName } = userDetails as User;
   const userInitials = userName.split(" ")[0][0] + userName.split(" ")?.pop()?.[0];
@@ -111,6 +108,9 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   React.useEffect(() => {
     setImageError(false);
   }, [imageUrl]);
+
+  // For hashtags display:
+  const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
 
   return (
     <div className={`flex flex-col ${className}`}>
@@ -176,7 +176,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
               <img
                 src={localPreviewUrl || imageUrl}
                 alt="Post visual content"
-                className="object-cover h-full w-full"
+                className="object-contain h-full w-full"
                 onError={() => setImageError(true)}
                 onLoad={() => setImageError(false)}
               />
@@ -221,12 +221,16 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
       {/* Footer with Schedule Options */}
       {!hideFooter && (
         <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end flex-wrap gap-4 w-full">
-          <DatePickerButton date={scheduledDate || ""} onClick={onDateChange} />
-          <ScheduleActionButton
-            onSchedule={onSchedule}
-            onToggleOptions={onToggleOptions}
-            buttonType={buttonType}
-          />
+          <div className="flex items-center gap-2">
+            <DatePickerWithButton
+              date={scheduledDate || new Date()}
+              onDateChange={(date) => onDateChange(date)}
+            />
+            <ScheduleActionButton
+              onSchedule={onSchedule}
+              onDraft={onDraft}
+            />
+          </div>
         </div>
       )}
     </div>

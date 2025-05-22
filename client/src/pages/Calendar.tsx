@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
-import { generateMockPosts } from '@/utils/mockPosts';
-import { Post } from '@/types/calendar';
 import { useToast } from '@/hooks/use-toast';
+import { usePostStore } from '@/store/usePostStore';
 
 export default function CalendarRoute() {
   const today = new Date();
   const { toast } = useToast();
-  const [posts] = useState<Post[]>(() => generateMockPosts(today, 50));
+  const posts = usePostStore((state) => state.posts);
+  const setPosts = usePostStore((state) => state.setPosts);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleDateSelect = (date: Date) => {
     toast({
@@ -24,6 +25,8 @@ export default function CalendarRoute() {
           posts={posts}
           onDateSelect={handleDateSelect}
           timeZoneLabel="GMT+05:30"
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       </div>
     </div>
