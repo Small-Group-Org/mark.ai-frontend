@@ -37,7 +37,7 @@ const DayColumnWeek: React.FC<DayColumnWeekProps> = ({
               <div className="space-y-1 p-1">
                 {postsForHour.map((post) => (
                   <PostIndicator
-                    key={post.postId}
+                    key={post._id}
                     post={post}
                     onClick={onPostClick}
                   />

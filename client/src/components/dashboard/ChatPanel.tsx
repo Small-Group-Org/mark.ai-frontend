@@ -87,7 +87,7 @@ const ChatPanel = () => {
         setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
 
         // Update post state if available
-        if (response.post) {
+        if (response.hasPost) {
           const { post } = response;
           setPostTitle(post.title ?? "");
           setPostContent(post.content ?? "");
