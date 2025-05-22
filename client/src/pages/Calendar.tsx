@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import SocialCalendar from '@/components/calendar/SocialCalendar';
 import { generateMockPosts } from '@/utils/mockPosts';
 import { useToast } from '@/hooks/use-toast';
-import { getPosts } from '@/services/postServices';
+import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 // import { mockPostsApiResponse } from '@/utils/postresponse';
 
@@ -20,40 +20,9 @@ export default function CalendarRoute() {
 
   // Function to fetch posts from API
   const fetchPosts = async () => {
-    try {
-      setIsLoading(true);
-      const startDate = new Date(today);
-      startDate.setMonth(startDate.getMonth() - 1);
-      const endDate = new Date(today);
-      endDate.setMonth(endDate.getMonth() + 1);
-
-      const startDateStr = startDate.toISOString().slice(0, 10);
-      const endDateStr = endDate.toISOString().slice(0, 10);
-
-      let response = await getPosts({
-        startDate: startDateStr,
-        endDate: endDateStr
-      });
-
-      if (response && response.success && response.data && response.data.data && response.data.data.length > 0) {
-        const parsedPosts = response.data.data.map((post: any) => ({
-          ...post,
-          scheduleDate: post.scheduleDate ? new Date(post.scheduleDate) : undefined,
-          createdAt: post.createdAt ? new Date(post.createdAt) : undefined,
-        }));
-        setPosts(parsedPosts);
-      }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch posts. Using mock data instead.',
-        variant: 'destructive'
-      });
-      // setPosts(generateMockPosts(today, 50));
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    await syncPostsFromDB(today);
+    setIsLoading(false);
   };
 
   const handleDateSelect = (date: Date) => {

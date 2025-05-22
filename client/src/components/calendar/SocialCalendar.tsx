@@ -56,10 +56,9 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   const handlePostClick = (postId: string | number) => {
     const post = posts.find(p => p._id === postId);
     if (post) {
-      // Convert only the necessary fields while keeping the rest of the post object
+      // Only override postType if needed, keep scheduleDate as Date
       const postWithRequiredFields = {
         ...post,
-        scheduleDate: post.scheduleDate.toISOString().slice(0, 16),
         postType: post.postType || 'post'
       };
       editPostContext.onOpen(post._id, postWithRequiredFields, timeZoneLabel);

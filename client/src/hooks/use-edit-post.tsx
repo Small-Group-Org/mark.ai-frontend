@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
+import { deletePost } from '@/services/postServices';
+import { syncPostsFromDB } from '@/utils/postSync';
 
 // Define the empty/default post structure
 const DEFAULT_POST: Post = {
@@ -44,58 +46,8 @@ export const useEditPost = () => {
       setIsOpen(true);
       return;
     }
-
-    if (postId) {
-      setIsLoading(true);
-      try {
-        // Try to load from localStorage mock (calendarEvents)
-        const mockEvents = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
-        const calendarEvent = mockEvents.find((event: any) => event._id === postId);
-        let mockPost: Post;
-        if (calendarEvent) {
-          mockPost = {
-            ...DEFAULT_POST,
-            _id: calendarEvent._id,
-            userId: calendarEvent.userId || '',
-            title: calendarEvent.title || 'Calendar Event',
-            content: calendarEvent.content || 'Content from calendar event',
-            hashtag: calendarEvent.hashtag || '',
-            mediaUrl: calendarEvent.mediaUrl || [],
-            platform: calendarEvent.platform || [],
-            postType: calendarEvent.postType || 'post',
-            status: calendarEvent.status || 'draft',
-            scheduleDate: calendarEvent.scheduleDate ? new Date(calendarEvent.scheduleDate) : new Date(),
-            publish: calendarEvent.publish || '',
-            platformId: calendarEvent.platformId,
-            createdAt: calendarEvent.createdAt ? new Date(calendarEvent.createdAt) : new Date(),
-            ayrshareId: calendarEvent.ayrshareId || '',
-          };
-        } else {
-          // Regular post, use default mock data
-          mockPost = {
-            ...DEFAULT_POST,
-            _id: postId,
-            title: 'Sample Post Title',
-            content: 'This is a sample post content that would be loaded from the server.',
-            hashtag: '#sample',
-            scheduleDate: new Date(),
-          };
-        }
-        setPost(mockPost);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch post', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load post data',
-          variant: 'destructive',
-        });
-        setIsLoading(false);
-      }
-    } else {
-      // Create a new post with default values
-      setPost(DEFAULT_POST);
-    }
+    // If no postData, just set default post (or fetch from API if needed)
+    setPost(DEFAULT_POST);
     setIsOpen(true);
   }, [toast]);
 
@@ -112,43 +64,8 @@ export const useEditPost = () => {
   const onSave = useCallback(async (updatedPost: Post) => {
     setIsLoading(true);
     try {
-      // Check if this might be a calendar event by getting saved events
-      const savedEventsStr = localStorage.getItem('calendarEvents');
-      if (savedEventsStr && updatedPost._id) {
-        try {
-          const savedEvents = JSON.parse(savedEventsStr);
-          // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event._id === updatedPost._id);
-          if (eventIndex !== -1) {
-            // This is a calendar event, so update it
-            const updatedEvent = {
-              ...savedEvents[eventIndex],
-              title: updatedPost.title,
-              content: updatedPost.content,
-              hashtag: updatedPost.hashtag,
-              platform: updatedPost.platform,
-              scheduleDate: updatedPost.scheduleDate,
-              mediaUrl: updatedPost.mediaUrl,
-              status: updatedPost.status,
-              postType: updatedPost.postType,
-              publish: updatedPost.publish,
-              platformId: updatedPost.platformId,
-              createdAt: updatedPost.createdAt,
-              ayrshareId: updatedPost.ayrshareId,
-            };
-            // Update the event in the array
-            savedEvents[eventIndex] = updatedEvent;
-            // Save the updated events back to localStorage
-            localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
-            // Refresh the calendar view by dispatching a custom event
-            window.dispatchEvent(new CustomEvent('calendarUpdated'));
-          }
-        } catch (e) {
-          console.error('Error handling calendar event update', e);
-        }
-      }
-      // Simulate API delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Call your API to save/update the post here
+      // await updatePostApi(updatedPost); // Example if you have an updatePost API
       toast({
         title: 'Success',
         description: updatedPost._id ? 'Post updated successfully' : 'Post created successfully',
@@ -171,33 +88,24 @@ export const useEditPost = () => {
     if (!post._id) return;
     setIsLoading(true);
     try {
-      // Check if this might be a calendar event
-      const savedEventsStr = localStorage.getItem('calendarEvents');
-      if (savedEventsStr) {
-        try {
-          const savedEvents = JSON.parse(savedEventsStr);
-          // Look for an event with the same ID
-          const eventIndex = savedEvents.findIndex((event: any) => event._id === post._id);
-          if (eventIndex !== -1) {
-            // This is a calendar event, so remove it
-            savedEvents.splice(eventIndex, 1);
-            // Save the updated events back to localStorage
-            localStorage.setItem('calendarEvents', JSON.stringify(savedEvents));
-            // Refresh the calendar view by dispatching a custom event
-            window.dispatchEvent(new CustomEvent('calendarUpdated'));
-          }
-        } catch (e) {
-          console.error('Error handling calendar event deletion', e);
-        }
+      // Call the deletePost API
+      const response = await deletePost({ _id: post._id });
+      if (response && response.success) {
+        toast({
+          title: 'Success',
+          description: 'Post deleted successfully',
+        });
+        await syncPostsFromDB();
+        setIsLoading(false);
+        setIsOpen(false);
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to delete post',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
       }
-      // Simulate API delay for better UX
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast({
-        title: 'Success',
-        description: 'Post deleted successfully',
-      });
-      setIsLoading(false);
-      setIsOpen(false);
     } catch (error) {
       console.error('Failed to delete post', error);
       toast({
