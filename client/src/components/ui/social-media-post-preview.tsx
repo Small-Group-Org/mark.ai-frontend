@@ -4,6 +4,7 @@ import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { User } from "@/types";
 import DatePickerWithButton from "./date-picker-with-button";
+import { Trash2 } from 'lucide-react';
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -35,6 +36,7 @@ interface SocialMediaPostPreviewProps {
   // Add these props for upload
   onImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   uploadedImageFile?: File | null;
+  onImageDelete?: () => void;
 }
 
 /**
@@ -61,6 +63,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   // Add these props for upload
   onImageUpload,
   uploadedImageFile,
+  onImageDelete
 }) => {
   const { postContent, hashtag, postTitle } = usePostStore();
   const { userDetails= {} } = useAuthStore();
@@ -173,13 +176,26 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
               </div>
             ) : (
               /* If image is uploaded, show it (local preview takes precedence) */
-              <img
-                src={localPreviewUrl || imageUrl}
-                alt="Post visual content"
-                className="object-contain h-full w-full"
-                onError={() => setImageError(true)}
-                onLoad={() => setImageError(false)}
-              />
+              <div className="relative w-full h-full">
+                <img
+                  src={localPreviewUrl || imageUrl}
+                  alt="Post visual content"
+                  className="object-contain h-full w-full"
+                  onError={() => setImageError(true)}
+                  onLoad={() => setImageError(false)}
+                />
+                {onImageDelete && (
+                  <button 
+                    className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onImageDelete();
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             )}
           </div>
 

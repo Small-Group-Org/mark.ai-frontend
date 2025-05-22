@@ -223,9 +223,9 @@ const EditPost: React.FC<EditPostProps> = ({
                     alt="Post media" 
                     className="object-cover w-full h-full"
                   />
-                  {isEditing && (
+                  {editedPost.status === 'draft' && (
                     <button 
-                      className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white"
+                      className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
                       onClick={() => handleDeleteMedia(0)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -332,9 +332,9 @@ const EditPost: React.FC<EditPostProps> = ({
                         alt="Post media" 
                         className="object-cover w-full h-full"
                       />
-                      {isEditing && (
+                      {editedPost.status === 'draft' && (
                         <button 
-                          className="absolute top-2 right-2 p-1 bg-white/80 rounded-full hover:bg-white"
+                          className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteMedia(0);
