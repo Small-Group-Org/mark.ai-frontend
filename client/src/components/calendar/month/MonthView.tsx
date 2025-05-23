@@ -14,7 +14,6 @@ interface MonthViewProps {
   displayDate: Date;
   posts: Post[];
   onPostClick: (postId: string | number) => void;
-  onDateSelect: (date: Date) => void;
   timeZoneLabel?: string;
 }
 
@@ -22,7 +21,6 @@ const MonthView: React.FC<MonthViewProps> = ({
   displayDate,
   posts,
   onPostClick,
-  onDateSelect,
   timeZoneLabel = 'GMT+00:00',
 }) => {
   const calendarDates = getCalendarDates(displayDate);
@@ -49,7 +47,6 @@ const MonthView: React.FC<MonthViewProps> = ({
               isToday={isToday(date)}
               isCurrentMonth={isCurrentMonth(date, displayDate)}
               onPostClick={onPostClick}
-              onDateSelect={onDateSelect}
             />
           );
         })}

@@ -10,7 +10,6 @@ interface DayCellMonthProps {
   isToday: boolean;
   isCurrentMonth: boolean;
   onPostClick: (postId: string | number) => void;
-  onDateSelect: (date: Date) => void;
 }
 
 const DayCellMonth: React.FC<DayCellMonthProps> = ({
@@ -19,11 +18,7 @@ const DayCellMonth: React.FC<DayCellMonthProps> = ({
   isToday,
   isCurrentMonth,
   onPostClick,
-  onDateSelect,
 }) => {
-  const handleClick = () => {
-    onDateSelect(date);
-  };
 
   const isFirstOfMonth = date.getDate() === 1;
   
