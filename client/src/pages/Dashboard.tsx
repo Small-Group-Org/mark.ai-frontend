@@ -36,11 +36,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(null); // Track errors
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const weekNavigationCountRef = useRef<number>(0);
   const posts = usePostStore((state) => state.posts);
 
   // Effect for fetching posts when timeframe changes
   useEffect(() => {
-    setLoading(true);
     fetchPosts();
 
     // Cleanup function
@@ -58,9 +58,21 @@ const Dashboard = () => {
       
       // Set new timeout for syncing posts
       debounceRef.current = setTimeout(async () => {
-        const displayDate = getDisplayDate();
-        await syncPostsFromDB(displayDate);
-        setLoading(false);
+        if (timeframe === 'month') {
+          setLoading(true);
+          const displayDate = getDisplayDate();
+          await syncPostsFromDB(displayDate);
+          setLoading(false);
+        } else if (timeframe === 'week') {
+          // sync after approximately a month's worth of weeks
+          if (Math.abs(weekNavigationCountRef.current) >= 3) {
+            setLoading(true);
+            const displayDate = getDisplayDate();
+            await syncPostsFromDB(displayDate);
+            weekNavigationCountRef.current = 0; // Reset counter after sync
+            setLoading(false);
+          }
+        }
       }, 500); // 500ms debounce delay
     } catch (err) {
       setError(err.message || 'Failed to fetch posts');
@@ -94,6 +106,7 @@ const Dashboard = () => {
       newWeekEnd.setDate(weekEnd.getDate() - 7);
       setWeekStart(newWeekStart);
       setWeekEnd(newWeekEnd);
+      weekNavigationCountRef.current -= 1;
     }
   };
 
@@ -112,6 +125,7 @@ const Dashboard = () => {
       newWeekEnd.setDate(weekEnd.getDate() + 7);
       setWeekStart(newWeekStart);
       setWeekEnd(newWeekEnd);
+      weekNavigationCountRef.current += 1;
     }
   };
 
