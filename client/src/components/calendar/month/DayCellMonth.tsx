@@ -42,7 +42,7 @@ const DayCellMonth: React.FC<DayCellMonthProps> = ({
               {MONTHS[date.getMonth()].substring(0, 3)}
             </span>
             <div className={cn(
-              "date-number font-poppins font-medium w-7 h-7 flex items-center justify-center",
+              "date-number font-poppins font-medium w-7 h-7 flex items-center justify-center text-xs",
               isToday ? "bg-today-bg text-today-text" : "text-day-text"
             )}>
               {date.getDate()}
@@ -50,7 +50,7 @@ const DayCellMonth: React.FC<DayCellMonthProps> = ({
           </div>
         ) : (
           <div className={cn(
-            "date-number font-poppins font-medium w-7 h-7 flex items-center justify-center",
+            "date-number font-poppins font-medium w-7 h-7 flex items-center justify-center text-xs",
             isToday ? "bg-today-bg text-today-text" : "text-day-text"
           )}>
             {date.getDate()}
