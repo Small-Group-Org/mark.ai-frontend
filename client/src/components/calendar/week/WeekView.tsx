@@ -17,7 +17,6 @@ interface WeekViewProps {
   posts: Post[];
   onPostClick: (postId: string | number) => void;
   onTimeSlotClick?: (date: Date) => void;
-  timeZoneLabel?: string;
 }
 
 const WeekView: React.FC<WeekViewProps> = ({
@@ -25,7 +24,6 @@ const WeekView: React.FC<WeekViewProps> = ({
   posts,
   onPostClick,
   onTimeSlotClick,
-  timeZoneLabel = 'GMT+00:00',
 }) => {
   const weekDates = getWeekDates(displayDate);
   const { toast } = useToast();
@@ -35,9 +33,6 @@ const WeekView: React.FC<WeekViewProps> = ({
   
   return (
     <>
-    <div className="text-xs text-gray-500 font-poppins px-4 py-2 border-b border-slate-200 text-left">
-      {timeZoneLabel}
-    </div>
     <div className="flex flex-col border border-slate-200 rounded-lg overflow-hidden animate-view-switch bg-white">
       
       {/* Header row */}

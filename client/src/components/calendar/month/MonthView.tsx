@@ -14,22 +14,17 @@ interface MonthViewProps {
   displayDate: Date;
   posts: Post[];
   onPostClick: (postId: string | number) => void;
-  timeZoneLabel?: string;
 }
 
 const MonthView: React.FC<MonthViewProps> = ({
   displayDate,
   posts,
   onPostClick,
-  timeZoneLabel = 'GMT+00:00',
 }) => {
   const calendarDates = getCalendarDates(displayDate);
   
   return (
     <>
-      <div className="text-xs text-gray-500 font-poppins px-4 py-2 border-b border-slate-200 text-left">
-        {timeZoneLabel}
-      </div>
       <div className="month-grid border border-border rounded-lg overflow-hidden animate-fade-in">
         {/* Day headers */}
         {DAYS_OF_WEEK.map((day) => (

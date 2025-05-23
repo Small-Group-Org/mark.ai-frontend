@@ -42,6 +42,11 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
         minWidth, 
       }}
     >
+      {!isLoading && (
+        <div className="text-xs text-gray-500 font-poppins px-4 py-2 text-left">
+          {timeZoneLabel}
+        </div>
+      )}
       {isLoading ? (
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -51,14 +56,12 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
           displayDate={displayDate}
           posts={posts}
           onPostClick={handlePostClick}
-          timeZoneLabel={timeZoneLabel}
         />
       ) : (
         <WeekView
           displayDate={displayDate}
           posts={posts}
           onPostClick={handlePostClick}
-          timeZoneLabel={timeZoneLabel}
         />
       )}
     </div>

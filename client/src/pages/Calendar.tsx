@@ -114,7 +114,7 @@ export default function CalendarRoute() {
         handlePrevPeriod={handlePrevPeriod}
         handleNextPeriod={handleNextPeriod}
       />
-      <div className="bg-white border border-gray-200 rounded-lg shadow-xl flex-1 overflow-auto transition-shadow hover:shadow-2xl">
+      <div className="overflow-auto">
         <SocialCalendar
           posts={posts}
           timeZoneLabel="GMT+05:30"
