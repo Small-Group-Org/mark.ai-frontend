@@ -15,7 +15,6 @@ import { usePostStore } from '@/store/usePostStore';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('past');
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(4); // 0-based index for May
   const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -34,10 +33,30 @@ const Dashboard = () => {
     end.setDate(today.getDate() + (6 - dayOfWeek)); // End of week (Saturday)
     return end;
   });
-  const [allPosts, setAllPosts] = useState([]); // Store all fetched posts for counts
   const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(null); // Track errors
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const posts = usePostStore((state) => state.posts);
+
+  // Filter posts by timeframe (month/week)
+  const timeframeFilteredPosts = posts.filter(post => {
+    const postDate = new Date(post.scheduleDate || post.createdAt);
+    if (timeframe === 'month') {
+      return postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
+    } else {
+      return postDate >= weekStart && postDate <= weekEnd;
+    }
+  });
+
+  // Filter posts by status based on active tab
+  const filteredPosts = timeframeFilteredPosts.filter(post => {
+    const statusMap = {
+      past: 'published',
+      upcoming: 'schedule',
+      drafts: 'draft'
+    };
+    return post.status === statusMap[activeTab];
+  });
 
   // Combined effect for fetching posts and cleanup
   useEffect(() => {
@@ -61,15 +80,11 @@ const Dashboard = () => {
       // Set new timeout for syncing posts
       debounceRef.current = setTimeout(async () => {
         const displayDate = getDisplayDate();
-        const posts = await syncPostsFromDB(displayDate);
-        setAllPosts(posts);
-        setFilteredPosts(posts);
+        await syncPostsFromDB(displayDate);
         setLoading(false);
       }, 500); // 500ms debounce delay
     } catch (err) {
       setError(err.message || 'Failed to fetch posts');
-      setAllPosts([]); // Reset to empty array on error
-      setFilteredPosts([]);
       setLoading(false);
     }
   };
@@ -124,31 +139,16 @@ const Dashboard = () => {
   // Map activeTab to status for API
   const getStatusFromTab = (tab: string) => {
     const statusMap = {
-      past: 'public',
+      past: 'published',
       upcoming: 'schedule',
       drafts: 'draft',
     };
     return statusMap[tab] || '';
   };
 
-  // Update counts based on fetched posts
-  const postCreatedCount = allPosts.filter(post => {
-    const postDate = new Date(post.scheduleDate || post.createdAt);
-    if (timeframe === 'month') {
-      return post.status === 'public' && postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
-    } else {
-      return post.status === 'public' && postDate >= weekStart && postDate <= weekEnd;
-    }
-  }).length;
-
-  const postScheduledCount = allPosts.filter(post => {
-    const postDate = new Date(post.scheduleDate || post.createdAt);
-    if (timeframe === 'month') {
-      return post.status === 'schedule' && postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
-    } else {
-      return post.status === 'schedule' && postDate >= weekStart && postDate <= weekEnd;
-    }
-  }).length;
+  // Update counts based on filtered posts
+  const postCreatedCount = timeframeFilteredPosts.filter(post => post.status === 'published').length;
+  const postScheduledCount = timeframeFilteredPosts.filter(post => post.status === 'schedule').length;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'No date';
@@ -290,7 +290,7 @@ const Dashboard = () => {
 
                 <div className="flex-1 min-w-0 break-words">
                   <h4 id="post-title" className="m-0 mb-[5px] data-cy='post-title' text-base text-gray-800 font-semibold">
-                    {post.title}
+                    {post.title} : {post.status}
                   </h4>
                   <p id="post-date" className="m-0 text-[13px] text-black font-normal">
                     {formatDate(post.scheduleDate || post.createdAt)}
