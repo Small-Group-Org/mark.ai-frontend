@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { usePostStore } from "@/store/usePostStore";
-import { PlatformType } from "@/types/post";
+import { PlatformType, PostStatus } from "@/types/post";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { platformsRow1, postTypes } from "@/commons/constant";
@@ -15,7 +15,7 @@ const CreatePost = () => {
   const {content, hashtag, mediaUrl, platform, postType, scheduleDate, title} = createPost;
 
   const { toast } = useToast();
-  const [loadingPlatforms, setLoadingPlatforms] = useState<Partial<Record<PlatformType, boolean>>>({});
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // --- Local UI State Only ---
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -53,38 +53,47 @@ const CreatePost = () => {
     }
   }, [uploadedImageFile]);
 
-  const handlePlatformToggle = async (platformName: PlatformType) => {
+  const updatePostHandler = async (
+    key: string,
+    value: PlatformType[] | PostStatus | string
+  ) => {
+    setIsUpdating(true);
+
     try {
-      setLoadingPlatforms(prev => ({ ...prev, [platformName]: true }));
-      
-      const newPlatforms = platform.includes(platformName)
-        ? platform.filter((p) => p !== platformName)
-        : [...platform, platformName];
+      const response = await updatePost(
+        {
+          [key]: value,
+        },
+        createPost._id || ""
+      );
 
-      setCreatePost({
-        platform: newPlatforms
-      });
+      if(response){
+        setCreatePost({
+          [key]: value,
+        });
+      }
 
-      await updatePost({
-        platform: newPlatforms
-      }, createPost._id || '');
     } catch (error) {
-      setCreatePost({
-        platform: platform
-      });
-      
       toast({
         title: "Error",
-        description: "Failed to update platform settings",
+        description: (error as Error)?.message as string,
         variant: "destructive",
       });
     } finally {
-      setLoadingPlatforms(prev => ({ ...prev, [platformName]: false }));
+      setIsUpdating(false);
     }
   };
 
+  const handlePlatformToggle = async (platformName: PlatformType) => {
+    const newPlatforms = platform.includes(platformName)
+      ? platform.filter((p) => p !== platformName)
+      : [...platform, platformName];
+    
+      updatePostHandler("platforms", newPlatforms)
+  };
+
   const handlePostTypeClick = (type: "post" | "story" | "reel") => {
-    setCreatePost({ postType: type });
+    updatePostHandler('postType', type)
   };
 
   const handleDateChange = (newDate: Date) => {
@@ -197,9 +206,9 @@ const CreatePost = () => {
   const previewPanelBg = "bg-gray-100";
   
   return (
-    <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
-      {/* Header (remains the same) */}
-      <div
+    <div className={`flex flex-col ${previewPanelBg} text-black h-full  `}>
+      <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div
         className={`h-[58px] flex items-center px-5 border-b border-gray-200 shrink-0 bg-white`}
       >
         <h2 className={`font-semibold text-gray-800`}>Post Preview</h2>
@@ -214,7 +223,6 @@ const CreatePost = () => {
               icon={platformObj.icon}
               active={platform.includes(platformObj.name)}
               onToggle={() => handlePlatformToggle(platformObj.name)}
-              loading={loadingPlatforms[platformObj.name]}
             />
           ))}
         </div>
@@ -254,6 +262,7 @@ const CreatePost = () => {
             uploadedImageFile={uploadedImageFile}
           />
         </div>
+      </div>
       </div>
     </div>
   );
