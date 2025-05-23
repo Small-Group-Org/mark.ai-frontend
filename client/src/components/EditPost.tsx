@@ -546,13 +546,14 @@ const EditPost: React.FC<EditPostProps> = ({
                   className={cn("w-full", !isEditing && "opacity-75")}
                 />
                 
-                {/* Schedule Button with Dropdown */}
+                {/* Schedule Button with Dropdown - Mobile */}
                 {editedPost.status === 'schedule' ? (
-                  <div className="flex justify-center">
+                  <div className="flex justify-center w-full">
                     <button
-                      className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors inline-flex items-center justify-center gap-2"
                       onClick={onDelete}
                     >
+                      <Trash2 className="w-4 h-4" />
                       Delete
                     </button>
                   </div>
@@ -562,7 +563,7 @@ const EditPost: React.FC<EditPostProps> = ({
                     <span>Post Published</span>
                   </div>
                 ) : (
-                  <div className={cn("flex rounded-lg shadow-sm relative")}>
+                  <div className={cn("flex rounded-lg shadow-sm relative w-full")}>
                     <ScheduleActionButton
                       onSchedule={() => isEditing && handleSchedule()}
                       onDraft={() => isEditing && handleSaveDraft()}
@@ -698,13 +699,14 @@ const EditPost: React.FC<EditPostProps> = ({
                   />
                 </div>
                 
-                {/* Schedule Button with Dropdown */}
+                {/* Schedule Button with Dropdown - Desktop */}
                 {editedPost.status === 'schedule' ? (
                   <div className="flex justify-center">
                     <button
-                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors inline-flex items-center justify-center gap-2"
                       onClick={onDelete}
                     >
+                      <Trash2 className="w-4 h-4" />
                       Delete
                     </button>
                   </div>
@@ -714,7 +716,7 @@ const EditPost: React.FC<EditPostProps> = ({
                     <span>Post Published</span>
                   </div>
                 ) : (
-                  <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
+                  <div className={cn("flex rounded-lg shadow-sm relative w-full lg:w-auto")}>
                     <ScheduleActionButton
                       onSchedule={() => isEditing && handleSchedule()}
                       onDraft={() => isEditing && handleSaveDraft()}
