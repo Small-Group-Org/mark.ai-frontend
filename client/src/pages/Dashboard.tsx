@@ -38,42 +38,21 @@ const Dashboard = () => {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const posts = usePostStore((state) => state.posts);
 
-  // Filter posts by timeframe (month/week)
-  const timeframeFilteredPosts = posts.filter(post => {
-    const postDate = new Date(post.scheduleDate || post.createdAt);
-    if (timeframe === 'month') {
-      return postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
-    } else {
-      return postDate >= weekStart && postDate <= weekEnd;
-    }
-  });
-
-  // Filter posts by status based on active tab
-  const filteredPosts = timeframeFilteredPosts.filter(post => {
-    const statusMap = {
-      past: 'published',
-      upcoming: 'schedule',
-      drafts: 'draft'
-    };
-    return post.status === statusMap[activeTab];
-  });
-
-  // Combined effect for fetching posts and cleanup
+  // Effect for fetching posts when timeframe changes
   useEffect(() => {
     setLoading(true);
-    fetchPosts(activeTab);
+    fetchPosts();
 
     // Cleanup function
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [activeTab, selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
+  }, [selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
 
   // Fetch posts from API
-  const fetchPosts = async (tab: string) => {
+  const fetchPosts = async () => {
     setError(null);
     try {
-      const status = getStatusFromTab(tab);
       // Clear any existing timeout
       if (debounceRef.current) clearTimeout(debounceRef.current);
       
@@ -145,6 +124,26 @@ const Dashboard = () => {
     };
     return statusMap[tab] || '';
   };
+
+  // Filter posts by timeframe (month/week)
+  const timeframeFilteredPosts = posts.filter(post => {
+    const postDate = new Date(post.scheduleDate || post.createdAt);
+    if (timeframe === 'month') {
+      return postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
+    } else {
+      return postDate >= weekStart && postDate <= weekEnd;
+    }
+  });
+
+  // Filter posts by status based on active tab
+  const filteredPosts = timeframeFilteredPosts.filter(post => {
+    const statusMap = {
+      past: 'published',
+      upcoming: 'schedule',
+      drafts: 'draft'
+    };
+    return post.status === statusMap[activeTab];
+  });
 
   // Update counts based on filtered posts
   const postCreatedCount = timeframeFilteredPosts.filter(post => post.status === 'published').length;
