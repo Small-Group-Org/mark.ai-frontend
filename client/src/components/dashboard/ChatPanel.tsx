@@ -11,21 +11,8 @@ const ChatPanel = () => {
     messages,
     isThinking,
     setIsThinking,
-    postTitle,
-    postContent,
-    hashtag,
-    mediaUrl,
-    platform,
-    postType,
-    scheduleDate,
-    setMediaUrl, 
-    setMessages, 
-    setPostContent, 
-    setHashtag, 
-    setPostTitle,
-    setPostType, 
-    setScheduleDate,
-    setPlatform
+    setCreatePost,
+    setMessages,
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
@@ -89,9 +76,11 @@ const ChatPanel = () => {
         // Update post state if available
         if (response.hasPost) {
           const { post } = response;
-          setPostTitle(post.title ?? "");
-          setPostContent(post.content ?? "");
-          setHashtag(Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? ""));
+          setCreatePost({
+            title: post.title ?? "",
+            content: post.content ?? "",
+            hashtag: Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? "")
+          });
         }
       } else {
         const aiErrorResponse: Message = {
