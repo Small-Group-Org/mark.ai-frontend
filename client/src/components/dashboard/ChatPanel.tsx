@@ -5,6 +5,7 @@ import { usePostStore } from "@/store/usePostStore";
 import { Message } from "@/types";
 import { chatWithMark } from "@/services/chatServices";
 import { useAuthStore } from "@/store/useAuthStore";
+import { marked } from 'marked';
 
 const ChatPanel = () => {
   const {
@@ -141,6 +142,27 @@ const ChatPanel = () => {
     }
   };
 
+  const renderMessageContent = (text: string) => {
+    // Configure marked options
+    marked.setOptions({
+      breaks: true, // Convert line breaks to <br>
+      gfm: true, // GitHub Flavored Markdown
+    });
+
+    // Pre-process text to handle double line breaks
+    const processedText = text.replace(/\n/g, '<br>');
+
+    // Convert markdown to HTML
+    const htmlContent = marked(processedText);
+
+    return (
+      <div 
+        className="max-w-none whitespace-pre-wrap"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
+    );
+  };
+
   return (
     <div
       className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}
@@ -169,12 +191,7 @@ const ChatPanel = () => {
                   : `${chatBubbleGradient} text-white`
               }`}
             >
-              {message.text.split("\n").map((line, index) => (
-                <span key={index}>
-                  {line}
-                  <br />
-                </span>
-              ))}
+              {renderMessageContent(message.text)}
             </div>
           </div>
         ))}
