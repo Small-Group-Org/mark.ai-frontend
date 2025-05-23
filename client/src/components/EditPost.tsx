@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image } from 'lucide-react';
+import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useEditPostContext } from '@/context/EditPostProvider';
@@ -556,7 +556,12 @@ const EditPost: React.FC<EditPostProps> = ({
                       Delete
                     </button>
                   </div>
-                  ) : (
+                ) : editedPost.status === 'published' ? (
+                  <div className="flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-md">
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Post Published</span>
+                  </div>
+                ) : (
                   <div className={cn("flex rounded-lg shadow-sm relative")}>
                     <ScheduleActionButton
                       onSchedule={() => isEditing && handleSchedule()}
@@ -703,15 +708,21 @@ const EditPost: React.FC<EditPostProps> = ({
                       Delete
                     </button>
                   </div>
-                  ) : (
-                <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
-                  <ScheduleActionButton
-                    onSchedule={() => isEditing && handleSchedule()}
-                    onDraft={() => isEditing && handleSaveDraft()}
-                    className={!isEditing ? "opacity-70" : ""}
-                    disabled={!isEditing}
-                  />
-                </div>)}
+                ) : editedPost.status === 'published' ? (
+                  <div className="flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-md">
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Post Published</span>
+                  </div>
+                ) : (
+                  <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
+                    <ScheduleActionButton
+                      onSchedule={() => isEditing && handleSchedule()}
+                      onDraft={() => isEditing && handleSaveDraft()}
+                      className={!isEditing ? "opacity-70" : ""}
+                      disabled={!isEditing}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
