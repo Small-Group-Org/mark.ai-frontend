@@ -21,7 +21,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {isVerifying && <FullScreenLoader message="Authenticating please wait..." />}
+      {isVerifying && <FullScreenLoader message="Loading please wait..." />}
       {children}
     </>
   );

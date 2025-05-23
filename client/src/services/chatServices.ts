@@ -9,7 +9,7 @@ export const chatWithMark = async (data: ChatRequest): Promise<ChatResponse> => 
             `${BASE_URL}/chat/send`,
             data
         );
-        return response.data.data.text;
+        return response.data.text;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw new Error(error.response?.data?.message || 'Failed to fetch posts');

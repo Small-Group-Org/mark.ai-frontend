@@ -76,7 +76,7 @@ const ChatPanel = () => {
       };
 
       const response = await chatWithMark(requestBody);
-
+      
       if (response?.bot?.text) {
         const aiResponseMessage: Message = {
           id: Date.now().toString(),

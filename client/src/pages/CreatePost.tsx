@@ -3,28 +3,19 @@ import { usePostStore } from "@/store/usePostStore";
 import { PlatformType } from "@/types/post";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
-import { postTypes } from "@/commons/constant";
+import { platformsRow1, postTypes } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
+import { updatePost } from "@/services/postServices";
 
 const CreatePost = () => {
   const {
-    mediaUrl,
-    postTitle,
-    postContent,
-    hashtag,
-    platform,
-    postType,
-    scheduleDate,
-    setPostTitle,
-    setPostContent,
-    setHashtag,
-    setMediaUrl,
-    setPlatform,
-    setPostType,
-    setScheduleDate,
+    createPost,
+    setCreatePost,
   } = usePostStore();
+  const {content, hashtag, mediaUrl, platform, postType, scheduleDate, title} = createPost;
 
   const { toast } = useToast();
+  const [loadingPlatforms, setLoadingPlatforms] = useState<Partial<Record<PlatformType, boolean>>>({});
 
   // --- Local UI State Only ---
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -35,13 +26,13 @@ const CreatePost = () => {
   // Show local preview if file is selected, otherwise use mediaUrl
   const imageUrl =
     localImageUrl ||
-    (mediaUrl && mediaUrl.length > 0 ? mediaUrl[0] : undefined);
+    (createPost.mediaUrl && createPost.mediaUrl.length > 0 ? createPost.mediaUrl[0] : undefined);
 
   // Effect to parse the ISO scheduledDate prop and set date and time inputs
   useEffect(() => {
     try {
-      if (scheduleDate) {
-        setDate(scheduleDate); // Set the main date object
+      if (createPost.scheduleDate) {
+        setDate(createPost.scheduleDate); // Set the main date object
       }
     } catch (error) {
       console.error("Error parsing scheduleDate prop:", error);
@@ -49,7 +40,7 @@ const CreatePost = () => {
       const now = new Date();
       setDate(now);
     }
-  }, [scheduleDate]);
+  }, [createPost.scheduleDate]);
 
   // Clean up local object URL when file changes
   useEffect(() => {
@@ -62,33 +53,43 @@ const CreatePost = () => {
     }
   }, [uploadedImageFile]);
 
-  // Platform Data (remain the same)
-  const platformsRow1: { name: PlatformType; icon: string }[] = [
-    { name: "instagram", icon: "I" },
-    { name: "twitter", icon: "X" },
-    { name: "threads", icon: "@" },
-    { name: "facebook", icon: "f" },
-    { name: "youtube", icon: "▶" },
-  ];
+  const handlePlatformToggle = async (platformName: PlatformType) => {
+    try {
+      setLoadingPlatforms(prev => ({ ...prev, [platformName]: true }));
+      
+      const newPlatforms = platform.includes(platformName)
+        ? platform.filter((p) => p !== platformName)
+        : [...platform, platformName];
 
-  // Platform toggle handler for array logic
-  const handlePlatformToggle = (platformName: PlatformType) => {
-    if (platform.includes(platformName)) {
-      setPlatform(platform.filter((p) => p !== platformName));
-    } else {
-      setPlatform([...platform, platformName]);
+      setCreatePost({
+        platform: newPlatforms
+      });
+
+      await updatePost({
+        platform: newPlatforms
+      }, createPost._id || '');
+    } catch (error) {
+      setCreatePost({
+        platform: platform
+      });
+      
+      toast({
+        title: "Error",
+        description: "Failed to update platform settings",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingPlatforms(prev => ({ ...prev, [platformName]: false }));
     }
   };
 
-  // Handle post type click - use prop setter
   const handlePostTypeClick = (type: "post" | "story" | "reel") => {
-    setPostType(type);
+    setCreatePost({ postType: type });
   };
 
-  // Update the date change handler
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
-    setScheduleDate(newDate);
+    setCreatePost({ scheduleDate: newDate });
   };
   
   // Image upload handler
@@ -106,8 +107,8 @@ const CreatePost = () => {
       if (uploadedImageFile) {
         const formData = new FormData();
         formData.append("image", uploadedImageFile);
-        formData.append("title", postTitle || "");
-        formData.append("content", postContent || "");
+        formData.append("title", title || "");
+        formData.append("content", content || "");
         formData.append("hashtag", hashtag || "");
         formData.append("platform", JSON.stringify(platform));
         formData.append("postType", postType);
@@ -124,8 +125,8 @@ const CreatePost = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: postTitle,
-            content: postContent,
+            title,
+            content,
             hashtag,
             platform,
             postType,
@@ -139,8 +140,7 @@ const CreatePost = () => {
         setUploadedImageFile(null);
         setLocalImageUrl(null);
         if (responseData.url) {
-          if (typeof setMediaUrl === "function")
-            setMediaUrl([responseData.url]);
+          setCreatePost({ mediaUrl: [responseData.url] });
         }
       }
       toast({
@@ -161,8 +161,8 @@ const CreatePost = () => {
     try {
       // Save draft post logic
       const draftData = {
-        title: postTitle,
-        content: postContent,
+        title,
+        content,
         hashtag,
         platform,
         postType,
@@ -194,16 +194,7 @@ const CreatePost = () => {
     }
   };
   
-  // --- Render using props and local UI state ---
-  // Color definitions (remain the same)
   const previewPanelBg = "bg-gray-100";
-  // ... other color definitions ...
-  const scheduleButtonBg = "bg-cyan-500";
-  const datePickerBg = "bg-gray-200";
-  const datePickerText = "text-gray-700";
-  
-  // For hashtags display:
-  const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
   
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
@@ -223,6 +214,7 @@ const CreatePost = () => {
               icon={platformObj.icon}
               active={platform.includes(platformObj.name)}
               onToggle={() => handlePlatformToggle(platformObj.name)}
+              loading={loadingPlatforms[platformObj.name]}
             />
           ))}
         </div>

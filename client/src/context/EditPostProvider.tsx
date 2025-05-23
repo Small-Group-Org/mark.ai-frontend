@@ -42,7 +42,7 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsVerifying(true);
     try{
       const response = await verifyToken();
-      setUserDetails(response.data);
+      setUserDetails(response);
       setIsAuth(true);
       navigate("/dashboard");
     } catch (error){

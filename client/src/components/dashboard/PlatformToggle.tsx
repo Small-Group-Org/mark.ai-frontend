@@ -15,9 +15,10 @@ interface PlatformToggleProps {
     icon: string; // Could be actual icon component later, or simple text/emoji
     active: boolean; // true if platform is in the array, false otherwise
     onToggle: () => void; // Function to handle toggle state change
+    loading?: boolean; // Optional loading state
 }
 
-const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, onToggle }) => {
+const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, onToggle, loading = false }) => {
     const platformIconBg = 'bg-gray-200'; // Adjusted from figma slightly for better contrast bg-[#E5E7EB]
     const platformIconInnerBg = 'bg-white';
     const platformActiveIconBg = 'bg-blue-500'; // bg-[#3b82f6]
@@ -55,14 +56,20 @@ const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, on
             <button
                 type="button"
                 className={`${active ? platformActiveIconBg : platformIconBg
-                    } relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none flex-shrink-0`}
+                    } relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none flex-shrink-0 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 aria-pressed={active}
+                disabled={loading}
             >
                 <span className="sr-only">Enable {label}</span>
                 <span
                     className={`${active ? 'translate-x-5' : 'translate-x-1'
                         } inline-block w-3.5 h-3.5 transform ${platformIconInnerBg} rounded-full transition-transform`}
                 />
+                {loading && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    </div>
+                )}
             </button>
 
             {/* Platform Icon */}
