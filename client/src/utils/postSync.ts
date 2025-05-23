@@ -2,7 +2,7 @@ import { toast } from '@/hooks/use-toast';
 import { getPosts } from '@/services/postServices';
 import { usePostStore } from '@/store/usePostStore';
 
-// Utility to fetch posts from API and update Zustand store
+// fetches posts from the database for the last 1 month and the next 1 month using centerDate
 export async function syncPostsFromDB(centerDate?: Date) {
   const setPosts = usePostStore.getState().setPosts;
   const today = centerDate || new Date();

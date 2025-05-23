@@ -44,7 +44,7 @@ const initialState = {
   platform: [],
   postType: 'post',
   scheduleDate: new Date(),
-  posts: [],
+  posts: [], // posts from the database
   displayDate: new Date(),
 };
 
