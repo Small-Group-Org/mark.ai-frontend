@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogOut } from "lucide-react";
 import markAiLogo from "../../assets/logo.png"; // Corrected file name to logo.png
 import { socialMedia } from "@/commons/constant";
@@ -11,16 +11,18 @@ const Header = () => {
   const headerBg = "bg-[#11132f]";
   const headerBorder = "border-gray-700/50";
   const { logout } = useAuthStore();
+  const [loadingPlatform, setLoadingPlatform] = useState<string | null>(null);
 
   const handleAyrshareConnection = async (platform: string) => {
     try {
+        setLoadingPlatform(platform);
         const response = await generateAyrshareToken();
-        const jwt = response.token;
-
-        const url = `https://app.ayrshare.com/connect?jwt=${jwt}`;
-        window.open(url, "_blank", "width=600,height=700");
-      } catch (error) {
+        const currentUrl = encodeURIComponent(window.location.href);
+        const url = `${response.url}&redirect=${currentUrl}`;
+        window.open(url, "_self");
+    } catch (error) {
         console.error('Failed to connect social media:', error);
+        setLoadingPlatform(null);
     }
   };
 
@@ -47,6 +49,7 @@ const Header = () => {
             isConnected={isConnected}
             label={label}
             handleAyrshareConnection={handleAyrshareConnection}
+            isLoading={loadingPlatform === label}
           />
         ))}
       </div>

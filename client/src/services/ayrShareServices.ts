@@ -6,7 +6,7 @@ import axios from 'axios';
 export const generateAyrshareToken = async () => {
     try {
         const response = await doPOST(
-            `${BASE_URL}/ayrshare/connect-profile-url`,
+            `${BASE_URL}/ayrshare/profile-connection-url`,
             {}
         );
 

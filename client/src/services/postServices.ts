@@ -20,7 +20,6 @@ interface CreatePostRequest {
 
 // Interface for update post request
 interface UpdatePostRequest {
-  postId: string;
   title?: string;
   content?: string;
   platform?: PlatformType[];
@@ -89,10 +88,10 @@ export const createPost = async (postData: CreatePostRequest) => {
   }
 };
 
-export const updatePost = async (postData: UpdatePostRequest) => {
+export const updatePost = async (postData: UpdatePostRequest, postId: string) => {
   try {
     const response = await doPUT(
-      `${BASE_URL}/post/update`,
+      `${BASE_URL}/post/update/${postId}`,
       postData
     );
     return response.data;

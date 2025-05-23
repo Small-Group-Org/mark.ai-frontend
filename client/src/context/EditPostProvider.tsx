@@ -29,7 +29,7 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
   const editPost = useEditPost();
   const token = getValue(STORAGE_KEYS.TOKEN) || "";
   const [, navigate] = useLocation();
-  const { setIsAuth, setUserDetails } = useAuthStore()
+  const { setIsAuth, setUserDetails, setIsVerifying } = useAuthStore()
   const [timeZoneLabel, setTimeZoneLabel] = React.useState<string>('GMT+00:00');
 
   useEffect(() => {
@@ -39,14 +39,17 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const checkUserAuthentication = async () => {
+    setIsVerifying(true);
     try{
       const response = await verifyToken();
-      setUserDetails(response.data);
+      setUserDetails(response);
       setIsAuth(true);
       navigate("/dashboard");
     } catch (error){
       setIsAuth(false);
       navigate("/");
+    } finally{
+      setIsVerifying(false);
     }
   }
 

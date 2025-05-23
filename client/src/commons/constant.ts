@@ -1,8 +1,9 @@
 import { MessageType } from "@/components/ChatInterface";
 import { PostType } from "@/types";
+import { PlatformType } from "@/types/post";
 
 // export const BASE_URL = "http://localhost:5000";
-export const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://34.135.194.8:8000';
+export const BASE_URL = 'https://mark-ai-backend-1057029383450.asia-south2.run.app';
 
 export const API_METHODS = {
     GET: "GET",
@@ -69,3 +70,10 @@ export const initialMessages: MessageType[] = [
   ];
 
   export const ENABLE_AI_GENERATE = false;
+  
+  export const platformsRow1: { name: PlatformType; icon: string }[] = [
+    { name: "instagram", icon: "I" },
+    { name: "twitter", icon: "X" },
+    { name: "threads", icon: "@" },
+    { name: "facebook", icon: "f" },
+  ];

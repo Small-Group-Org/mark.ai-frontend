@@ -8,20 +8,17 @@ interface PostState {
   isThinking: boolean;
   setIsThinking: (isThinking: boolean) => void;
 
-  postTitle: string;
-  setPostTitle: (title: string) => void;
-  postContent: string;
-  setPostContent: (content: string) => void;
-  hashtag: string;
-  setHashtag: (hashtag: string) => void;
-  mediaUrl: string[];
-  setMediaUrl: (urls: string[]) => void;
-  platform: PlatformType[];
-  setPlatform: (platform: PlatformType[]) => void;
-  postType: string;
-  setPostType: (type: string) => void;
-  scheduleDate: Date;
-  setScheduleDate: (date: Date) => void;
+  createPost: {
+    _id?: string;
+    title: string;
+    content: string;
+    hashtag: string;
+    mediaUrl: string[];
+    platform: PlatformType[];
+    postType: string;
+    scheduleDate: Date;
+  };
+  setCreatePost: (postState: Partial<PostState['createPost']>) => void;
 
   posts: Post[];
   setPosts: (posts: Post[]) => void;
@@ -37,13 +34,15 @@ const initialState = {
   messageCount: 0,
   messages: [],
   isThinking: false,
-  postTitle: "",
-  postContent: "",
-  hashtag: "",
-  mediaUrl: [],
-  platform: [],
-  postType: 'post',
-  scheduleDate: new Date(),
+  createPost: {
+    title: "",
+    content: "",
+    hashtag: "",
+    mediaUrl: [],
+    platform: [],
+    postType: 'post',
+    scheduleDate: new Date(),
+  },
   posts: [],
   displayDate: new Date(),
 };
@@ -55,14 +54,10 @@ export const usePostStore = create<PostState>((set) => ({
   })),
   setIsThinking: (isThinking) => set({ isThinking }),
 
-  // Post details actions
-  setPostTitle: (postTitle) => set({ postTitle }),
-  setPostContent: (postContent) => set({ postContent }),
-  setHashtag: (hashtag) => set({ hashtag }),
-  setMediaUrl: (mediaUrl) => set({ mediaUrl }),
-  setPlatform: (platform) => set({ platform }),
-  setPostType: (postType) => set({ postType }),
-  setScheduleDate: (scheduleDate) => set({ scheduleDate }),
+  // Post state actions
+  setCreatePost: (newPostState) => set((state) => ({
+    createPost: { ...state.createPost, ...newPostState }
+  })),
 
   setPosts: (posts) => set({ posts }),
 

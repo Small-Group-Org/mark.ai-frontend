@@ -55,7 +55,7 @@ const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, icon, active, on
             <button
                 type="button"
                 className={`${active ? platformActiveIconBg : platformIconBg
-                    } relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none flex-shrink-0`}
+                    } relative inline-flex items-center h-5 rounded-full w-9 transition-colors focus:outline-none flex-shrink-0}`}
                 aria-pressed={active}
             >
                 <span className="sr-only">Enable {label}</span>

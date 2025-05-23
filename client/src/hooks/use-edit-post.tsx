@@ -72,7 +72,6 @@ export const useEditPost = () => {
       let response;
       if (updatedPost.status === 'draft' && updatedPost._id) {
         response = await updatePost({
-          postId: updatedPost._id,
           title: updatedPost.title,
           content: updatedPost.content,
           platform: updatedPost.platform,
@@ -84,7 +83,7 @@ export const useEditPost = () => {
           publish: 'true',
           ayrshareId: updatedPost.ayrshareId || '',
           platformId: updatedPost.platformId
-        });
+        }, updatedPost._id);
       } else {
         response = await createPost({
           title: updatedPost.title,

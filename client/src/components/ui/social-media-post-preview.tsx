@@ -65,7 +65,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   uploadedImageFile,
   onImageDelete
 }) => {
-  const { postContent, hashtag, postTitle } = usePostStore();
+  const {createPost} = usePostStore();
+  const {content: postContent, hashtag, title: postTitle} = createPost;
   const { userDetails= {} } = useAuthStore();
   const { name: userName } = userDetails as User;
   const userInitials = userName.split(" ")[0][0] + userName.split(" ")?.pop()?.[0];

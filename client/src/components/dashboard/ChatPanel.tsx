@@ -4,31 +4,22 @@ import { ThreeDots } from "react-loader-spinner";
 import { usePostStore } from "@/store/usePostStore";
 import { Message } from "@/types";
 import { chatWithMark } from "@/services/chatServices";
+import { useAuthStore } from "@/store/useAuthStore";
+import { marked } from 'marked';
 
 const ChatPanel = () => {
   const {
     messages,
     isThinking,
     setIsThinking,
-    postTitle,
-    postContent,
-    hashtag,
-    mediaUrl,
-    platform,
-    postType,
-    scheduleDate,
-    setMediaUrl, 
-    setMessages, 
-    setPostContent, 
-    setHashtag, 
-    setPostTitle,
-    setPostType, 
-    setScheduleDate,
-    setPlatform
+    setCreatePost,
+    setMessages,
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
+  const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const {isAuth} = useAuthStore();
 
   const chatPanelBg = "bg-[#11132f]";
   const chatHeaderBorder = "border-gray-600/60";
@@ -42,7 +33,7 @@ const ChatPanel = () => {
 
   // Initialize chat with first AI message
   useEffect(() => {
-    if (messages && messages.length === 0) {
+    if (messages && messages.length === 0 && isAuth) {
       setIsThinking(true);
       handleChatResponse("Hi There!");
     }
@@ -62,9 +53,11 @@ const ChatPanel = () => {
   }, [messages, isThinking]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value);
-    e.target.style.height = "auto";
-    e.target.style.height = `${e.target.scrollHeight}px`;
+    if (!isWaitingForResponse) {
+      setInputValue(e.target.value);
+      e.target.style.height = "auto";
+      e.target.style.height = `${e.target.scrollHeight}px`;
+    }
   };
 
   const handleChatResponse = async (messageText: string) => {
@@ -74,7 +67,7 @@ const ChatPanel = () => {
       };
 
       const response = await chatWithMark(requestBody);
-
+      
       if (response?.bot?.text) {
         const aiResponseMessage: Message = {
           id: Date.now().toString(),
@@ -85,11 +78,13 @@ const ChatPanel = () => {
         setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
 
         // Update post state if available
-        if (response.post) {
+        if (response.hasPost) {
           const { post } = response;
-          setPostTitle(post.title ?? "");
-          setPostContent(post.content ?? "");
-          setHashtag(Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? ""));
+          setCreatePost({
+            title: post.title ?? "",
+            content: post.content ?? "",
+            hashtag: Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? "")
+          });
         }
       } else {
         const aiErrorResponse: Message = {
@@ -111,13 +106,14 @@ const ChatPanel = () => {
       setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
     } finally {
       setIsThinking(false);
+      setIsWaitingForResponse(false);
     }
   };
 
-
   const handleSend = async () => {
     const messageText = inputValue.trim();
-    if (messageText) {
+    if (messageText && !isWaitingForResponse) {
+      setIsWaitingForResponse(true);
       const newMessage: Message = {
         id: Date.now().toString(),
         text: messageText,
@@ -134,21 +130,37 @@ const ChatPanel = () => {
         textarea.style.height = "auto";
       }
 
-      // Show thinking state after a short delay
-      const thinkingTimeout = setTimeout(() => {
-        setIsThinking(true);
-      }, 1500);
-
+      setIsThinking(true);
       await handleChatResponse(messageText);
-      clearTimeout(thinkingTimeout);
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !isWaitingForResponse) {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const renderMessageContent = (text: string) => {
+    // Configure marked options
+    marked.setOptions({
+      breaks: true, // Convert line breaks to <br>
+      gfm: true, // GitHub Flavored Markdown
+    });
+
+    // Pre-process text to handle double line breaks
+    const processedText = text.replace(/\n/g, '<br>');
+
+    // Convert markdown to HTML
+    const htmlContent = marked(processedText);
+
+    return (
+      <div 
+        className="max-w-none whitespace-pre-wrap"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
+    );
   };
 
   return (
@@ -179,12 +191,7 @@ const ChatPanel = () => {
                   : `${chatBubbleGradient} text-white`
               }`}
             >
-              {message.text.split("\n").map((line, index) => (
-                <span key={index}>
-                  {line}
-                  <br />
-                </span>
-              ))}
+              {renderMessageContent(message.text)}
             </div>
           </div>
         ))}
@@ -216,17 +223,18 @@ const ChatPanel = () => {
           <textarea
             id="chat-textarea"
             rows={1}
-            placeholder="Type your message..."
+            placeholder={isWaitingForResponse ? "Waiting for response..." : "Type your message..."}
             className={`flex-1 bg-transparent ${messagePlaceholderColor} text-sm focus:outline-none resize-none py-1.5 placeholder-gray-400 max-h-24 overflow-y-auto`}
             style={{ scrollbarWidth: "none" }}
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            disabled={isWaitingForResponse}
           />
           <button
             className={`ml-3 ${sendButtonBg} rounded-full w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700 flex-shrink-0 self-center mb-0.5 disabled:opacity-50 disabled:cursor-not-allowed`}
             onClick={handleSend}
-            disabled={!inputValue.trim() || isThinking}
+            disabled={!inputValue.trim() || isWaitingForResponse}
           >
             <SendIcon className="w-5 h-5 transform rotate-90" />
           </button>
