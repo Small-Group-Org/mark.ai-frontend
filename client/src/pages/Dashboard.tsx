@@ -284,7 +284,9 @@ const Dashboard = () => {
                 key={post._id}
                 id="post-item"
                 className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 m-[0_30px_15px_30px] hover:translate-x-[5px] ${
-                  index % 2 ? 'bg-yellow-500' : 'bg-purple-200'
+                  index % 2 
+                    ? 'bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200' 
+                    : 'bg-gradient-to-r from-pink-200 via-rose-200 to-red-200'
                 }`}
                 onClick={() => setSelectedPost(post)}
                 style={{ cursor: 'pointer' }}
