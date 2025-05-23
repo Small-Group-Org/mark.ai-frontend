@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useEditPostContext } from '@/context/EditPostProvider';
@@ -36,7 +36,6 @@ const EditPost: React.FC<EditPostProps> = ({
   onGenerate
 }) => {
   const { timeZoneLabel = 'GMT+00:00' } = useEditPostContext();
-  // Component state
   const [editedPost, setEditedPost] = useState<Post>(post);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
@@ -45,15 +44,12 @@ const EditPost: React.FC<EditPostProps> = ({
   // Calendar and time selection state
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
   
-  const calendarRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Update character count when content changes
   useEffect(() => {
     setCharacterCount(editedPost.content.length);
   }, [editedPost.content]);
 
-  // Initialize edited post when post prop changes
   useEffect(() => {
     if (post) {
       setEditedPost(post);
@@ -74,7 +70,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }
   }, [post, timeZoneLabel]);
   
-  // Handle text input changes
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     setEditedPost(prev => ({
@@ -83,7 +78,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }));
   };
   
-  // Handle platform toggle
   const handlePlatformToggle = (platform: PlatformType) => {
     setEditedPost(prev => ({
       ...prev,
@@ -93,7 +87,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }));
   };
 
-  // Handle post type toggle
   const handlePostTypeToggle = (type: string) => {
     setEditedPost(prev => ({
       ...prev,
@@ -101,7 +94,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }));
   };
 
-  // Handle hashtags input
   const handleHashtagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const hashtagsText = e.target.value;
     
@@ -111,7 +103,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }));
   };
 
-  // Handle media deletion
   const handleDeleteMedia = (index: number) => {
     setEditedPost(prev => ({
       ...prev,
@@ -119,7 +110,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }));
   };
 
-  // Handle AI generation
   const handleGenerate = () => {
     if (onGenerate && generatePrompt.trim()) {
       onGenerate(generatePrompt);
@@ -131,16 +121,13 @@ const EditPost: React.FC<EditPostProps> = ({
     }
   };
   
-  // Handle date change functions
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
   };
   
-  // Handle draft save
   const handleSaveDraft = () => {
     if (!isEditing) return;
     
-    // Update post with current settings
     const updatedPost = {
       ...editedPost,
       scheduleDate: date,
@@ -150,11 +137,9 @@ const EditPost: React.FC<EditPostProps> = ({
     setIsEditing(false);
   };
 
-  // Handle schedule save
   const handleSchedule = () => {
     if (!isEditing) return;
     
-    // Update post with current settings
     const updatedPost = {
       ...editedPost,
       scheduleDate: date,
@@ -169,7 +154,6 @@ const EditPost: React.FC<EditPostProps> = ({
     onClose();
   }
 
-  // If modal is not open, don't render anything
   if (!isOpen) return null;
 
   return (
@@ -277,7 +261,7 @@ const EditPost: React.FC<EditPostProps> = ({
                     key={type}
                     className={cn(
                       "px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex-1",
-                      editedPost.postType === type
+                      (editedPost.postType === type || (editedPost.postType === 'text' && type === 'post'))
                         ? "bg-blue-500 text-white" 
                         : "bg-gray-100 text-gray-600",
                       !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
@@ -532,7 +516,7 @@ const EditPost: React.FC<EditPostProps> = ({
                         key={type}
                         className={cn(
                           "px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex-1",
-                          editedPost.postType === type
+                          (editedPost.postType === type || (editedPost.postType === 'text' && type === 'post'))
                             ? "bg-blue-500 text-white" 
                             : "bg-gray-100 text-gray-600",
                           !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
@@ -562,18 +546,24 @@ const EditPost: React.FC<EditPostProps> = ({
                   className={cn("w-full", !isEditing && "opacity-75")}
                 />
                 
-                {/* Schedule Button with Dropdown */}
+                {/* Schedule Button with Dropdown - Mobile */}
                 {editedPost.status === 'schedule' ? (
-                  <div className="flex justify-center">
+                  <div className="flex justify-center w-full">
                     <button
-                      className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      className="w-full px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors inline-flex items-center justify-center gap-2"
                       onClick={onDelete}
                     >
+                      <Trash2 className="w-4 h-4" />
                       Delete
                     </button>
                   </div>
-                  ) : (
-                  <div className={cn("flex rounded-lg shadow-sm relative")}>
+                ) : editedPost.status === 'published' ? (
+                  <div className="flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-md">
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Post Published</span>
+                  </div>
+                ) : (
+                  <div className={cn("flex rounded-lg shadow-sm relative w-full")}>
                     <ScheduleActionButton
                       onSchedule={() => isEditing && handleSchedule()}
                       onDraft={() => isEditing && handleSaveDraft()}
@@ -709,25 +699,32 @@ const EditPost: React.FC<EditPostProps> = ({
                   />
                 </div>
                 
-                {/* Schedule Button with Dropdown */}
+                {/* Schedule Button with Dropdown - Desktop */}
                 {editedPost.status === 'schedule' ? (
                   <div className="flex justify-center">
                     <button
-                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors inline-flex items-center justify-center gap-2"
                       onClick={onDelete}
                     >
+                      <Trash2 className="w-4 h-4" />
                       Delete
                     </button>
                   </div>
-                  ) : (
-                <div className={cn("flex rounded-lg shadow-sm relative flex-1 lg:flex-initial")}>
-                  <ScheduleActionButton
-                    onSchedule={() => isEditing && handleSchedule()}
-                    onDraft={() => isEditing && handleSaveDraft()}
-                    className={!isEditing ? "opacity-70" : ""}
-                    disabled={!isEditing}
-                  />
-                </div>)}
+                ) : editedPost.status === 'published' ? (
+                  <div className="flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-md">
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Post Published</span>
+                  </div>
+                ) : (
+                  <div className={cn("flex rounded-lg shadow-sm relative w-full lg:w-auto")}>
+                    <ScheduleActionButton
+                      onSchedule={() => isEditing && handleSchedule()}
+                      onDraft={() => isEditing && handleSaveDraft()}
+                      className={!isEditing ? "opacity-70" : ""}
+                      disabled={!isEditing}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

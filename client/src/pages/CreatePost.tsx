@@ -241,7 +241,7 @@ const CreatePost = () => {
           <button
             key={type.id}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium border ${
-              postType === type.id
+              (postType === type.id || (postType === 'text' && type.id === 'post'))
                 ? "bg-blue-500 text-white border-blue-500"
                 : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300"
             }`}

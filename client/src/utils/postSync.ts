@@ -25,14 +25,10 @@ export async function syncPostsFromDB(centerDate?: Date) {
       }));
       setPosts(parsedPosts);
     } else {
-      toast({
-        title: 'Error',
-        description: 'No posts found.',
-        variant: 'destructive'
-      });
+      console.log('No posts found.');
     }
   } catch (error) {
-    console.error('Fetching posts error:', error);
+    console.error('Failed to fetch posts:', error);
     toast({
       title: 'Error',
       description: 'Failed to fetch posts.',
