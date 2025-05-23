@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getPosts } from '../services/postServices.ts';
 import twitterIcon from '../assets/icons/twitter.png';
 import instagramIcon from '../assets/icons/instagram.png';
@@ -10,6 +10,8 @@ import facebookIcon from '../assets/icons/facebook.png';
 import youtubeIcon from '../assets/icons/youtube.png';
 import ActionScreenHeader from './ActionScreenHeader.tsx';
 import { CalendarView } from '@/types/post';
+import { syncPostsFromDB } from '@/utils/postSync';
+import { usePostStore } from '@/store/usePostStore';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('past');
@@ -35,11 +37,53 @@ const Dashboard = () => {
   const [allPosts, setAllPosts] = useState([]); // Store all fetched posts for counts
   const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(null); // Track errors
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+  // Combined effect for fetching posts and cleanup
+  useEffect(() => {
+    setLoading(true);
+    fetchPosts(activeTab);
+
+    // Cleanup function
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [activeTab, selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
+
+  // Fetch posts from API
+  const fetchPosts = async (tab: string) => {
+    setError(null);
+    try {
+      const status = getStatusFromTab(tab);
+      // Clear any existing timeout
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      
+      // Set new timeout for syncing posts
+      debounceRef.current = setTimeout(async () => {
+        const displayDate = getDisplayDate();
+        const posts = await syncPostsFromDB(displayDate);
+        setAllPosts(posts);
+        setFilteredPosts(posts);
+        setLoading(false);
+      }, 500); // 500ms debounce delay
+    } catch (err) {
+      setError(err.message || 'Failed to fetch posts');
+      setAllPosts([]); // Reset to empty array on error
+      setFilteredPosts([]);
+      setLoading(false);
+    }
+  };
+
+  // Get display date based on timeframe
+  const getDisplayDate = () => {
+    if (timeframe === 'month') {
+      const date = new Date();
+      date.setMonth(selectedMonth);
+      date.setFullYear(selectedYear);
+      return date;
+    }
+    return weekStart;
+  };
 
   const handlePrevPeriod = () => {
     if (timeframe === 'month') {
@@ -77,27 +121,6 @@ const Dashboard = () => {
     }
   };
 
-  // Format date to YYYY-MM-DD for API
-  const formatDateForApi = (date: Date) => {
-    return date.toISOString().split('T')[0]; // e.g., "2025-05-01"
-  };
-
-  // Get startDate and endDate based on timeframe
-  const getDateRange = () => {
-    let startDate, endDate;
-    if (timeframe === 'month') {
-      startDate = new Date(selectedYear, selectedMonth, 1); // First day of the month
-      endDate = new Date(selectedYear, selectedMonth + 1, 0); // Last day of the month
-    } else {
-      startDate = new Date(weekStart);
-      endDate = new Date(weekEnd);
-    }
-    return {
-      startDate: formatDateForApi(startDate),
-      endDate: formatDateForApi(endDate),
-    };
-  };
-
   // Map activeTab to status for API
   const getStatusFromTab = (tab: string) => {
     const statusMap = {
@@ -106,31 +129,6 @@ const Dashboard = () => {
       drafts: 'draft',
     };
     return statusMap[tab] || '';
-  };
-
-  // Fetch posts from API
-  const fetchPosts = async (tab: string, startDate: string, endDate: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const status = getStatusFromTab(tab);
-      const params = {
-        status,
-        startDate,
-        endDate,
-      };
-      const posts = await getPosts(params);
-      // Ensure posts is an array; fallback to empty array if not
-      const postsArray = Array.isArray(posts) ? posts : [];
-      setAllPosts(postsArray);
-      setFilteredPosts(postsArray);
-    } catch (err) {
-      setError(err.message || 'Failed to fetch posts');
-      setAllPosts([]); // Reset to empty array on error
-      setFilteredPosts([]);
-    } finally {
-      setLoading(false);
-    }
   };
 
   // Update counts based on fetched posts
@@ -151,11 +149,6 @@ const Dashboard = () => {
       return post.status === 'schedule' && postDate >= weekStart && postDate <= weekEnd;
     }
   }).length;
-
-  useEffect(() => {
-    const { startDate, endDate } = getDateRange();
-    fetchPosts(activeTab, startDate, endDate);
-  }, [activeTab, selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'No date';
@@ -206,7 +199,7 @@ const Dashboard = () => {
         handlePrevPeriod={handlePrevPeriod}
         handleNextPeriod={handleNextPeriod}
       />
-      {selectedPost && (
+      {false && (
         <div className="flex gap-[10px] justify-between">
           <div className="flex flex-col gap-5">
             <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[246px] h-[108px]">
@@ -242,7 +235,7 @@ const Dashboard = () => {
       <div
         id="posts-container"
         className={`absolute left-1/2 transform -translate-x-1/2 w-[95%] max-w-full overflow-x-hidden overflow-y-auto rounded-[10px] bg-gray-200/30 bottom-0 ${
-          selectedPost ? 'top-[450px]' : 'top-[150px]'
+          false ? 'top-[450px]' : 'top-[150px]'
         }`}
       >
         <div className="flex justify-center m-[20px_30px] pb-[10px]">
