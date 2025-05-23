@@ -12,6 +12,8 @@ import ActionScreenHeader from './ActionScreenHeader.tsx';
 import { CalendarView } from '@/types/post';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
+import { useEditPostContext } from '@/context/EditPostProvider';
+import EditPost from '@/components/EditPost';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('past');
@@ -38,6 +40,7 @@ const Dashboard = () => {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
   const posts = usePostStore((state) => state.posts);
+  const editPostContext = useEditPostContext();
 
   // Effect for fetching posts when timeframe changes
   useEffect(() => {
@@ -199,6 +202,16 @@ const Dashboard = () => {
     return null;
   };
 
+  const handlePostClick = (post: any) => {
+    if (post) {
+      const postWithRequiredFields = {
+        ...post,
+        postType: post.postType || 'post'
+      };
+      editPostContext.onOpen(post._id, postWithRequiredFields, 'GMT+00:00');
+    }
+  };
+
   return (
     <div className="w-full h-full p-5 border border-gray-300 bg-white overflow-y-auto box-border relative [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
       <ActionScreenHeader
@@ -288,7 +301,7 @@ const Dashboard = () => {
                     ? 'bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200' 
                     : 'bg-gradient-to-r from-pink-200 via-rose-200 to-red-200'
                 }`}
-                onClick={() => setSelectedPost(post)}
+                onClick={() => handlePostClick(post)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="w-[50px] h-[50px] mr-[15px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-[6px] bg-gray-100 border border-gray-300">
