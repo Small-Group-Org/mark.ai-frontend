@@ -98,13 +98,16 @@ export default function CalendarRoute() {
   };
 
   const getDisplayDate = () => {
+    let date;
     if (timeframe === 'month') {
-      const date = new Date();
+      date = new Date();
       date.setMonth(selectedMonth);
       date.setFullYear(selectedYear);
-      return date;
+    } else {
+      date = weekStart;
     }
-    return weekStart;
+    usePostStore.getState().setDisplayDate(date);
+    return date;
   };
 
   return (
@@ -122,7 +125,7 @@ export default function CalendarRoute() {
       />
       <div className="overflow-auto">
         <SocialCalendar
-          posts={posts}
+          posts={posts.filter(post => post.status !== 'deleted')}
           timeZoneLabel="GMT+05:30"
           isLoading={isLoading}
           currentView={timeframe}

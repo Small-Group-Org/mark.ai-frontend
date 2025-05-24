@@ -85,13 +85,16 @@ const Dashboard = () => {
 
   // Get display date based on timeframe
   const getDisplayDate = () => {
+    let date;
     if (timeframe === 'month') {
-      const date = new Date();
+      date = new Date();
       date.setMonth(selectedMonth);
       date.setFullYear(selectedYear);
-      return date;
+    } else {
+      date = weekStart;
     }
-    return weekStart;
+    usePostStore.getState().setDisplayDate(date);
+    return date;
   };
 
   const handlePrevPeriod = () => {
