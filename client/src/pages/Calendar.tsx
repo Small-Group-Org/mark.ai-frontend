@@ -8,7 +8,6 @@ import { CalendarView } from '@/types/post';
 export default function CalendarRoute() {
   const today = new Date();
   const posts = usePostStore((state) => state.posts);
-  const [isLoading, setIsLoading] = useState(false);
   const [timeframe, setTimeframe] = useState<CalendarView>('month');
 
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
@@ -27,37 +26,29 @@ export default function CalendarRoute() {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
 
-  const fetchPosts = async () => {
-    if (timeframe === 'month') {
-      const syncDate = new Date();
-      syncDate.setMonth(selectedMonth);
-      syncDate.setFullYear(selectedYear);
-      await syncPostsFromDB(syncDate);
-    } else if (timeframe === 'week') {
-      // sync after approximately a month's worth of weeks
-      if (Math.abs(weekNavigationCountRef.current) >= 3) {
-        const syncDate = new Date();
-        syncDate.setDate(today.getDate());
-        await syncPostsFromDB(syncDate);
-        weekNavigationCountRef.current = 0; // Reset counter after sync
-      }
-    }
-  };
-
-  // Effect for handling debounced post fetching
+  // Effect for handling debounced post fetching for navigation
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    setIsLoading(true);
     
     debounceRef.current = setTimeout(async () => {
-      await fetchPosts();
-      setIsLoading(false);
+      if (timeframe === 'month') {
+        await syncPostsFromDB(getDisplayDate());
+      } else if (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3) {
+        await syncPostsFromDB(getDisplayDate());
+        weekNavigationCountRef.current = 0;
+      }
     }, 500);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [timeframe, selectedMonth, selectedYear, weekStart, weekEnd]);
+  }, [selectedMonth, selectedYear, weekStart, weekEnd]);
+
+  // Effect for syncing posts when timeframe changes
+  useEffect(() => {
+    syncPostsFromDB(getDisplayDate());
+    weekNavigationCountRef.current = 0;
+  }, [timeframe]);
 
   const handlePrevPeriod = () => {
     if (timeframe === 'month') {
@@ -98,13 +89,16 @@ export default function CalendarRoute() {
   };
 
   const getDisplayDate = () => {
+    let date;
     if (timeframe === 'month') {
-      const date = new Date();
+      date = new Date();
       date.setMonth(selectedMonth);
       date.setFullYear(selectedYear);
-      return date;
+    } else {
+      date = weekStart;
     }
-    return weekStart;
+    usePostStore.getState().setDisplayDate(date);
+    return date;
   };
 
   return (
@@ -122,9 +116,8 @@ export default function CalendarRoute() {
       />
       <div className="overflow-auto">
         <SocialCalendar
-          posts={posts}
+          posts={posts.filter(post => post.status !== 'deleted')}
           timeZoneLabel="GMT+05:30"
-          isLoading={isLoading}
           currentView={timeframe}
           displayDate={getDisplayDate()}
         />
