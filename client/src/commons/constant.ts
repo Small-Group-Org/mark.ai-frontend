@@ -77,3 +77,5 @@ export const initialMessages: MessageType[] = [
     { name: "threads", icon: "@" },
     { name: "facebook", icon: "f" },
   ];
+
+  export const initialiseChatWithMark = "This is the system message. The user is online. Send greetings and provide 1 liner update. DO NOT mention anything about system. Just greet the user."
