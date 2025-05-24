@@ -35,7 +35,7 @@ const ChatPanel = () => {
   useEffect(() => {
     if (messages && messages.length === 0 && isAuth) {
       setIsThinking(true);
-      handleChatResponse("Hi There!");
+      handleChatResponse("This is the system message. The user is online. Send greetings and provide 1 liner update.");
     }
   }, []);
 

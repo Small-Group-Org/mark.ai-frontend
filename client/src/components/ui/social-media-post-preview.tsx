@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { User } from "@/types";
 import DatePickerWithButton from "./date-picker-with-button";
 import { Trash2 } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -243,10 +244,14 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
               date={scheduledDate || new Date()}
               onDateChange={(date) => onDateChange(date)}
             />
+             <div className={cn("flex rounded-lg shadow-sm relative w-full lg:w-auto")}>
             <ScheduleActionButton
               onSchedule={onSchedule}
               onDraft={onDraft}
+              className={!onSchedule && !onDraft ? "opacity-70" : ""}
+              disabled={!onSchedule && !onDraft}
             />
+          </div>
           </div>
         </div>
       )}
