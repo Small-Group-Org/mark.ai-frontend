@@ -26,16 +26,18 @@ export default function CalendarRoute() {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
 
-  // Effect for handling debounced post fetching for navigation
+  // Effect for syncing posts when month or week changes
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     
     debounceRef.current = setTimeout(async () => {
-      if (timeframe === 'month') {
+      const shouldSync = timeframe === 'month' || (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3);
+      
+      if (shouldSync) {
         await syncPostsFromDB(getDisplayDate());
-      } else if (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3) {
-        await syncPostsFromDB(getDisplayDate());
-        weekNavigationCountRef.current = 0;
+        if (timeframe === 'week') {
+          weekNavigationCountRef.current = 0;
+        }
       }
     }, 500);
 
@@ -44,49 +46,10 @@ export default function CalendarRoute() {
     };
   }, [selectedMonth, selectedYear, weekStart, weekEnd]);
 
-  // Effect for syncing posts when timeframe changes
   useEffect(() => {
     syncPostsFromDB(getDisplayDate());
     weekNavigationCountRef.current = 0;
   }, [timeframe]);
-
-  const handlePrevPeriod = () => {
-    if (timeframe === 'month') {
-      if (selectedMonth === 0) {
-        setSelectedMonth(11);
-        setSelectedYear(selectedYear - 1);
-      } else {
-        setSelectedMonth(selectedMonth - 1);
-      }
-    } else {
-      const newWeekStart = new Date(weekStart);
-      newWeekStart.setDate(weekStart.getDate() - 7);
-      const newWeekEnd = new Date(weekEnd);
-      newWeekEnd.setDate(weekEnd.getDate() - 7);
-      setWeekStart(newWeekStart);
-      setWeekEnd(newWeekEnd);
-      weekNavigationCountRef.current -= 1;
-    }
-  };
-
-  const handleNextPeriod = () => {
-    if (timeframe === 'month') {
-      if (selectedMonth === 11) {
-        setSelectedMonth(0);
-        setSelectedYear(selectedYear + 1);
-      } else {
-        setSelectedMonth(selectedMonth + 1);
-      }
-    } else {
-      const newWeekStart = new Date(weekStart);
-      newWeekStart.setDate(weekStart.getDate() + 7);
-      const newWeekEnd = new Date(weekEnd);
-      newWeekEnd.setDate(weekEnd.getDate() + 7);
-      setWeekStart(newWeekStart);
-      setWeekEnd(newWeekEnd);
-      weekNavigationCountRef.current += 1;
-    }
-  };
 
   const getDisplayDate = () => {
     let date;
@@ -109,10 +72,13 @@ export default function CalendarRoute() {
         setTimeframe={setTimeframe}
         selectedMonth={selectedMonth}
         selectedYear={selectedYear}
+        setSelectedMonth={setSelectedMonth}
+        setSelectedYear={setSelectedYear}
         weekStart={weekStart}
         weekEnd={weekEnd}
-        handlePrevPeriod={handlePrevPeriod}
-        handleNextPeriod={handleNextPeriod}
+        setWeekStart={setWeekStart}
+        setWeekEnd={setWeekEnd}
+        weekNavigationCountRef={weekNavigationCountRef}
       />
       <div className="overflow-auto">
         <SocialCalendar
