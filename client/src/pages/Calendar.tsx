@@ -27,24 +27,30 @@ export default function CalendarRoute() {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
 
+  const fetchPosts = async () => {
+    if (timeframe === 'month') {
+      const syncDate = new Date();
+      syncDate.setMonth(selectedMonth);
+      syncDate.setFullYear(selectedYear);
+      await syncPostsFromDB(syncDate);
+    } else if (timeframe === 'week') {
+      // sync after approximately a month's worth of weeks
+      if (Math.abs(weekNavigationCountRef.current) >= 3) {
+        const syncDate = new Date();
+        syncDate.setDate(today.getDate());
+        await syncPostsFromDB(syncDate);
+        weekNavigationCountRef.current = 0; // Reset counter after sync
+      }
+    }
+  };
+
+  // Effect for handling debounced post fetching
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     setIsLoading(true);
-    debounceRef.current = setTimeout(() => {
-      if (timeframe === 'month') {
-        const syncDate = new Date();
-        syncDate.setMonth(selectedMonth);
-        syncDate.setFullYear(selectedYear);
-        syncPostsFromDB(syncDate);
-      } else if (timeframe === 'week') {
-        // sync after approximately a month's worth of weeks
-        if (Math.abs(weekNavigationCountRef.current) >= 3) {
-          const syncDate = new Date();
-          syncDate.setDate(today.getDate());
-          syncPostsFromDB(syncDate);
-          weekNavigationCountRef.current = 0; // Reset counter after sync
-        }
-      }
+    
+    debounceRef.current = setTimeout(async () => {
+      await fetchPosts();
       setIsLoading(false);
     }, 500);
 

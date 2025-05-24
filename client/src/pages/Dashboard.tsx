@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getPosts } from '../services/postServices.ts';
 import twitterIcon from '../assets/icons/twitter.png';
 import instagramIcon from '../assets/icons/instagram.png';
@@ -10,10 +10,13 @@ import facebookIcon from '../assets/icons/facebook.png';
 import youtubeIcon from '../assets/icons/youtube.png';
 import ActionScreenHeader from './ActionScreenHeader.tsx';
 import { CalendarView } from '@/types/post';
+import { syncPostsFromDB } from '@/utils/postSync';
+import { usePostStore } from '@/store/usePostStore';
+import { useEditPostContext } from '@/context/EditPostProvider';
+import EditPost from '@/components/EditPost';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('past');
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(4); // 0-based index for May
   const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -32,14 +35,64 @@ const Dashboard = () => {
     end.setDate(today.getDate() + (6 - dayOfWeek)); // End of week (Saturday)
     return end;
   });
-  const [allPosts, setAllPosts] = useState([]); // Store all fetched posts for counts
   const [loading, setLoading] = useState(false); // Track loading state
   const [error, setError] = useState(null); // Track errors
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const weekNavigationCountRef = useRef<number>(0);
+  const posts = usePostStore((state) => state.posts);
+  const editPostContext = useEditPostContext();
 
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+  // Effect for fetching posts when timeframe changes
+  useEffect(() => {
+    fetchPosts();
+
+    // Cleanup function
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
+
+  // Fetch posts from API
+  const fetchPosts = async () => {
+    setError(null);
+    try {
+      // Clear any existing timeout
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      
+      // Set new timeout for syncing posts
+      debounceRef.current = setTimeout(async () => {
+        if (timeframe === 'month') {
+          setLoading(true);
+          const displayDate = getDisplayDate();
+          await syncPostsFromDB(displayDate);
+          setLoading(false);
+        } else if (timeframe === 'week') {
+          // sync after approximately a month's worth of weeks
+          if (Math.abs(weekNavigationCountRef.current) >= 3) {
+            setLoading(true);
+            const displayDate = getDisplayDate();
+            await syncPostsFromDB(displayDate);
+            weekNavigationCountRef.current = 0; // Reset counter after sync
+            setLoading(false);
+          }
+        }
+      }, 500); // 500ms debounce delay
+    } catch (err) {
+      setError(err.message || 'Failed to fetch posts');
+      setLoading(false);
+    }
+  };
+
+  // Get display date based on timeframe
+  const getDisplayDate = () => {
+    if (timeframe === 'month') {
+      const date = new Date();
+      date.setMonth(selectedMonth);
+      date.setFullYear(selectedYear);
+      return date;
+    }
+    return weekStart;
+  };
 
   const handlePrevPeriod = () => {
     if (timeframe === 'month') {
@@ -56,6 +109,7 @@ const Dashboard = () => {
       newWeekEnd.setDate(weekEnd.getDate() - 7);
       setWeekStart(newWeekStart);
       setWeekEnd(newWeekEnd);
+      weekNavigationCountRef.current -= 1;
     }
   };
 
@@ -74,88 +128,43 @@ const Dashboard = () => {
       newWeekEnd.setDate(weekEnd.getDate() + 7);
       setWeekStart(newWeekStart);
       setWeekEnd(newWeekEnd);
+      weekNavigationCountRef.current += 1;
     }
-  };
-
-  // Format date to YYYY-MM-DD for API
-  const formatDateForApi = (date: Date) => {
-    return date.toISOString().split('T')[0]; // e.g., "2025-05-01"
-  };
-
-  // Get startDate and endDate based on timeframe
-  const getDateRange = () => {
-    let startDate, endDate;
-    if (timeframe === 'month') {
-      startDate = new Date(selectedYear, selectedMonth, 1); // First day of the month
-      endDate = new Date(selectedYear, selectedMonth + 1, 0); // Last day of the month
-    } else {
-      startDate = new Date(weekStart);
-      endDate = new Date(weekEnd);
-    }
-    return {
-      startDate: formatDateForApi(startDate),
-      endDate: formatDateForApi(endDate),
-    };
   };
 
   // Map activeTab to status for API
   const getStatusFromTab = (tab: string) => {
     const statusMap = {
-      past: 'public',
+      past: 'published',
       upcoming: 'schedule',
       drafts: 'draft',
     };
     return statusMap[tab] || '';
   };
 
-  // Fetch posts from API
-  const fetchPosts = async (tab: string, startDate: string, endDate: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const status = getStatusFromTab(tab);
-      const params = {
-        status,
-        startDate,
-        endDate,
-      };
-      const posts = await getPosts(params);
-      // Ensure posts is an array; fallback to empty array if not
-      const postsArray = Array.isArray(posts) ? posts : [];
-      setAllPosts(postsArray);
-      setFilteredPosts(postsArray);
-    } catch (err) {
-      setError(err.message || 'Failed to fetch posts');
-      setAllPosts([]); // Reset to empty array on error
-      setFilteredPosts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Update counts based on fetched posts
-  const postCreatedCount = allPosts.filter(post => {
+  // Filter posts by timeframe (month/week)
+  const timeframeFilteredPosts = posts.filter(post => {
     const postDate = new Date(post.scheduleDate || post.createdAt);
     if (timeframe === 'month') {
-      return post.status === 'public' && postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
+      return postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
     } else {
-      return post.status === 'public' && postDate >= weekStart && postDate <= weekEnd;
+      return postDate >= weekStart && postDate <= weekEnd;
     }
-  }).length;
+  });
 
-  const postScheduledCount = allPosts.filter(post => {
-    const postDate = new Date(post.scheduleDate || post.createdAt);
-    if (timeframe === 'month') {
-      return post.status === 'schedule' && postDate.getMonth() === selectedMonth && postDate.getFullYear() === selectedYear;
-    } else {
-      return post.status === 'schedule' && postDate >= weekStart && postDate <= weekEnd;
-    }
-  }).length;
+  // Filter posts by status based on active tab
+  const filteredPosts = timeframeFilteredPosts.filter(post => {
+    const statusMap = {
+      past: 'published',
+      upcoming: 'schedule',
+      drafts: 'draft'
+    };
+    return post.status === statusMap[activeTab];
+  });
 
-  useEffect(() => {
-    const { startDate, endDate } = getDateRange();
-    fetchPosts(activeTab, startDate, endDate);
-  }, [activeTab, selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
+  // Update counts based on filtered posts
+  const postCreatedCount = timeframeFilteredPosts.filter(post => post.status === 'published').length;
+  const postScheduledCount = timeframeFilteredPosts.filter(post => post.status === 'schedule').length;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'No date';
@@ -193,6 +202,16 @@ const Dashboard = () => {
     return null;
   };
 
+  const handlePostClick = (post: any) => {
+    if (post) {
+      const postWithRequiredFields = {
+        ...post,
+        postType: post.postType || 'post'
+      };
+      editPostContext.onOpen(post._id, postWithRequiredFields, 'GMT+00:00');
+    }
+  };
+
   return (
     <div className="w-full h-full p-5 border border-gray-300 bg-white overflow-y-auto box-border relative [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
       <ActionScreenHeader
@@ -206,7 +225,7 @@ const Dashboard = () => {
         handlePrevPeriod={handlePrevPeriod}
         handleNextPeriod={handleNextPeriod}
       />
-      {selectedPost && (
+      {false && (
         <div className="flex gap-[10px] justify-between">
           <div className="flex flex-col gap-5">
             <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[246px] h-[108px]">
@@ -242,7 +261,7 @@ const Dashboard = () => {
       <div
         id="posts-container"
         className={`absolute left-1/2 transform -translate-x-1/2 w-[95%] max-w-full overflow-x-hidden overflow-y-auto rounded-[10px] bg-gray-200/30 bottom-0 ${
-          selectedPost ? 'top-[450px]' : 'top-[150px]'
+          false ? 'top-[450px]' : 'top-[150px]'
         }`}
       >
         <div className="flex justify-center m-[20px_30px] pb-[10px]">
@@ -278,9 +297,11 @@ const Dashboard = () => {
                 key={post._id}
                 id="post-item"
                 className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 m-[0_30px_15px_30px] hover:translate-x-[5px] ${
-                  index % 2 ? 'bg-yellow-500' : 'bg-purple-200'
+                  index % 2 
+                    ? 'bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200' 
+                    : 'bg-gradient-to-r from-pink-200 via-rose-200 to-red-200'
                 }`}
-                onClick={() => setSelectedPost(post)}
+                onClick={() => handlePostClick(post)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="w-[50px] h-[50px] mr-[15px] flex-shrink-0 flex items-center justify-center overflow-hidden rounded-[6px] bg-gray-100 border border-gray-300">
@@ -297,7 +318,7 @@ const Dashboard = () => {
 
                 <div className="flex-1 min-w-0 break-words">
                   <h4 id="post-title" className="m-0 mb-[5px] data-cy='post-title' text-base text-gray-800 font-semibold">
-                    {post.title}
+                    {post.title} : {post.status}
                   </h4>
                   <p id="post-date" className="m-0 text-[13px] text-black font-normal">
                     {formatDate(post.scheduleDate || post.createdAt)}
