@@ -1,7 +1,5 @@
-// @ts-nocheck
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { getPosts } from '../services/postServices.ts';
 import twitterIcon from '../assets/icons/twitter.png';
 import instagramIcon from '../assets/icons/instagram.png';
 import tiktokIcon from '../assets/icons/tiktok.png';
@@ -9,34 +7,48 @@ import linkedinIcon from '../assets/icons/linkedin.png';
 import facebookIcon from '../assets/icons/facebook.png';
 import youtubeIcon from '../assets/icons/youtube.png';
 import ActionScreenHeader from './ActionScreenHeader.tsx';
-import { CalendarView } from '@/types/post';
+import { CalendarView, Post as PostType, PlatformType } from '@/types/post';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 import { useEditPostContext } from '@/context/EditPostProvider';
-import EditPost from '@/components/EditPost';
+
+type TabType = 'past' | 'upcoming' | 'drafts';
+
+// Define supported platforms for icons
+type SupportedPlatform = 'twitter' | 'instagram' | 'tiktok' | 'linkedin' | 'facebook' | 'youtube';
+
+interface PostAnalytics {
+  likes: number;
+  comments: number;
+  views: number;
+}
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState('past');
-  const [selectedMonth, setSelectedMonth] = useState(4); // 0-based index for May
-  const [selectedYear, setSelectedYear] = useState(2025);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [timeframe, setTimeframe] = useState<CalendarView>('month'); // Track 'month' or 'week'
+  const [activeTab, setActiveTab] = useState<TabType>('past');
+  const today = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
+  const [postAnalytics, setPostAnalytics] = useState<PostAnalytics>({
+    likes: 0,
+    comments: 0,
+    views: 0
+  });
+  const [timeframe, setTimeframe] = useState<CalendarView>('month');
   const [weekStart, setWeekStart] = useState(() => {
-    const today = new Date('2025-05-20'); // Updated to current date
     const dayOfWeek = today.getDay();
     const start = new Date(today);
-    start.setDate(today.getDate() - dayOfWeek); // Start of week (Sunday)
+    start.setDate(today.getDate() - dayOfWeek);
     return start;
   });
   const [weekEnd, setWeekEnd] = useState(() => {
-    const today = new Date('2025-05-20'); // Updated to current date
     const dayOfWeek = today.getDay();
     const end = new Date(today);
-    end.setDate(today.getDate() + (6 - dayOfWeek)); // End of week (Saturday)
+    end.setDate(today.getDate() + (6 - dayOfWeek));
     return end;
   });
-  const [loading, setLoading] = useState(false); // Track loading state
-  const [error, setError] = useState(null); // Track errors
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
   const posts = usePostStore((state) => state.posts);
@@ -76,14 +88,14 @@ const Dashboard = () => {
             setLoading(false);
           }
         }
-      }, 500); // 500ms debounce delay
-    } catch (err) {
-      setError(err.message || 'Failed to fetch posts');
+      }, 500);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch posts';
+      setError(errorMessage);
       setLoading(false);
     }
   };
 
-  // Get display date based on timeframe
   const getDisplayDate = () => {
     let date;
     if (timeframe === 'month') {
@@ -97,14 +109,14 @@ const Dashboard = () => {
     return date;
   };
 
-  // Map activeTab to status for API
-  const getStatusFromTab = (tab: string) => {
-    const statusMap = {
+  // Map activeTab  status for API
+  const getStatusFromTab = (tab: TabType): string => {
+    const statusMap: Record<TabType, string> = {
       past: 'published',
       upcoming: 'schedule',
       drafts: 'draft',
     };
-    return statusMap[tab] || '';
+    return statusMap[tab];
   };
 
   // Filter posts by timeframe (month/week)
@@ -119,7 +131,7 @@ const Dashboard = () => {
 
   // Filter posts by status based on active tab
   const filteredPosts = timeframeFilteredPosts.filter(post => {
-    const statusMap = {
+    const statusMap: Record<TabType, string> = {
       past: 'published',
       upcoming: 'schedule',
       drafts: 'draft'
@@ -127,11 +139,10 @@ const Dashboard = () => {
     return post.status === statusMap[activeTab];
   });
 
-  // Update counts based on filtered posts
   const postCreatedCount = timeframeFilteredPosts.filter(post => post.status === 'published').length;
   const postScheduledCount = timeframeFilteredPosts.filter(post => post.status === 'schedule').length;
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | Date) => {
     if (!dateString) return 'No date';
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -144,8 +155,8 @@ const Dashboard = () => {
     }).replace(',', ' -');
   };
 
-  const getPlatformIcon = (platform: string[]) => {
-    const platformIcons = {
+  const getPlatformIcon = (platform?: PlatformType[]) => {
+    const platformIcons: Record<SupportedPlatform, string> = {
       twitter: twitterIcon,
       instagram: instagramIcon,
       tiktok: tiktokIcon,
@@ -154,8 +165,8 @@ const Dashboard = () => {
       youtube: youtubeIcon
     };
 
-    const platformName = platform && platform[0]; // Access first platform in array
-    if (platformName && platformIcons[platformName]) {
+    const platformName = platform?.[0] as SupportedPlatform | undefined;
+    if (platformName && platformName in platformIcons) {
       return (
         <img
           src={platformIcons[platformName]}
@@ -167,13 +178,9 @@ const Dashboard = () => {
     return null;
   };
 
-  const handlePostClick = (post: any) => {
+  const handlePostClick = (post: PostType) => {
     if (post) {
-      const postWithRequiredFields = {
-        ...post,
-        postType: post.postType || 'post'
-      };
-      editPostContext.onOpen(post._id, postWithRequiredFields, 'GMT+00:00');
+      editPostContext.onOpen(post._id, post, 'GMT+00:00');
     }
   };
 
@@ -193,7 +200,8 @@ const Dashboard = () => {
         setWeekEnd={setWeekEnd}
         weekNavigationCountRef={weekNavigationCountRef}
       />
-      {false && (
+      {false && 
+      (
         <div className="flex gap-[10px] justify-between">
           <div className="flex flex-col gap-5">
             <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[246px] h-[108px]">
@@ -209,9 +217,9 @@ const Dashboard = () => {
             <h3 className="text-base font-semibold text-gray-800 m-0 mb-[10px]">Ayrshare analytics</h3>
             {selectedPost ? (
               <div className="mt-[10px]">
-                <p className="text-sm text-gray-800 my-[5px]">Likes: {selectedPost.likes || 234}</p>
-                <p className="text-sm text-gray-800 my-[5px]">Comments: {selectedPost.comments || 45}</p>
-                <p className="text-sm text-gray-800 my-[5px]">Views: {selectedPost.views || 1250}</p>
+                <p className="text-sm text-gray-800 my-[5px]">Likes: {postAnalytics.likes}</p>
+                <p className="text-sm text-gray-800 my-[5px]">Comments: {postAnalytics.comments}</p>
+                <p className="text-sm text-gray-800 my-[5px]">Views: {postAnalytics.views}</p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-[80%]">
@@ -233,7 +241,7 @@ const Dashboard = () => {
         }`}
       >
         <div className="flex justify-center m-[20px_30px] pb-[10px]">
-          {['past', 'upcoming', 'drafts'].map(tab => (
+          {(['past', 'upcoming', 'drafts'] as const).map(tab => (
             <button
               key={tab}
               id={activeTab === tab ? 'active-tab-button' : 'tab-button'}
