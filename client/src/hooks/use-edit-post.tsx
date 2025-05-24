@@ -127,7 +127,7 @@ export const useEditPost = () => {
     setIsLoading(true);
     try {
       // Call the deletePost API
-      const response = await deletePost({ postId: post._id });
+      const response = await deletePost(post._id);
       if (response && response.success) {
         toast({
           title: 'Success',
