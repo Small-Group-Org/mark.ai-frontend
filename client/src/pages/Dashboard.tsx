@@ -24,8 +24,8 @@ interface PostAnalytics {
 }
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('past');
   const today = new Date();
+  const [activeTab, setActiveTab] = useState<TabType>('past');
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
   const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
@@ -36,15 +36,13 @@ const Dashboard = () => {
   });
   const [timeframe, setTimeframe] = useState<CalendarView>('month');
   const [weekStart, setWeekStart] = useState(() => {
-    const dayOfWeek = today.getDay();
     const start = new Date(today);
-    start.setDate(today.getDate() - dayOfWeek);
+    start.setDate(today.getDate() - today.getDay());
     return start;
   });
   const [weekEnd, setWeekEnd] = useState(() => {
-    const dayOfWeek = today.getDay();
     const end = new Date(today);
-    end.setDate(today.getDate() + (6 - dayOfWeek));
+    end.setDate(today.getDate() + (6 - today.getDay()));
     return end;
   });
   const [loading, setLoading] = useState(false);
@@ -54,39 +52,33 @@ const Dashboard = () => {
   const posts = usePostStore((state) => state.posts);
   const editPostContext = useEditPostContext();
 
-  // Effect for fetching posts when timeframe changes
+  // Effect for syncing posts when month or week changes
   useEffect(() => {
-    fetchPosts();
-
-    // Cleanup function
+    syncPosts();
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [selectedMonth, selectedYear, timeframe, weekStart, weekEnd]);
+  }, [selectedMonth, selectedYear, weekStart, weekEnd]);
 
-  // Fetch posts from API
-  const fetchPosts = async () => {
+  // Effect for syncing posts when timeframe changes
+  useEffect(() => {
+    syncPostsFromDB(getDisplayDate());
+    weekNavigationCountRef.current = 0;
+  }, [timeframe]);
+
+  const syncPosts = async () => {
     setError(null);
     try {
-      // Clear any existing timeout
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      
-      // Set new timeout for syncing posts
       debounceRef.current = setTimeout(async () => {
-        if (timeframe === 'month') {
+        const shouldSync = timeframe === 'month' || (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3);
+        
+        if (shouldSync) {
           setLoading(true);
-          const displayDate = getDisplayDate();
-          await syncPostsFromDB(displayDate);
-          setLoading(false);
-        } else if (timeframe === 'week') {
-          // sync after approximately a month's worth of weeks
-          if (Math.abs(weekNavigationCountRef.current) >= 3) {
-            setLoading(true);
-            const displayDate = getDisplayDate();
-            await syncPostsFromDB(displayDate);
-            weekNavigationCountRef.current = 0; // Reset counter after sync
-            setLoading(false);
+          await syncPostsFromDB(getDisplayDate());
+          if (timeframe === 'week') {
+            weekNavigationCountRef.current = 0;
           }
+          setLoading(false);
         }
       }, 500);
     } catch (err: unknown) {
@@ -258,7 +250,7 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-col gap-[5px]">
-          {loading && <p className="text-center text-gray-600">Loading...</p>}
+          {loading && <p className="text-center text-gray-600">Loading posts...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
           {!loading && !error && filteredPosts.length === 0 && (
             <p className="text-center text-gray-600">No posts found.</p>
@@ -274,8 +266,8 @@ const Dashboard = () => {
                 id="post-item"
                 className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 m-[0_30px_15px_30px] hover:translate-x-[5px] ${
                   index % 2 
-                    ? 'bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200' 
-                    : 'bg-gradient-to-r from-pink-200 via-rose-200 to-red-200'
+                    ? 'bg-gradient-to-r from-rose-300 to-pink-400' 
+                    : 'bg-gradient-to-r from-blue-300 to-sky-400'
                 }`}
                 onClick={() => handlePostClick(post)}
                 style={{ cursor: 'pointer' }}
@@ -293,7 +285,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="flex-1 min-w-0 break-words">
-                  <h4 id="post-title" className="m-0 mb-[5px] data-cy='post-title' text-base text-gray-800 font-semibold">
+                  <h4 id="post-title" className="m-0 mb-[5px] data-cy='post-title' text-lg font-['Dancing_Script'] font-bold text-gray-800 tracking-wide hover:text-rose-500 transition-colors duration-300">
                     {post.title} : {post.status}
                   </h4>
                   <p id="post-date" className="m-0 text-[13px] text-black font-normal">

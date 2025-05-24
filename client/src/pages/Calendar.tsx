@@ -26,16 +26,18 @@ export default function CalendarRoute() {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
 
-  // Effect for handling debounced post fetching for navigation
+  // Effect for syncing posts when month or week changes
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     
     debounceRef.current = setTimeout(async () => {
-      if (timeframe === 'month') {
+      const shouldSync = timeframe === 'month' || (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3);
+      
+      if (shouldSync) {
         await syncPostsFromDB(getDisplayDate());
-      } else if (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3) {
-        await syncPostsFromDB(getDisplayDate());
-        weekNavigationCountRef.current = 0;
+        if (timeframe === 'week') {
+          weekNavigationCountRef.current = 0;
+        }
       }
     }, 500);
 
@@ -44,7 +46,6 @@ export default function CalendarRoute() {
     };
   }, [selectedMonth, selectedYear, weekStart, weekEnd]);
 
-  // Effect for syncing posts when timeframe changes
   useEffect(() => {
     syncPostsFromDB(getDisplayDate());
     weekNavigationCountRef.current = 0;
