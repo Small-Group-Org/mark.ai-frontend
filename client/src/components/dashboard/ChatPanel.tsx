@@ -38,7 +38,7 @@ const ChatPanel = () => {
       setIsThinking(true);
       handleChatResponse(initialiseChatWithMark);
     }
-  }, []);
+  }, [isAuth]);
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {

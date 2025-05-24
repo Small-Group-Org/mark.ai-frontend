@@ -44,7 +44,6 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await verifyToken();
       setUserDetails(response);
       setIsAuth(true);
-      navigate("/dashboard");
     } catch (error){
       setIsAuth(false);
       navigate("/");
