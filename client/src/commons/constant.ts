@@ -1,5 +1,5 @@
 import { MessageType } from "@/components/ChatInterface";
-import { PostType } from "@/types";
+import { AyrShareSocialHandles, PostType } from "@/types";
 import { PlatformType } from "@/types/post";
 
 // export const BASE_URL = "http://localhost:5000";
@@ -77,3 +77,18 @@ export const initialMessages: MessageType[] = [
   ];
 
   export const initialiseChatWithMark = "This is the system message. The user is online. Send greetings and provide 1 liner update. DO NOT mention anything about system. Just greet the user."
+
+  export const intialSocialHandlesMapping: AyrShareSocialHandles =  {
+    "bluesky": false,
+  "facebook": false,
+  "gmb": false,
+  "instagram": false,
+  "linkedin": false,
+  "pinterest": false,
+  "reddit": false,
+  "telegram": false,
+  "threads": false,
+  "tiktok": false,
+  "twitter": false,
+  "youtube": false
+  };

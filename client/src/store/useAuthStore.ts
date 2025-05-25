@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { AyrShareSocialHandles, User } from '@/types';
 import { removeValue, STORAGE_KEYS } from '@/commons/storage';
 import { resetPostState } from './usePostStore';
+import { intialSocialHandlesMapping } from '@/commons/constant';
 
 interface PostState {
   isAuth: boolean | null;
@@ -26,20 +27,7 @@ export const useAuthStore = create<PostState>((set) => ({
   isOpen: false,
   view: 'signin',
   isVerifying: false,
-  userSocialHandles: {
-    "bluesky": false,
-    "facebook": false,
-    "gmb": false,
-    "instagram": false,
-    "linkedin": false,
-    "pinterest": false,
-    "reddit": false,
-    "telegram": false,
-    "threads": false,
-    "tiktok": false,
-    "twitter": false,
-    "youtube": false
-},
+  userSocialHandles: intialSocialHandlesMapping,
   setIsAuth: (isAuth: boolean) => set({isAuth}),
   setUserDetails: (userDetails: User) => set({userDetails}),
   setIsOpen: (isOpen: boolean) => set({isOpen}),
