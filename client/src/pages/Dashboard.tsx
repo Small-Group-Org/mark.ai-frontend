@@ -292,7 +292,11 @@ const Dashboard = () => {
                 </div>
 
                 <div className="flex-1 min-w-0 break-words">
-                  <h4 id="post-title" className="m-0 mb-[5px] data-cy='post-title' text-lg font-['Dancing_Script'] font-bold text-gray-800 tracking-wide hover:text-rose-500 transition-colors duration-300">
+                  <h4 id="post-title" className={`m-0 mb-[5px] data-cy='post-title' text-lg font-['Dancing_Script'] font-bold text-gray-800 tracking-wide transition-colors duration-300 ${
+                    index % 2 
+                      ? 'hover:text-indigo-600'  // For pink background
+                      : 'hover:text-rose-500'    // For blue background
+                  }`}>
                     {post.title} : {post.status}
                   </h4>
                   <p id="post-date" className="m-0 text-[13px] text-black font-normal">
