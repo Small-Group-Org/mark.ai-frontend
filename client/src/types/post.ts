@@ -33,8 +33,8 @@ export interface Post {
   scheduleDate: Date;
   publish: string;
   platformId?: string;
-  createdAt: Date;
-  ayrshareId: string;
+  createdAt?: string;
+  ayrshareId?: string;
 }
 
 export type CalendarView = 'month' | 'week';

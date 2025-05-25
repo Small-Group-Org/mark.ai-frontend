@@ -116,8 +116,6 @@ const CreatePost = () => {
       status: 'draft' as PostStatus,
       userId: '',
       publish: '',
-      createdAt: new Date(),
-      ayrshareId: ''
     };
     onSave(updatedPost);
   };
@@ -129,8 +127,6 @@ const CreatePost = () => {
       status: 'schedule' as PostStatus,
       userId: '',
       publish: '',
-      createdAt: new Date(),
-      ayrshareId: ''
     };
     onSave(updatedPost);
   };

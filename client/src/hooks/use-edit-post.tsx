@@ -19,8 +19,6 @@ const DEFAULT_POST: Post = {
   scheduleDate: new Date(),
   publish: '',
   platformId: undefined,
-  createdAt: new Date(),
-  ayrshareId: '',
 };
 
 export interface EditPostStore {
