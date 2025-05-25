@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import { Image } from 'lucide-react';
 import twitterIcon from '../assets/icons/twitter.png';
 import instagramIcon from '../assets/icons/instagram.png';
 import tiktokIcon from '../assets/icons/tiktok.png';
@@ -281,6 +282,12 @@ const Dashboard = () => {
                       <source src={media} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
+                  )}
+                  {!isImage && !isVideo && (
+                    <div className="flex flex-col items-center justify-center w-full h-full bg-gray-50">
+                      <Image className="w-5 h-5 text-gray-400" />
+                      <span className="text-[8px] text-gray-400 mt-1">No Media</span>
+                    </div>
                   )}
                 </div>
 
