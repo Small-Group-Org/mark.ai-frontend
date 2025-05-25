@@ -31,10 +31,29 @@ export interface Post {
   postType: string;
   status: PostStatus;
   scheduleDate: Date;
-  publish: string;
-  platformId?: string;
-  createdAt?: string;
-  ayrshareId?: string;
+}
+
+export interface PostDetails {
+  _id?: string;
+  title?: string;
+  content?: string;
+  hashtag?: string;
+  mediaUrl?: string[];
+  platform?: PlatformType[];
+  postType?: string;
+  status?: PostStatus;
+  scheduleDate: Date;
+}
+
+export interface PostApiDetails {
+  title?: string;
+  content?: string;
+  hashtag?: string;
+  mediaUrl?: string[];
+  platform?: PlatformType[];
+  postType?: string;
+  status?: PostStatus;
+  scheduleDate?: string;
 }
 
 export type CalendarView = 'month' | 'week';

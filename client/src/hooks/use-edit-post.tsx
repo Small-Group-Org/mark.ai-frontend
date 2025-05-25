@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Post } from '@/types/post';
+import { Post, PostDetails } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
 import { deletePost, updatePost } from '@/services/postServices';
 import { syncPostsFromDB } from '@/utils/postSync';
@@ -16,9 +16,7 @@ const DEFAULT_POST: Post = {
   platform: [],
   postType: 'post',
   status: 'draft',
-  scheduleDate: new Date(),
-  publish: '',
-  platformId: undefined,
+  scheduleDate: new Date()
 };
 
 export interface EditPostStore {
@@ -61,21 +59,18 @@ export const useEditPost = () => {
   }, []);
 
   // Save the post
-  const onSave = useCallback(async (updatedPost: Post) => {
+  const onSave = useCallback(async (updatedPost: PostDetails) => {
     setIsLoading(true);
     try {
       const response = await updatePost({
         title: updatedPost.title,
         content: updatedPost.content,
-        platform: updatedPost.platform,
-        status: updatedPost.status,
         hashtag: updatedPost.hashtag,
         mediaUrl: updatedPost.mediaUrl,
+        platform: updatedPost.platform,
         postType: updatedPost.postType,
+        status: updatedPost.status,
         scheduleDate: updatedPost.scheduleDate.toISOString(),
-        publish: 'true',
-        ayrshareId: updatedPost.ayrshareId || '',
-        platformId: updatedPost.platformId
       }, updatedPost._id || '');
 
       if (!response?.success) {

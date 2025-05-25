@@ -13,18 +13,13 @@ const CreatePost = () => {
     livePost,
     setLivePost,
   } = usePostStore();
-  const {content, hashtag, mediaUrl, platform, postType, scheduleDate, title} = livePost;
+  const { platform, postType, scheduleDate } = livePost;
 
   const { toast } = useToast();
-  const { isLoading, onSave } = useEditPost();
+  const { onSave } = useEditPost();
   const [isUpdating, setIsUpdating] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null);
-  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
-
-  const imageUrl =
-    localImageUrl ||
-    (livePost.mediaUrl && livePost.mediaUrl.length > 0 ? livePost.mediaUrl[0] : undefined);
 
   useEffect(() => {
     try {
@@ -41,10 +36,7 @@ const CreatePost = () => {
   useEffect(() => {
     if (uploadedImageFile) {
       const url = URL.createObjectURL(uploadedImageFile);
-      setLocalImageUrl(url);
       return () => URL.revokeObjectURL(url);
-    } else {
-      setLocalImageUrl(null);
     }
   }, [uploadedImageFile]);
 
@@ -79,9 +71,11 @@ const CreatePost = () => {
   };
 
   const handlePlatformToggle = async (platformName: PlatformType) => {
-    const newPlatforms = platform.includes(platformName)
-      ? platform.filter((p) => p !== platformName)
-      : [...platform, platformName];
+    const currentPlatforms = Array.isArray(platform) ? platform : [];
+
+    const newPlatforms = currentPlatforms.includes(platformName)
+      ? currentPlatforms.filter((p) => p !== platformName)
+      : [...currentPlatforms, platformName];
     
     updatePostHandler("platforms", newPlatforms);
   };
@@ -105,7 +99,6 @@ const CreatePost = () => {
 
   const handleImageDelete = () => {
     setUploadedImageFile(null);
-    setLocalImageUrl(null);
     setLivePost({ mediaUrl: [] });
   };
 
@@ -114,8 +107,6 @@ const CreatePost = () => {
       ...livePost,
       scheduleDate: date || new Date(),
       status: 'draft' as PostStatus,
-      userId: '',
-      publish: '',
     };
     onSave(updatedPost);
   };
@@ -125,8 +116,6 @@ const CreatePost = () => {
       ...livePost,
       scheduleDate: date || new Date(),
       status: 'schedule' as PostStatus,
-      userId: '',
-      publish: '',
     };
     onSave(updatedPost);
   };
@@ -149,7 +138,7 @@ const CreatePost = () => {
                 key={platformObj.name}
                 label={platformObj.name.charAt(0).toUpperCase() + platformObj.name.slice(1)}
                 icon={platformObj.icon}
-                active={platform.includes(platformObj.name)}
+                active={!!platform?.includes(platformObj.name)}
                 onToggle={() => handlePlatformToggle(platformObj.name)}
               />
             ))}

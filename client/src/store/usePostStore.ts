@@ -10,14 +10,14 @@ interface PostState {
 
   livePost: {
     _id?: string;
-    title: string;
-    content: string;
-    hashtag: string;
-    mediaUrl: string[];
-    platform: PlatformType[];
-    postType: string;
-    scheduleDate: Date;
-    status: PostStatus;
+    title?: string;
+    content?: string;
+    hashtag?: string;
+    mediaUrl?: string[];
+    platform?: PlatformType[];
+    postType?: string;
+    scheduleDate?: Date;
+    status?: PostStatus;
   };
   setLivePost: (postState: Partial<PostState['livePost']>) => void;
 
