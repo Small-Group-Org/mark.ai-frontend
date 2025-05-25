@@ -10,10 +10,10 @@ import useEditPost from "@/hooks/use-edit-post";
 
 const CreatePost = () => {
   const {
-    createPost,
-    setCreatePost,
+    livePost,
+    setLivePost,
   } = usePostStore();
-  const {content, hashtag, mediaUrl, platform, postType, scheduleDate, title} = createPost;
+  const {content, hashtag, mediaUrl, platform, postType, scheduleDate, title} = livePost;
 
   const { toast } = useToast();
   const { isLoading, onSave } = useEditPost();
@@ -24,19 +24,19 @@ const CreatePost = () => {
 
   const imageUrl =
     localImageUrl ||
-    (createPost.mediaUrl && createPost.mediaUrl.length > 0 ? createPost.mediaUrl[0] : undefined);
+    (livePost.mediaUrl && livePost.mediaUrl.length > 0 ? livePost.mediaUrl[0] : undefined);
 
   useEffect(() => {
     try {
-      if (createPost.scheduleDate) {
-        setDate(createPost.scheduleDate); // Set the main date object
+      if (livePost.scheduleDate) {
+        setDate(livePost.scheduleDate); // Set the main date object
       }
     } catch (error) {
       console.error("Error parsing scheduleDate prop:", error);
       const now = new Date();
       setDate(now);
     }
-  }, [createPost.scheduleDate]);
+  }, [livePost.scheduleDate]);
 
   useEffect(() => {
     if (uploadedImageFile) {
@@ -58,11 +58,11 @@ const CreatePost = () => {
         {
           [key]: value,
         },
-        createPost._id || ""
+        livePost._id || ""
       );
 
       if(response){
-        setCreatePost({
+        setLivePost({
           [key]: value,
         });
       }
@@ -92,7 +92,7 @@ const CreatePost = () => {
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
-    setCreatePost({ scheduleDate: newDate });
+    setLivePost({ scheduleDate: newDate });
   };
   
   // Image upload handler
@@ -106,12 +106,12 @@ const CreatePost = () => {
   const handleImageDelete = () => {
     setUploadedImageFile(null);
     setLocalImageUrl(null);
-    setCreatePost({ mediaUrl: [] });
+    setLivePost({ mediaUrl: [] });
   };
 
   const handleSaveDraft = () => {
     const updatedPost = {
-      ...createPost,
+      ...livePost,
       scheduleDate: date || new Date(),
       status: 'draft' as PostStatus,
       userId: '',
@@ -124,7 +124,7 @@ const CreatePost = () => {
 
   const handleSchedule = () => {
     const updatedPost = {
-      ...createPost,
+      ...livePost,
       scheduleDate: date || new Date(),
       status: 'schedule' as PostStatus,
       userId: '',

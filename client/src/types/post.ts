@@ -18,7 +18,7 @@ export type PlatformType =
   | "twitter"
   | "youtube";
 
-export type PostStatus = 'draft' | 'schedule' | 'public' | 'published' | 'deleted';
+export type PostStatus = 'draft' | 'schedule' | 'live' | 'published' | 'deleted';
 
 export interface Post {
   _id?: string;

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Message } from '@/types';
-import { Post, PlatformType } from '@/types/post';
+import { Post, PlatformType, PostStatus } from '@/types/post';
 
 interface PostState {
   messages: Message[];
@@ -8,7 +8,7 @@ interface PostState {
   isThinking: boolean;
   setIsThinking: (isThinking: boolean) => void;
 
-  createPost: {
+  livePost: {
     _id?: string;
     title: string;
     content: string;
@@ -17,8 +17,9 @@ interface PostState {
     platform: PlatformType[];
     postType: string;
     scheduleDate: Date;
+    status: PostStatus;
   };
-  setCreatePost: (postState: Partial<PostState['createPost']>) => void;
+  setLivePost: (postState: Partial<PostState['livePost']>) => void;
 
   posts: Post[];
   setPosts: (posts: Post[]) => void;
@@ -30,11 +31,9 @@ interface PostState {
 }
 
 const initialState = {
-  showSignUpPrompt: false,
-  messageCount: 0,
   messages: [],
   isThinking: false,
-  createPost: {
+  livePost: {
     title: "",
     content: "",
     hashtag: "",
@@ -42,6 +41,7 @@ const initialState = {
     platform: [],
     postType: 'post',
     scheduleDate: new Date(),
+    status: 'live' as PostStatus,
   },
   posts: [],
   displayDate: new Date(),
@@ -55,8 +55,8 @@ export const usePostStore = create<PostState>((set) => ({
   setIsThinking: (isThinking) => set({ isThinking }),
 
   // Post state actions
-  setCreatePost: (newPostState) => set((state) => ({
-    createPost: { ...state.createPost, ...newPostState }
+  setLivePost: (newPostState) => set((state) => ({
+    livePost: { ...state.livePost, ...newPostState }
   })),
 
   setPosts: (posts) => set({ posts }),

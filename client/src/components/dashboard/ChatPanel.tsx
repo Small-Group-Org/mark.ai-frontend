@@ -13,7 +13,7 @@ const ChatPanel = () => {
     messages,
     isThinking,
     setIsThinking,
-    setCreatePost,
+    setLivePost,
     setMessages,
   } = usePostStore();
   
@@ -81,7 +81,7 @@ const ChatPanel = () => {
         // Update post state if available
         if (response.hasPost) {
           const { post } = response;
-          setCreatePost({
+          setLivePost({
             title: post.title ?? "",
             content: post.content ?? "",
             hashtag: Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? "")

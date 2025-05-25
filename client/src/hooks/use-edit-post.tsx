@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
-import { deletePost, updatePost, createPost } from '@/services/postServices';
+import { deletePost, updatePost } from '@/services/postServices';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 
