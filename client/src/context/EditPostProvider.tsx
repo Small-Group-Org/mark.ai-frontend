@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import useEditPost, { EditPostStore } from '@/hooks/use-edit-post';
+import useEditPost from '@/hooks/use-edit-post';
 import EditPost from '@/components/EditPost';
 import { Post } from '@/types/post';
 
