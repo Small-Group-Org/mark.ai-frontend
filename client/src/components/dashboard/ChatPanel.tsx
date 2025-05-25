@@ -6,7 +6,7 @@ import { Message } from "@/types";
 import { chatWithMark } from "@/services/chatServices";
 import { useAuthStore } from "@/store/useAuthStore";
 import { marked } from 'marked';
-import { initialiseChatWithMark, initialMessages } from "@/commons/constant";
+import { initialiseChatWithMark } from "@/commons/constant";
 
 const ChatPanel = () => {
   const {
@@ -15,6 +15,7 @@ const ChatPanel = () => {
     setIsThinking,
     setLivePost,
     setMessages,
+    livePost,
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
@@ -64,7 +65,11 @@ const ChatPanel = () => {
   const handleChatResponse = async (messageText: string) => {
     try {
       const requestBody = {
-        message: messageText
+        message: messageText,
+        post: {
+          ...livePost,
+          scheduleDate: livePost.scheduleDate.toISOString()
+        }
       };
 
       const response = await chatWithMark(requestBody);
