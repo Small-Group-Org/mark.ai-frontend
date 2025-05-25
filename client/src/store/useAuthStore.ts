@@ -19,6 +19,8 @@ interface PostState {
   setIsVerifying: (isVerifying: boolean) => void;
   userSocialHandles: AyrShareSocialHandles;
   setUserSocialHandles: (userSocialHandles: AyrShareSocialHandles) => void;
+  timeZoneLabel: string;
+  setTimeZoneLabel: (timeZoneLabel: string) => void;
 }
 
 export const useAuthStore = create<PostState>((set) => ({
@@ -26,6 +28,7 @@ export const useAuthStore = create<PostState>((set) => ({
   isOpen: false,
   view: 'signin',
   isVerifying: false,
+  timeZoneLabel: 'GMT+05:30', // Default timezone
   userSocialHandles: {
     "bluesky": false,
     "facebook": false,
@@ -52,4 +55,5 @@ export const useAuthStore = create<PostState>((set) => ({
   },
   setIsVerifying: (isVerifying: boolean) => set({isVerifying}),
   setUserSocialHandles: (userSocialHandles: AyrShareSocialHandles) => set({userSocialHandles}),
+  setTimeZoneLabel: (timeZoneLabel: string) => set({timeZoneLabel}),
 }));
