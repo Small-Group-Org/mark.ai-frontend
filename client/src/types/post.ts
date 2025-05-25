@@ -22,7 +22,7 @@ export type PostStatus = 'draft' | 'schedule' | 'live' | 'published' | 'deleted'
 
 export interface Post {
   _id?: string;
-  userId: string | Record<string, any>;
+  userId?: string | Record<string, any>;
   title: string;
   content: string;
   hashtag: string;
@@ -31,18 +31,8 @@ export interface Post {
   postType: string;
   status: PostStatus;
   scheduleDate: Date;
-}
-
-export interface PostDetails {
-  _id?: string;
-  title?: string;
-  content?: string;
-  hashtag?: string;
-  mediaUrl?: string[];
-  platform?: PlatformType[];
-  postType?: string;
-  status?: PostStatus;
-  scheduleDate: Date;
+  publish?: string;
+  createdAt?: string;
 }
 
 export interface PostApiDetails {

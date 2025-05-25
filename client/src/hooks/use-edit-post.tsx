@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Post, PostDetails } from '@/types/post';
+import { Post } from '@/types/post';
 import { useToast } from '@/hooks/use-toast';
 import { deletePost, updatePost } from '@/services/postServices';
 import { syncPostsFromDB } from '@/utils/postSync';
@@ -59,7 +59,7 @@ export const useEditPost = () => {
   }, []);
 
   // Save the post
-  const onSave = useCallback(async (updatedPost: PostDetails) => {
+  const onSave = useCallback(async (updatedPost: Post) => {
     setIsLoading(true);
     try {
       const response = await updatePost({

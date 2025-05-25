@@ -8,17 +8,7 @@ interface PostState {
   isThinking: boolean;
   setIsThinking: (isThinking: boolean) => void;
 
-  livePost: {
-    _id?: string;
-    title?: string;
-    content?: string;
-    hashtag?: string;
-    mediaUrl?: string[];
-    platform?: PlatformType[];
-    postType?: string;
-    scheduleDate?: Date;
-    status?: PostStatus;
-  };
+  livePost:Post;
   setLivePost: (postState: Partial<PostState['livePost']>) => void;
 
   posts: Post[];
