@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { generateAyrshareToken, getAyrshareSocialHandles } from "@/services/ayrShareServices";
 import { PlatformName } from "@/types";
 import { PlatformType } from '@/types/post';
+import { convertSocialHandles } from "@/commons/utils";
 
 const headerBg = "bg-[#11132f]";
 const headerBorder = "border-gray-700/50";
@@ -28,12 +29,11 @@ const Header = () => {
   const handleAyrshareSocialHandles = async () => {
      try{
       const socialMediaHandles = await getAyrshareSocialHandles();
-      setUserSocialHandles(socialMediaHandles);
+      setUserSocialHandles(convertSocialHandles(socialMediaHandles));
      } catch(error){
       console.error(error)
      }
   }
-
 
   const handleAyrshareConnection = async (platform: string) => {
     try {
