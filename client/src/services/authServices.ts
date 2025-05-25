@@ -14,7 +14,7 @@ interface AuthResponse {
   };
 }
 
-const createDummyLivePost = async () => {
+export const createDummyLivePost = async () => {
   const postStore = usePostStore.getState();
   const currentTime = new Date();
   
@@ -31,8 +31,13 @@ const createDummyLivePost = async () => {
   postStore.setLivePost(livePost);
   
   try {
-    const savedPost = await createPost(postForDB);
-    postStore.setLivePost({ ...livePost, _id: savedPost._id });
+    let livePost = await createPost(postForDB);
+    livePost = livePost.data;
+    console.log(50, livePost);
+    postStore.setLivePost({
+      ...livePost,
+      scheduleDate: new Date(livePost.scheduleDate)
+    });
   } catch (error) {
     console.error('Failed to create live post:', error);
   }

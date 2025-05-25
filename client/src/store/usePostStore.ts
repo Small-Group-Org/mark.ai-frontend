@@ -10,6 +10,7 @@ interface PostState {
 
   livePost:Post;
   setLivePost: (postState: Partial<PostState['livePost']>) => void;
+  resetLivePost: () => void;
 
   posts: Post[];
   setPosts: (posts: Post[]) => void;
@@ -55,6 +56,13 @@ export const usePostStore = create<PostState>((set) => ({
 
   // Reset all post state
   resetPostState: () => set(initialState),
+
+  resetLivePost: () => {
+    set((state) => ({
+      livePost: { ...initialState.livePost }
+    }));
+  },
 }));
 
 export const resetPostState = usePostStore.getState().resetPostState;
+export const resetLivePost = usePostStore.getState().resetLivePost;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePostStore } from "@/store/usePostStore";
+import { resetLivePost, usePostStore } from "@/store/usePostStore";
 import { PlatformType, PostStatus } from "@/types/post";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
@@ -7,6 +7,7 @@ import { platformsRow1, postTypes } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
 import { updatePost } from "@/services/postServices";
 import useEditPost from "@/hooks/use-edit-post";
+import { createDummyLivePost } from "@/services/authServices";
 
 const CreatePost = () => {
   const {
@@ -102,24 +103,19 @@ const CreatePost = () => {
     setLivePost({ mediaUrl: [] });
   };
 
-  const handleSaveDraft = () => {
+  const handleSave = (status: PostStatus) => {
     const updatedPost = {
       ...livePost,
       scheduleDate: date || new Date(),
-      status: 'draft' as PostStatus,
+      status,
     };
+    resetLivePost();
     onSave(updatedPost);
+    setTimeout(() => {
+      createDummyLivePost();
+    }, 500);
   };
 
-  const handleSchedule = () => {
-    const updatedPost = {
-      ...livePost,
-      scheduleDate: date || new Date(),
-      status: 'schedule' as PostStatus,
-    };
-    onSave(updatedPost);
-  };
-  
   const previewPanelBg = "bg-gray-100";
   
   return (
@@ -171,8 +167,8 @@ const CreatePost = () => {
               userHandle="@steveconley"
               userTitle="Product Designer"
               scheduledDate={scheduleDate}
-              onSchedule={handleSchedule}
-              onDraft={handleSaveDraft}
+              onSchedule={() => handleSave('schedule')}
+              onDraft={() => handleSave('draft')}
               onDateChange={handleDateChange}
               hideFooter={false}
               onImageUpload={handleImageUpload}
