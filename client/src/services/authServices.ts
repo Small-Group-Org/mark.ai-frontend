@@ -4,8 +4,8 @@ import { LoginRequest, SignUpRequest } from "@/types/requestTypes";
 import { BASE_URL } from "@/commons/constant";
 import { doGET, doPOST } from "@/commons/serviceUtils";
 import { usePostStore } from '@/store/usePostStore';
-import { PostStatus, PlatformType } from '@/types/post';
 import { createPost } from './postServices';
+import { setValue, STORAGE_KEYS } from '@/commons/storage';
 
 interface AuthResponse {
   data: {
@@ -59,6 +59,7 @@ export const handleSignUp = async (
       `${BASE_URL}/auth/signup`,
       userData
     );
+    setValue(STORAGE_KEYS.TOKEN, response.data.data.token);
     await createDummyLivePost();
     return response.data;
   } catch (error) {
@@ -77,6 +78,7 @@ export const handleLogin = async (
       `${BASE_URL}/auth/login`,
       credentials
     );
+    setValue(STORAGE_KEYS.TOKEN, response.data.data.token);
     await createDummyLivePost();
     return response.data;
   } catch (error) {
