@@ -28,7 +28,7 @@ const initialSocialPlatforms: AyrsharePlatformDetails[] = [
   {
     label: "Instagram",
     value: "instagram",
-    isConnected: false,
+    isConnected: true,
     isEnabled: true,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
   },
@@ -63,7 +63,7 @@ const initialSocialPlatforms: AyrsharePlatformDetails[] = [
   {
     label: "Threads",
     value: "threads",
-    isConnected: false,
+    isConnected: true,
     isEnabled: true,
     img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmOQT83dtIlgCmJiM8X08gAFfHSDkuxBXA1Q&s"
   },
@@ -92,48 +92,54 @@ const initialSocialPlatforms: AyrsharePlatformDetails[] = [
 
 interface PostState {
   isAuth: boolean | null;
-  setIsAuth: (isAuth: boolean) => void;
   userDetails?: User;
-  setUserDetails: (userDetails: User) => void;
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   view: 'signin' | 'signup';
-  setView: (view: 'signin' | 'signup') => void;
   token?: string;
-  setToken: (token: string) => void;
-  logout: () => void;
   isVerifying: boolean;
-  setIsVerifying: (isVerifying: boolean) => void;
   timeZoneLabel: string;
-  setTimeZoneLabel: (timeZoneLabel: string) => void;
   socialPlatforms: AyrsharePlatformDetails[];
+  
+  setIsAuth: (isAuth: boolean) => void;
+  setUserDetails: (userDetails: User) => void;
+  setIsOpen: (isOpen: boolean) => void;
+  setView: (view: 'signin' | 'signup') => void;
+  setToken: (token: string) => void;
+  setIsVerifying: (isVerifying: boolean) => void;
+  setTimeZoneLabel: (timeZoneLabel: string) => void;
   updatePlatformConnection: (value: string, isConnected: boolean) => void;
   getEnabledPlatforms: () => AyrsharePlatformDetails[];
+  getConnectedPlatforms: () => AyrsharePlatformDetails[];
+  logout: () => void;
 }
 
 export const useAuthStore = create<PostState>((set, get) => ({
   isAuth: null,
+  userDetails: undefined,
   isOpen: false,
   view: 'signin',
+  token: undefined,
   isVerifying: false,
   timeZoneLabel: 'GMT+00:00',
+  socialPlatforms: initialSocialPlatforms,
+
   setIsAuth: (isAuth: boolean) => set({isAuth}),
   setUserDetails: (userDetails: User) => set({userDetails}),
   setIsOpen: (isOpen: boolean) => set({isOpen}),
   setView: (view) => set({ view }),
   setToken: (token: string) => set({token}),
-  logout: () => {
-    set({isAuth: false});
-    removeValue(STORAGE_KEYS.TOKEN);
-    resetPostState();
-  },
   setIsVerifying: (isVerifying: boolean) => set({isVerifying}),
   setTimeZoneLabel: (timeZoneLabel: string) => set({timeZoneLabel}),
-  socialPlatforms: initialSocialPlatforms,
   updatePlatformConnection: (value: string, isConnected: boolean) => set((state) => ({
     socialPlatforms: state.socialPlatforms.map((platform) =>
       platform.value === value ? { ...platform, isConnected } : platform
     )
   })),
-  getEnabledPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled)
+  getEnabledPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled),
+  getConnectedPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled && platform.isConnected),
+  logout: () => {
+    set({isAuth: false});
+    removeValue(STORAGE_KEYS.TOKEN);
+    resetPostState();
+  }
 }));

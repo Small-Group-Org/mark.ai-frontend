@@ -30,29 +30,6 @@ export const postTypes: PostType[] = [
     }
 ];
 
-export const socialMedia = [
-    {
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
-        label: "instagram"
-    },
-    {
-        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjvzC_QRv6moAhgNb5C6e3yicKgFND1g2RwA&s",
-        label: "facebook"
-    },
-    {
-         img: "https://pngdownload.io/wp-content/uploads/2023/12/X-Logo-Twitter-Logo-Iconic-Social-Media-Brand-Symbol-PNG-Transparent-Recognizable-Emblem-jpg.webp",
-        label: "twitter"
-    },
-    {
-        img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmOQT83dtIlgCmJiM8X08gAFfHSDkuxBXA1Q&s",
-        label: "threads"
-    },
-    {
-        img: "https://1000logos.net/wp-content/uploads/2017/03/Color-of-the-LinkedIn-Logo.jpg",
-        label: "linkedin"
-    },
-]
-
 export const initialMessages: MessageType[] = [
     {
       id: '1',
