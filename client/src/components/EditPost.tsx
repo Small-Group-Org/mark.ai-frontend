@@ -262,7 +262,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 <h3 className="text-xs sm:text-sm text-gray-700 font-medium mb-3">Platforms</h3>
                 
                 {/* Platform toggles in a responsive layout */}
-                <div className="flex flex-wrap justify-between gap-4">
+                <div className="grid gap-4 mb-4 w-full max-w-2xl grid-cols-[repeat(auto-fit,_minmax(140px,_1fr))]">
                   {connectedPlatforms.map((platformObj) => (
                     <div key={platformObj.value} className="flex-shrink-0">
                       <PlatformToggle
@@ -462,7 +462,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   !isEditing && "opacity-50"
                 )}>
                   <h3 className="text-xs sm:text-sm text-gray-700 font-medium mb-2">Platforms</h3>
-                  <div className="flex flex-wrap justify-between gap-4 mb-4">
+                  <div className="grid gap-4 mb-4 w-full max-w-2xl grid-cols-[repeat(auto-fit,_minmax(140px,_1fr))]">
                     {connectedPlatforms.map((platformObj) => (
                       <div key={platformObj.value} className="flex-shrink-0">
                         <PlatformToggle
