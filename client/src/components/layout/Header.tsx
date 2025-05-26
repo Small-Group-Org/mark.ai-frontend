@@ -6,7 +6,7 @@ import ConnectSocialIcon from "../ui/ConnectSocialIcon";
 import { Link } from "wouter";
 import { useAuthStore } from "@/store/useAuthStore";
 import { generateAyrshareToken, getAyrshareSocialHandles } from "@/services/ayrShareServices";
-import { PlatformName } from "@/types";
+import { PlatformType } from "@/types";
 
 const headerBg = "bg-[#11132f]";
 const headerBorder = "border-gray-700/50";
@@ -33,10 +33,10 @@ const Header = () => {
      }
   }
 
-  const handleAyrshareConnection = async (platform: string) => {
+  const handleAyrshareConnection = async (platform: PlatformType) => {
     try {
         setLoadingPlatform(platform);
-        const response = await generateAyrshareToken([platform] as PlatformName[]);
+        const response = await generateAyrshareToken([platform] as PlatformType[]);
         const currentUrl = encodeURIComponent(window.location.href);
         const hasSourceParam = window.location.href.includes(`source=${AYRSHARE}`);
         
@@ -69,7 +69,7 @@ const Header = () => {
             key={platform.value}
             image={platform.img}
             isConnected={platform.isConnected}
-            label={platform.value}
+            platform={platform.value}
             handleAyrshareConnection={handleAyrshareConnection}
             isLoading={loadingPlatform === platform.value}
           />

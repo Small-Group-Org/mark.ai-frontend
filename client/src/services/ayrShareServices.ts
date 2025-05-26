@@ -1,10 +1,10 @@
 import { BASE_URL } from "@/commons/constant";
 import { doGET, doPOST } from "@/commons/serviceUtils";
-import { PlatformName } from "@/types";
+import { PlatformType } from "@/types";
 import { GenerateAyrshareTokenResponse } from "@/types/requestTypes";
 import axios from "axios";
 
-export const generateAyrshareToken = async (platforms: PlatformName[]) => {
+export const generateAyrshareToken = async (platforms: PlatformType[]) => {
   try {
     const response = await doPOST(
       `${BASE_URL}/ayrshare/profile-connection-url`,

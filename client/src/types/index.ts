@@ -1,5 +1,3 @@
-import { PlatformType } from "./post";
-
 export interface Message {
   id: string;
   text: string;
@@ -7,26 +5,27 @@ export interface Message {
   timestamp: Date;
 }
 
+export type PlatformType =
+| "bluesky"
+| "facebook"
+| "gmb"
+| "instagram"
+| "linkedin"
+| "pinterest"
+| "reddit"
+| "telegram"
+| "threads"
+| "tiktok"
+| "twitter"
+| "youtube";
+
 export interface AyrsharePlatformDetails {
   label: string;
-  value: string;
+  value: PlatformType;
   isConnected: boolean;
   isEnabled: boolean;
-  icon?: any;
   img?: any;
 }
-
-export type PlatformName =
-  | "Instagram"
-  | "Facebook"
-  | "TikTok"
-  | "X/Twitter"
-  | "Reddit"
-  | "Telegram"
-  | "Threads"
-  | "YouTube"
-  | "Bluesky"
-  | "Google Business";
 
 export interface User {
   name: string;
@@ -51,8 +50,4 @@ export interface UserCredential {
   lastName?: string;
   rememberMe?: boolean;
   agreeToTerms?: boolean;
-}
-
-export type AyrShareSocialHandles = {
-  [key in PlatformType]: boolean;
 }
