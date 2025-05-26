@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ActionScreenHeader from './ActionScreenHeader.tsx';
 import PostsList from '@/components/dashboard/PostsList';
+import DashboardAnalytics from '@/components/dashboard/DashboardAnalytics';
 import { CalendarView, Post as PostType } from '@/types/post';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
@@ -149,39 +150,13 @@ const Dashboard = () => {
         setWeekEnd={setWeekEnd}
         weekNavigationCountRef={weekNavigationCountRef}
       />
-      {ENABLE_ANALYTICS && 
-      (
-        <div className="flex w-[95%] mx-auto gap-[10px] justify-between">
-          <div className="flex flex-col gap-5">
-            <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[246px] h-[108px]">
-              <h3 className="text-base font-semibold text-gray-800 m-0 mb-[10px]">Post created</h3>
-              <p className="text-2xl font-bold text-gray-800 m-0">{postCreatedCount}</p>
-            </div>
-            <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[246px] h-[108px]">
-              <h3 className="text-base font-semibold text-gray-800 m-0 mb-[10px]">Post scheduled</h3>
-              <p className="text-2xl font-bold text-gray-800 m-0">{postScheduledCount}</p>
-            </div>
-          </div>
-          <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[444px] h-[247px]">
-            <h3 className="text-base font-semibold text-gray-800 m-0 mb-[10px]">Ayrshare analytics</h3>
-            {selectedPost ? (
-              <div className="mt-[10px]">
-                <p className="text-sm text-gray-800 my-[5px]">Likes: {postAnalytics.likes}</p>
-                <p className="text-sm text-gray-800 my-[5px]">Comments: {postAnalytics.comments}</p>
-                <p className="text-sm text-gray-800 my-[5px]">Views: {postAnalytics.views}</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-[80%]">
-                <img
-                  src="https://via.placeholder.com/150x100.png?text=Graph"
-                  alt="Analytics Graph Placeholder"
-                  className="w-[150px] h-[100px] mb-[10px]"
-                />
-                <p className="text-sm text-gray-800 my-[5px]">Select a post to view analytics</p>
-              </div>
-            )}
-          </div>
-        </div>
+      {ENABLE_ANALYTICS && (
+        <DashboardAnalytics
+          postCreatedCount={postCreatedCount}
+          postScheduledCount={postScheduledCount}
+          selectedPost={selectedPost}
+          postAnalytics={postAnalytics}
+        />
       )}
       <PostsList
         activeTab={activeTab}
