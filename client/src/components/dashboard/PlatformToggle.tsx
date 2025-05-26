@@ -49,7 +49,7 @@ const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, platform, onTogg
                 {IconComponent ? <IconComponent className="w-4 h-4" /> : <span>{config.icon}</span>}
             </div>
 
-            <span className={`text-sm font-medium ${active ? 'text-black' : 'text-gray-500'} group-hover:text-gray-800`}>{label}</span>
+            <span className={`text-sm font-medium truncate ${active ? 'text-black' : 'text-gray-500'} group-hover:text-gray-800`}>{label}</span>
         </div>
     );
 }

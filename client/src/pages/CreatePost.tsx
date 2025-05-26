@@ -129,14 +129,15 @@ const CreatePost = () => {
         </div>
 
         <div className={`px-5 py-2 border-b border-gray-200 bg-gray-50 shrink-0`}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-4 sm:gap-x-6">
+          <div className="flex flex-wrap justify-between gap-4">
             {connectedPlatforms.map((platformObj) => (
-              <PlatformToggle
-                key={platformObj.value}
-                label={platformObj.label}
-                platform={platformObj.value}
-                onToggle={(isActive) => handlePlatformToggle(platformObj.value as PlatformType, isActive)}
-              />
+              <div key={platformObj.value} className="flex-shrink-0">
+                <PlatformToggle
+                  label={platformObj.label}
+                  platform={platformObj.value}
+                  onToggle={(isActive) => handlePlatformToggle(platformObj.value as PlatformType, isActive)}
+                />
+              </div>
             ))}
           </div>
         </div>
