@@ -27,8 +27,8 @@ const EditPost: React.FC<EditPostProps> = ({
   onDelete,
   onGenerate
 }) => {
-  const { timeZoneLabel = 'GMT+00:00', getConnectedPlatforms } = useAuthStore();
   const [editedPost, setEditedPost] = useState<Post>(post);
+  const { timeZoneLabel = 'GMT+00:00', getConnectedPlatforms } = useAuthStore();
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft');
