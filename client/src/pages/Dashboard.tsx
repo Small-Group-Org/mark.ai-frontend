@@ -13,6 +13,7 @@ import { PlatformType } from '@/types';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 import { useEditPostContext } from '@/context/EditPostProvider';
+import { ENABLE_ANALYTICS } from '@/commons/constant';
 
 type TabType = 'past' | 'upcoming' | 'drafts';
 
@@ -194,9 +195,9 @@ const Dashboard = () => {
         setWeekEnd={setWeekEnd}
         weekNavigationCountRef={weekNavigationCountRef}
       />
-      {false && 
+      {ENABLE_ANALYTICS && 
       (
-        <div className="flex gap-[10px] justify-between">
+        <div className="flex w-[95%] mx-auto gap-[10px] justify-between">
           <div className="flex flex-col gap-5">
             <div className="flex-1 bg-[#FF89004D] p-5 rounded-lg text-center w-[246px] h-[108px]">
               <h3 className="text-base font-semibold text-gray-800 m-0 mb-[10px]">Post created</h3>
@@ -230,9 +231,7 @@ const Dashboard = () => {
       )}
       <div
         id="posts-container"
-        className={`absolute left-1/2 transform -translate-x-1/2 w-[95%] max-w-full overflow-x-hidden overflow-y-auto rounded-[10px] bg-gray-200/30 bottom-0 ${
-          false ? 'top-[450px]' : 'top-[150px]'
-        }`}
+        className={`relative w-[95%] max-w-full mx-auto overflow-x-hidden overflow-y-auto rounded-[10px] bg-gray-200/30 mt-4 min-h-[60vh] flex flex-col`}
       >
         <div className="flex justify-center m-[20px_30px] pb-[10px]">
           {(['past', 'upcoming', 'drafts'] as const).map(tab => (
@@ -251,11 +250,21 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="flex flex-col gap-[5px]">
-          {loading && <p className="text-center text-gray-600">Loading posts...</p>}
-          {error && <p className="text-center text-red-500">{error}</p>}
+        <div className="flex flex-col gap-[5px] flex-1">
+          {loading && (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-center text-gray-600">Loading posts...</p>
+            </div>
+          )}
+          {error && !loading && (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-center text-red-500">{error}</p>
+            </div>
+          )}
           {!loading && !error && filteredPosts.length === 0 && (
-            <p className="text-center text-gray-600">No posts found.</p>
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-center text-gray-600">No posts found.</p>
+            </div>
           )}
           {filteredPosts.map((post, index) => {
             const media = post.mediaUrl?.[0];
