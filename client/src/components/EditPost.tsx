@@ -5,7 +5,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
-import { Post, PlatformType, PostStatus } from '@/types/post';
+import { Post, PostStatus } from '@/types/post';
+import { PlatformType } from '@/types';
 import { ENABLE_AI_GENERATE } from '@/commons/constant';
 
 // Define platform values

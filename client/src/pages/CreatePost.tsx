@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { resetLivePost, usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { PlatformType, PostStatus } from "@/types/post";
+import { PostStatus } from "@/types/post";
+import { PlatformType } from "@/types";
 import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
 import { postTypes } from "@/commons/constant";
@@ -73,7 +74,7 @@ const CreatePost = () => {
       ? [...currentPlatforms, platformName]
       : currentPlatforms.filter((p) => p !== platformName);
     
-    // updatePostHandler("platforms", newPlatforms);
+    updatePostHandler("platform", newPlatforms);
   };
 
   const handlePostTypeClick = (type: "post" | "story" | "reel") => {
