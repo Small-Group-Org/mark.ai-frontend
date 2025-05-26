@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { FacebookIcon, YouTubeIcon } from './IconComponents';
+import { PlatformType } from '@/types';
 
 interface PlatformToggleProps {
     label: string;
-    platform: string;
+    platform: PlatformType;
     onToggle: (isActive: boolean) => void;
+    initialState?: boolean;
 }
 
 const platformConfig: Record<string, { icon: string; color: string; component?: React.ElementType }> = {
@@ -22,16 +24,15 @@ const platformConfig: Record<string, { icon: string; color: string; component?: 
     'gmb': { icon: 'G', color: 'text-[#4285F4]' }
 };
 
-const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, platform, onToggle }) => {
-    const [active, setActive] = useState(false);
+const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, platform, onToggle, initialState = false }) => {
+    const [active, setActive] = useState(initialState);
     
     const config = platformConfig[platform] || { icon: '?', color: 'text-black' };
     const IconComponent = config.component;
 
     const handleToggle = () => {
-        const newActiveState = !active;
-        setActive(newActiveState);
-        onToggle(newActiveState);
+        setActive(!active);
+        onToggle(!active);
     };
 
     return (
