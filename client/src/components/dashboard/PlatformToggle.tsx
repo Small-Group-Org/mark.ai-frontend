@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FacebookIcon, YouTubeIcon } from './IconComponents';
 import { PlatformType } from '@/types';
 
@@ -26,6 +26,10 @@ const platformConfig: Record<string, { icon: string; color: string; component?: 
 
 const PlatformToggle: React.FC<PlatformToggleProps> = ({ label, platform, onToggle, initialState = false }) => {
     const [active, setActive] = useState(initialState);
+    
+    useEffect(() => {
+        setActive(initialState);
+    }, [initialState]);
     
     const config = platformConfig[platform] || { icon: '?', color: 'text-black' };
     const IconComponent = config.component;
