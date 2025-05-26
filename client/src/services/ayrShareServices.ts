@@ -1,6 +1,6 @@
 import { BASE_URL } from "@/commons/constant";
 import { doGET, doPOST } from "@/commons/serviceUtils";
-import { AyrShareSocialHandles, PlatformName } from "@/types";
+import { PlatformName } from "@/types";
 import { GenerateAyrshareTokenResponse } from "@/types/requestTypes";
 import axios from "axios";
 
@@ -20,13 +20,17 @@ export const generateAyrshareToken = async (platforms: PlatformName[]) => {
   }
 };
 
-export const getAyrshareSocialHandles = async (): Promise<PlatformName[]> => {
+export const getAyrshareSocialHandles = async (): Promise<any> => {
   try {
     const response = await doGET(
       `${BASE_URL}/ayrshare/ayrshare-connected-platforms`
     );
+    const data =  response.data;
 
-    return response.data.data?.profiles?.[0]?.activeSocialAccounts || [] as PlatformName[];
+    if(data?.success && data?.data) {
+      return data.data;
+    }
+    return {};
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message || "Failed to fetch posts");

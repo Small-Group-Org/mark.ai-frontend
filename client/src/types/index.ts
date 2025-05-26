@@ -7,6 +7,15 @@ export interface Message {
   timestamp: Date;
 }
 
+export interface AyrsharePlatformDetails {
+  label: string;
+  value: string;
+  isConnected: boolean;
+  isEnabled: boolean;
+  icon?: any;
+  img?: any;
+}
+
 export type PlatformName =
   | "Instagram"
   | "Facebook"
