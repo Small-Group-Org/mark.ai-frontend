@@ -8,6 +8,7 @@ import tiktokIcon from '../../assets/icons/tiktok.png';
 import linkedinIcon from '../../assets/icons/linkedin.png';
 import facebookIcon from '../../assets/icons/facebook.png';
 import youtubeIcon from '../../assets/icons/youtube.png';
+import threadsIcon from '../../assets/icons/threads.png';
 
 type TabType = 'past' | 'upcoming' | 'drafts';
 
@@ -48,20 +49,29 @@ const PostsList: React.FC<PostsListProps> = ({
       tiktok: tiktokIcon,
       linkedin: linkedinIcon,
       facebook: facebookIcon,
-      youtube: youtubeIcon
+      youtube: youtubeIcon,
+      threads: threadsIcon
     };
 
-    const platformName = platform?.[0] as PlatformType | undefined;
-    if (platformName && platformIcons[platformName]) {
-      return (
-        <img
-          src={platformIcons[platformName]}
-          alt={platformName}
-          className="w-[22px] h-[22px] ml-[15px] object-contain transition-transform duration-200 hover:scale-110"
-        />
-      );
-    }
-    return null;
+    if (!platform || platform.length === 0) return null;
+
+    return (
+      <div className="flex items-center gap-2 ml-[15px]">
+        {platform.map((platformName, index) => {
+          if (platformIcons[platformName]) {
+            return (
+              <img
+                key={`${platformName}-${index}`}
+                src={platformIcons[platformName]}
+                alt={platformName}
+                className="w-[22px] h-[22px] object-contain transition-transform duration-200 hover:scale-110"
+              />
+            );
+          }
+          return null;
+        })}
+      </div>
+    );
   };
 
   return (
@@ -69,6 +79,7 @@ const PostsList: React.FC<PostsListProps> = ({
       id="posts-container"
       className="relative w-[95%] max-w-full mx-auto overflow-x-hidden overflow-y-auto rounded-[10px] bg-gray-200/30 mt-4 min-h-[60vh] flex flex-col"
     >
+        {/* Tabs */}
       <div className="flex justify-center m-[20px_30px] pb-[10px]">
         {(['past', 'upcoming', 'drafts'] as const).map(tab => (
           <button
@@ -86,6 +97,7 @@ const PostsList: React.FC<PostsListProps> = ({
         ))}
       </div>
 
+       {/* Posts List Container */}
       <div className="flex flex-col gap-[5px] flex-1">
         {loading && (
           <div className="flex-1 flex items-center justify-center">
