@@ -28,6 +28,7 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
   const [mindState, setMindState] = useState<ExtendedBrandState>({});
   const [animatingFields, setAnimatingFields] = useState<Set<string>>(new Set());
   const [completedFields, setCompletedFields] = useState<Set<string>>(new Set());
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
   const previousStateRef = useRef<ExtendedBrandState>({});
 
   // Update mindState and detect changes
@@ -67,6 +68,18 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
     previousStateRef.current = extendedState;
   }, [brandState]);
 
+  // Trigger sequential entrance animations when component loads
+  useEffect(() => {
+    // Trigger all cards to become visible at once, but they'll fade in with different delays
+    const timer = setTimeout(() => {
+      setVisibleCards(new Set([0, 1, 2, 3]));
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   const handleAnimationComplete = (fieldKey: string) => {
     setAnimatingFields(prev => {
       const newSet = new Set(prev);
@@ -93,7 +106,11 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
     children: React.ReactNode;
     className?: string;
     shape?: 'rounded' | 'cloud' | 'curved';
-  }> = ({ title, icon, children, className = "", shape = 'rounded' }) => {
+    cardIndex: number;
+    delay?: number;
+  }> = ({ title, icon, children, className = "", shape = 'rounded', cardIndex, delay = 0 }) => {
+    const isVisible = visibleCards.has(cardIndex);
+    
     const shapeClasses = {
       rounded: 'rounded-3xl',
       cloud: 'rounded-[2rem_1rem_2rem_1rem]',
@@ -101,7 +118,17 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
     };
 
     return (
-      <div className={`bg-white shadow-xl border border-gray-100 p-6 transition-all duration-300 hover:shadow-2xl hover:scale-105 relative overflow-hidden group ${shapeClasses[shape]} ${className}`}>
+      <div 
+        className={`bg-white shadow-xl border border-gray-100 p-6 relative overflow-hidden group ${shapeClasses[shape]} ${className}
+          transition-all duration-1000 ease-out
+          ${isVisible 
+            ? 'opacity-100 scale-100 hover:shadow-2xl hover:scale-105' 
+            : 'opacity-0 scale-95 pointer-events-none'
+          }`}
+        style={{
+          transitionDelay: `${delay}ms`
+        }}
+      >
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-blue-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         
@@ -169,6 +196,8 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                 icon={<User className="w-5 h-5 text-white" />}
                 shape="rounded"
                 className="bg-gradient-to-br from-blue-200 to-blue-300"
+                cardIndex={0}
+                delay={1000}
               >
                 <dl className="space-y-3">
                   <DataField 
@@ -197,6 +226,8 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                 icon={<TrendingUp className="w-5 h-5 text-white" />}
                 shape="cloud"
                 className="bg-gradient-to-br from-blue-50 to-blue-100"
+                cardIndex={1}
+                delay={1500}
               >
                 <dl className="space-y-3">
                   <DataField 
@@ -220,6 +251,8 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                 icon={<Users className="w-5 h-5 text-white" />}
                 shape="curved"
                 className="bg-gradient-to-br from-blue-50 to-blue-100"
+                cardIndex={2}
+                delay={2500}
               >
                 <dl className="space-y-3">
                   <DataField 
@@ -243,6 +276,8 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                 icon={<Lightbulb className="w-5 h-5 text-white" />}
                 shape="cloud"
                 className="bg-gradient-to-br from-blue-200 to-blue-300"
+                cardIndex={3}
+                delay={1500}
               >
                 <dl className="space-y-3">
                   <DataField 
