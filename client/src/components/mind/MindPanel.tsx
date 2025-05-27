@@ -9,18 +9,41 @@ interface MindPanelProps {
 }
 
 interface ExtendedBrandState extends BrandState {
+  client_info?: {
+    brand_name?: string | null;
+    industry?: string | null;
+    team_size?: string | null;
+    website?: string | null;
+    budget?: string | null;
+    location?: string | null;
+  };
+  business_goals?: {
+    pain_points?: string | null;
+    success_metrics?: string | null;
+    primary_objective?: string | null;
+    secondary_objectives?: string | null;
+  };
+  target_audience?: {
+    demographics?: string | null;
+    psychographics?: string | null;
+    customer_segments?: string | null;
+  };
   content_strategy?: {
     content_pillars?: string | null;
     posting_frequency?: string | null;
     brand_voice?: string | null;
+    key_messaging?: string | null;
+    preferred_content_types?: string | null;
   };
   onboarding_progress?: {
     completion_percentage?: string | null;
     next_steps?: string | null;
+    missing_required_info?: string[];
   };
   additional_information?: {
     notes?: string | null;
     preferences?: string | null;
+    [key: string]: any;
   };
 }
 
@@ -36,9 +59,10 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
     const extendedState: ExtendedBrandState = {
       ...brandState,
       content_strategy: {
-        content_pillars: "Educational content, Industry insights, Behind-the-scenes",
-        posting_frequency: "3-4 posts per week across all platforms",
-        brand_voice: "Professional yet approachable, innovative, solution-focused"
+        ...brandState.content_strategy,
+        content_pillars: brandState.content_strategy?.content_pillars || brandState.content_strategy?.key_messaging || null,
+        posting_frequency: brandState.content_strategy?.posting_frequency || null,
+        brand_voice: brandState.content_strategy?.brand_voice || null
       }
     };
 
@@ -58,10 +82,10 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
       });
     };
 
-    checkSection('client_info', ['brand_name', 'industry', 'team_size']);
-    checkSection('business_goals', ['pain_points', 'success_metrics']);
-    checkSection('target_audience', ['demographics', 'psychographics']);
-    checkSection('content_strategy', ['content_pillars', 'posting_frequency', 'brand_voice']);
+    checkSection('client_info', ['brand_name', 'industry', 'team_size', 'website', 'budget', 'location']);
+    checkSection('business_goals', ['pain_points', 'success_metrics', 'primary_objective', 'secondary_objectives']);
+    checkSection('target_audience', ['demographics', 'psychographics', 'customer_segments']);
+    checkSection('content_strategy', ['content_pillars', 'posting_frequency', 'brand_voice', 'key_messaging', 'preferred_content_types']);
 
     setAnimatingFields(newAnimatingFields);
     setMindState(extendedState);
@@ -91,9 +115,15 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
 
   const hasData = Boolean(
     mindState.client_info?.brand_name ||
+    mindState.client_info?.industry ||
+    mindState.client_info?.website ||
     mindState.business_goals?.pain_points ||
+    mindState.business_goals?.primary_objective ||
     mindState.target_audience?.demographics ||
-    mindState.content_strategy?.content_pillars
+    mindState.target_audience?.customer_segments ||
+    mindState.content_strategy?.content_pillars ||
+    mindState.content_strategy?.brand_voice ||
+    mindState.content_strategy?.key_messaging
   );
 
   if (!hasData) {
@@ -215,6 +245,21 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                     value={mindState.client_info.team_size} 
                     fieldKey="client_info.team_size"
                   />
+                  <DataField 
+                    label="Website" 
+                    value={mindState.client_info.website} 
+                    fieldKey="client_info.website"
+                  />
+                  <DataField 
+                    label="Budget" 
+                    value={mindState.client_info.budget} 
+                    fieldKey="client_info.budget"
+                  />
+                  <DataField 
+                    label="Location" 
+                    value={mindState.client_info.location} 
+                    fieldKey="client_info.location"
+                  />
                 </dl>
               </SectionCard>
             )}
@@ -240,6 +285,16 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                     value={mindState.business_goals.success_metrics} 
                     fieldKey="business_goals.success_metrics"
                   />
+                  <DataField 
+                    label="Primary Objective" 
+                    value={mindState.business_goals.primary_objective} 
+                    fieldKey="business_goals.primary_objective"
+                  />
+                  <DataField 
+                    label="Secondary Objectives" 
+                    value={mindState.business_goals.secondary_objectives} 
+                    fieldKey="business_goals.secondary_objectives"
+                  />
                 </dl>
               </SectionCard>
             )}
@@ -264,6 +319,11 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                     label="Psychographics" 
                     value={mindState.target_audience.psychographics} 
                     fieldKey="target_audience.psychographics"
+                  />
+                  <DataField 
+                    label="Customer Segments" 
+                    value={mindState.target_audience.customer_segments} 
+                    fieldKey="target_audience.customer_segments"
                   />
                 </dl>
               </SectionCard>
@@ -294,6 +354,16 @@ const MindPanel: React.FC<MindPanelProps> = ({ brandState }) => {
                     label="Brand Voice" 
                     value={mindState.content_strategy.brand_voice} 
                     fieldKey="content_strategy.brand_voice"
+                  />
+                  <DataField 
+                    label="Key Messaging" 
+                    value={mindState.content_strategy.key_messaging} 
+                    fieldKey="content_strategy.key_messaging"
+                  />
+                  <DataField 
+                    label="Preferred Content Types" 
+                    value={mindState.content_strategy.preferred_content_types} 
+                    fieldKey="content_strategy.preferred_content_types"
                   />
                 </dl>
               </SectionCard>
