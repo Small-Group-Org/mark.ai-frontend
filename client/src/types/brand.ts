@@ -12,4 +12,17 @@ export interface BrandState {
     demographics?: string | null;
     psychographics?: string | null;
   };
+  content_strategy?: {
+    content_pillars?: string | null;
+    posting_frequency?: string | null;
+    brand_voice?: string | null;
+  };
+  onboarding_progress?: {
+    completion_percentage?: string | null;
+    next_steps?: string | null;
+  };
+  additional_information?: {
+    notes?: string | null;
+    preferences?: string | null;
+  };
 } 

@@ -49,7 +49,7 @@ const TypewriterText: React.FC<TypewriterTextProps> = ({
     <span className="inline-block">
       {displayText}
       {isStarted && currentIndex < text.length && (
-        <span className="animate-pulse text-violet-600">|</span>
+        <span className="animate-pulse text-blue-600">|</span>
       )}
     </span>
   );
