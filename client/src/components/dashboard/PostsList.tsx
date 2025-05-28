@@ -2,13 +2,7 @@ import React from 'react';
 import { Image } from 'lucide-react';
 import { Post as PostType } from '@/types/post';
 import { PlatformType } from '@/types';
-import twitterIcon from '../../assets/icons/twitter.png';
-import instagramIcon from '../../assets/icons/instagram.png';
-import tiktokIcon from '../../assets/icons/tiktok.png';
-import linkedinIcon from '../../assets/icons/linkedin.png';
-import facebookIcon from '../../assets/icons/facebook.png';
-import youtubeIcon from '../../assets/icons/youtube.png';
-import threadsIcon from '../../assets/icons/threads.png';
+import { SocialIconComponents } from '@/assets/icons/social/SocialIcons';
 
 type TabType = 'past' | 'upcoming' | 'drafts';
 
@@ -43,14 +37,14 @@ const PostsList: React.FC<PostsListProps> = ({
   };
 
   const getPlatformIcon = (platform?: PlatformType[]) => {
-    const platformIcons: Partial<Record<PlatformType, string>> = {
-      twitter: twitterIcon,
-      instagram: instagramIcon,
-      tiktok: tiktokIcon,
-      linkedin: linkedinIcon,
-      facebook: facebookIcon,
-      youtube: youtubeIcon,
-      threads: threadsIcon
+    const platformIcons: Partial<Record<PlatformType, React.ComponentType<any>>> = {
+      twitter: SocialIconComponents.twitter,
+      instagram: SocialIconComponents.instagram,
+      tiktok: SocialIconComponents.tiktok,
+      linkedin: SocialIconComponents.linkedin,
+      facebook: SocialIconComponents.facebook,
+      youtube: SocialIconComponents.youtube,
+      threads: SocialIconComponents.threads
     };
 
     if (!platform || platform.length === 0) return null;
@@ -58,14 +52,18 @@ const PostsList: React.FC<PostsListProps> = ({
     return (
       <div className="flex items-center gap-2 ml-[15px]">
         {platform.map((platformName, index) => {
-          if (platformIcons[platformName]) {
+          const IconComponent = platformIcons[platformName];
+          if (IconComponent) {
             return (
-              <img
+              <div
                 key={`${platformName}-${index}`}
-                src={platformIcons[platformName]}
-                alt={platformName}
-                className="w-[22px] h-[22px] object-contain transition-transform duration-200 hover:scale-110"
-              />
+                className="w-[22px] h-[22px] flex items-center justify-center transition-transform duration-200 hover:scale-110"
+              >
+                <IconComponent
+                  size={22}
+                  className="object-contain"
+                />
+              </div>
             );
           }
           return null;
