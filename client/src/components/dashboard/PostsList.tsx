@@ -125,7 +125,7 @@ const PostsList: React.FC<PostsListProps> = ({
               id="post-item"
               className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 m-[0_30px_15px_30px] hover:translate-x-[5px] cursor-pointer border ${
                 index % 2 
-                  ? 'bg-[#0891b2] hover:bg-[rgb(8_145_178_/_0.15)] border-[rgb(8_145_178_/_0.3)]' 
+                  ? 'bg-[rgb(8_145_178_/_0.1)] hover:bg-[rgb(8_145_178_/_0.15)] border-[rgb(8_145_178_/_0.3)]' 
                   : 'bg-slate-50 hover:bg-slate-100 border-slate-200'
               }`}
               onClick={() => onPostClick(post)}
