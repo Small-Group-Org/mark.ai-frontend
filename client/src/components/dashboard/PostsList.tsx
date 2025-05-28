@@ -116,8 +116,8 @@ const PostsList: React.FC<PostsListProps> = ({
         )}
         {filteredPosts.map((post, index) => {
           const media = post.mediaUrl?.[0];
-          const isImage = media && /\.(jpg|jpeg|png|gif)$/i.test(media);
-          const isVideo = media && /\.(mp4|mov|webm)$/i.test(media);
+          const isImage = media && (media.startsWith('http://') || media.startsWith('https://'));
+          const isVideo = false; // Since we're treating all URLs as images
 
           return (
             <div
