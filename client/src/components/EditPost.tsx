@@ -10,6 +10,7 @@ import { Post, PostStatus } from '@/types/post';
 import { PlatformType } from '@/types';
 import { ENABLE_AI_GENERATE } from '@/commons/constant';
 import { uploadSingleMedia } from "@/services/uploadServices";
+import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 
 interface EditPostProps {
   isOpen: boolean;
@@ -46,7 +47,13 @@ const EditPost: React.FC<EditPostProps> = ({
 
   useEffect(() => {
     if (post) {
-      setEditedPost(post);
+      // Format hashtags for initial display only
+      const formattedHashtags = formatHashtagsForDisplay(post.hashtag || '');
+      
+      setEditedPost({
+        ...post,
+        hashtag: formattedHashtags
+      });
       const postDate = new Date(post.scheduleDate);
       
       setDate(postDate);
@@ -82,6 +89,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const handleHashtagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const hashtagsText = e.target.value;
     
+    // Preserve user input exactly as typed - no formatting during editing
     setEditedPost(prev => ({
       ...prev,
       hashtag: hashtagsText
@@ -154,8 +162,12 @@ const EditPost: React.FC<EditPostProps> = ({
       return;
     }
     
+    // Format hashtags for submission to backend
+    const formattedHashtags = formatHashtagsForSubmission(editedPost.hashtag || '');
+    
     const updatedPost = {
       ...editedPost,
+      hashtag: formattedHashtags,
       scheduleDate: date,
       status
     };
