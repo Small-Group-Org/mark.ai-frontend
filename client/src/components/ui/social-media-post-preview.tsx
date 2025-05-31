@@ -162,7 +162,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
                 <img
                   src={uploadedImageFile}
                   alt="Post visual content"
-                  className="object-conver h-full w-full"
+                  className="object-contain h-full w-full"
                   onError={() => setImageError(true)}
                   onLoad={() => setImageError(false)}
                 />
