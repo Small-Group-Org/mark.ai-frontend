@@ -46,7 +46,14 @@ const EditPost: React.FC<EditPostProps> = ({
 
   useEffect(() => {
     if (post) {
-      setEditedPost(post);
+      setEditedPost(
+        {
+          ...post, 
+          hashtag: post.hashtag
+            .split(" ") 
+            .map(tag => `#${tag}`)
+            .join(' ')
+        });
       const postDate = new Date(post.scheduleDate);
       
       setDate(postDate);

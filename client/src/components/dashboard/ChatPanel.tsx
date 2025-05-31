@@ -109,7 +109,7 @@ const ChatPanel = () => {
           setLivePost({
             title: post.title ?? "",
             content: post.content ?? "",
-            hashtag: Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? "")
+            hashtag: post.hashtag ?? ""
           });
         }
       } else {
