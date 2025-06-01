@@ -6,6 +6,7 @@ import { User } from "@/types";
 import DatePickerWithButton from "./date-picker-with-button";
 import { Trash2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { parseHashtagsToArray } from "@/utils/postUtils";
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -84,7 +85,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
     setImageError(false);
   }, [imageUrl]);
 
-  const hashtags = hashtag ? hashtag.split(' ').filter(Boolean) : [];
+  // Parse hashtags for display
+  const hashtagsArray = parseHashtagsToArray(hashtag || '');
 
   return (
     <div className={`flex flex-col ${className}`}>
@@ -201,9 +203,9 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
               </p>
             )}
 
-            {hashtags && hashtags.length > 0 && (
+            {hashtagsArray.length > 0 && (
               <div className="text-blue-500 text-sm space-x-1 flex flex-wrap">
-                {hashtags.map((tag, index) => (
+                {hashtagsArray.map((tag, index) => (
                   <span key={index}>{tag}</span>
                 ))}
               </div>

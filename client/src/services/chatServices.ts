@@ -1,7 +1,7 @@
 import { BASE_URL } from '@/commons/constant';
 import { doPOST, doGET } from '@/commons/serviceUtils';
 import { ChatRequest, ChatResponse, ChatHistoryResponse } from '@/types/requestTypes';
-import { Message } from '@/types';
+import { Message, OnboardingResponse } from '@/types';
 import axios from 'axios';
 
 export const chatWithMark = async (data: ChatRequest): Promise<ChatResponse> => {
@@ -26,6 +26,18 @@ export const getChatHistory = async (): Promise<ChatHistoryResponse> => {
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw new Error(error.response?.data?.message || 'Failed to fetch chat history');
+        }
+        throw error;
+    }
+};
+
+export const getOnboardingState = async (): Promise<OnboardingResponse> => {
+    try {
+        const response = await doGET(`${BASE_URL}/chat/onboardingstate`);
+        return response.data.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(error.response?.data?.message || 'Failed to fetch onboarding state');
         }
         throw error;
     }

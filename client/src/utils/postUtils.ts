@@ -79,4 +79,86 @@ export const doPostsOverlap = (post1: Post, post2: Post): boolean => {
   const date2 = post2.scheduleDate;
   
   return isSameDay(date1, date2) && isSameHour(date1, date2);
+};
+
+/**
+ * Formats hashtag string for initial display when loading from backend
+ * Ensures all hashtags have proper # prefix for display purposes
+ */
+export const formatHashtagsForDisplay = (hashtagString: string): string => {
+  if (!hashtagString || !hashtagString.trim()) {
+    return '';
+  }
+
+  const words = hashtagString.trim().split(/\s+/).filter(Boolean);
+  
+  if (words.length === 0) {
+    return '';
+  }
+
+  const formattedWords = words.map(word => {
+    if (word.startsWith('#')) {
+      return word;
+    }
+    return `#${word}`;
+  });
+
+  return formattedWords.join(' ');
+};
+
+/**
+ * Formats hashtag string before sending to backend
+ * Cleans up user input and ensures proper formatting
+ * Removes multiple consecutive # symbols and normalizes spacing
+ */
+export const formatHashtagsForSubmission = (hashtagString: string): string => {
+  if (!hashtagString || !hashtagString.trim()) {
+    return '';
+  }
+
+  const cleanInput = hashtagString.trim();
+  
+  // If input doesn't contain any #, treat as space-separated words
+  if (!cleanInput.includes('#')) {
+    const words = cleanInput.split(/\s+/).filter(Boolean);
+    return words.map(word => `#${word}`).join(' ');
+  }
+  
+  const hashtagParts = cleanInput.split('#').filter(Boolean);
+  
+  if (hashtagParts.length === 0) {
+    return '';
+  }
+  
+  const startsWithHash = cleanInput.startsWith('#');
+  let processedParts: string[] = [];
+  
+  hashtagParts.forEach((part, index) => {
+    const words = part.trim().split(/\s+/).filter(Boolean);
+    
+    words.forEach((word, wordIndex) => {
+      if (word) {
+        if (index === 0 && wordIndex === 0 && !startsWithHash) {
+          processedParts.push(`#${word}`);
+        } else {
+          processedParts.push(`#${word}`);
+        }
+      }
+    });
+  });
+  
+  return processedParts.join(' ');
+};
+
+/**
+ * Parses hashtag string into an array of individual hashtags
+ * Useful for processing hashtags for display or validation
+ */
+export const parseHashtagsToArray = (hashtagString: string): string[] => {
+  if (!hashtagString || !hashtagString.trim()) {
+    return [];
+  }
+  
+  const formatted = formatHashtagsForDisplay(hashtagString);
+  return formatted.split(/\s+/).filter(Boolean);
 }; 

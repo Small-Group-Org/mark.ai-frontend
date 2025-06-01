@@ -12,7 +12,7 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 export const useAuth = () => {
   const { toast } = useToast();
   const [, navigate] = useLocation();
-  const { setIsAuth, setUserDetails, setIsOpen } = useAuthStore();
+  const { setIsAuth, setUserDetails, setIsOpen, isOnboardingComplete } = useAuthStore();
 
   const [userCredential, setUserCredential] = useState<UserCredential>({
     email: "",
@@ -43,7 +43,12 @@ export const useAuth = () => {
         description: "You have been logged in successfully!",
       });
       setIsOpen(false);
-      navigate("/create");
+      
+      if (isOnboardingComplete()) {
+        navigate("/create");
+      } else {
+        navigate("/mind");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast({
@@ -60,7 +65,7 @@ export const useAuth = () => {
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if(!validateFields("signin")) return;
+    if(!validateFields("signup")) return;
     const { email, password, firstName, lastName  } = userCredential;
     setIsSubmitting(true);
 
@@ -80,7 +85,12 @@ export const useAuth = () => {
         description: "Your account has been created successfully!",
       });
       setIsOpen(false);
-      navigate("/create");
+      
+      if (isOnboardingComplete()) {
+        navigate("/create");
+      } else {
+        navigate("/mind");
+      }
     } catch (error) {
       console.error("Registration error:", error);
       toast({

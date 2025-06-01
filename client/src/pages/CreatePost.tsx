@@ -11,6 +11,7 @@ import { updatePost } from "@/services/postServices";
 import useEditPost from "@/hooks/use-edit-post";
 import { createDummyLivePost } from "@/services/authServices";
 import { uploadSingleMedia } from "@/services/uploadServices";
+import { formatHashtagsForSubmission } from "@/utils/postUtils";
 
 const CreatePost = () => {
   const { livePost, setLivePost } = usePostStore();
@@ -127,8 +128,12 @@ const CreatePost = () => {
       return;
     }
 
+    // Format hashtags for submission to backend
+    const formattedHashtags = formatHashtagsForSubmission(livePost.hashtag || '');
+
     const updatedPost = {
       ...livePost,
+      hashtag: formattedHashtags,
       scheduleDate: date || new Date(),
       status,
     };
@@ -145,7 +150,7 @@ const CreatePost = () => {
       toast({
         title: "Select Platform",
         description: "Please select at least one platform to schedule your post.",
-        variant: "default",
+        variant: "destructive",
       });
       return;
     }

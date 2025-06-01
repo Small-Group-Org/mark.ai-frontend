@@ -69,9 +69,13 @@ export const handleSignUp = async (
     );
     setValue(STORAGE_KEYS.TOKEN, response.data.data.token);
     
-    useAuthStore.getState().setTimeZoneLabel(detectUserTimezone());
+    const authStore = useAuthStore.getState();
+    authStore.setTimeZoneLabel(detectUserTimezone());
     
     await createDummyLivePost();
+    
+    await authStore.fetchOnboardingState();
+    
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -91,9 +95,13 @@ export const handleLogin = async (
     );
     setValue(STORAGE_KEYS.TOKEN, response.data.data.token);
     
-    useAuthStore.getState().setTimeZoneLabel(detectUserTimezone());
+    const authStore = useAuthStore.getState();
+    authStore.setTimeZoneLabel(detectUserTimezone());
     
     await createDummyLivePost();
+    
+    await authStore.fetchOnboardingState();
+    
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
