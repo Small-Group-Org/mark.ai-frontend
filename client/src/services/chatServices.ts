@@ -34,7 +34,7 @@ export const getChatHistory = async (): Promise<ChatHistoryResponse> => {
 export const getOnboardingState = async (): Promise<OnboardingResponse> => {
     try {
         const response = await doGET(`${BASE_URL}/chat/onboardingstate`);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             throw new Error(error.response?.data?.message || 'Failed to fetch onboarding state');
