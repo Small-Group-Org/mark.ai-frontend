@@ -128,7 +128,6 @@ const CreatePost = () => {
       return;
     }
 
-    // Format hashtags for submission to backend
     const formattedHashtags = formatHashtagsForSubmission(livePost.hashtag || '');
 
     const updatedPost = {

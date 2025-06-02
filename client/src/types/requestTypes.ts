@@ -33,7 +33,7 @@ export interface ChatResponse {
   };
   hasPost: false;
   post: {
-    hashtags: string[];
+    hashtag: string;
     content: string;
     title: string;
   };

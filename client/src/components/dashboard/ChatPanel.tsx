@@ -107,7 +107,7 @@ const ChatPanel = () => {
         // Update post state if available
         if (response.hasPost) {
           const { post } = response;
-          const rawHashtags = Array.isArray(post.hashtags) ? post.hashtags.join(' ') : (post.hashtags ?? "");
+          const rawHashtags = Array.isArray(post.hashtag) ? post.hashtag.join(' ') : (post.hashtag ?? "");
           const formattedHashtags = formatHashtagsForDisplay(rawHashtags);
           
           setLivePost({

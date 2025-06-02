@@ -13,7 +13,7 @@ interface SocialMediaPostPreviewProps {
   // Post content
   postTitle?: string | null;
   postContent?: string | null;
-  hashtags?: string[];
+  hashtag?: string[];
 
   // Image data
   imageUrl?: string;
@@ -79,6 +79,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
     .join('') || 'U';
   
   const [imageError, setImageError] = React.useState(false);
+  
 
   // Reset error if imageUrl changes
   React.useEffect(() => {
