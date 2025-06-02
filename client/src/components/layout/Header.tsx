@@ -8,6 +8,7 @@ import { Link } from "wouter";
 import { useAuthStore } from "@/store/useAuthStore";
 import { generateAyrshareToken, getAyrshareSocialHandles } from "@/services/ayrShareServices";
 import { PlatformType } from "@/types";
+import { useMobileDetection } from "@/hooks/useMobileDetection";
 
 const headerBg = "bg-[#11132f]";
 const headerBorder = "border-gray-700/50";
@@ -18,6 +19,7 @@ const Header = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const enabledPlatforms = getEnabledPlatforms();
+  const { isMobileView } = useMobileDetection();
 
   useEffect(() => {
     handleAyrshareSocialHandles();
@@ -78,11 +80,13 @@ const Header = () => {
         className="relative flex-shrink-0 flex items-center cursor-pointer"
       >
         {/* Mark PNG - only visible on mobile */}
-        <img
-          src={markPng}
-          alt="Mark AI"
-          className="w-12 h-12 rounded-full object-cover mr-3 md:hidden"
-        />
+        {isMobileView && (
+          <img
+            src={markPng}
+            alt="Mark AI"
+            className="w-12 h-12 rounded-full object-cover mr-3"
+          />
+        )}
         
         {/* Main Logo */}
         <img
@@ -92,28 +96,32 @@ const Header = () => {
         />
       </Link>
 
-      {/* Social Media Icons - hidden on small screens, shown on medium+ */}
-      <div className="hidden md:flex items-center gap-4 h-[50px]">
-        {enabledPlatforms.map((platform) => (
-          <ConnectSocialIcon
-            key={platform.value}
-            isConnected={platform.isConnected}
-            platform={platform.value}
-            handleAyrshareConnection={handleAyrshareConnection}
-            isLoading={loadingPlatform === platform.value}
-          />
-        ))}
-      </div>
+      {/* Social Media Icons - hidden on mobile, shown on desktop */}
+      {!isMobileView && (
+        <div className="flex items-center gap-4 h-[50px]">
+          {enabledPlatforms.map((platform) => (
+            <ConnectSocialIcon
+              key={platform.value}
+              isConnected={platform.isConnected}
+              platform={platform.value}
+              handleAyrshareConnection={handleAyrshareConnection}
+              isLoading={loadingPlatform === platform.value}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Mobile menu and sign out */}
       <div className="flex items-center gap-2" ref={mobileMenuRef}>
         {/* Mobile menu button */}
-        <button
-          onClick={() => setShowMobileMenu(!showMobileMenu)}
-          className="md:hidden flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white p-2 rounded-md transition-colors"
-        >
-          {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
-        </button>
+        {isMobileView && (
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white p-2 rounded-md transition-colors"
+          >
+            {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        )}
 
         {/* Sign out button */}
         <button
@@ -121,12 +129,12 @@ const Header = () => {
           className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
         >
           <LogOut size={18} />
-          <span className="hidden sm:inline">Sign out</span>
+          <span className={isMobileView ? "hidden" : "inline"}>Sign out</span>
         </button>
 
         {/* Mobile dropdown menu */}
-        {showMobileMenu && (
-          <div className="absolute top-full right-0 w-80 border border-gray-700/50 rounded-lg shadow-lg md:hidden z-30 mt-2" style={{ backgroundColor: '#24243E' }}>
+        {showMobileMenu && isMobileView && (
+          <div className="absolute top-full right-0 w-80 border border-gray-700/50 rounded-lg shadow-lg z-30 mt-2" style={{ backgroundColor: '#24243E' }}>
             <div className="p-4">
               <h3 className="text-l font-medium text-gray-300 mb-3">Connect Social Media</h3>
               <div className="grid grid-cols-4 gap-2">

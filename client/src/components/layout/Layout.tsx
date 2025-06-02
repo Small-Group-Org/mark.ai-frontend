@@ -9,28 +9,7 @@ import {
   PanelResizeHandle 
 } from 'react-resizable-panels';
 import Sidebar from './Sidebar';
-
-// Custom hook for window size
-const useWindowSize = () => {
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowSize;
-};
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -42,9 +21,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [leftPanelSize, setLeftPanelSize] = useState(40);
   const [rightPanelSize, setRightPanelSize] = useState(60);
   const [mobileView, setMobileView] = useState<'chat' | 'content'>('chat');
-  const { width } = useWindowSize();
   
-  const isMobile = width < 1024; // 1024px is the lg breakpoint in Tailwind
+  const { isMobileView, initializeMobileDetection } = useAuthStore();
+
+  // Initialize mobile detection on component mount
+  useEffect(() => {
+    const cleanup = initializeMobileDetection();
+    return cleanup;
+  }, [initializeMobileDetection]);
 
   // Extract the current route for highlighting in the sidebar
   const currentRoute = location.split('/')[1] || 'create';
@@ -61,10 +45,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex h-screen text-white overflow-hidden">
       <Sidebar currentRoute={currentRoute} />
 
-      <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-[80px]'} h-screen`}>
+      <div className={`flex-1 flex flex-col ${isMobileView ? '' : 'ml-[80px]'} h-screen`}>
         <Header />
 
-        {isMobile && (
+        {isMobileView && (
           <div className="bg-gray-800 text-center py-2 px-4">
             <div className="inline-flex rounded-md shadow-sm" role="group">
               <button
@@ -93,7 +77,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         )}
 
-        {!isMobile ? (
+        {!isMobileView ? (
           <div className="flex-1 h-[calc(100vh-70px)]">
             <PanelGroup 
               direction="horizontal" 
@@ -141,7 +125,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </PanelGroup>
           </div>
         ) : (
-          <div className={`flex flex-1 ${isMobile ? 'h-[calc(100vh-134px-64px)]' : 'h-[calc(100vh-110px)]'}`}>
+          <div className={`flex flex-1 ${isMobileView ? 'h-[calc(100vh-134px-64px)]' : 'h-[calc(100vh-110px)]'}`}>
             <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
               <ChatPanel />
             </div>
