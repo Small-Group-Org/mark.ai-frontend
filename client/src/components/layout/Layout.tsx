@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import Header from './Header';
 import ChatPanel from '../dashboard/ChatPanel';
+import BottomNavigation from './BottomNavigation';
 import { 
   Panel, 
   PanelGroup, 
@@ -60,7 +61,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex h-screen text-white overflow-hidden">
       <Sidebar currentRoute={currentRoute} />
 
-      <div className="flex-1 flex flex-col ml-[80px] h-screen">
+      <div className={`flex-1 flex flex-col ${isMobile ? '' : 'ml-[80px]'} h-screen`}>
         <Header />
 
         {isMobile && (
@@ -140,7 +141,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </PanelGroup>
           </div>
         ) : (
-          <div className="flex flex-1 h-[calc(100vh-110px)]">
+          <div className={`flex flex-1 ${isMobile ? 'h-[calc(100vh-174px)]' : 'h-[calc(100vh-110px)]'}`}>
             <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
               <ChatPanel />
             </div>
@@ -151,6 +152,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         )}
       </div>
+
+      {/* Bottom Navigation for Mobile */}
+      <BottomNavigation currentRoute={currentRoute} />
     </div>
   );
 };

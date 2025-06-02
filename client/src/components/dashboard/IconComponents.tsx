@@ -2,19 +2,19 @@ import React from 'react';
 
 // Centralized Icon Components
 export const DashboardIcon = ({ className = '' }: { className?: string }) => (
-    <svg className={`w-8 h-8 ${className}`} fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 13h6v6H4v-6zm0-8h6v6H4V5zm8 11h6v-3h-6v3zm0-5h6V8h-6v3zm0-5h6V3h-6v5z"></path></svg>
+    <svg className={`${className}`} fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 13h6v6H4v-6zm0-8h6v6H4V5zm8 11h6v-3h-6v3zm0-5h6V8h-6v3zm0-5h6V3h-6v5z"></path></svg>
 );
 
 export const CreateIcon = ({ className = '' }: { className?: string }) => (
-   <svg className={`w-8 h-8 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+   <svg className={`${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 );
 
 export const CalendarIcon = ({ className = '' }: { className?: string }) => (
-    <svg className={`w-8 h-8 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+    <svg className={`${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
 );
 
 export const MindIcon = ({ className = '' }: { className?: string }) => (
-   <svg className={`w-8 h-8 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a8.001 8.001 0 00-14.856 0M5.144 15.428L3 21l5.572-2.144m10.284 0L21 21l-5.572-2.144M7.857 15.428A4 4 0 0112 13.857a4 4 0 014.143 1.571m-8.286 0A4.002 4.002 0 0112 17.143a4.002 4.002 0 004.143-1.715M12 8a3 3 0 100-6 3 3 0 000 6z"></path></svg>
+   <svg className={`${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a8.001 8.001 0 00-14.856 0M5.144 15.428L3 21l5.572-2.144m10.284 0L21 21l-5.572-2.144M7.857 15.428A4 4 0 0112 13.857a4 4 0 014.143 1.571m-8.286 0A4.002 4.002 0 0112 17.143a4.002 4.002 0 004.143-1.715M12 8a3 3 0 100-6 3 3 0 000 6z"></path></svg>
 );
 
 export const SettingsIcon = ({ className = '' }: { className?: string }) => (

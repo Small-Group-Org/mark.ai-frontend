@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { LogOut } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { LogOut, Menu, X } from "lucide-react";
 import markAiLogo from "../../assets/logo.png";
+import markPng from "../../assets/mark.png";
 import { AYRSHARE } from "@/commons/constant";
 import ConnectSocialIcon from "../ui/ConnectSocialIcon";
 import { Link } from "wouter";
@@ -14,11 +15,30 @@ const headerBorder = "border-gray-700/50";
 const Header = () => {
   const { logout, updatePlatformConnection, getEnabledPlatforms } = useAuthStore();
   const [loadingPlatform, setLoadingPlatform] = useState<string | null>(null);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const enabledPlatforms = getEnabledPlatforms();
 
   useEffect(() => {
     handleAyrshareSocialHandles();
   }, []);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
+      }
+    };
+
+    if (showMobileMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMobileMenu]);
 
   const handleAyrshareSocialHandles = async () => {
      try{
@@ -42,6 +62,7 @@ const Header = () => {
         
         const url = `${response.url}&redirect=${currentUrl}${hasSourceParam ? '' : `?source=${AYRSHARE}`}`;
         window.open(url, "_self");
+        setShowMobileMenu(false); // Close menu after connection
     } catch (error) {
         console.error('Failed to connect social media:', error);
         setLoadingPlatform(null);
@@ -50,20 +71,29 @@ const Header = () => {
 
   return (
     <header
-      className={`h-[70px] ${headerBg} text-white flex items-center justify-between px-4 border-b ${headerBorder} shrink-0`}
+      className={`h-[70px] ${headerBg} text-white flex items-center justify-between px-4 border-b ${headerBorder} shrink-0 relative`}
     >
       <Link
         href="/"
-        className="relative flex-shrink-0 w-[220px] flex items-center cursor-pointer"
+        className="relative flex-shrink-0 flex items-center cursor-pointer"
       >
+        {/* Mark PNG - only visible on mobile */}
+        <img
+          src={markPng}
+          alt="Mark AI"
+          className="w-12 h-12 rounded-full object-cover mr-3 md:hidden"
+        />
+        
+        {/* Main Logo */}
         <img
           src={markAiLogo}
           alt="Mark.ai Logo"
-          style={{ height: "65px", objectFit: "contain" }}
+          className="h-[65px] object-contain"
         />
       </Link>
 
-      <div className="flex items-center gap-4 h-[50px]">
+      {/* Social Media Icons - hidden on small screens, shown on medium+ */}
+      <div className="hidden md:flex items-center gap-4 h-[50px]">
         {enabledPlatforms.map((platform) => (
           <ConnectSocialIcon
             key={platform.value}
@@ -75,13 +105,46 @@ const Header = () => {
         ))}
       </div>
 
-      <button
-        onClick={logout}
-        className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors"
-      >
-        <LogOut size={18} />
-        <span className="text-sm">Sign out</span>
-      </button>
+      {/* Mobile menu and sign out */}
+      <div className="flex items-center gap-2" ref={mobileMenuRef}>
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          className="md:hidden flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white p-2 rounded-md transition-colors"
+        >
+          {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
+        </button>
+
+        {/* Sign out button */}
+        <button
+          onClick={logout}
+          className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
+        >
+          <LogOut size={18} />
+          <span className="hidden sm:inline">Sign out</span>
+        </button>
+
+        {/* Mobile dropdown menu */}
+        {showMobileMenu && (
+          <div className="absolute top-full right-0 w-80 border border-gray-700/50 rounded-lg shadow-lg md:hidden z-30 mt-2" style={{ backgroundColor: '#24243E' }}>
+            <div className="p-4">
+              <h3 className="text-l font-medium text-gray-300 mb-3">Connect Social Media</h3>
+              <div className="grid grid-cols-4 gap-2">
+                {enabledPlatforms.map((platform) => (
+                  <div key={platform.value} className="w-10 h-10">
+                    <ConnectSocialIcon
+                      isConnected={platform.isConnected}
+                      platform={platform.value}
+                      handleAyrshareConnection={handleAyrshareConnection}
+                      isLoading={loadingPlatform === platform.value}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
