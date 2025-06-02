@@ -1,5 +1,5 @@
 import React, { ChangeEvent, KeyboardEvent, useRef, useEffect } from "react";
-import { PaperclipIcon, SendIcon } from "./IconComponents";
+import { SendIcon } from "./IconComponents";
 import { ThreeDots } from "react-loader-spinner";
 import { usePostStore } from "@/store/usePostStore";
 import { Message } from "@/types";
@@ -7,6 +7,7 @@ import { chatWithMark } from "@/services/chatServices";
 import { useAuthStore } from "@/store/useAuthStore";
 import { marked } from 'marked';
 import { initialiseChatWithMark } from "@/commons/constant";
+import { formatHashtagsForDisplay } from "@/utils/postUtils";
 
 const ChatPanel = () => {
   const {
@@ -106,10 +107,13 @@ const ChatPanel = () => {
         // Update post state if available
         if (response.hasPost) {
           const { post } = response;
+          const rawHashtags = Array.isArray(post.hashtag) ? post.hashtag.join(' ') : (post.hashtag ?? "");
+          const formattedHashtags = formatHashtagsForDisplay(rawHashtags);
+          
           setLivePost({
             title: post.title ?? "",
             content: post.content ?? "",
-            hashtag: post.hashtag ?? ""
+            hashtag: formattedHashtags
           });
         }
       } else {

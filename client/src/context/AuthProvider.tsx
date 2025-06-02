@@ -15,7 +15,16 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const token = getValue(STORAGE_KEYS.TOKEN) || "";
   const [, navigate] = useLocation();
-  const { setIsAuth, setUserDetails, setIsVerifying, isVerifying, isAuth, userDetails } = useAuthStore();
+  const { 
+    setIsAuth, 
+    setUserDetails, 
+    setIsVerifying, 
+    isVerifying, 
+    isAuth, 
+    userDetails,
+    fetchOnboardingState,
+    isOnboardingComplete
+  } = useAuthStore();
 
   useEffect(() => {
     if(token){
@@ -29,7 +38,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await verifyToken();
       setUserDetails(response);
       setIsAuth(true);
-    //   navigate("/dashboard");
+      
+      await fetchOnboardingState();
+      
+      if (isOnboardingComplete()) {
+        navigate("/create");
+      } else {
+        navigate("/mind");
+      }
     } catch (error){
       setIsAuth(false);
       navigate("/");
