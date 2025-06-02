@@ -195,7 +195,7 @@ const ChatPanel = () => {
 
   return (
     <div
-      className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}
+      className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden md:h-full h-[calc(100vh-70px-40px-64px)]`}
     >
       <div
         className={`h-[54px] flex items-center px-5 border-b ${chatHeaderBorder} shrink-0`}

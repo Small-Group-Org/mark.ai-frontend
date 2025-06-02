@@ -65,7 +65,7 @@ export default function CalendarRoute() {
   };
 
   return (
-    <div className="p-5 h-full flex flex-col bg-white">
+    <div className="p-5 h-full flex flex-col bg-white md:h-full h-[calc(100vh-70px-40px-64px)]">
       <ActionScreenHeader
         title="Calendar"
         timeframe={timeframe}

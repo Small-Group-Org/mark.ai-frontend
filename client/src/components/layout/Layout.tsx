@@ -141,7 +141,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </PanelGroup>
           </div>
         ) : (
-          <div className={`flex flex-1 ${isMobile ? 'h-[calc(100vh-174px)]' : 'h-[calc(100vh-110px)]'}`}>
+          <div className={`flex flex-1 ${isMobile ? 'h-[calc(100vh-134px-64px)]' : 'h-[calc(100vh-110px)]'}`}>
             <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
               <ChatPanel />
             </div>

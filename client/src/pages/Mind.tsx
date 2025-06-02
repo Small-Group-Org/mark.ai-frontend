@@ -14,7 +14,7 @@ export default function MindRoute() {
   }, []);
 
   return (
-    <div className="p-6 h-full flex items-center justify-center">
+    <div className="p-6 h-full flex items-center justify-center md:h-full h-[calc(100vh-70px-40px-64px)]">
       {loading ? (
         <div className="flex flex-col items-center">
           <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
