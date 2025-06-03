@@ -257,15 +257,6 @@ const SchedulingControls: React.FC<{
   <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-white flex-shrink-0">
     <div className="flex justify-between items-center mb-1">
       <div className="text-xs text-gray-500">{timeZoneLabel}</div>
-      {editedPost.status === 'schedule' && (
-        <button
-          onClick={onDelete}
-          className="p-1 hover:bg-red-50 rounded-full transition-colors"
-          title="Delete scheduled post"
-        >
-          <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
-        </button>
-      )}
     </div>
     <div className="flex flex-col space-y-2">
       <DatePickerWithButton
@@ -280,14 +271,25 @@ const SchedulingControls: React.FC<{
           <span>Post Published</span>
         </div>
       ) : (
-        <ScheduleActionButton
-          onSchedule={() => isEditing && onSave('schedule')}
-          onDraft={() => isEditing && onSave('draft')}
-          className={(!isEditing || isImageUploading) ? "opacity-70 cursor-not-allowed" : ""}
-          disabled={!isEditing || isImageUploading}
-          initialPostStatus={post.status}
-          hasChanges={hasChanges}
-        />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onDelete}
+            className="p-2 hover:bg-red-50 rounded-lg transition-colors border border-red-200 hover:border-red-300"
+            title="Delete post"
+          >
+            <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
+          </button>
+          <div className="flex-1">
+            <ScheduleActionButton
+              onSchedule={() => isEditing && onSave('schedule')}
+              onDraft={() => isEditing && onSave('draft')}
+              className={(!isEditing || isImageUploading) ? "opacity-70 cursor-not-allowed" : ""}
+              disabled={!isEditing || isImageUploading}
+              initialPostStatus={post.status}
+              hasChanges={hasChanges}
+            />
+          </div>
+        </div>
       )}
     </div>
   </div>
