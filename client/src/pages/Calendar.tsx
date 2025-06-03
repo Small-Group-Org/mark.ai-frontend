@@ -67,7 +67,7 @@ export default function CalendarRoute() {
   };
 
   return (
-    <div className={`h-full flex flex-col bg-white ${isMobileView ? '' : 'p-5'}`}>
+    <div className={`h-full flex flex-col bg-white`}>
       <ActionScreenHeader
         title="Calendar"
         timeframe={timeframe}
