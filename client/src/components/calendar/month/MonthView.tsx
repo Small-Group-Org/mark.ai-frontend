@@ -25,26 +25,28 @@ const MonthView: React.FC<MonthViewProps> = ({
   
   return (
     <>
-      <div className="month-grid border border-border rounded-lg overflow-hidden animate-fade-in">
-        {/* Day headers */}
-        {DAYS_OF_WEEK.map((day) => (
-          <DayHeaderCellMonth key={day} day={day} />
-        ))}
-        
-        {/* Day cells */}
-        {calendarDates.map((date, index) => {
-          const postsForDay = getPostsForDay(posts, date);
-          return (
-            <DayCellMonth
-              key={index}
-              date={date}
-              posts={postsForDay}
-              isToday={isToday(date)}
-              isCurrentMonth={isCurrentMonth(date, displayDate)}
-              onPostClick={onPostClick}
-            />
-          );
-        })}
+      <div className="overflow-x-auto">
+        <div className="month-grid border border-border rounded-lg overflow-hidden animate-fade-in min-w-[320px]" style={{ gridTemplateColumns: 'repeat(7, minmax(45px, 1fr))' }}>
+          {/* Day headers */}
+          {DAYS_OF_WEEK.map((day) => (
+            <DayHeaderCellMonth key={day} day={day} />
+          ))}
+          
+          {/* Day cells */}
+          {calendarDates.map((date, index) => {
+            const postsForDay = getPostsForDay(posts, date);
+            return (
+              <DayCellMonth
+                key={index}
+                date={date}
+                posts={postsForDay}
+                isToday={isToday(date)}
+                isCurrentMonth={isCurrentMonth(date, displayDate)}
+                onPostClick={onPostClick}
+              />
+            );
+          })}
+        </div>
       </div>
     </>
   );
