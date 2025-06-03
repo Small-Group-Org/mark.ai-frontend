@@ -102,7 +102,7 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
   };
 
   return (
-    <div className={`relative bg-white mb-5 ${isMobileView  && isCalendarPage? 'pt-5 px-1' : ''}`}>
+    <div className={`relative bg-white mb-5 ${isMobileView  && isCalendarPage? 'pt-5 px-1' : 'px-6 pt-6'}`}>
       <h2 className="text-2xl font-semibold text-gray-800 m-0 pl-5">{title}</h2>
       <div className={`flex justify-between items-center mt-4 ${isMobileView  && isCalendarPage? 'max-[320px]:w-[82%] max-[420px]:w-[95%]' : ''}`}>
         <div className="flex items-center gap-0">

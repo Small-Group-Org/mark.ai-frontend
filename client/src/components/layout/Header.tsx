@@ -103,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
 
       {/* Chat/Content Toggle - only on mobile */}
       {isMobileView && setMobileView && (
-        <div className="flex items-center bg-slate-800 rounded-lg p-1">
+        <div className="flex items-center ${headerBg} rounded-lg p-1">
           <button
             onClick={() => setMobileView('chat')}
             className={`flex items-center justify-center p-2 rounded-md transition-colors ${
@@ -148,7 +148,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
         {isMobileView && (
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            className="flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white p-2 rounded-md transition-colors"
+            className={`flex items-center justify-center ${headerBg} hover:bg-slate-700 text-white p-2 rounded-md transition-colors`}
           >
             {showMobileMenu ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -158,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
         {!isMobileView && (
           <button
             onClick={logout}
-            className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
+            className={`flex items-center justify-center gap-2 ${headerBg} hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm border border-gray-700`}
           >
             <LogOut size={18} />
             <span>Sign out</span>
@@ -167,7 +167,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
 
         {/* Mobile dropdown menu */}
         {showMobileMenu && isMobileView && (
-          <div className="absolute top-full right-0 max-w-[80%] w-full border border-gray-700/50 rounded-lg shadow-lg z-30 mt-2" style={{ backgroundColor: '#24243E' }}>
+          <div className="absolute top-full right-0 max-w-[80%] w-full border border-gray-700/50 rounded-lg shadow-lg z-30 mt-2 mr-2" style={{ backgroundColor: '#11132f' }}>
             <div className="p-4">
               <h3 className="text-l font-medium text-gray-300 mb-3">Connect Social Media</h3>
               <div className="grid grid-cols-5 gap-2 mb-4">
@@ -190,7 +190,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
                     logout();
                     setShowMobileMenu(false);
                   }}
-                  className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-md transition-colors text-xs"
+                  className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-white px-2 py-2 rounded-md transition-colors text-xs border border-gray-700"
                 >
                   <LogOut size={16} />
                   <span>Sign out</span>

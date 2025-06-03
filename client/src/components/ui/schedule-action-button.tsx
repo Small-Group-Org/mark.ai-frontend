@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import {
   AlertDialog,
@@ -11,12 +11,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { PostStatus } from '@/types/post';
 
 interface ScheduleActionButtonProps {
   onSchedule?: () => void;
   onDraft?: () => void;
   className?: string;
   disabled?: boolean;
+  initialPostStatus?: PostStatus;
+  hasChanges?: boolean;
 }
 
 const ScheduleActionButton = ({
@@ -24,16 +27,30 @@ const ScheduleActionButton = ({
   onDraft,
   className = '',
   disabled = false,
+  initialPostStatus = 'draft',
+  hasChanges = false,
 }: ScheduleActionButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<'schedule' | 'draft'>('draft');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Set initial selected type based on post status
+  useEffect(() => {
+    if (initialPostStatus === 'schedule') {
+      setSelectedType('schedule');
+    } else {
+      setSelectedType('draft');
+    }
+  }, [initialPostStatus]);
+
+  // Disable buttons if no changes have been made
+  const isButtonDisabled = disabled || !hasChanges;
+
   const handleDropdownToggle = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    if (!disabled) setIsDropdownOpen(!isDropdownOpen);
+    if (!isButtonDisabled) setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleOptionSelect = (type: 'schedule' | 'draft') => {
@@ -42,7 +59,7 @@ const ScheduleActionButton = ({
   };
 
   const handleMainButtonClick = () => {
-    if (disabled) return;
+    if (isButtonDisabled) return;
     if (selectedType === 'schedule') {
       setShowConfirmDialog(true);
     } else {
@@ -59,25 +76,25 @@ const ScheduleActionButton = ({
     <>
       <div className={`w-full flex rounded-lg shadow-sm relative ${className}`}>
         <button 
-          className={`w-full min-w-40 px-6 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${disabled ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cyan-600'}`}
+          className={`w-full min-w-40 px-6 text-sm font-medium bg-cyan-500 text-white whitespace-nowrap rounded-l-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${isButtonDisabled ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cyan-600'}`}
           onClick={handleMainButtonClick}
-          disabled={disabled}
-          tabIndex={disabled ? -1 : 0}
+          disabled={isButtonDisabled}
+          tabIndex={isButtonDisabled ? -1 : 0}
         >
           {selectedType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
         </button>
         <button 
-          className={`px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${disabled ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cyan-700'}`}
+          className={`px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${isButtonDisabled ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cyan-700'}`}
           onClick={handleDropdownToggle}
           aria-haspopup="true"
           aria-expanded={isDropdownOpen}
-          disabled={disabled}
-          tabIndex={disabled ? -1 : 0}
+          disabled={isButtonDisabled}
+          tabIndex={isButtonDisabled ? -1 : 0}
         >
           <ChevronDown className={`h-5 w-5 transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
         </button>
         
-        {isDropdownOpen && !disabled && (
+        {isDropdownOpen && !isButtonDisabled && (
           <div 
             ref={dropdownRef}
             className="absolute right-0 bottom-full mb-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50 divide-y divide-gray-100"
@@ -116,7 +133,7 @@ const ScheduleActionButton = ({
           <AlertDialogHeader>
             <AlertDialogTitle className="text-xl font-semibold text-gray-900">Confirm Schedule Post</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-600">
-              Once you schedule a post, it cannot be edited. Are you sure you want to schedule this post?
+              Are you sure you want to schedule this post?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

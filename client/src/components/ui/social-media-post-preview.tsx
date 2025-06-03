@@ -216,16 +216,16 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
       </div>
 
       {!hideFooter && (
-        <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end flex-wrap gap-4 w-full">
-          <div className="flex items-center gap-2">
-            <div className="max-w-[280px]">
+        <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end w-full">
+          <div className="flex flex-col items-center gap-4 w-full sm:flex-row sm:items-center sm:gap-2 justify-end">
+            <div className="sm:w-auto">
               <DatePickerWithButton
                 date={scheduledDate || new Date()}
                 onDateChange={(date) => onDateChange(date)}
               />
             </div>
               
-             <div className={cn("max-w-[196px] flex rounded-lg shadow-sm relative w-full lg:w-auto")}>
+            <div className={cn("w-full sm:w-auto flex rounded-lg shadow-sm relative")}>
               <ScheduleActionButton
                 onSchedule={onSchedule}
                 onDraft={onDraft}

@@ -137,7 +137,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className={`w-full h-full p-5 border border-gray-300 bg-white overflow-y-auto box-border relative [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : ''}`}>
+    <div className={`w-full h-full border border-gray-300 bg-white overflow-y-auto box-border relative [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden`}>
       <ActionScreenHeader
         title="Dashboard"
         timeframe={timeframe}
