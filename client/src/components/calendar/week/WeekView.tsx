@@ -35,35 +35,39 @@ const WeekView: React.FC<WeekViewProps> = ({
     <>
     <div className="flex flex-col border border-slate-200 rounded-lg overflow-hidden animate-view-switch bg-white">
       
-      {/* Header row */}
-      <div className="grid grid-cols-[60px,repeat(7,1fr)] border-b border-slate-200">
-        <div className="border-r border-slate-200"></div>
-        {weekDates.map((date, index) => (
-          <DayHeaderCellWeek
-          key={index}
-          day={DAYS_OF_WEEK[date.getDay()]}
-          date={date.getDate()}
-          isToday={isToday(date)}
-          />
-        ))}
-      </div>
-      
-      {/* Week grid with scrollable content */}
-      <ScrollArea className="h-[60vh]">
-        <div className="grid grid-cols-[60px,repeat(7,1fr)] relative" style={{ height: '1440px' }}>
-          <TimeGutter />
-          
+      {/* Header row with horizontal scroll for small screens */}
+      <div className="overflow-x-auto">
+        <div className="grid border-b border-slate-200 min-w-[320px]" style={{ gridTemplateColumns: '40px repeat(7, minmax(40px, 1fr))' }}>
+          <div className="border-r border-slate-200 min-w-[40px]"></div>
           {weekDates.map((date, index) => (
-            <DayColumnWeek
+            <DayHeaderCellWeek
             key={index}
-            date={date}
-            postsMap={postsMap}
+            day={DAYS_OF_WEEK[date.getDay()]}
+            date={date.getDate()}
             isToday={isToday(date)}
-            onPostClick={onPostClick}
             />
           ))}
         </div>
-      </ScrollArea>
+      </div>
+      
+      {/* Week grid with scrollable content */}
+      <div className="overflow-x-auto">
+        <ScrollArea className="h-[60vh]">
+          <div className="grid relative min-w-[320px]" style={{ gridTemplateColumns: '40px repeat(7, minmax(40px, 1fr))', height: '1440px' }}>
+            <TimeGutter />
+            
+            {weekDates.map((date, index) => (
+              <DayColumnWeek
+              key={index}
+              date={date}
+              postsMap={postsMap}
+              isToday={isToday(date)}
+              onPostClick={onPostClick}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
     </div>
     </>
   );

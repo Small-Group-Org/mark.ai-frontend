@@ -24,7 +24,7 @@ const ChatPanel = () => {
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = React.useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const {isAuth} = useAuthStore();
+  const {isAuth, isMobileView} = useAuthStore();
 
   const chatPanelBg = "bg-[#11132f]";
   const chatHeaderBorder = "border-gray-600/60";
@@ -195,7 +195,7 @@ const ChatPanel = () => {
 
   return (
     <div
-      className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden`}
+      className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : ''}`}
     >
       <div
         className={`h-[54px] flex items-center px-5 border-b ${chatHeaderBorder} shrink-0`}

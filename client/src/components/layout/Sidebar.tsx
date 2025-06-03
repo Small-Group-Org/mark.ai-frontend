@@ -13,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = "create" }) => {
 
   return (
     <aside
-      className={`w-[80px] ${sidebarBg} text-white flex flex-col items-center fixed left-0 top-0 bottom-0 h-screen z-10`}
+      className={`w-[80px] ${sidebarBg} text-white flex-col items-center fixed left-0 top-0 bottom-0 h-screen z-10 hidden md:flex`}
     >
       <img
         src={markPng}
@@ -33,9 +33,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentRoute = "create" }) => {
             >
               <div className="mb-1">
                 <item.icon
-                  className={
+                  className={`w-7 h-7 ${
                     currentRoute === item.path.slice(1) ? "text-white" : ""
-                  }
+                  }`}
                 />
               </div>
               <span

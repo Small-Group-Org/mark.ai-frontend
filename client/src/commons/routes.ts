@@ -5,7 +5,7 @@ import {
   MindIcon,
 } from "../components/dashboard/IconComponents";
 
-interface NavItem {
+export interface NavItem {
   path: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;

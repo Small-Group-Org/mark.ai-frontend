@@ -79,7 +79,7 @@ export const doPostsOverlap = (post1: Post, post2: Post): boolean => {
   const date2 = post2.scheduleDate;
   
   return isSameDay(date1, date2) && isSameHour(date1, date2);
-};
+}; 
 
 /**
  * Formats hashtag string for initial display when loading from backend

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CalendarView } from '@/types/post';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface ActionScreenHeaderProps {
   title: string;
@@ -15,6 +16,7 @@ interface ActionScreenHeaderProps {
   setWeekStart: (date: Date) => void;
   setWeekEnd: (date: Date) => void;
   weekNavigationCountRef: React.MutableRefObject<number>;
+  isCalendarPage?: boolean;
 }
 
 const months = [
@@ -56,7 +58,10 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
   setWeekStart,
   setWeekEnd,
   weekNavigationCountRef,
+  isCalendarPage = false,
 }) => {
+
+  const { isMobileView } = useAuthStore();
 
   const handlePrevPeriod = () => {
     if (timeframe === 'month') {
@@ -97,9 +102,9 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
   };
 
   return (
-    <div className="relative px-5 pt-2 bg-white mb-5">
+    <div className={`relative bg-white mb-5 ${isMobileView  && isCalendarPage? 'pt-5 px-1' : ''}`}>
       <h2 className="text-2xl font-semibold text-gray-800 m-0 pl-5">{title}</h2>
-      <div className="flex justify-between items-center mt-4">
+      <div className={`flex justify-between items-center mt-4 ${isMobileView  && isCalendarPage? 'max-[320px]:w-[82%] max-[420px]:w-[95%]' : ''}`}>
         <div className="flex items-center gap-0">
           <ChevronLeft
             className="text-lg text-black cursor-pointer transition-transform duration-200 hover:scale-110 ml-[10px]"
@@ -113,7 +118,7 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
             {timeframe === 'month' ? `${months[selectedMonth]} ${selectedYear}` : getWeekRange(weekStart, weekEnd)}
           </span>
         </div>
-        <div className="flex rounded overflow-hidden">
+        <div className={`flex rounded`}>
           <button
             className={`px-5 py-[5px] text-sm cursor-pointer transition-colors duration-200 rounded ${
               timeframe === 'month' ? 'bg-cyan-600 text-white' : 'bg-gray-100 text-gray-800'

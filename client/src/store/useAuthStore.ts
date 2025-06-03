@@ -15,6 +15,7 @@ interface PostState {
   timeZoneLabel: string;
   socialPlatforms: AyrsharePlatformDetails[];
   onboardingState?: OnboardingResponse;
+  isMobileView: boolean;
   
   setIsAuth: (isAuth: boolean) => void;
   setUserDetails: (userDetails: User) => void;
@@ -29,8 +30,19 @@ interface PostState {
   setOnboardingState: (onboardingState: OnboardingResponse) => void;
   fetchOnboardingState: () => Promise<void>;
   isOnboardingComplete: () => boolean;
+  setIsMobileView: (isMobile: boolean) => void;
+  initializeMobileDetection: () => void;
   logout: () => void;
 }
+
+// Mobile detection utility function
+const detectMobileView = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  const isMobileWidth = window.innerWidth < 768;
+  
+  return isMobileWidth;
+};
 
 export const useAuthStore = create<PostState>((set, get) => ({
   isAuth: null,
@@ -42,6 +54,7 @@ export const useAuthStore = create<PostState>((set, get) => ({
   timeZoneLabel: 'GMT+00:00',
   socialPlatforms: initialSocialPlatforms,
   onboardingState: undefined,
+  isMobileView: false,
 
   setIsAuth: (isAuth: boolean) => set({isAuth}),
   setUserDetails: (userDetails: User) => set({userDetails}),
@@ -69,6 +82,28 @@ export const useAuthStore = create<PostState>((set, get) => ({
   isOnboardingComplete: () => {
     const state = get().onboardingState;
     return state?.onboarding_complete ?? false;
+  },
+  setIsMobileView: (isMobile: boolean) => set({ isMobileView: isMobile }),
+  initializeMobileDetection: () => {
+    const isMobile = detectMobileView();
+    set({ isMobileView: isMobile });
+    
+    // Add resize listener to update mobile state when window size changes
+    const handleResize = () => {
+      const newIsMobile = detectMobileView();
+      if (newIsMobile !== get().isMobileView) {
+        set({ isMobileView: newIsMobile });
+      }
+    };
+    
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      
+      // Return cleanup function
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   },
   logout: () => {
     set({isAuth: false, onboardingState: undefined});

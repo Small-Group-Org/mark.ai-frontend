@@ -4,11 +4,13 @@ import { usePostStore } from '@/store/usePostStore';
 import ActionScreenHeader from './ActionScreenHeader';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { CalendarView } from '@/types/post';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function CalendarRoute() {
   const today = new Date();
   const posts = usePostStore((state) => state.posts);
   const [timeframe, setTimeframe] = useState<CalendarView>('month');
+  const { isMobileView } = useAuthStore();
 
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
@@ -65,7 +67,7 @@ export default function CalendarRoute() {
   };
 
   return (
-    <div className="p-5 h-full flex flex-col bg-white">
+    <div className={`h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : 'p-5'}`}>
       <ActionScreenHeader
         title="Calendar"
         timeframe={timeframe}
@@ -79,6 +81,7 @@ export default function CalendarRoute() {
         setWeekStart={setWeekStart}
         setWeekEnd={setWeekEnd}
         weekNavigationCountRef={weekNavigationCountRef}
+        isCalendarPage={true}
       />
       <div className="overflow-auto">
         <SocialCalendar

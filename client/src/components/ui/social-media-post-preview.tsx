@@ -218,18 +218,21 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
       {!hideFooter && (
         <div className="max-w-2xl mx-auto mt-4 flex items-center justify-end flex-wrap gap-4 w-full">
           <div className="flex items-center gap-2">
-            <DatePickerWithButton
-              date={scheduledDate || new Date()}
-              onDateChange={(date) => onDateChange(date)}
-            />
-             <div className={cn("flex rounded-lg shadow-sm relative w-full lg:w-auto")}>
-            <ScheduleActionButton
-              onSchedule={onSchedule}
-              onDraft={onDraft}
-              className={!onSchedule && !onDraft ? "opacity-70" : ""}
-              disabled={!onSchedule && !onDraft}
-            />
-          </div>
+            <div className="max-w-[280px]">
+              <DatePickerWithButton
+                date={scheduledDate || new Date()}
+                onDateChange={(date) => onDateChange(date)}
+              />
+            </div>
+              
+             <div className={cn("max-w-[196px] flex rounded-lg shadow-sm relative w-full lg:w-auto")}>
+              <ScheduleActionButton
+                onSchedule={onSchedule}
+                onDraft={onDraft}
+                className={!onSchedule && !onDraft ? "opacity-70" : ""}
+                disabled={!onSchedule && !onDraft}
+              />
+            </div>
           </div>
         </div>
       )}

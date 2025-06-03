@@ -2,34 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import Header from './Header';
 import ChatPanel from '../dashboard/ChatPanel';
+import BottomNavigation from './BottomNavigation';
 import { 
   Panel, 
   PanelGroup, 
   PanelResizeHandle 
 } from 'react-resizable-panels';
 import Sidebar from './Sidebar';
-
-// Custom hook for window size
-const useWindowSize = () => {
-  const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return windowSize;
-};
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,13 +17,17 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [location] = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
   const [leftPanelSize, setLeftPanelSize] = useState(40);
   const [rightPanelSize, setRightPanelSize] = useState(60);
   const [mobileView, setMobileView] = useState<'chat' | 'content'>('chat');
-  const { width } = useWindowSize();
   
-  const isMobile = width < 1024; // 1024px is the lg breakpoint in Tailwind
+  const { isMobileView, initializeMobileDetection } = useAuthStore();
+
+  // Initialize mobile detection on component mount
+  useEffect(() => {
+    const cleanup = initializeMobileDetection();
+    return cleanup;
+  }, [initializeMobileDetection]);
 
   // Extract the current route for highlighting in the sidebar
   const currentRoute = location.split('/')[1] || 'create';
@@ -60,39 +44,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="flex h-screen text-white overflow-hidden">
       <Sidebar currentRoute={currentRoute} />
 
-      <div className="flex-1 flex flex-col ml-[80px] h-screen">
-        <Header />
+      <div className={`flex-1 flex flex-col ${isMobileView ? '' : 'ml-[80px]'} h-screen`}>
+        <Header mobileView={mobileView} setMobileView={setMobileView} />
 
-        {isMobile && (
-          <div className="bg-gray-800 text-center py-2 px-4">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setMobileView('chat')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  mobileView === 'chat' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Chat
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileView('content')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                  mobileView === 'content' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Content
-              </button>
-            </div>
-          </div>
-        )}
-
-        {!isMobile ? (
+        {!isMobileView ? (
           <div className="flex-1 h-[calc(100vh-70px)]">
             <PanelGroup 
               direction="horizontal" 
@@ -124,15 +79,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 minSize={30}
                 className="h-full"
               >
-                {isLoading && (
-                  <div className="absolute inset-0 bg-gray-900/70 flex items-center justify-center z-50">
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
-                      <p className="mt-3 text-blue-400">Loading...</p>
-                    </div>
-                  </div>
-                )}
-                
                 <div className="h-full">
                   {children}
                 </div>
@@ -140,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </PanelGroup>
           </div>
         ) : (
-          <div className="flex flex-1 h-[calc(100vh-110px)]">
+          <div className="flex flex-1 h-[calc(100vh-70px-64px)]">
             <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
               <ChatPanel />
             </div>
@@ -151,6 +97,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         )}
       </div>
+
+      {/* Bottom Navigation for Mobile */}
+      <BottomNavigation currentRoute={currentRoute} setMobileView={setMobileView}  />
     </div>
   );
 };
