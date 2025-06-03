@@ -60,7 +60,7 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
         } ${isLoading ? "opacity-50" : ""}`}
       />
       {!isConnected && !isLoading && (
-        <span className="absolute bottom-[-2px] right-[-6px] w-6 h-6 text-lg bg-gray-700 rounded-full flex items-center justify-center border border-white pb-[2px] pl-[0.5px]">
+        <span className="absolute bottom-[-2px] right-[-6px] w-4 h-4 md:w-6 md:h-6 text-xs md:text-lg bg-gray-700 rounded-full flex items-center justify-center border border-white pb-[1px] md:pb-[2px] pl-[0.25px] md:pl-[0.5px]">
           <span>+</span>
         </span>
       )}

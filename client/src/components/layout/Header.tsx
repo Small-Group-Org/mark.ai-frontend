@@ -154,23 +154,25 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
           </button>
         )}
 
-        {/* Sign out button */}
-      <button
-        onClick={logout}
-          className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
-      >
-        <LogOut size={18} />
-          <span className={isMobileView ? "hidden" : "inline"}>Sign out</span>
-      </button>
+        {/* Sign out button - only on desktop */}
+        {!isMobileView && (
+          <button
+            onClick={logout}
+            className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
+          >
+            <LogOut size={18} />
+            <span>Sign out</span>
+          </button>
+        )}
 
         {/* Mobile dropdown menu */}
         {showMobileMenu && isMobileView && (
-          <div className="absolute top-full right-0 w-80 border border-gray-700/50 rounded-lg shadow-lg z-30 mt-2" style={{ backgroundColor: '#24243E' }}>
+          <div className="absolute top-full right-0 max-w-[80%] w-full border border-gray-700/50 rounded-lg shadow-lg z-30 mt-2" style={{ backgroundColor: '#24243E' }}>
             <div className="p-4">
               <h3 className="text-l font-medium text-gray-300 mb-3">Connect Social Media</h3>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-5 gap-2 mb-4">
                 {enabledPlatforms.map((platform) => (
-                  <div key={platform.value} className="w-10 h-10">
+                  <div key={platform.value} className="w-8 h-8">
                     <ConnectSocialIcon
                       isConnected={platform.isConnected}
                       platform={platform.value}
@@ -179,6 +181,20 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
                     />
                   </div>
                 ))}
+              </div>
+              
+              {/* Sign out button in mobile menu */}
+              <div className="border-t border-gray-600 pt-3">
+                <button
+                  onClick={() => {
+                    logout();
+                    setShowMobileMenu(false);
+                  }}
+                  className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-md transition-colors text-xs"
+                >
+                  <LogOut size={16} />
+                  <span>Sign out</span>
+                </button>
               </div>
             </div>
           </div>
