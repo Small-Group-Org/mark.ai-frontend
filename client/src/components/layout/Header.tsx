@@ -158,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
         {!isMobileView && (
           <button
             onClick={logout}
-            className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
+            className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm border border-gray-700"
           >
             <LogOut size={18} />
             <span>Sign out</span>
@@ -190,7 +190,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
                     logout();
                     setShowMobileMenu(false);
                   }}
-                  className="flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-700 text-white px-2 py-2 rounded-md transition-colors text-xs"
+                  className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-white px-2 py-2 rounded-md transition-colors text-xs border border-gray-700"
                 >
                   <LogOut size={16} />
                   <span>Sign out</span>
