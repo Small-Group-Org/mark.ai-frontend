@@ -20,7 +20,7 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
   displayDate = new Date(),
 }) => {
   const editPostContext = useEditPostContext();
-  const { timeZoneLabel = 'GMT+00:00' } = useAuthStore();
+  const { timeZoneLabel = 'GMT+00:00', isMobileView } = useAuthStore();
 
   const handlePostClick = (postId: string | number) => {
     const post = posts.find(p => p._id === postId);
@@ -35,7 +35,7 @@ const SocialCalendar: React.FC<SocialCalendarProps> = ({
 
   return (
     <div 
-      className="calendar-container bg-calendar-bg p-4 rounded-xl"
+      className={`calendar-container bg-calendar-bg rounded-xl ${isMobileView ? '' : 'p-4'}`}
       style={{ 
         minWidth, 
       }}

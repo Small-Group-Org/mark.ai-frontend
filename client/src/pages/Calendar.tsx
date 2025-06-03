@@ -67,7 +67,7 @@ export default function CalendarRoute() {
   };
 
   return (
-    <div className={`p-5 h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : ''}`}>
+    <div className={`h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : 'p-5'}`}>
       <ActionScreenHeader
         title="Calendar"
         timeframe={timeframe}
@@ -81,6 +81,7 @@ export default function CalendarRoute() {
         setWeekStart={setWeekStart}
         setWeekEnd={setWeekEnd}
         weekNavigationCountRef={weekNavigationCountRef}
+        isCalendarPage={true}
       />
       <div className="overflow-auto">
         <SocialCalendar
