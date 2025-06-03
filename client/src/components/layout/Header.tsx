@@ -98,17 +98,17 @@ const Header = () => {
 
       {/* Social Media Icons - hidden on mobile, shown on desktop */}
       {!isMobileView && (
-        <div className="flex items-center gap-4 h-[50px]">
-          {enabledPlatforms.map((platform) => (
-            <ConnectSocialIcon
-              key={platform.value}
-              isConnected={platform.isConnected}
-              platform={platform.value}
-              handleAyrshareConnection={handleAyrshareConnection}
-              isLoading={loadingPlatform === platform.value}
-            />
-          ))}
-        </div>
+      <div className="flex items-center gap-4 h-[50px]">
+        {enabledPlatforms.map((platform) => (
+          <ConnectSocialIcon
+            key={platform.value}
+            isConnected={platform.isConnected}
+            platform={platform.value}
+            handleAyrshareConnection={handleAyrshareConnection}
+            isLoading={loadingPlatform === platform.value}
+          />
+        ))}
+      </div>
       )}
 
       {/* Mobile menu and sign out */}
@@ -124,13 +124,13 @@ const Header = () => {
         )}
 
         {/* Sign out button */}
-        <button
-          onClick={logout}
+      <button
+        onClick={logout}
           className="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-md transition-colors text-sm"
-        >
-          <LogOut size={18} />
+      >
+        <LogOut size={18} />
           <span className={isMobileView ? "hidden" : "inline"}>Sign out</span>
-        </button>
+      </button>
 
         {/* Mobile dropdown menu */}
         {showMobileMenu && isMobileView && (

@@ -4,13 +4,13 @@ import { usePostStore } from '@/store/usePostStore';
 import ActionScreenHeader from './ActionScreenHeader';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { CalendarView } from '@/types/post';
-import { useMobileDetection } from '@/hooks/useMobileDetection';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function CalendarRoute() {
   const today = new Date();
   const posts = usePostStore((state) => state.posts);
   const [timeframe, setTimeframe] = useState<CalendarView>('month');
-  const { isMobileView } = useMobileDetection();
+  const { isMobileView } = useAuthStore();
 
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
@@ -67,7 +67,7 @@ export default function CalendarRoute() {
   };
 
   return (
-    <div className={`p-5 h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100vh-70px-40px-64px)]' : ''}`}>
+    <div className={`p-5 h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100%-64px)]' : ''}`}>
       <ActionScreenHeader
         title="Calendar"
         timeframe={timeframe}
