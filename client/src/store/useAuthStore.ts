@@ -39,18 +39,9 @@ interface PostState {
 const detectMobileView = (): boolean => {
   if (typeof window === 'undefined') return false;
   
-  // Check screen width (768px is the md breakpoint in Tailwind)
   const isMobileWidth = window.innerWidth < 768;
   
-  // Check user agent for mobile devices
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-  
-  // Check for touch capability
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  
-  // Return true if any mobile indicator is present
-  return isMobileWidth || (isMobileDevice && isTouchDevice);
+  return isMobileWidth;
 };
 
 export const useAuthStore = create<PostState>((set, get) => ({

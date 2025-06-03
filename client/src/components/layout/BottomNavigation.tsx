@@ -1,13 +1,24 @@
 import React from "react";
 import { Link } from "wouter";
 import { navItems } from "../../commons/routes";
+import { NavItem } from "../../commons/routes";
 
 interface BottomNavigationProps {
   currentRoute?: string;
+  setMobileView?: (view: 'chat' | 'content') => void;
 }
 
-const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentRoute = "create" }) => {
+const BottomNavigation: React.FC<BottomNavigationProps> = ({ 
+  currentRoute = "create", 
+  setMobileView 
+}) => {
   const navBg = "bg-[#0E2D60]";
+
+  const handleNavigation = (item: NavItem) => {
+    if (setMobileView && item.path !== '/') {
+      setMobileView('content');
+    }
+  }
 
   return (
     <nav
@@ -22,6 +33,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentRoute = "cre
                   ? "text-white bg-white/10"
                   : "text-gray-300"
               }`}
+              onClick={() => handleNavigation(item)}
             >
               <div className="mb-1">
                 <item.icon

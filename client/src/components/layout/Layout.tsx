@@ -17,7 +17,6 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [location] = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
   const [leftPanelSize, setLeftPanelSize] = useState(40);
   const [rightPanelSize, setRightPanelSize] = useState(60);
   const [mobileView, setMobileView] = useState<'chat' | 'content'>('chat');
@@ -80,15 +79,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 minSize={30}
                 className="h-full"
               >
-                {isLoading && (
-                  <div className="absolute inset-0 bg-gray-900/70 flex items-center justify-center z-50">
-                    <div className="flex flex-col items-center">
-                      <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
-                      <p className="mt-3 text-blue-400">Loading...</p>
-                    </div>
-                  </div>
-                )}
-                
                 <div className="h-full">
                   {children}
                 </div>
@@ -109,7 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </div>
 
       {/* Bottom Navigation for Mobile */}
-      <BottomNavigation currentRoute={currentRoute} />
+      <BottomNavigation currentRoute={currentRoute} setMobileView={setMobileView}  />
     </div>
   );
 };

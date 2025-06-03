@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CalendarView } from '@/types/post';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface ActionScreenHeaderProps {
   title: string;
@@ -58,6 +59,8 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
   weekNavigationCountRef,
 }) => {
 
+  const { isMobileView } = useAuthStore();
+
   const handlePrevPeriod = () => {
     if (timeframe === 'month') {
       if (selectedMonth === 0) {
@@ -113,7 +116,7 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
             {timeframe === 'month' ? `${months[selectedMonth]} ${selectedYear}` : getWeekRange(weekStart, weekEnd)}
           </span>
         </div>
-        <div className="flex rounded overflow-hidden">
+        <div className={`flex rounded ${!isMobileView ? "overflow-hidden" : "" }`}>
           <button
             className={`px-5 py-[5px] text-sm cursor-pointer transition-colors duration-200 rounded ${
               timeframe === 'month' ? 'bg-cyan-600 text-white' : 'bg-gray-100 text-gray-800'
