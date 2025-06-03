@@ -441,7 +441,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-hidden p-2 sm:p-4" onClick={handleClose}>
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-[80vw] xl:max-w-[64vw] flex flex-col h-full max-h-[95vh] sm:max-h-[90vh] md:max-h-[85vh] relative" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-[80vw] xl:max-w-[64vw] flex flex-col h-full max-h-[65vh] md:max-h-[85vh] relative" onClick={(e) => e.stopPropagation()}>
         
         {/* Header */}
         <div className="flex justify-between items-center p-3 sm:p-4 border-b rounded-tr-[8px] rounded-tl-[8px] border-gray-200 bg-white z-10 flex-shrink-0">
