@@ -67,7 +67,7 @@ export default function CalendarRoute() {
   };
 
   return (
-    <div className={`p-5 h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100%-64px)]' : ''}`}>
+    <div className={`p-5 h-full flex flex-col bg-white ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : ''}`}>
       <ActionScreenHeader
         title="Calendar"
         timeframe={timeframe}

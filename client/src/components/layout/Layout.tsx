@@ -46,36 +46,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Sidebar currentRoute={currentRoute} />
 
       <div className={`flex-1 flex flex-col ${isMobileView ? '' : 'ml-[80px]'} h-screen`}>
-        <Header />
-
-        {isMobileView && (
-          <div className="bg-gray-800 text-center py-2 px-4">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setMobileView('chat')}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                  mobileView === 'chat' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Chat
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileView('content')}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                  mobileView === 'content' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                Content
-              </button>
-            </div>
-          </div>
-        )}
+        <Header mobileView={mobileView} setMobileView={setMobileView} />
 
         {!isMobileView ? (
           <div className="flex-1 h-[calc(100vh-70px)]">
@@ -125,7 +96,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </PanelGroup>
           </div>
         ) : (
-          <div className={`flex flex-1 ${isMobileView ? 'h-[calc(100vh-134px-64px)]' : 'h-[calc(100vh-110px)]'}`}>
+          <div className="flex flex-1 h-[calc(100vh-70px-64px)]">
             <div className={`w-full h-full ${mobileView === 'chat' ? 'block' : 'hidden'}`}>
               <ChatPanel />
             </div>

@@ -164,7 +164,7 @@ const CreatePost = () => {
   const previewPanelBg = "bg-gray-100";
   
   return (
-    <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isMobileView ? 'h-[calc(100%-64px)]' : ''}`}>
+    <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isMobileView ? 'h-[calc(100vh-70px-64px)]' : ''}`}>
       <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isUpdating ? 'opacity-50 pointer-events-none' : ''}`}>
         <div
           className={`h-[58px] flex items-center px-5 border-b border-gray-200 shrink-0 bg-white`}

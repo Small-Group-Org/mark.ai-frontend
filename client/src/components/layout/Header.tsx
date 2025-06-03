@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, MessageCircle, FileText } from "lucide-react";
 import markAiLogo from "../../assets/logo.png";
 import markPng from "../../assets/mark.png";
 import { AYRSHARE } from "@/commons/constant";
@@ -13,7 +13,12 @@ import { useMobileDetection } from "@/hooks/useMobileDetection";
 const headerBg = "bg-[#11132f]";
 const headerBorder = "border-gray-700/50";
 
-const Header = () => {
+interface HeaderProps {
+  mobileView?: 'chat' | 'content';
+  setMobileView?: (view: 'chat' | 'content') => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) => {
   const { logout, updatePlatformConnection, getEnabledPlatforms } = useAuthStore();
   const [loadingPlatform, setLoadingPlatform] = useState<string | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -95,6 +100,32 @@ const Header = () => {
           className="h-[65px] object-contain"
         />
       </Link>
+
+      {/* Chat/Content Toggle - only on mobile */}
+      {isMobileView && setMobileView && (
+        <div className="flex items-center bg-slate-800 rounded-lg p-1">
+          <button
+            onClick={() => setMobileView('chat')}
+            className={`flex items-center justify-center p-2 rounded-md transition-colors ${
+              mobileView === 'chat' 
+                ? 'bg-blue-600 text-white' 
+                : 'text-gray-300 hover:bg-slate-700'
+            }`}
+          >
+            <MessageCircle size={16} />
+          </button>
+          <button
+            onClick={() => setMobileView('content')}
+            className={`flex items-center justify-center p-2 rounded-md transition-colors ${
+              mobileView === 'content' 
+                ? 'bg-blue-600 text-white' 
+                : 'text-gray-300 hover:bg-slate-700'
+            }`}
+          >
+            <FileText size={16} />
+          </button>
+        </div>
+      )}
 
       {/* Social Media Icons - hidden on mobile, shown on desktop */}
       {!isMobileView && (
