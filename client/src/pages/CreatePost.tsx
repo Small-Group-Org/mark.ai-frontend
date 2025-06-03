@@ -206,7 +206,7 @@ const CreatePost = () => {
         </div>
 
         <div className={`flex-1 overflow-y-auto bg-white`}>
-          <div className="p-6">
+          <div className="p-4">
             <SocialMediaPostPreview
               scheduledDate={scheduleDate}
               onSchedule={handleSchedule}
