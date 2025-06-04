@@ -15,6 +15,7 @@ import Layout from "./components/layout/Layout";
 import CreatePost from "./pages/CreatePost";
 import FullScreenLoader from "./components/ui/FullScreenLoader";
 import { useAuth } from "@/context/AuthProvider";
+import Waitlist from "./pages/Waitlist";
 
 function Router() {
   const { isVerifying } = useAuth();
@@ -26,6 +27,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/waitlist" component={Waitlist} />
       <Layout>
         <ProtectedRoute path="/create" component={CreatePost} />
         <ProtectedRoute path="/dashboard" component={Dashboard} />
