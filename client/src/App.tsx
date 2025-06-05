@@ -16,8 +16,7 @@ import Layout from "./components/layout/Layout";
 import CreatePost from "./pages/CreatePost";
 import FullScreenLoader from "./components/ui/FullScreenLoader";
 import { useAuth } from "@/context/AuthProvider";
-import Waitlist from "./pages/Waitlist";
-
+import Waitlist from "@/pages/Waitlist";
 function Router() {
   const { isVerifying } = useAuth();
   

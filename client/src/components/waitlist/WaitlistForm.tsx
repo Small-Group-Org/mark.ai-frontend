@@ -86,10 +86,10 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg bg-gray-50 border-gray-200 text-gray-900 shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Complete Your Waitlist Registration</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-bold text-gray-900">Complete Your Waitlist Registration</DialogTitle>
+          <DialogDescription className="text-gray-600">
             Tell us a bit more about yourself so we can tailor Mark.AI to your needs.
           </DialogDescription>
         </DialogHeader>
@@ -101,11 +101,15 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your name" {...field} />
+                    <Input 
+                      placeholder="Your name" 
+                      className="bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-purple-500 focus:ring-purple-500 focus:bg-white transition-colors"
+                      {...field} 
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-600" />
                 </FormItem>
               )}
             />
@@ -115,11 +119,15 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your email" {...field} />
+                    <Input 
+                      placeholder="Your email" 
+                      className="bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-purple-500 focus:ring-purple-500 focus:bg-white transition-colors"
+                      {...field} 
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-600" />
                 </FormItem>
               )}
             />
@@ -129,24 +137,24 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
               name="businessType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Type</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Business Type</FormLabel>
                   <FormControl>
                     <select 
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-base text-gray-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:bg-white disabled:cursor-not-allowed disabled:opacity-50 md:text-sm transition-colors"
                       {...field}
                     >
-                      <option value="">Select business type</option>
-                      <option value="solopreneur">Solopreneur</option>
-                      <option value="startup">Startup (2-10 employees)</option>
-                      <option value="small_business">Small Business (11-50 employees)</option>
-                      <option value="medium_business">Medium Business (51-200 employees)</option>
-                      <option value="enterprise">Enterprise (201+ employees)</option>
-                      <option value="agency">Marketing Agency</option>
-                      <option value="freelancer">Freelancer</option>
-                      <option value="other">Other</option>
+                      <option value="" className="bg-white text-gray-500">Select business type</option>
+                      <option value="solopreneur" className="bg-white text-gray-900">Solopreneur</option>
+                      <option value="startup" className="bg-white text-gray-900">Startup (2-10 employees)</option>
+                      <option value="small_business" className="bg-white text-gray-900">Small Business (11-50 employees)</option>
+                      <option value="medium_business" className="bg-white text-gray-900">Medium Business (51-200 employees)</option>
+                      <option value="enterprise" className="bg-white text-gray-900">Enterprise (201+ employees)</option>
+                      <option value="agency" className="bg-white text-gray-900">Marketing Agency</option>
+                      <option value="freelancer" className="bg-white text-gray-900">Freelancer</option>
+                      <option value="other" className="bg-white text-gray-900">Other</option>
                     </select>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-600" />
                 </FormItem>
               )}
             />
@@ -156,11 +164,15 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
               name="businessWebsite"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Business Website (optional)</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">Business Website (optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your website" {...field} />
+                    <Input 
+                      placeholder="Your website" 
+                      className="bg-gray-100 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-purple-500 focus:ring-purple-500 focus:bg-white transition-colors"
+                      {...field} 
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-600" />
                 </FormItem>
               )}
             />
@@ -168,7 +180,7 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
             <div className="flex justify-end pt-4">
               <Button 
                 type="submit" 
-                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium px-8"
+                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium px-8 shadow-lg hover:shadow-xl transition-all duration-200"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Submitting...' : 'Complete Registration'}
