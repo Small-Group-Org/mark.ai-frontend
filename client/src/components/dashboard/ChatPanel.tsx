@@ -24,6 +24,7 @@ const ChatPanel = () => {
   const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = React.useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const {isAuth, isMobileView} = useAuthStore();
 
   const chatPanelBg = "bg-[#11132f]";
@@ -74,6 +75,18 @@ const ChatPanel = () => {
     
     return () => clearTimeout(scrollTimeout);
   }, [messages, isThinking]);
+
+  // Auto-focus textarea when response is received
+  useEffect(() => {
+    if (!isWaitingForResponse && textareaRef.current) {
+      // Small delay to ensure the textarea is enabled before focusing
+      const focusTimeout = setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+      
+      return () => clearTimeout(focusTimeout);
+    }
+  }, [isWaitingForResponse]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (!isWaitingForResponse) {
@@ -280,6 +293,7 @@ const ChatPanel = () => {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             disabled={isWaitingForResponse}
+            ref={textareaRef}
           />
           <button
             className={`ml-3 ${sendButtonBg} rounded-full w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700 flex-shrink-0 self-center mb-0.5 disabled:opacity-50 disabled:cursor-not-allowed`}

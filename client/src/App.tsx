@@ -10,12 +10,13 @@ import Calendar from "@/pages/Calendar";
 import Mind from "@/pages/Mind";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import EditPostProvider from "@/context/EditPostProvider";
+import ConfirmationDialogProvider from "@/context/ConfirmationDialogProvider";
 import AuthProvider from "@/context/AuthProvider";
 import Layout from "./components/layout/Layout";
 import CreatePost from "./pages/CreatePost";
 import FullScreenLoader from "./components/ui/FullScreenLoader";
 import { useAuth } from "@/context/AuthProvider";
-
+import Waitlist from "@/pages/Waitlist";
 function Router() {
   const { isVerifying } = useAuth();
   
@@ -26,6 +27,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/waitlist" component={Waitlist} />
       <Layout>
         <ProtectedRoute path="/create" component={CreatePost} />
         <ProtectedRoute path="/dashboard" component={Dashboard} />
@@ -42,10 +44,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <EditPostProvider>
-            <Toaster />
-            <Router />
-          </EditPostProvider>
+          <ConfirmationDialogProvider>
+            <EditPostProvider>
+              <Toaster />
+              <Router />
+            </EditPostProvider>
+          </ConfirmationDialogProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
