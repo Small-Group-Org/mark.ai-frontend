@@ -11,6 +11,7 @@ import { PlatformType } from '@/types';
 import { ENABLE_AI_GENERATE } from '@/commons/constant';
 import { uploadSingleMedia } from "@/services/uploadServices";
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
+import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
 
 interface EditPostProps {
   isOpen: boolean;
@@ -253,7 +254,8 @@ const SchedulingControls: React.FC<{
   onDateChange: (date: Date) => void;
   onSave: (status: PostStatus) => void;
   onDelete: () => void;
-}> = ({ editedPost, post, date, timeZoneLabel, isEditing, isImageUploading, hasChanges, onDateChange, onSave, onDelete }) => (
+  showDeleteConfirmation: (config: any) => void;
+}> = ({ editedPost, post, date, timeZoneLabel, isEditing, isImageUploading, hasChanges, onDateChange, onSave, onDelete, showDeleteConfirmation }) => (
   <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-white flex-shrink-0">
     <div className="flex justify-between items-center mb-1">
       <div className="text-xs text-gray-500">{timeZoneLabel}</div>
@@ -273,7 +275,13 @@ const SchedulingControls: React.FC<{
       ) : (
         <div className="flex items-center gap-2">
           <button
-            onClick={onDelete}
+            onClick={() => showDeleteConfirmation({
+              title: 'Delete Post',
+              description: 'Are you sure you want to delete this post? This action cannot be undone.',
+              confirmText: 'Delete Post',
+              confirmButtonClass: 'bg-red-500 text-white hover:bg-red-600 border-0',
+              onConfirm: onDelete,
+            })}
             className="p-2 hover:bg-red-50 rounded-lg transition-colors border border-red-200 hover:border-red-300"
             title="Delete post"
           >
@@ -315,6 +323,7 @@ const EditPost: React.FC<EditPostProps> = ({
   
   const { toast } = useToast();
   const connectedPlatforms = getConnectedPlatforms();
+  const { showConfirmation } = useConfirmationDialogContext();
 
   useEffect(() => {
     setCharacterCount(editedPost.content.length);
@@ -527,6 +536,7 @@ const EditPost: React.FC<EditPostProps> = ({
               onDateChange={handleDateChange}
               onSave={handleSave}
               onDelete={onDelete}
+              showDeleteConfirmation={showConfirmation}
             />
           </div>
 
@@ -555,6 +565,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 onDateChange={handleDateChange}
                 onSave={handleSave}
                 onDelete={onDelete}
+                showDeleteConfirmation={showConfirmation}
               />
             </div>
           </div>

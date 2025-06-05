@@ -1,17 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
 import { PostStatus } from '@/types/post';
+import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
 
 interface ScheduleActionButtonProps {
   onSchedule?: () => void;
@@ -28,12 +18,13 @@ const ScheduleActionButton = ({
   className = '',
   disabled = false,
   initialPostStatus = 'draft',
-  hasChanges = false,
+  hasChanges = true,
 }: ScheduleActionButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<'schedule' | 'draft'>('draft');
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  const { showConfirmation } = useConfirmationDialogContext();
 
   // Set initial selected type based on post status
   useEffect(() => {
@@ -61,15 +52,16 @@ const ScheduleActionButton = ({
   const handleMainButtonClick = () => {
     if (isButtonDisabled) return;
     if (selectedType === 'schedule') {
-      setShowConfirmDialog(true);
+      showConfirmation({
+        title: 'Confirm Schedule Post',
+        description: 'Are you sure you want to schedule this post?',
+        confirmText: 'Schedule Post',
+        confirmButtonClass: 'bg-cyan-500 text-white hover:bg-cyan-600 border-0',
+        onConfirm: () => onSchedule?.(),
+      });
     } else {
       onDraft?.();
     }
-  };
-
-  const handleConfirmSchedule = () => {
-    setShowConfirmDialog(false);
-    onSchedule?.();
   };
 
   return (
@@ -127,28 +119,6 @@ const ScheduleActionButton = ({
           </div>
         )}
       </div>
-
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="bg-white border border-gray-200 shadow-lg">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-semibold text-gray-900">Confirm Schedule Post</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
-              Are you sure you want to schedule this post?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleConfirmSchedule}
-              className="bg-cyan-500 text-white hover:bg-cyan-600 border-0"
-            >
-              Schedule Post
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 };
