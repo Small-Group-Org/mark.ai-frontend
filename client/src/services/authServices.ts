@@ -36,7 +36,7 @@ export const createDummyLivePost = async () => {
     livePost = livePost.data;
     postStore.setLivePost({
       ...livePost,
-      scheduleDate: new Date(livePost.scheduleDate)
+      scheduleDate: currentTime
     });
   } catch (error) {
     console.error('Failed to create live post:', error);
