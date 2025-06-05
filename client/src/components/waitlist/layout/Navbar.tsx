@@ -15,6 +15,13 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToApplication = () => {
+    const applicationSection = document.getElementById('pilot-application');
+    if (applicationSection) {
+      applicationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[80px] ${
@@ -41,11 +48,12 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <a href="#waitlist">
-            <Button className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white rounded-full px-6">
-              Join Waitlist
-            </Button>
-          </a>
+          <Button 
+            onClick={scrollToApplication}
+            className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white rounded-full px-6"
+          >
+            Join Waitlist
+          </Button>
         </div>
       </div>
     </nav>

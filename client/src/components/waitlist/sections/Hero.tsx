@@ -39,6 +39,14 @@ const Hero = () => {
             alt="Mark mascot with arms out and friendly message - Don't worry, he's friendly" 
             className="mx-auto w-64 h-64 md:w-72 md:h-72 object-contain animate-float" 
           />
+
+          {/* Button with proper spacing */}
+          <Button 
+            onClick={scrollToApplication}
+            className="h-12 lg:h-14 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium px-8 lg:px-10 text-base lg:text-lg animate-fade-up-delay-3"
+          >
+            Apply for the Pilot Program
+          </Button>
           
           {/* Bullet Highlights */}
           <div className="grid md:grid-cols-3 gap-4 lg:gap-6 max-w-4xl mx-auto animate-fade-up-delay-2">
@@ -67,15 +75,6 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Button with proper spacing */}
-          <div className="pt-8 pb-16">
-            <Button 
-              onClick={scrollToApplication}
-              className="h-12 lg:h-14 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium px-8 lg:px-10 text-base lg:text-lg animate-fade-up-delay-3"
-            >
-              Apply for the Pilot Program
-            </Button>
-          </div>
         </div>
       </div>
 
