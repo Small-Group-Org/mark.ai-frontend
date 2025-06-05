@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Inter:0,400;0,500;0,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -87,6 +88,30 @@ body.dragging-active {
   --right-panel-bg: #ECECEC;
 }
 
+/* Waitlist-specific CSS variables scoped to .waitlist-page */
+.waitlist-page {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 252 94% 67%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 223 100% 50%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+  --radius: 0.75rem;
+}
+
 .dark {
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
@@ -124,6 +149,20 @@ body.dragging-active {
     font-family: var(--font-family-Font-1);
     min-height: 100vh;
     overflow-x: hidden;
+  }
+
+  /* Waitlist-specific body styling */
+  .waitlist-page {
+    @apply bg-background text-foreground font-inter antialiased;
+  }
+
+  .waitlist-page h1, 
+  .waitlist-page h2, 
+  .waitlist-page h3, 
+  .waitlist-page h4, 
+  .waitlist-page h5, 
+  .waitlist-page h6 {
+    @apply font-space-grotesk;
   }
 }
 
@@ -420,4 +459,119 @@ select option {
 
 .view-toggle button:not(.active) {
   color: #1F2937;
+}
+
+/* Waitlist Page Specific Styles */
+@keyframes fadeUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.5));
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.animate-fade-up {
+  animation: fadeUpIn 0.8s ease forwards;
+}
+
+.animate-fade-up-delay-1 {
+  animation: fadeUpIn 0.8s ease forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-2 {
+  animation: fadeUpIn 0.8s ease forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.animate-fade-up-delay-3 {
+  animation: fadeUpIn 0.8s ease forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-violet-500;
+}
+
+.gradient-border {
+  position: relative;
+  border-radius: 0.75rem;
+}
+
+.gradient-border:before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  border-radius: 0.85rem;
+  background: linear-gradient(45deg, #8B5CF6, #0EA5E9);
+  z-index: -1;
+}
+
+.typing-effect {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3.5s steps(40, end);
+}
+
+/* Styles for the blur glass effect */
+.glass {
+  @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg;
+}
+
+/* Gradient background */
+.bg-gradient-dark {
+  background: radial-gradient(circle at top left, #1c1c2c, #121222);
+}
+
+.bg-grid {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255,255,255,0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
