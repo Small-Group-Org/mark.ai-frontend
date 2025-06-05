@@ -25,7 +25,7 @@ const ChatPanel = () => {
   const [isLoadingHistory, setIsLoadingHistory] = React.useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const {isAuth, isMobileView} = useAuthStore();
+  const { isAuth, isMobileView, isOnboardingComplete } = useAuthStore();
 
   const chatPanelBg = "bg-[#11132f]";
   const chatHeaderBorder = "border-gray-600/60";
@@ -59,7 +59,7 @@ const ChatPanel = () => {
   useEffect(() => {
     if (messages && messages.length === 0 && isAuth && !isLoadingHistory) {
       setIsThinking(true);
-      handleChatResponse(initialiseChatWithMark);
+      !isOnboardingComplete() && handleChatResponse(initialiseChatWithMark);
     }
   }, [isAuth, messages.length, isLoadingHistory]);
 
