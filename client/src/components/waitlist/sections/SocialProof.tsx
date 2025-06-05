@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const SocialProof = () => {
@@ -21,7 +20,7 @@ const SocialProof = () => {
     <section className="py-20 bg-gradient-dark relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Whispers of Hype</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Whispers of Hype</h2>
         </div>
 
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -43,7 +42,7 @@ const SocialProof = () => {
           <p className="text-gray-400 mb-8">Coming soon to</p>
           <div className="flex flex-wrap justify-center items-center gap-8">
             {['TechCrunch', 'Product Hunt', 'HackerNews', 'Forbes'].map((logo, index) => (
-              <div key={index} className="text-xl font-bold text-gray-500 opacity-70">
+              <div key={index} className="text-xl font-bold text-gray-400 opacity-70">
                 {logo}
               </div>
             ))}

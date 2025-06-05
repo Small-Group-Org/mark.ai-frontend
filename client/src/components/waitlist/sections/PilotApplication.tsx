@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +23,7 @@ const PilotApplication = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Shape the Future of Marketing?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Shape the Future of Marketing?</h2>
           <p className="text-xl text-gray-300 mb-10">
             Apply now to join 25 founding members in Mark.ai's Pilot Program.
           </p>

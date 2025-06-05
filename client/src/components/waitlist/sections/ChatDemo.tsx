@@ -31,7 +31,7 @@ const ChatDemo = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">The 'AI Employee' Experience</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">The 'AI Employee' Experience</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
             Sample chat transcript demonstrating Mark.ai's proactive planning and on‑brand content drafting.
           </p>
@@ -49,7 +49,7 @@ const ChatDemo = () => {
           <div className="glass p-8 rounded-lg border border-white/10">
             <div className="flex items-center mb-6 pb-4 border-b border-white/10">
               <MessageSquare className="text-purple-400 mr-3" size={24} />
-              <h3 className="text-lg font-semibold">Chat with Mark.ai</h3>
+              <h3 className="text-lg font-semibold text-white">Chat with Mark.ai</h3>
               <div className="ml-auto flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 <span className="text-sm text-gray-400">Online</span>

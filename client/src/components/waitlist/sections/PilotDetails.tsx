@@ -46,7 +46,7 @@ const PilotDetails = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Pilot Program Details</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Pilot Program Details</h2>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto mb-12">

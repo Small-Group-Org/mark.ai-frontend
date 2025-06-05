@@ -35,7 +35,7 @@ const Hero = () => {
       />
       
       <div className="relative z-10 container mx-auto text-center max-w-5xl">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-up">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-up text-white">
           AI Doesn't Have to Be <span className="gradient-text">Scary</span>
         </h1>
         
@@ -49,7 +49,7 @@ const Hero = () => {
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">⚡</span>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Always On</h3>
+            <h3 className="text-lg font-semibold mb-2 text-white">Always On</h3>
             <p className="text-gray-400">24/7 availability, zero downtime.</p>
           </div>
           
@@ -57,7 +57,7 @@ const Hero = () => {
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🎯</span>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Brand Expert</h3>
+            <h3 className="text-lg font-semibold mb-2 text-white">Brand Expert</h3>
             <p className="text-gray-400">Masters your voice and tone from day one.</p>
           </div>
           
@@ -65,7 +65,7 @@ const Hero = () => {
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🚀</span>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Task Tactician</h3>
+            <h3 className="text-lg font-semibold mb-2 text-white">Task Tactician</h3>
             <p className="text-gray-400">Initiates and completes tasks proactively.</p>
           </div>
         </div>
@@ -80,7 +80,7 @@ const Hero = () => {
 
       <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent"></div>
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-        <span className="text-sm text-gray-500 mb-2">Scroll to explore</span>
+        <span className="text-sm text-gray-400 mb-2">Scroll to explore</span>
         <div className="w-6 h-10 border-2 border-gray-500 rounded-full flex justify-center">
           <div className="w-1.5 h-3 bg-gray-500 rounded-full mt-2 animate-bounce"></div>
         </div>

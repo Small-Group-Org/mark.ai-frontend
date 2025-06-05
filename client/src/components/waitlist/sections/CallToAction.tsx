@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,7 +47,7 @@ const CallToAction = () => {
         }`}
       >
         <div className="glass px-4 py-3 rounded-full flex items-center gap-4 border border-white/10 shadow-lg">
-          <span className="text-sm font-medium hidden md:block">Ready to hire your first AI teammate?</span>
+          <span className="text-sm font-medium hidden md:block text-white">Ready to hire your first AI teammate?</span>
           <form onSubmit={handleEmailSubmit} className="flex items-center gap-2">
             <Input
               type="email"
@@ -75,7 +74,7 @@ const CallToAction = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Hire Your First AI Employee?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Hire Your First AI Employee?</h2>
             <p className="text-xl text-gray-300 mb-10">
               Join the waitlist now to secure early access and exclusive benefits.
             </p>

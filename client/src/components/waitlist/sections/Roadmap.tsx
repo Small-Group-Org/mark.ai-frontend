@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
@@ -33,7 +32,7 @@ const Roadmap = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">What's Coming Next</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">What's Coming Next</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Our roadmap to building the ultimate AI marketing employee
           </p>
@@ -64,7 +63,7 @@ const Roadmap = () => {
                           Launching soon
                         </span>
                       ) : (
-                        <span className="flex items-center text-gray-500 text-sm">
+                        <span className="flex items-center text-gray-400 text-sm">
                           <span className="w-2 h-2 rounded-full bg-gray-500 mr-2"></span>
                           Coming soon
                         </span>

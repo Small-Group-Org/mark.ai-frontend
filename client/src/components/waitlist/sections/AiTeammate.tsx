@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 const chatMessages = [
@@ -44,7 +43,7 @@ const AiTeammate = () => {
     <section id="ai-teammate-section" className="py-24 bg-black relative">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">The ‘AI Employee’ Experience</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">The 'AI Employee' Experience</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Say goodbye to marketing chaos and hello to your new AI employee who works with you, not for you.
           </p>
@@ -52,7 +51,7 @@ const AiTeammate = () => {
 
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div className="order-2 md:order-1">
-            <h3 className="text-2xl font-bold mb-4">From Chaos to Clarity</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">From Chaos to Clarity</h3>
             <p className="text-gray-400 mb-6">
               Traditional marketing requires juggling multiple tools, calendars, and constant context switching. 
               Mark.AI centralizes your workflow through a simple chat interface.
@@ -85,7 +84,7 @@ const AiTeammate = () => {
                   <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                  <div className="mx-auto text-sm font-medium">Chat with Mark.AI</div>
+                  <div className="mx-auto text-sm font-medium text-white">Chat with Mark.AI</div>
                 </div>
                 <div className="p-4 h-80 overflow-y-auto scrollbar-hidden bg-gradient-to-b from-gray-900 to-black">
                   <div className="space-y-4">

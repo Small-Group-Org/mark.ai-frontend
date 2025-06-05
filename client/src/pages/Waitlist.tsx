@@ -20,7 +20,7 @@ import { Toaster } from '@/components/ui/toaster';
 const WaitlistPage = () => {
     console.log('WaitlistPage');
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="waitlist-page min-h-screen bg-background text-foreground overflow-x-hidden">
       <Navbar />
       <Hero />
       <WhatIsMarkAI />

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
@@ -64,7 +63,7 @@ const Features = () => {
     <section id="features" className="py-24 bg-gradient-dark relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">What is Mark.AI?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">What is Mark.AI?</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Not just another tool — a proactive AI employee built to handle your marketing tasks
           </p>
