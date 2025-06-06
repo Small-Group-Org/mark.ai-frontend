@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image, CheckCircle } from 'lucide-react';
+import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image, CheckCircle, Video } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -26,60 +26,86 @@ interface EditPostProps {
 const MediaUpload: React.FC<{
   mediaUrl: string[];
   isEditing: boolean;
-  isImageUploading: boolean;
-  onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isMediaUploading: boolean;
+  onMediaUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDeleteMedia: (index: number) => void;
   className?: string;
-}> = ({ mediaUrl, isEditing, isImageUploading, onImageUpload, onDeleteMedia, className = "" }) => (
-  <div className={`relative mb-4 ${className}`}>
-    {mediaUrl.length > 0 ? (
-      <div className="relative rounded-lg overflow-hidden h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80">
-        <img 
-          src={mediaUrl[0]} 
-          alt="Post media" 
-          className="object-contain w-full h-full"
-        />
-        {isEditing && (
-          <button 
-            className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
-            onClick={() => onDeleteMedia(0)}
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-    ) : (
-      <div className={cn(
-        "flex flex-col items-center justify-center h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 rounded-lg border-2 border-dashed border-gray-300",
-        isEditing ? "bg-gray-100 cursor-pointer hover:bg-gray-200" : "bg-gray-50"
-      )}>
-        {isImageUploading ? (
-          <div className="flex flex-col items-center text-center w-full h-full justify-center">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2 animate-spin">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500">
-                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-              </svg>
+}> = ({ mediaUrl, isEditing, isMediaUploading, onMediaUpload, onDeleteMedia, className = "" }) => {
+  
+  const isVideo = (url: string) => {
+    return url.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i);
+  };
+
+  return (
+    <div className={`relative mb-4 ${className}`}>
+      {mediaUrl.length > 0 ? (
+        <div className="relative overflow-hidden h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 flex items-start justify-center">
+          {isVideo(mediaUrl[0]) ? (
+            <video 
+              src={mediaUrl[0]} 
+              className="object-contain rounded-lg h-full"
+              controls
+              preload="metadata"
+            />
+          ) : (
+            <img 
+              src={mediaUrl[0]} 
+              alt="Post media" 
+              className="rounded-lg object-contain h-full"
+            />
+          )}
+          {isEditing && (
+            <button 
+              className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
+              onClick={() => onDeleteMedia(0)}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className={cn(
+          "flex flex-col items-center justify-center h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80 rounded-lg border-2 border-dashed border-gray-300",
+          isEditing ? "bg-gray-100 cursor-pointer hover:bg-gray-200" : "bg-gray-50"
+        )}>
+          {isMediaUploading ? (
+            <div className="flex flex-col items-center text-center w-full h-full justify-center">
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2 animate-spin">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+              </div>
+              <p className="text-sm text-gray-500">Uploading...</p>
             </div>
-            <p className="text-sm text-gray-500">Uploading...</p>
-          </div>
-        ) : isEditing ? (
-          <>
-            <PlusCircle className="w-8 h-8 sm:w-10 sm:h-10 mb-2 text-gray-400" />
-            <p className="text-xs sm:text-sm text-gray-500">Click to upload media</p>
-            <label className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onClick={(e) => e.stopPropagation()}>
-              <input type="file" className="hidden" accept="image/*" onChange={onImageUpload} disabled={isImageUploading} />
-            </label>
-          </>
-        ) : (
-          <>
-            <Image className="w-8 h-8 sm:w-10 sm:h-10 mb-2 text-gray-400" />
-            <p className="text-xs sm:text-sm text-gray-400">No image</p>
-          </>
-        )}
-      </div>
-    )}
-  </div>
-);
+          ) : isEditing ? (
+            <>
+              <PlusCircle className="w-8 h-8 sm:w-10 sm:h-10 mb-2 text-gray-400" />
+              <p className="text-xs sm:text-sm text-gray-500 text-center">Click to upload image or video</p>
+              <p className="text-xs text-gray-400 mt-1">Max video size: 100MB</p>
+              <label className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*,video/*" 
+                  onChange={onMediaUpload} 
+                  disabled={isMediaUploading} 
+                />
+              </label>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center space-x-2 mb-2">
+                <Image className="w-6 h-6 text-gray-400" />
+                <Video className="w-6 h-6 text-gray-400" />
+              </div>
+              <p className="text-xs sm:text-sm text-gray-400">No media</p>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // Post Type Selection Component
 const PostTypeSelector: React.FC<{
@@ -249,13 +275,13 @@ const SchedulingControls: React.FC<{
   date: Date;
   timeZoneLabel: string;
   isEditing: boolean;
-  isImageUploading: boolean;
+  isMediaUploading: boolean;
   hasChanges: boolean;
   onDateChange: (date: Date) => void;
   onSave: (status: PostStatus) => void;
   onDelete: () => void;
   showDeleteConfirmation: (config: any) => void;
-}> = ({ editedPost, post, date, timeZoneLabel, isEditing, isImageUploading, hasChanges, onDateChange, onSave, onDelete, showDeleteConfirmation }) => (
+}> = ({ editedPost, post, date, timeZoneLabel, isEditing, isMediaUploading, hasChanges, onDateChange, onSave, onDelete, showDeleteConfirmation }) => (
   <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-white flex-shrink-0">
     <div className="flex justify-between items-center mb-1">
       <div className="text-xs text-gray-500">{timeZoneLabel}</div>
@@ -291,8 +317,8 @@ const SchedulingControls: React.FC<{
             <ScheduleActionButton
               onSchedule={() => isEditing && onSave('schedule')}
               onDraft={() => isEditing && onSave('draft')}
-              className={(!isEditing || isImageUploading) ? "opacity-70 cursor-not-allowed" : ""}
-              disabled={!isEditing || isImageUploading}
+              className={(!isEditing || isMediaUploading) ? "opacity-70 cursor-not-allowed" : ""}
+              disabled={!isEditing || isMediaUploading}
               initialPostStatus={post.status}
               hasChanges={hasChanges}
             />
@@ -318,7 +344,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft' || post.status === 'schedule');
-  const [isImageUploading, setIsImageUploading] = useState<boolean>(false);
+  const [isMediaUploading, setIsMediaUploading] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
   
   const { toast } = useToast();
@@ -382,19 +408,38 @@ const EditPost: React.FC<EditPostProps> = ({
     setEditedPost(prev => ({ ...prev, mediaUrl: prev.mediaUrl.filter((_, i) => i !== index) }));
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsImageUploading(true);
+      // Check file size (100MB limit for videos, 10MB for images)
+      const maxSize = file.type.startsWith('video/') ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        const sizeLimit = file.type.startsWith('video/') ? '100MB' : '10MB';
+        toast({ 
+          title: "File too large", 
+          description: `Please select a ${file.type.startsWith('video/') ? 'video' : 'image'} smaller than ${sizeLimit}`, 
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      setIsMediaUploading(true);
       try {
         const response = await uploadSingleMedia(file);
         setEditedPost(prev => ({ ...prev, mediaUrl: [response] }));
-        toast({ title: "Success", description: "Image uploaded successfully" });
+        toast({ 
+          title: "Success", 
+          description: `${file.type.startsWith('video/') ? 'Video' : 'Image'} uploaded successfully` 
+        });
       } catch (error) {
         console.error('Error uploading file:', error);
-        toast({ title: "Error", description: "Failed to upload image", variant: "destructive" });
+        toast({ 
+          title: "Error", 
+          description: `Failed to upload ${file.type.startsWith('video/') ? 'video' : 'image'}`, 
+          variant: "destructive" 
+        });
       } finally {
-        setIsImageUploading(false);
+        setIsMediaUploading(false);
       }
     }
   };
@@ -470,8 +515,8 @@ const EditPost: React.FC<EditPostProps> = ({
               <MediaUpload
                 mediaUrl={editedPost.mediaUrl}
                 isEditing={isEditing}
-                isImageUploading={isImageUploading}
-                onImageUpload={handleImageUpload}
+                isMediaUploading={isMediaUploading}
+                onMediaUpload={handleMediaUpload}
                 onDeleteMedia={handleDeleteMedia}
               />
               <PostTypeSelector
@@ -497,8 +542,8 @@ const EditPost: React.FC<EditPostProps> = ({
                 <MediaUpload
                   mediaUrl={editedPost.mediaUrl}
                   isEditing={isEditing}
-                  isImageUploading={isImageUploading}
-                  onImageUpload={handleImageUpload}
+                  isMediaUploading={isMediaUploading}
+                  onMediaUpload={handleMediaUpload}
                   onDeleteMedia={handleDeleteMedia}
                   className="h-48 sm:h-56"
                 />
@@ -531,7 +576,7 @@ const EditPost: React.FC<EditPostProps> = ({
               date={date}
               timeZoneLabel={timeZoneLabel}
               isEditing={isEditing}
-              isImageUploading={isImageUploading}
+              isMediaUploading={isMediaUploading}
               hasChanges={hasChanges}
               onDateChange={handleDateChange}
               onSave={handleSave}
@@ -560,7 +605,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 date={date}
                 timeZoneLabel={timeZoneLabel}
                 isEditing={isEditing}
-                isImageUploading={isImageUploading}
+                isMediaUploading={isMediaUploading}
                 hasChanges={hasChanges}
                 onDateChange={handleDateChange}
                 onSave={handleSave}
