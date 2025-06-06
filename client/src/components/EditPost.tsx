@@ -411,13 +411,15 @@ const EditPost: React.FC<EditPostProps> = ({
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (100MB limit for videos, 10MB for images)
-      const maxSize = file.type.startsWith('video/') ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+      // Check file size (25MB limit for videos, 10MB for images)
+      const isFileVideo = file.type.startsWith('video/');
+      const maxSizeInMB = isFileVideo ? 25 : 10;
+      const maxSize = maxSizeInMB * 1024 * 1024;
       if (file.size > maxSize) {
-        const sizeLimit = file.type.startsWith('video/') ? '100MB' : '10MB';
+        const sizeLimit = maxSizeInMB + 'MB';
         toast({ 
           title: "File too large", 
-          description: `Please select a ${file.type.startsWith('video/') ? 'video' : 'image'} smaller than ${sizeLimit}`, 
+          description: `Please select a ${isFileVideo ? 'video' : 'image'} smaller than ${sizeLimit}`, 
           variant: "destructive" 
         });
         return;
@@ -429,13 +431,13 @@ const EditPost: React.FC<EditPostProps> = ({
         setEditedPost(prev => ({ ...prev, mediaUrl: [response] }));
         toast({ 
           title: "Success", 
-          description: `${file.type.startsWith('video/') ? 'Video' : 'Image'} uploaded successfully` 
+          description: `${isFileVideo ? 'Video' : 'Image'} uploaded successfully` 
         });
       } catch (error) {
         console.error('Error uploading file:', error);
         toast({ 
           title: "Error", 
-          description: `Failed to upload ${file.type.startsWith('video/') ? 'video' : 'image'}`, 
+          description: `Failed to upload ${isFileVideo ? 'video' : 'image'}`, 
           variant: "destructive" 
         });
       } finally {
