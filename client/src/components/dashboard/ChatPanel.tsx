@@ -25,7 +25,7 @@ const ChatPanel = () => {
   const [isLoadingHistory, setIsLoadingHistory] = React.useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const {isAuth, isMobileView} = useAuthStore();
+  const { isAuth, isMobileView, isOnboardingComplete, fetchOnboardingState } = useAuthStore();
 
   const chatPanelBg = "bg-[#11132f]";
   const chatHeaderBorder = "border-gray-600/60";
@@ -59,7 +59,7 @@ const ChatPanel = () => {
   useEffect(() => {
     if (messages && messages.length === 0 && isAuth && !isLoadingHistory) {
       setIsThinking(true);
-      handleChatResponse(initialiseChatWithMark);
+      !isOnboardingComplete() && handleChatResponse(initialiseChatWithMark);
     }
   }, [isAuth, messages.length, isLoadingHistory]);
 
@@ -175,6 +175,10 @@ const ChatPanel = () => {
 
       setIsThinking(true);
       await handleChatResponse(messageText);
+
+      if (!isOnboardingComplete() && !isThinking) {
+        await fetchOnboardingState();
+      }
     }
   };
 
@@ -211,9 +215,13 @@ const ChatPanel = () => {
       className={`relative flex flex-col ${chatPanelBg} text-white border-r-2 border-gray-800 h-full overflow-hidden ${isMobileView ? '' : ''}`}
     >
       <div
-        className={`h-[54px] flex items-center px-5 border-b ${chatHeaderBorder} shrink-0`}
+        className={`h-[54px] flex items-center justify-between px-5 border-b ${chatHeaderBorder} shrink-0`}
       >
         <h2 className="font-semibold text-sm">Chat with Mark</h2>
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-xs text-green-600 font-medium">Online</span>
+        </div>
       </div>
 
       <div
