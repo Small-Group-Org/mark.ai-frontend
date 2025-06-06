@@ -21,7 +21,6 @@ const ChatPanel = () => {
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
-  const [isWaitingForResponse, setIsWaitingForResponse] = React.useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = React.useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -57,11 +56,10 @@ const ChatPanel = () => {
 
   // Initialize chat with first AI message only if no history exists
   useEffect(() => {
-    if (messages && messages.length === 0 && isAuth && !isLoadingHistory) {
-      setIsThinking(true);
-      !isOnboardingComplete() && handleChatResponse(initialiseChatWithMark);
+    if(isAuth && !isLoadingHistory && messages?.length === 0 && !isOnboardingComplete()) {
+      handleChatResponse(initialiseChatWithMark);
     }
-  }, [isAuth, messages.length, isLoadingHistory]);
+  }, [isAuth, messages.length, isLoadingHistory, isOnboardingComplete]);
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
@@ -78,7 +76,7 @@ const ChatPanel = () => {
 
   // Auto-focus textarea when response is received
   useEffect(() => {
-    if (!isWaitingForResponse && textareaRef.current) {
+    if (!isThinking && textareaRef.current) {
       // Small delay to ensure the textarea is enabled before focusing
       const focusTimeout = setTimeout(() => {
         textareaRef.current?.focus();
@@ -86,10 +84,10 @@ const ChatPanel = () => {
       
       return () => clearTimeout(focusTimeout);
     }
-  }, [isWaitingForResponse]);
+  }, [isThinking]);
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!isWaitingForResponse) {
+    if (!isThinking) {
       setInputValue(e.target.value);
       e.target.style.height = "auto";
       e.target.style.height = `${e.target.scrollHeight}px`;
@@ -98,6 +96,7 @@ const ChatPanel = () => {
 
   const handleChatResponse = async (messageText: string) => {
     try {
+      setIsThinking(true);
       const requestBody = {
         message: messageText,
         post: {
@@ -149,14 +148,12 @@ const ChatPanel = () => {
       setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
     } finally {
       setIsThinking(false);
-      setIsWaitingForResponse(false);
     }
   };
 
   const handleSend = async () => {
     const messageText = inputValue.trim();
-    if (messageText && !isWaitingForResponse) {
-      setIsWaitingForResponse(true);
+    if (messageText && !isThinking) {
       const newMessage: Message = {
         id: Date.now().toString(),
         text: messageText,
@@ -173,7 +170,6 @@ const ChatPanel = () => {
         textarea.style.height = "auto";
       }
 
-      setIsThinking(true);
       await handleChatResponse(messageText);
 
       if (!isOnboardingComplete() && !isThinking) {
@@ -183,7 +179,7 @@ const ChatPanel = () => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && !isWaitingForResponse) {
+    if (e.key === "Enter" && !e.shiftKey && !isThinking) {
       e.preventDefault();
       handleSend();
     }
@@ -294,19 +290,19 @@ const ChatPanel = () => {
           <textarea
             id="chat-textarea"
             rows={1}
-            placeholder={isWaitingForResponse ? "Waiting for response..." : "Type your message..."}
+            placeholder={isThinking ? "Mark is thinking..." : "Type your message..."}
             className={`flex-1 bg-transparent ${messagePlaceholderColor} text-sm focus:outline-none resize-none py-1.5 placeholder-gray-400 max-h-24 overflow-y-auto`}
             style={{ scrollbarWidth: "none" }}
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            disabled={isWaitingForResponse}
+            disabled={isThinking}
             ref={textareaRef}
           />
           <button
             className={`ml-3 ${sendButtonBg} rounded-full w-8 h-8 flex items-center justify-center text-white hover:bg-blue-700 flex-shrink-0 self-center mb-0.5 disabled:opacity-50 disabled:cursor-not-allowed`}
             onClick={handleSend}
-            disabled={!inputValue.trim() || isWaitingForResponse}
+            disabled={!inputValue.trim() || isThinking}
           >
             <SendIcon className="w-5 h-5 transform rotate-90" />
           </button>
