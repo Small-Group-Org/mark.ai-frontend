@@ -80,7 +80,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   // Check if a date is in the past
   const isDateInPast = (date: Date): boolean => {
     const now = new Date();
-    return date < now;
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return compareDate < today;
   };
 
   // Handle date selection from calendar
