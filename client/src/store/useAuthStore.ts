@@ -50,7 +50,7 @@ export const useAuthStore = create<PostState>((set, get) => ({
   isOpen: false,
   view: 'signin',
   token: undefined,
-  isVerifying: false,
+  isVerifying: true,
   timeZoneLabel: 'GMT+00:00',
   socialPlatforms: initialSocialPlatforms,
   onboardingState: undefined,

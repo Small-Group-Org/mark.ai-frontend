@@ -10,6 +10,7 @@ interface ScheduleActionButtonProps {
   disabled?: boolean;
   initialPostStatus?: PostStatus;
   hasChanges?: boolean;
+  isMediaUploading?: boolean;
 }
 
 const ScheduleActionButton = ({
@@ -19,6 +20,7 @@ const ScheduleActionButton = ({
   disabled = false,
   initialPostStatus = 'draft',
   hasChanges = true,
+  isMediaUploading = false,
 }: ScheduleActionButtonProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<'schedule' | 'draft'>('draft');
@@ -35,8 +37,8 @@ const ScheduleActionButton = ({
     }
   }, [initialPostStatus]);
 
-  // Disable buttons if no changes have been made
-  const isButtonDisabled = disabled || !hasChanges;
+  // Disable buttons if no changes have been made or media is uploading
+  const isButtonDisabled = disabled || !hasChanges || isMediaUploading;
 
   const handleDropdownToggle = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -64,6 +66,13 @@ const ScheduleActionButton = ({
     }
   };
 
+  const getButtonText = () => {
+    if (isMediaUploading) {
+      return 'Uploading...';
+    }
+    return selectedType === 'schedule' ? 'Schedule Post' : 'Save Draft';
+  };
+
   return (
     <>
       <div className={`w-full flex rounded-lg shadow-sm relative ${className}`}>
@@ -73,7 +82,7 @@ const ScheduleActionButton = ({
           disabled={isButtonDisabled}
           tabIndex={isButtonDisabled ? -1 : 0}
         >
-          {selectedType === 'schedule' ? 'Schedule Post' : 'Save Draft'}
+          {getButtonText()}
         </button>
         <button 
           className={`px-2 py-2 bg-cyan-500 text-white rounded-r-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${isButtonDisabled ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cyan-700'}`}

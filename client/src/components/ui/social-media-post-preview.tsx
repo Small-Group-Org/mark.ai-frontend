@@ -30,15 +30,15 @@ interface SocialMediaPostPreviewProps {
   className?: string;
 
   // Add these props for upload
-  onImageUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  uploadedImageFile?: string;
-  onImageDelete?: () => void;
-  isImageUploading?: boolean;
+  onMediaUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  uploadedMediaFile?: string;
+  onMediaDelete?: () => void;
+  isMediaUploading?: boolean;
 }
 
 /**
  * A reusable component that displays a social media post preview with user info,
- * post content, image upload area, and scheduling options.
+ * post content, media upload area, and scheduling options.
  */
 const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   // User data with defaults
@@ -56,10 +56,10 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   className = "",
 
   // Add these props for upload
-  onImageUpload,
-  uploadedImageFile,
-  onImageDelete,
-  isImageUploading = false
+  onMediaUpload,
+  uploadedMediaFile,
+  onMediaDelete,
+  isMediaUploading = false
 }) => {
   const {livePost} = usePostStore();
   const {content: postContent, hashtag, title: postTitle} = livePost;
@@ -78,13 +78,16 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
     .map(word => word.charAt(0).toUpperCase())
     .join('') || 'U';
   
-  const [imageError, setImageError] = React.useState(false);
+  const [mediaError, setMediaError] = React.useState(false);
   
+  const isVideo = (url: string) => {
+    return url.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i);
+  };
 
-  // Reset error if imageUrl changes
+  // Reset error if mediaUrl changes
   React.useEffect(() => {
-    setImageError(false);
-  }, [imageUrl]);
+    setMediaError(false);
+  }, [uploadedMediaFile]);
 
   // Parse hashtags for display
   const hashtagsArray = parseHashtagsToArray(hashtag || '');
@@ -105,7 +108,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
-            {isImageUploading ? (
+            {isMediaUploading ? (
               <div className="flex flex-col items-center text-center w-full h-full justify-center">
                 <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2 animate-spin">
                   <svg
@@ -125,7 +128,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
                 </div>
                 <p className="text-sm text-gray-500">Uploading...</p>
               </div>
-            ) : !uploadedImageFile || imageError ? (
+            ) : !uploadedMediaFile || mediaError ? (
               <div className="flex flex-col items-center text-center w-full h-full justify-center">
                 <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
                   <svg
@@ -155,26 +158,35 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
                 </p>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/*,video/*"
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  onChange={onImageUpload}
+                  onChange={onMediaUpload}
                 />
               </div>
             ) : (
               <div className="relative w-full h-full">
-                <img
-                  src={uploadedImageFile}
-                  alt="Post visual content"
-                  className="object-contain h-full w-full"
-                  onError={() => setImageError(true)}
-                  onLoad={() => setImageError(false)}
-                />
-                {onImageDelete && (
+                {isVideo(uploadedMediaFile) ? (
+                  <video 
+                    src={uploadedMediaFile} 
+                    className="object-contain h-full w-full"
+                    controls
+                    preload="metadata"
+                  />
+                ) : (
+                  <img
+                    src={uploadedMediaFile}
+                    alt="Post visual content"
+                    className="object-contain h-full w-full"
+                    onError={() => setMediaError(true)}
+                    onLoad={() => setMediaError(false)}
+                  />
+                )}
+                {onMediaDelete && (
                   <button 
                     className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onImageDelete();
+                      onMediaDelete();
                     }}
                   >
                     <Trash2 className="w-4 h-4" />
