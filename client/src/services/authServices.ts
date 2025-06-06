@@ -2,7 +2,7 @@ import axios from "axios";
 import { User } from "@/types";
 import { LoginRequest, SignUpRequest } from "@/types/requestTypes";
 import { BASE_URL } from "@/commons/constant";
-import { doGET, doPOST } from "@/commons/serviceUtils";
+import { doGET } from "@/commons/serviceUtils";
 import { usePostStore } from '@/store/usePostStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { createPost } from './postServices';

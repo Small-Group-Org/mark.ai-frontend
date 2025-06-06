@@ -36,8 +36,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if(window.location.pathname === "/waitlist"){
       return;
     }
-    setIsVerifying(true);
+    
     try{
+      setIsVerifying(true);
       const response = await verifyToken();
       setUserDetails(response);
       setIsAuth(true);
