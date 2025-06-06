@@ -21,7 +21,7 @@ const CreatePost = () => {
   const { toast } = useToast();
   const { onSave } = useEditPost();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isMediaUploading, setIsMediaUploading] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const connectedPlatforms = getConnectedPlatforms();
@@ -87,11 +87,25 @@ const CreatePost = () => {
     setLivePost({ scheduleDate: newDate });
   };
   
-  // Image upload handler
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Media upload handler
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsImageUploading(true);
+      // Check file size (25MB limit for videos, 10MB for images)
+      const isFileVideo = file.type.startsWith('video/');
+      const maxSizeInMB = isFileVideo ? 25 : 10;
+      const maxSize = maxSizeInMB * 1024 * 1024;
+      if (file.size > maxSize) {
+        const sizeLimit = maxSizeInMB + 'MB';
+        toast({ 
+          title: "File too large", 
+          description: `Please select a ${isFileVideo ? 'video' : 'image'} smaller than ${sizeLimit}`, 
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      setIsMediaUploading(true);
       try {
         const response = await uploadSingleMedia(file);
         
@@ -99,20 +113,24 @@ const CreatePost = () => {
           ...livePost,
           mediaUrl: [response]
         });
+        toast({ 
+          title: "Success", 
+          description: `${isFileVideo ? 'Video' : 'Image'} uploaded successfully` 
+        });
       } catch (error) {
         console.error('Error uploading file:', error);
         toast({
           title: "Error",
-          description: "Failed to upload image",
+          description: `Failed to upload ${isFileVideo ? 'video' : 'image'}`,
           variant: "destructive",
         });
       } finally {
-        setIsImageUploading(false);
+        setIsMediaUploading(false);
       }
     }
   };
 
-  const handleImageDelete = () => {
+  const handleMediaDelete = () => {
     setLivePost({ ...livePost, mediaUrl: [] });
   };
 
@@ -213,10 +231,10 @@ const CreatePost = () => {
               onDraft={handleDraft}
               onDateChange={handleDateChange}
               hideFooter={false}
-              onImageUpload={handleImageUpload}
-              uploadedImageFile={mediaUrl?.[0] || ""}
-              onImageDelete={handleImageDelete}
-              isImageUploading={isImageUploading}
+              onMediaUpload={handleMediaUpload}
+              uploadedMediaFile={mediaUrl?.[0] || ""}
+              onMediaDelete={handleMediaDelete}
+              isMediaUploading={isMediaUploading}
             />
           </div>
         </div>
