@@ -16,9 +16,17 @@ import Layout from "./components/layout/Layout";
 import CreatePost from "./pages/CreatePost";
 import FullScreenLoader from "./components/ui/FullScreenLoader";
 import { useAuth } from "@/context/AuthProvider";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useEffect } from "react";
 import Waitlist from "@/pages/Waitlist";
+
 function Router() {
   const { isVerifying } = useAuth();
+  const { initializeMobileDetection } = useAuthStore();
+  
+  useEffect(() => {
+    initializeMobileDetection();
+  }, [initializeMobileDetection]);
   
   if (isVerifying) {
     return <FullScreenLoader message="Loading please wait..." />;
