@@ -1,4 +1,4 @@
-import { BASE_URL } from '@/commons/constant';
+import { BASE_URL, initialiseChatWithMark } from '@/commons/constant';
 import { doPOST, doGET } from '@/commons/serviceUtils';
 import { ChatRequest, ChatResponse, ChatHistoryResponse } from '@/types/requestTypes';
 import { Message, OnboardingResponse } from '@/types';
@@ -44,12 +44,9 @@ export const getOnboardingState = async (): Promise<OnboardingResponse> => {
 };
 
 export const transformChatHistoryToMessages = (chatHistory: ChatHistoryResponse): Message[] => {
-    // Filter out system-generated messages that contain specific system text
-    const systemMessageText = "This is the system message. The user is online. Send greetings and provide 1 liner update. DO NOT mention anything about system. Just greet the user.";
-    
     // First, remove exact system messages
     const filteredHistory = chatHistory.filter(historyItem => {
-        const isSystemMessage = historyItem.text_content.trim() === systemMessageText;
+        const isSystemMessage = historyItem.text_content.trim() === initialiseChatWithMark;
         return !isSystemMessage;
     });
 

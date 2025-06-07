@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import Header from './Header';
 import ChatPanel from '../dashboard/ChatPanel';
@@ -20,14 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [leftPanelSize, setLeftPanelSize] = useState(40);
   const [rightPanelSize, setRightPanelSize] = useState(60);
   const [mobileView, setMobileView] = useState<'chat' | 'content'>('chat');
-  
-  const { isMobileView, initializeMobileDetection } = useAuthStore();
-
-  // Initialize mobile detection on component mount
-  useEffect(() => {
-    const cleanup = initializeMobileDetection();
-    return cleanup;
-  }, [initializeMobileDetection]);
+  const { isMobileView } = useAuthStore();
 
   // Extract the current route for highlighting in the sidebar
   const currentRoute = location.split('/')[1] || 'create';
