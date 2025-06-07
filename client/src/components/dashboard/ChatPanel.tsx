@@ -127,6 +127,8 @@ const ChatPanel = () => {
             content: post.content ?? "",
             hashtag: formattedHashtags
           });
+        } else {
+            await fetchOnboardingState();
         }
       } else {
         const aiErrorResponse: Message = {
@@ -171,10 +173,6 @@ const ChatPanel = () => {
       }
 
       await handleChatResponse(messageText);
-
-      if (!isOnboardingComplete() && !isThinking) {
-        await fetchOnboardingState();
-      }
     }
   };
 
