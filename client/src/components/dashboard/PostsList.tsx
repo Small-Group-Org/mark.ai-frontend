@@ -84,10 +84,10 @@ const PostsList: React.FC<PostsListProps> = ({
           <button
             key={tab}
             id={activeTab === tab ? 'active-tab-button' : 'tab-button'}
-            className={`flex-1 text-center p-[10px] cursor-pointer text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 text-center p-[10px] cursor-pointer font-medium transition-all duration-200 ${
               activeTab === tab
-                ? 'border-b-2 border-blue-500 font-semibold text-blue-600 bg-blue-50'
-                : 'border-b-2 border-gray-300 text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-400'
+                ? 'text-base border-b-2 border-blue-500 font-semibold text-blue-600 bg-blue-50'
+                : 'text-sm border-b-2 border-gray-300 text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-400'
             } px-[15px] py-[8px] rounded-t-lg`}
             onClick={() => setActiveTab(tab)}
             style={{ fontFamily: 'var(--font-family-Font-1)' }}
@@ -123,7 +123,7 @@ const PostsList: React.FC<PostsListProps> = ({
             <div
               key={post._id}
               id="post-item"
-              className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 m-[0_30px_15px_30px] hover:translate-x-[5px] cursor-pointer border ${
+              className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 mb-4 mx-3 hover:translate-x-[5px] cursor-pointer border ${
                 index % 2 
                   ? 'bg-[rgb(8_145_178_/_0.1)] hover:bg-[rgb(8_145_178_/_0.15)] border-[rgb(8_145_178_/_0.3)]' 
                   : 'bg-slate-50 hover:bg-slate-100 border-slate-200'
@@ -151,7 +151,7 @@ const PostsList: React.FC<PostsListProps> = ({
               <div className="flex-1 min-w-0 break-words">
                 <h4 
                   id="post-title" 
-                  className={`m-0 mb-[5px] text-lg font-semibold text-gray-800 tracking-wide transition-colors duration-300 ${
+                  className={`m-0 mb-[5px] text-base font-semibold text-gray-800 tracking-wide transition-colors duration-300 ${
                     index % 2 
                       ? 'hover:text-blue-600'
                       : 'hover:text-blue-700'
