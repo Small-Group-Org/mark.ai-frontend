@@ -4,9 +4,9 @@ import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { User } from "@/types";
 import DatePickerWithButton from "./date-picker-with-button";
-import { Trash2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { parseHashtagsToArray } from "@/utils/postUtils";
+import MediaUploadArea from "./media-upload-area";
 
 // Define types for component props
 interface SocialMediaPostPreviewProps {
@@ -78,17 +78,6 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
     .map(word => word.charAt(0).toUpperCase())
     .join('') || 'U';
   
-  const [mediaError, setMediaError] = React.useState(false);
-  
-  const isVideo = (url: string) => {
-    return url.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i);
-  };
-
-  // Reset error if mediaUrl changes
-  React.useEffect(() => {
-    setMediaError(false);
-  }, [uploadedMediaFile]);
-
   // Parse hashtags for display
   const hashtagsArray = parseHashtagsToArray(hashtag || '');
 
@@ -108,92 +97,15 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
-            {isMediaUploading ? (
-              <div className="flex flex-col items-center text-center w-full h-full justify-center">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2 animate-spin">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-gray-500"
-                  >
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  </svg>
-                </div>
-                <p className="text-sm text-gray-500">Uploading...</p>
-              </div>
-            ) : !uploadedMediaFile || mediaError ? (
-              <div className="flex flex-col items-center text-center w-full h-full justify-center">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-gray-500"
-                  >
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" />
-                    <line x1="16" y1="5" x2="22" y2="5" />
-                    <line x1="19" y1="2" x2="19" y2="8" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                  </svg>
-                </div>
-                <p className="text-sm text-gray-500 mx-4">
-                  <span className="font-semibold text-blue-600 cursor-pointer">
-                    Click to Upload
-                  </span>
-                  <span className="block mt-1">or Drag & Drop</span>
-                </p>
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  onChange={onMediaUpload}
-                />
-              </div>
-            ) : (
-              <div className="relative w-full h-full">
-                {isVideo(uploadedMediaFile) ? (
-                  <video 
-                    src={uploadedMediaFile} 
-                    className="object-contain h-full w-full"
-                    controls
-                    preload="metadata"
-                  />
-                ) : (
-                  <img
-                    src={uploadedMediaFile}
-                    alt="Post visual content"
-                    className="object-contain h-full w-full"
-                    onError={() => setMediaError(true)}
-                    onLoad={() => setMediaError(false)}
-                  />
-                )}
-                {onMediaDelete && (
-                  <button 
-                    className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onMediaDelete();
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            )}
+            <MediaUploadArea
+              mediaUrl={uploadedMediaFile}
+              isUploading={isMediaUploading}
+              onMediaUpload={onMediaUpload}
+              onMediaDelete={onMediaDelete}
+              isEditable={true}
+              height="h-full"
+              containerClassName="w-full h-full"
+            />
           </div>
 
           <div className="md:w-1/2 p-5 max-h-[280px] overflow-y-auto">
