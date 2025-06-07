@@ -21,7 +21,7 @@ const ChatPanel = () => {
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
-  const [isLoadingHistory, setIsLoadingHistory] = React.useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = React.useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isAuth, isMobileView, isOnboardingComplete, fetchOnboardingState } = useAuthStore();
@@ -40,7 +40,6 @@ const ChatPanel = () => {
   useEffect(() => {
     const loadHistory = async () => {
       if (isAuth) {
-        setIsLoadingHistory(true);
         try {
           await loadChatHistory();
         } catch (error) {
@@ -54,12 +53,24 @@ const ChatPanel = () => {
     loadHistory();
   }, [isAuth, loadChatHistory]);
 
-  // Initialize chat with first AI message only if no history exists
+  // Initialize chat with Mark only once when conditions are met
   useEffect(() => {
-    if(isAuth && !isLoadingHistory && messages?.length === 0 && !isOnboardingComplete()) {
+    // Only proceed if we're authenticated and chat history has finished loading
+    if (!isAuth || isLoadingHistory) {
+      return;
+    }
+
+    // Case 1: If onboarding is complete, always initialize chat with Mark
+    if (isOnboardingComplete()) {
+      handleChatResponse(initialiseChatWithMark);
+      return;
+    }
+
+    // Case 2: If onboarding is NOT complete, only initialize if no messages exist
+    if (!isOnboardingComplete() && messages?.length === 0) {
       handleChatResponse(initialiseChatWithMark);
     }
-  }, [isAuth, messages.length, isLoadingHistory, isOnboardingComplete]);
+  }, [isAuth, isLoadingHistory, messages?.length, isOnboardingComplete]);
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
