@@ -9,6 +9,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { generateAyrshareToken, getAyrshareSocialHandles } from "@/services/ayrShareServices";
 import { PlatformType } from "@/types";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
+import { usePostStore } from "@/store/usePostStore";
+import useEditPost from "@/hooks/use-edit-post";
 
 const headerBg = "bg-[#11132f]";
 const headerBorder = "border-gray-700/50";
@@ -20,7 +22,11 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) => {
   const { logout, updatePlatformConnection, getEnabledPlatforms } = useAuthStore();
-  const [loadingPlatform, setLoadingPlatform] = useState<string | null>(null);
+  const {updatePostHandler} = useEditPost();
+  const { livePost } = usePostStore();
+  const { platform: currentPlatforms = [] } = livePost;
+
+  const [loadingPlatforms, setLoadingPlatforms] = useState<string[]>([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const enabledPlatforms = getEnabledPlatforms();
@@ -62,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
 
   const handleAyrshareConnection = async (platform: PlatformType) => {
     try {
-        setLoadingPlatform(platform);
+        setLoadingPlatforms(prev => [...prev, platform]);
         const response = await generateAyrshareToken([platform] as PlatformType[]);
         const currentUrl = encodeURIComponent(window.location.href);
         const hasSourceParam = window.location.href.includes(`source=${AYRSHARE}`);
@@ -72,8 +78,18 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
         setShowMobileMenu(false); // Close menu after connection
     } catch (error) {
         console.error('Failed to connect social media:', error);
-        setLoadingPlatform(null);
+        setLoadingPlatforms(prev => prev.filter(p => p !== platform));
     }
+  };
+
+  const handlePlatformToggle = async (platformName: PlatformType, isActive: boolean) => {
+    const newPlatforms = isActive
+      ? [...currentPlatforms, platformName]
+      : currentPlatforms.filter((p) => p !== platformName);
+    
+    setLoadingPlatforms(prev => [...prev, platformName]);
+    await updatePostHandler("platform", newPlatforms);
+    setLoadingPlatforms(prev => prev.filter(p => p !== platformName));
   };
 
   return (
@@ -136,7 +152,10 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
             isConnected={platform.isConnected}
             platform={platform.value}
             handleAyrshareConnection={handleAyrshareConnection}
-            isLoading={loadingPlatform === platform.value}
+            isLoading={loadingPlatforms.includes(platform.value)}
+            isToggleOn={currentPlatforms.includes(platform.value)}
+            onToggle={handlePlatformToggle}
+            toggleColor={platform.toggleColor}
           />
         ))}
       </div>
@@ -172,12 +191,15 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
               <h3 className="text-l font-medium text-gray-300 mb-3">Connect Social Media</h3>
               <div className="grid grid-cols-5 gap-2 mb-4">
                 {enabledPlatforms.map((platform) => (
-                  <div key={platform.value} className="w-8 h-8">
+                  <div key={platform.value} className="w-10 h-10">
                     <ConnectSocialIcon
                       isConnected={platform.isConnected}
                       platform={platform.value}
                       handleAyrshareConnection={handleAyrshareConnection}
-                      isLoading={loadingPlatform === platform.value}
+                      isLoading={loadingPlatforms.includes(platform.value)}
+                      isToggleOn={currentPlatforms.includes(platform.value)}
+                      onToggle={handlePlatformToggle}
+                      toggleColor={platform.toggleColor}
                     />
                   </div>
                 ))}

@@ -4,6 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { deletePost, updatePost } from '@/services/postServices';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
+import { PlatformType } from '@/types';
 
 // Define the empty/default post structure
 const DEFAULT_POST: Post = {
@@ -159,6 +160,41 @@ export const useEditPost = () => {
     }
   }, [toast]);
 
+  const updatePostHandler = async (
+    key: string,
+    value: PlatformType[] | string,
+  ) => {
+    const { livePost, setLivePost } = usePostStore.getState();
+    setLivePost({
+      ...livePost,
+      [key]: value,
+    })
+
+    try {
+      const response = await updatePost(
+        {
+          ...livePost,
+          scheduleDate: typeof livePost.scheduleDate === "object" && livePost.scheduleDate instanceof Date
+            ? livePost.scheduleDate.toISOString()
+            : livePost.scheduleDate,
+          [key]: value,
+        },
+        livePost._id || ""
+      );
+
+      if(response){
+        setLivePost(response);
+      }
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: (error as Error)?.message as string,
+        variant: "destructive",
+      });
+    } 
+  };
+
   return {
     isOpen,
     post,
@@ -167,7 +203,8 @@ export const useEditPost = () => {
     onClose,
     onSave,
     onDelete,
-    onGenerate
+    onGenerate,
+    updatePostHandler
   };
 };
 

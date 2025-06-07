@@ -67,83 +67,95 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "bluesky",
     isConnected: false,
     isEnabled: false,
-    img: SocialIconComponents.bluesky
+    img: SocialIconComponents.bluesky,
+    toggleColor: "#0085C3"  // Darker blue while maintaining Bluesky brand
   },
   {
     label: "Facebook",
     value: "facebook",
     isConnected: false,
     isEnabled: true,
-    img: SocialIconComponents.facebook
+    img: SocialIconComponents.facebook,
+    toggleColor: "#1565C0"  // Darker Facebook blue
   },
   {
     label: "Gmb",
     value: "gmb",
     isConnected: false,
     isEnabled: false,
-    img: ""
+    img: "",
+    toggleColor: "#3367D6"  // Darker Google blue
   },
   {
     label: "Instagram",
     value: "instagram",
-    isConnected: true,
+    isConnected: false,
     isEnabled: true,
-    img: SocialIconComponents.instagram
+    img: SocialIconComponents.instagram,
+    toggleColor: "#C13584"  // Darker Instagram pink/purple
   },
   {
     label: "Linkedin",
     value: "linkedin",
-    isConnected: true,
+    isConnected: false,
     isEnabled: true,
-    img: SocialIconComponents.linkedin
+    img: SocialIconComponents.linkedin,
+    toggleColor: "#005885"  // Darker LinkedIn blue
   },
   {
     label: "Pinterest",
     value: "pinterest",
     isConnected: false,
     isEnabled: false,
-    img: SocialIconComponents.pinterest
+    img: SocialIconComponents.pinterest,
+    toggleColor: "#BD081C"  // Darker Pinterest red
   },
   {
     label: "Reddit",
     value: "reddit",
     isConnected: false,
     isEnabled: false,
-    img: SocialIconComponents.reddit
+    img: SocialIconComponents.reddit,
+    toggleColor: "#D93900"  // Darker Reddit orange
   },
   {
     label: "Telegram",
     value: "telegram",
     isConnected: false,
     isEnabled: false,
-    img: SocialIconComponents.telegram
+    img: SocialIconComponents.telegram,
+    toggleColor: "#006BA6"  // Darker Telegram blue
   },
   {
     label: "Threads",
     value: "threads",
-    isConnected: true,
+    isConnected: false,
     isEnabled: true,
-    img: SocialIconComponents.threads
+    img: SocialIconComponents.threads,
+    toggleColor: "#1A1A1A"  // Darker than pure black for better visibility
   },
   {
     label: "Tiktok",
     value: "tiktok",
     isConnected: false,
     isEnabled: false,
-    img: SocialIconComponents.tiktok
+    img: SocialIconComponents.tiktok,
+    toggleColor: "#4A9DA8"  // Darker TikTok teal
   },
   {
     label: "Twitter",
     value: "twitter",
     isConnected: false,
     isEnabled: true,
-    img: SocialIconComponents.twitter
+    img: SocialIconComponents.twitter,
+    toggleColor: "#1976D2"  // Darker Twitter blue
   },
   {
     label: "Youtube",
     value: "youtube",
     isConnected: false,
-    isEnabled: false,
-    img: SocialIconComponents.youtube
+    isEnabled: true,
+    img: SocialIconComponents.youtube,
+    toggleColor: "#CC0000"  // Darker YouTube red
   }
 ];

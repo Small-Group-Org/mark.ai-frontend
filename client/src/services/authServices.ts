@@ -18,15 +18,16 @@ interface AuthResponse {
 export const createDummyLivePost = async () => {
   const postStore = usePostStore.getState();
   const currentTime = new Date();
+  const tenMinutesLater = new Date(currentTime.getTime() + 10 * 60000);
   
   const livePost = {
     ...postStore.livePost,
-    scheduleDate: currentTime
+    scheduleDate: tenMinutesLater
   };
   
   const postForDB = {
     ...livePost,
-    scheduleDate: currentTime.toISOString()
+    scheduleDate: tenMinutesLater.toISOString()
   };
   
   postStore.setLivePost(livePost);
@@ -36,7 +37,7 @@ export const createDummyLivePost = async () => {
     livePost = livePost.data;
     postStore.setLivePost({
       ...livePost,
-      scheduleDate: currentTime
+      scheduleDate: tenMinutesLater
     });
   } catch (error) {
     console.error('Failed to create live post:', error);

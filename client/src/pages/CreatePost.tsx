@@ -15,6 +15,7 @@ import { formatHashtagsForSubmission } from "@/utils/postUtils";
 const CreatePost = () => {
   const { livePost, setLivePost } = usePostStore();
   const { getConnectedPlatforms, isMobileView } = useAuthStore();
+  const {updatePostHandler} = useEditPost();
   const { platform, postType, scheduleDate, mediaUrl } = livePost;
 
   const { toast } = useToast();
@@ -36,45 +37,35 @@ const CreatePost = () => {
     }
   }, [livePost.scheduleDate]);
 
-  const updatePostHandler = async (
-    key: string,
-    value: PlatformType[] | string
-  ) => {
-    setIsUpdating(true);
-    try {
-      const response = await updatePost(
-        {
-          [key]: value,
-        },
-        livePost._id || ""
-      );
+  // const updatePostHandler = async (
+  //   key: string,
+  //   value: PlatformType[] | string
+  // ) => {
+  //   setIsUpdating(true);
+  //   try {
+  //     const response = await updatePost(
+  //       {
+  //         [key]: value,
+  //       },
+  //       livePost._id || ""
+  //     );
 
-      if(response){
-        setLivePost({
-          [key]: value,
-        });
-      }
+  //     if(response){
+  //       setLivePost({
+  //         [key]: value,
+  //       });
+  //     }
 
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: (error as Error)?.message as string,
-        variant: "destructive",
-      });
-    } finally{
-      setIsUpdating(false);
-    }
-  };
-
-  const handlePlatformToggle = async (platformName: PlatformType, isActive: boolean) => {
-    const currentPlatforms = Array.isArray(platform) ? platform : [];
-
-    const newPlatforms = isActive
-      ? [...currentPlatforms, platformName]
-      : currentPlatforms.filter((p) => p !== platformName);
-    
-    updatePostHandler("platform", newPlatforms);
-  };
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: (error as Error)?.message as string,
+  //       variant: "destructive",
+  //     });
+  //   } finally{
+  //     setIsUpdating(false);
+  //   }
+  // };
 
   const handlePostTypeClick = (type: "post" | "story" | "reel") => {
     updatePostHandler('postType', type);
@@ -109,11 +100,9 @@ const CreatePost = () => {
       scheduleDate: date || new Date(),
       status,
     };
-    resetLivePost();
     await onSave(updatedPost);
-    setTimeout(() => {
-      createDummyLivePost();
-    }, 500);
+    resetLivePost();
+    createDummyLivePost();
   };
 
   const handleSavePost = async (type: "schedule" | "draft") => {
@@ -127,7 +116,7 @@ const CreatePost = () => {
       return;
     }
     
-    await handleSave('schedule');
+    await handleSave(type);
   };
 
   const previewPanelBg = "bg-gray-100";
@@ -141,7 +130,7 @@ const CreatePost = () => {
           <h2 className={`font-semibold text-gray-800`}>Post Preview</h2>
         </div>
 
-        <div className={`px-5 py-2 border-b border-gray-200 bg-gray-50 shrink-0`}>
+        {/* <div className={`px-5 py-2 border-b border-gray-200 bg-gray-50 shrink-0`}>
           <div className="flex flex-wrap justify-between gap-4">
             {connectedPlatforms.map((platformObj) => (
               <div key={platformObj.value} className="flex-shrink-0">
@@ -154,7 +143,7 @@ const CreatePost = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         <div
           className={`px-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-3`}

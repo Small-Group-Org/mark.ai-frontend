@@ -25,6 +25,7 @@ export interface AyrsharePlatformDetails {
   isConnected: boolean;
   isEnabled: boolean;
   img?: any;
+  toggleColor?: string;
 }
 
 export interface User {

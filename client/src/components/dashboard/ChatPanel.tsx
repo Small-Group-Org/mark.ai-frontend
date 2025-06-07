@@ -61,16 +61,16 @@ const ChatPanel = () => {
     }
 
     // Case 1: If onboarding is complete, always initialize chat with Mark
-    // if (isOnboardingComplete()) {
-    //   handleChatResponse(initialiseChatWithMark);
-    //   return;
-    // }
+    if (isOnboardingComplete()) {
+      handleChatResponse(initialiseChatWithMark);
+      return;
+    }
 
-    // // Case 2: If onboarding is NOT complete, only initialize if no messages exist
-    // if (!isOnboardingComplete() && messages?.length === 0) {
-    //   handleChatResponse(initialiseChatWithMark);
-    // }
-  }, [isAuth, isLoadingHistory, messages?.length, isOnboardingComplete]);
+    // Case 2: If onboarding is NOT complete, only initialize if no messages exist
+    if (!isOnboardingComplete() && messages?.length === 0) {
+      handleChatResponse(initialiseChatWithMark);
+    }
+  }, [isAuth, isLoadingHistory]);
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
