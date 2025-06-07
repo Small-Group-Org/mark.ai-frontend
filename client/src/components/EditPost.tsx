@@ -376,10 +376,10 @@ const EditPost: React.FC<EditPostProps> = ({
     if (!isEditing) return;
     
     // Check if platforms are selected when scheduling
-    if (status === 'schedule' && editedPost.platform.length === 0) {
+    if (editedPost.platform.length === 0) {
       toast({
         title: "Select Platform",
-        description: "Please select at least one platform to schedule your post.",
+        description: `Please select at least one platform to ${status === "schedule" ? "schedule" : "save"} your post.`,
         variant: "destructive",
       });
       return;

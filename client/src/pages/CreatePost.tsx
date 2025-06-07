@@ -161,22 +161,18 @@ const CreatePost = () => {
     }, 500);
   };
 
-  const handleSchedule = async () => {
+  const handleSavePost = async (type: "schedule" | "draft") => {
     const currentPlatforms = Array.isArray(platform) ? platform : [];
     if (currentPlatforms.length === 0) {
       toast({
         title: "Select Platform",
-        description: "Please select at least one platform to schedule your post.",
+        description: `Please select at least one platform to ${type === "schedule" ? "schedule" : "save"} your post.`,
         variant: "destructive",
       });
       return;
     }
     
     await handleSave('schedule');
-  };
-
-  const handleDraft = async () => {
-    await handleSave('draft');
   };
 
   const previewPanelBg = "bg-gray-100";
@@ -227,8 +223,8 @@ const CreatePost = () => {
           <div className="p-4">
             <SocialMediaPostPreview
               scheduledDate={scheduleDate}
-              onSchedule={handleSchedule}
-              onDraft={handleDraft}
+              onSchedule={() => handleSavePost("schedule")}
+              onDraft={() => handleSavePost("draft")}
               onDateChange={handleDateChange}
               hideFooter={false}
               onMediaUpload={handleMediaUpload}
