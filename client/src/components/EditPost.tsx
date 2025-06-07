@@ -10,7 +10,6 @@ import MediaUploadArea from "@/components/ui/media-upload-area";
 import { Post, PostStatus } from '@/types/post';
 import { PlatformType } from '@/types';
 import { ENABLE_AI_GENERATE } from '@/commons/constant';
-import { uploadSingleMedia } from "@/services/uploadServices";
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
 
@@ -191,13 +190,12 @@ const SchedulingControls: React.FC<{
   date: Date;
   timeZoneLabel: string;
   isEditing: boolean;
-  isMediaUploading: boolean;
   hasChanges: boolean;
   onDateChange: (date: Date) => void;
   onSave: (status: PostStatus) => void;
   onDelete: () => void;
   showDeleteConfirmation: (config: any) => void;
-}> = ({ editedPost, post, date, timeZoneLabel, isEditing, isMediaUploading, hasChanges, onDateChange, onSave, onDelete, showDeleteConfirmation }) => (
+}> = ({ editedPost, post, date, timeZoneLabel, isEditing, hasChanges, onDateChange, onSave, onDelete, showDeleteConfirmation }) => (
   <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-white flex-shrink-0">
     <div className="flex justify-between items-center mb-1">
       <div className="text-xs text-gray-500">{timeZoneLabel}</div>
@@ -233,8 +231,8 @@ const SchedulingControls: React.FC<{
             <ScheduleActionButton
               onSchedule={() => isEditing && onSave('schedule')}
               onDraft={() => isEditing && onSave('draft')}
-              className={(!isEditing || isMediaUploading) ? "opacity-70 cursor-not-allowed" : ""}
-              disabled={!isEditing || isMediaUploading}
+              className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
+              disabled={!isEditing}
               initialPostStatus={post.status}
               hasChanges={hasChanges}
             />
@@ -260,7 +258,6 @@ const EditPost: React.FC<EditPostProps> = ({
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft' || post.status === 'schedule');
-  const [isMediaUploading, setIsMediaUploading] = useState<boolean>(false);
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
   
   const { toast } = useToast();
@@ -320,46 +317,8 @@ const EditPost: React.FC<EditPostProps> = ({
     setEditedPost(prev => ({ ...prev, hashtag: e.target.value }));
   };
 
-  const handleDeleteMedia = (index: number) => {
-    setEditedPost(prev => ({ ...prev, mediaUrl: prev.mediaUrl.filter((_, i) => i !== index) }));
-  };
-
-  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Check file size (25MB limit for videos, 10MB for images)
-      const isFileVideo = file.type.startsWith('video/');
-      const maxSizeInMB = isFileVideo ? 25 : 10;
-      const maxSize = maxSizeInMB * 1024 * 1024;
-      if (file.size > maxSize) {
-        const sizeLimit = maxSizeInMB + 'MB';
-        toast({ 
-          title: "File too large", 
-          description: `Please select a ${isFileVideo ? 'video' : 'image'} smaller than ${sizeLimit}`, 
-          variant: "destructive" 
-        });
-        return;
-      }
-
-      setIsMediaUploading(true);
-      try {
-        const response = await uploadSingleMedia(file);
-        setEditedPost(prev => ({ ...prev, mediaUrl: [response] }));
-        toast({ 
-          title: "Success", 
-          description: `${isFileVideo ? 'Video' : 'Image'} uploaded successfully` 
-        });
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        toast({ 
-          title: "Error", 
-          description: `Failed to upload ${isFileVideo ? 'video' : 'image'}`, 
-          variant: "destructive" 
-        });
-      } finally {
-        setIsMediaUploading(false);
-      }
-    }
+  const handleMediaChange = (mediaUrls: string[]) => {
+    setEditedPost(prev => ({ ...prev, mediaUrl: mediaUrls }));
   };
 
   const handleGenerate = () => {
@@ -432,9 +391,7 @@ const EditPost: React.FC<EditPostProps> = ({
             <div className="flex-1 overflow-y-auto p-3 sm:p-4">
               <MediaUploadArea
                 mediaUrl={editedPost.mediaUrl}
-                isUploading={isMediaUploading}
-                onMediaUpload={handleMediaUpload}
-                onMediaDelete={() => handleDeleteMedia(0)}
+                onMediaChange={handleMediaChange}
                 isEditable={isEditing}
                 showEmptyIcons={!isEditing}
                 containerClassName="mb-4 rounded-lg border-2 border-dashed border-gray-300"
@@ -463,9 +420,7 @@ const EditPost: React.FC<EditPostProps> = ({
               <div className="p-3 sm:p-4" onClick={(e) => e.stopPropagation()}>
                 <MediaUploadArea
                   mediaUrl={editedPost.mediaUrl}
-                  isUploading={isMediaUploading}
-                  onMediaUpload={handleMediaUpload}
-                  onMediaDelete={() => handleDeleteMedia(0)}
+                  onMediaChange={handleMediaChange}
                   isEditable={isEditing}
                   showEmptyIcons={!isEditing}
                   containerClassName="mb-4 rounded-lg border-2 border-dashed border-gray-300"
@@ -501,7 +456,6 @@ const EditPost: React.FC<EditPostProps> = ({
               date={date}
               timeZoneLabel={timeZoneLabel}
               isEditing={isEditing}
-              isMediaUploading={isMediaUploading}
               hasChanges={hasChanges}
               onDateChange={handleDateChange}
               onSave={handleSave}
@@ -530,7 +484,6 @@ const EditPost: React.FC<EditPostProps> = ({
                 date={date}
                 timeZoneLabel={timeZoneLabel}
                 isEditing={isEditing}
-                isMediaUploading={isMediaUploading}
                 hasChanges={hasChanges}
                 onDateChange={handleDateChange}
                 onSave={handleSave}

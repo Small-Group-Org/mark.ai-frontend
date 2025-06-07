@@ -1,13 +1,14 @@
 import React from 'react';
-import { Trash2, Image, Video } from 'lucide-react';
+import { Trash2, Image, Video, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { uploadMultipleMedia } from '@/services/uploadServices';
+import { useToast } from '@/hooks/use-toast';
 
 interface MediaUploadAreaProps {
   // Media data
   mediaUrl?: string | string[];
   isUploading?: boolean;
-  onMediaUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onMediaDelete?: () => void;
+  onMediaChange?: (mediaUrls: string[]) => void;
   
   // Behavior props
   isEditable?: boolean;
@@ -21,66 +22,264 @@ interface MediaUploadAreaProps {
   // Content props
   emptyText?: string;
   uploadingText?: string;
+  
+  // File validation
+  maxFiles?: number;
+  maxVideoSizeMB?: number;
+  maxImageSizeMB?: number;
 }
 
 const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
   mediaUrl,
-  isUploading = false,
-  onMediaUpload,
-  onMediaDelete,
+  isUploading: externalIsUploading = false,
+  onMediaChange,
   isEditable = true,
   showEmptyIcons = false,
   containerClassName = "",
   height = "h-[300px]",
   mediaClassName = "",
   emptyText = "No media",
-  uploadingText = "Uploading..."
+  uploadingText = "Uploading...",
+  maxFiles = 10
 }) => {
   const [mediaError, setMediaError] = React.useState(false);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [internalIsUploading, setInternalIsUploading] = React.useState(false);
+  const { toast } = useToast();
+  
+  const isUploading = externalIsUploading || internalIsUploading;
   
   const isVideo = (url: string) => {
     return url.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i);
   };
 
   // Handle both string and array formats
-  const currentMediaUrl = Array.isArray(mediaUrl) ? mediaUrl[0] : mediaUrl;
-  const hasMedia = currentMediaUrl && currentMediaUrl.length > 0;
+  const mediaArray = Array.isArray(mediaUrl) ? mediaUrl : mediaUrl ? [mediaUrl] : [];
+  const hasMedia = mediaArray.length > 0;
+  const hasMultipleMedia = mediaArray.length > 1;
 
   // Reset error when media changes
   React.useEffect(() => {
     setMediaError(false);
-  }, [currentMediaUrl]);
+  }, [mediaArray[currentIndex]]);
+
+  // Reset current index if it's out of bounds
+  React.useEffect(() => {
+    if (currentIndex >= mediaArray.length && mediaArray.length > 0) {
+      setCurrentIndex(0);
+    }
+  }, [mediaArray.length, currentIndex]);
+
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? mediaArray.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === mediaArray.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleDotClick = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileArray = Array.from(files);
+    const currentMediaCount = mediaArray.length;
+    
+    // Check if total files would exceed maximum
+    if (currentMediaCount + fileArray.length > maxFiles) {
+      toast({ 
+        title: "Too many files", 
+        description: `Maximum ${maxFiles} files allowed. You can add ${maxFiles - currentMediaCount} more files.`, 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    // Validate file sizes
+    const validFiles = [];
+    for (const file of fileArray) {
+      const isFileVideo = file.type.startsWith('video/');
+      const maxSizeInMB = 500;
+      const maxSize = maxSizeInMB * 1024 * 1024;
+      
+      if (file.size > maxSize) {
+        const sizeLimit = maxSizeInMB + 'MB';
+        toast({ 
+          title: "File too large", 
+          description: `${file.name} is larger than ${sizeLimit}. Please select a smaller ${isFileVideo ? 'video' : 'image'}.`, 
+          variant: "destructive" 
+        });
+        continue;
+      }
+      
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) return;
+
+    setInternalIsUploading(true);
+    try {
+      const uploadedUrls = await uploadMultipleMedia(validFiles);
+      const newMediaArray = [...mediaArray, ...uploadedUrls];
+      
+      if (onMediaChange) {
+        onMediaChange(newMediaArray);
+      }
+      
+      toast({ 
+        title: "Success", 
+        description: `${uploadedUrls.length} file(s) uploaded successfully` 
+      });
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      toast({ 
+        title: "Error", 
+        description: error instanceof Error ? error.message : "Failed to upload files", 
+        variant: "destructive" 
+      });
+    } finally {
+      setInternalIsUploading(false);
+      // Reset file input
+      e.target.value = '';
+    }
+  };
+
+  const handleDeleteMedia = (index: number) => {
+    const newMediaArray = mediaArray.filter((_, i) => i !== index);
+    
+    if (onMediaChange) {
+      onMediaChange(newMediaArray);
+    }
+    
+    // Adjust current index if necessary
+    if (currentIndex >= newMediaArray.length && newMediaArray.length > 0) {
+      setCurrentIndex(newMediaArray.length - 1);
+    } else if (newMediaArray.length === 0) {
+      setCurrentIndex(0);
+    }
+  };
+
+  const renderMediaItem = (url: string) => {
+    if (isVideo(url)) {
+      return (
+        <video 
+          src={url} 
+          className={cn("object-contain h-full w-full", mediaClassName)}
+          controls
+          preload="metadata"
+        />
+      );
+    } else {
+      return (
+        <img 
+          src={url} 
+          alt="Post media" 
+          className={cn("object-contain h-full w-full", mediaClassName)}
+          onError={() => setMediaError(true)}
+          onLoad={() => setMediaError(false)}
+        />
+      );
+    }
+  };
 
   return (
     <div className={cn("relative", containerClassName)}>
       {hasMedia && !mediaError ? (
         <div className={cn("relative overflow-hidden flex items-start justify-center", height)}>
-          {isVideo(currentMediaUrl) ? (
-            <video 
-              src={currentMediaUrl} 
-              className={cn("object-contain h-full", mediaClassName)}
-              controls
-              preload="metadata"
-            />
-          ) : (
-            <img 
-              src={currentMediaUrl} 
-              alt="Post media" 
-              className={cn("object-contain h-full", mediaClassName)}
-              onError={() => setMediaError(true)}
-              onLoad={() => setMediaError(false)}
-            />
+          {/* Media Display */}
+          {renderMediaItem(mediaArray[currentIndex])}
+          
+          {/* Navigation Arrows (only show if multiple media) */}
+          {hasMultipleMedia && (
+            <>
+              <button
+                onClick={handlePrevious}
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white transition-opacity"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleNext}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </>
           )}
-          {isEditable && onMediaDelete && (
+          
+          {/* Delete Button */}
+          {isEditable && (
             <button 
-              className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white"
+              className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white z-10"
               onClick={(e) => {
                 e.stopPropagation();
-                onMediaDelete();
+                handleDeleteMedia(currentIndex);
               }}
             >
               <Trash2 className="w-4 h-4" />
             </button>
+          )}
+          
+          {/* Add More Media Button (show when editable and under max files) */}
+          {isEditable && mediaArray.length < maxFiles && (
+            <button 
+              className="absolute bottom-2 right-2 p-2 bg-blue-600/90 rounded-full hover:bg-blue-700 text-white z-10"
+              onClick={(e) => {
+                e.stopPropagation();
+                const fileInput = e.currentTarget.parentElement?.querySelector('input[type="file"]') as HTMLInputElement;
+                if (fileInput) {
+                  fileInput.click();
+                }
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+            </button>
+          )}
+          
+          {/* Navigation Dots (Instagram-style) */}
+          {hasMedia && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {mediaArray.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleDotClick(index)}
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-all duration-200",
+                    index === currentIndex 
+                      ? "bg-white scale-110" 
+                      : "bg-white/50 hover:bg-white/75"
+                  )}
+                />
+              ))}
+            </div>
+          )}
+          
+          {/* Hidden file input for adding more media */}
+          {isEditable && (
+            <input
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={handleMediaUpload}
+              disabled={isUploading}
+              multiple
+            />
           )}
         </div>
       ) : (
@@ -137,13 +336,15 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
                   Click to Upload
                 </span>
                 <span className="block mt-1">or Drag & Drop</span>
+                <span className="block mt-1 text-xs text-gray-400">Max {maxFiles} files</span>
               </p>
               <input
                 type="file"
                 accept="image/*,video/*"
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                onChange={onMediaUpload}
+                onChange={handleMediaUpload}
                 disabled={isUploading}
+                multiple
               />
             </>
           ) : showEmptyIcons ? (
