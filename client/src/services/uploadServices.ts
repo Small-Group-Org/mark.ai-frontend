@@ -14,7 +14,31 @@ export const uploadSingleMedia = async (file: File) => {
       return response.data.data?.[0]?.cloudinaryUrl || "";
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || 'Failed to create post');
+        throw new Error(error.response?.data?.message || 'Failed to upload media');
+      }
+      throw error;
+    }
+  };
+
+export const uploadMultipleMedia = async (files: File[]) => {
+    try {
+      if (files.length > 10) {
+        throw new Error('Maximum 10 files allowed');
+      }
+
+      const formData = new FormData();
+      files.forEach(file => formData.append('mediaFiles', file));
+
+      const response = await doPOST(
+        `${BASE_URL}/upload/multiple`,
+        formData
+      );
+      
+      // Return array of URLs from the response
+      return response.data.data?.map((item: any) => item.cloudinaryUrl) || [];
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || 'Failed to upload media');
       }
       throw error;
     }

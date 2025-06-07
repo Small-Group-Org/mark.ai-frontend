@@ -30,10 +30,8 @@ interface SocialMediaPostPreviewProps {
   className?: string;
 
   // Add these props for upload
-  onMediaUpload?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  uploadedMediaFile?: string;
-  onMediaDelete?: () => void;
-  isMediaUploading?: boolean;
+  uploadedMediaFile?: string | string[];
+  onMediaChange?: (mediaUrls: string[]) => void;
 }
 
 /**
@@ -56,10 +54,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   className = "",
 
   // Add these props for upload
-  onMediaUpload,
   uploadedMediaFile,
-  onMediaDelete,
-  isMediaUploading = false
+  onMediaChange
 }) => {
   const {livePost} = usePostStore();
   const {content: postContent, hashtag, title: postTitle} = livePost;
@@ -99,9 +95,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
           <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
             <MediaUploadArea
               mediaUrl={uploadedMediaFile}
-              isUploading={isMediaUploading}
-              onMediaUpload={onMediaUpload}
-              onMediaDelete={onMediaDelete}
+              isUploading={false}
+              onMediaChange={onMediaChange}
               isEditable={true}
               height="h-full"
               containerClassName="w-full h-full"

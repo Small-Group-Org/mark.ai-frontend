@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { updatePost } from "@/services/postServices";
 import useEditPost from "@/hooks/use-edit-post";
 import { createDummyLivePost } from "@/services/authServices";
-import { uploadSingleMedia } from "@/services/uploadServices";
 import { formatHashtagsForSubmission } from "@/utils/postUtils";
 
 const CreatePost = () => {
@@ -21,7 +20,6 @@ const CreatePost = () => {
   const { toast } = useToast();
   const { onSave } = useEditPost();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isMediaUploading, setIsMediaUploading] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const connectedPlatforms = getConnectedPlatforms();
@@ -87,51 +85,8 @@ const CreatePost = () => {
     setLivePost({ scheduleDate: newDate });
   };
   
-  // Media upload handler
-  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Check file size (25MB limit for videos, 10MB for images)
-      const isFileVideo = file.type.startsWith('video/');
-      const maxSizeInMB = isFileVideo ? 25 : 10;
-      const maxSize = maxSizeInMB * 1024 * 1024;
-      if (file.size > maxSize) {
-        const sizeLimit = maxSizeInMB + 'MB';
-        toast({ 
-          title: "File too large", 
-          description: `Please select a ${isFileVideo ? 'video' : 'image'} smaller than ${sizeLimit}`, 
-          variant: "destructive" 
-        });
-        return;
-      }
-
-      setIsMediaUploading(true);
-      try {
-        const response = await uploadSingleMedia(file);
-        
-        setLivePost({
-          ...livePost,
-          mediaUrl: [response]
-        });
-        toast({ 
-          title: "Success", 
-          description: `${isFileVideo ? 'Video' : 'Image'} uploaded successfully` 
-        });
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        toast({
-          title: "Error",
-          description: `Failed to upload ${isFileVideo ? 'video' : 'image'}`,
-          variant: "destructive",
-        });
-      } finally {
-        setIsMediaUploading(false);
-      }
-    }
-  };
-
-  const handleMediaDelete = () => {
-    setLivePost({ ...livePost, mediaUrl: [] });
+  const handleMediaChange = (mediaUrls: string[]) => {
+    setLivePost({ ...livePost, mediaUrl: mediaUrls });
   };
 
   const handleSave = async (status: PostStatus) => {
@@ -227,10 +182,8 @@ const CreatePost = () => {
               onDraft={() => handleSavePost("draft")}
               onDateChange={handleDateChange}
               hideFooter={false}
-              onMediaUpload={handleMediaUpload}
-              uploadedMediaFile={mediaUrl?.[0] || ""}
-              onMediaDelete={handleMediaDelete}
-              isMediaUploading={isMediaUploading}
+              uploadedMediaFile={mediaUrl}
+              onMediaChange={handleMediaChange}
             />
           </div>
         </div>
