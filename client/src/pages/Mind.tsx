@@ -4,6 +4,7 @@ import { MainInfo } from "@/components/mind/MainInfo";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEffect, useRef, useState } from "react";
 import { OnboardingState } from "@/types";
+import { Info } from "lucide-react";
 
 const Mind = () => {
   const { onboardingState } = useAuthStore();
@@ -73,7 +74,7 @@ const Mind = () => {
 
   if (!onboardingState) {
     return (
-      <div className="max-h-[calc(100vh-100px)] bg-slate-900 overflow-auto">
+      <div className=" bg-slate-900 overflow-auto">
         <div className="p-4 md:p-6">
           <div className="max-w-full mx-auto">
             <div className="flex items-center justify-center h-[calc(100vh-200px)]">
@@ -92,7 +93,7 @@ const Mind = () => {
   const hasContentStrategy = Object.values(mindData.content_strategy || {}).some(v => v !== null);
 
   return (
-    <div className="max-h-[calc(100vh-100px)] bg-slate-900 overflow-auto">
+    <div className="max-h-[calc(100vh-135px)] md:max-h-[calc(100vh-70px)] bg-slate-900 overflow-auto">
       <div className="p-4 md:p-6">
         <div className="max-w-full mx-auto">
           <MainInfo 
@@ -107,7 +108,7 @@ const Mind = () => {
               title="Business Goals" 
               icon="🎯" 
               isEmpty={!hasBusinessGoals} 
-              className="min-w-[400px] flex-1"
+              className="min-w-[350px] flex-1"
             >
               {hasBusinessGoals && (
                 <>
@@ -140,7 +141,7 @@ const Mind = () => {
               title="Target Audience" 
               icon="👥" 
               isEmpty={!hasTargetAudience} 
-              className="min-w-[400px] flex-1"
+              className="min-w-[350px] flex-1"
             >
               {hasTargetAudience && (
                 <>
@@ -168,7 +169,7 @@ const Mind = () => {
               title="Content Strategy" 
               icon="📝" 
               isEmpty={!hasContentStrategy} 
-              className="min-w-[400px] flex-1"
+              className="min-w-[350px] flex-1"
             >
               {hasContentStrategy && (
                 <>
@@ -196,7 +197,7 @@ const Mind = () => {
               )}
             </InfoCard>
 
-            <InfoCard title="Learning Progress" icon="📊" className="min-w-[400px] flex-1">
+            <InfoCard title="Learning Progress" icon="📊" className="min-w-[350px] flex-1">
               <InfoRow 
                 label="Missing Info" 
                 value={mindData.onboarding_progress?.missing_required_info?.length === 0 ? 
@@ -215,9 +216,9 @@ const Mind = () => {
           </div>
 
           {/* Footer Info */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-500 text-sm">
-              Data updates automatically as the agent learns from conversations
+          <div className="mt-6">
+            <p className="text-gray-500 text-sm italic">
+             <Info className="w-4 h-4 inline-block mr-1" /> Data updates automatically as the agent learns from conversations
             </p>
           </div>
         </div>
