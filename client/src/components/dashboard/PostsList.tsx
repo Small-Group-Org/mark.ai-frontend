@@ -75,30 +75,32 @@ const PostsList: React.FC<PostsListProps> = ({
   return (
     <div
       id="posts-container"
-      className="relative w-[95%] max-w-full mx-auto overflow-x-hidden overflow-y-auto rounded-[10px] bg-white mt-4 min-h-[60vh] flex flex-col border border-gray-300"
+      className="relative w-[95%] h-[calc(100vh-140px)] md:h-[calc(100vh-200px)] max-w-full mx-auto overflow-x-hidden overflow-y-auto rounded-[10px] bg-white mt-4 min-h-[60vh] flex flex-col border border-gray-300"
       style={{ fontFamily: 'var(--font-family-Font-1)' }}
     >
         {/* Tabs */}
-      <div className="flex justify-center m-[20px_30px] pb-[10px]">
-        {(['past', 'upcoming', 'drafts'] as const).map(tab => (
-          <button
-            key={tab}
-            id={activeTab === tab ? 'active-tab-button' : 'tab-button'}
-            className={`flex-1 text-center p-[10px] cursor-pointer font-medium transition-all duration-200 ${
-              activeTab === tab
-                ? 'text-base border-b-2 border-blue-500 font-semibold text-blue-600 bg-blue-50'
-                : 'text-sm border-b-2 border-gray-300 text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-400'
-            } px-[15px] py-[8px] rounded-t-lg`}
-            onClick={() => setActiveTab(tab)}
-            style={{ fontFamily: 'var(--font-family-Font-1)' }}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)} Posts
-          </button>
-        ))}
-      </div>
+        <div className="sticky top-0 z-10 bg-white">
+          <div className="flex justify-center mb-3 md:m-3">
+            {(['past', 'upcoming', 'drafts'] as const).map(tab => (
+              <button
+                key={tab}
+                id={activeTab === tab ? 'active-tab-button' : 'tab-button'}
+                className={`flex-1 text-center p-[10px] text-sm cursor-pointer font-medium transition-all duration-200 ${
+                  activeTab === tab
+                    ? 'border-b-2 border-blue-500 text-blue-600 bg-blue-50'
+                    : 'border-b-2 border-gray-300 text-gray-600 hover:text-gray-800 hover:bg-gray-100 hover:border-gray-400'
+                } px-[15px] py-[8px] rounded-t-lg`}
+                onClick={() => setActiveTab(tab)}
+                style={{ fontFamily: 'var(--font-family-Font-1)' }}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)} Posts
+              </button>
+            ))}
+          </div>
+        </div>
 
        {/* Posts List Container */}
-      <div className="flex flex-col gap-[5px] flex-1">
+      <div className="flex flex-col gap-[5px] flex-1 px-3">
         {loading && (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-center text-gray-600" style={{ fontFamily: 'var(--font-family-Font-1)' }}>Loading posts...</p>
@@ -123,7 +125,7 @@ const PostsList: React.FC<PostsListProps> = ({
             <div
               key={post._id}
               id="post-item"
-              className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 mb-4 mx-3 hover:translate-x-[5px] cursor-pointer border ${
+              className={`p-5 rounded-lg overflow-hidden box-border flex justify-between items-center transition-all duration-200 mb-3 hover:translate-x-[5px] cursor-pointer border ${
                 index % 2 
                   ? 'bg-[rgb(8_145_178_/_0.1)] hover:bg-[rgb(8_145_178_/_0.15)] border-[rgb(8_145_178_/_0.3)]' 
                   : 'bg-slate-50 hover:bg-slate-100 border-slate-200'
@@ -151,7 +153,7 @@ const PostsList: React.FC<PostsListProps> = ({
               <div className="flex-1 min-w-0 break-words">
                 <h4 
                   id="post-title" 
-                  className={`m-0 mb-[5px] text-base font-semibold text-gray-800 tracking-wide transition-colors duration-300 ${
+                  className={`m-0 mb-[5px] text-sm md:text-[15px] font-semibold text-gray-800 tracking-wide transition-colors duration-300 ${
                     index % 2 
                       ? 'hover:text-blue-600'
                       : 'hover:text-blue-700'
@@ -161,15 +163,11 @@ const PostsList: React.FC<PostsListProps> = ({
                     fontWeight: 'var(--font-weight-500)'
                   }}
                 >
-                  {post.title} : {post.status}
+                  {post.title}
                 </h4>
                 <p 
                   id="post-date" 
-                  className="m-0 text-[13px] text-gray-600 font-normal"
-                  style={{ 
-                    fontFamily: 'var(--font-family-Font-1)',
-                    fontSize: 'var(--font-size-14)'
-                  }}
+                  className="m-0 text-[12px] text-gray-600 font-normal"
                 >
                   {formatDate(post.scheduleDate)}
                 </p>

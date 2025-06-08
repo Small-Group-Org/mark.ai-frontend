@@ -102,12 +102,12 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
   };
 
   return (
-    <div className={`relative bg-white mb-5 ${isMobileView  && isCalendarPage? 'pt-5 px-1' : 'px-6 pt-6'}`}>
-      <h2 className="text-2xl font-semibold text-gray-800 m-0 pl-5">{title}</h2>
-      <div className={`flex justify-between items-center mt-4 ${isMobileView  && isCalendarPage? 'max-[320px]:w-[82%] max-[420px]:w-[95%]' : ''}`}>
+    <div className={`relative bg-white mb-5 pt-6`}>
+      <h2 className="text-2xl font-semibold text-gray-800 m-0  px-4 md:px-6">{title}</h2>
+      <div className={`flex justify-between items-center mt-2 md:mt-4  px-4 md:px-6}`}>
         <div className="flex items-center gap-0">
           <ChevronLeft
-            className="text-lg text-black cursor-pointer transition-transform duration-200 hover:scale-110 ml-[10px]"
+            className="text-lg text-black cursor-pointer transition-transform duration-200 hover:scale-110"
             onClick={handlePrevPeriod}
           />
           <ChevronRight
