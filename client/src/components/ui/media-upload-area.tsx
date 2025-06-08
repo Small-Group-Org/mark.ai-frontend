@@ -12,7 +12,7 @@ interface MediaUploadAreaProps {
   mediaUrl?: string | string[];
   postType: SupportedPostType;
   isUploading?: boolean;
-  onMediaChange?: (mediaUrls: string[]) => Promise<void>;
+  onMediaChange?: (mediaUrls: string[]) => Promise<void> | void;
   
   // Behavior props
   isEditable?: boolean;

@@ -15,7 +15,7 @@ const DEFAULT_POST: Post = {
   hashtag: '',
   mediaUrl: [],
   platform: [],
-  postType: 'post',
+  postType: '',
   status: 'draft',
   scheduleDate: new Date()
 };

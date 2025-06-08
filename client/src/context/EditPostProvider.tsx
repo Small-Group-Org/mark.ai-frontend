@@ -9,7 +9,7 @@ interface EditPostContextType {
   isLoading: boolean;
   onOpen: (postId?: string, postData?: Post) => void;
   onClose: () => void;
-  onSave: (post: Post) => Promise<void>;
+  onSave: (post: Post) => Promise<boolean>;
   onDelete: () => Promise<void>;
   onGenerate: (prompt: string) => Promise<void>;
 }

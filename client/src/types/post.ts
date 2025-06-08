@@ -1,4 +1,4 @@
-import { PlatformType } from ".";
+import { PlatformType, SupportedPostType } from ".";
 export interface PostUser {
   id: string | number;
   avatarUrl: string;
@@ -15,7 +15,7 @@ export interface Post {
   hashtag: string;
   mediaUrl: string[];
   platform: PlatformType[];
-  postType: string;
+  postType: SupportedPostType | string;
   status: PostStatus;
   scheduleDate: Date;
   publish?: string;

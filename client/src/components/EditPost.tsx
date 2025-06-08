@@ -5,10 +5,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import ScheduleActionButton from "@/components/ui/schedule-action-button";
 import DatePickerWithButton from "./ui/date-picker-with-button";
-import PlatformToggle from "@/components/dashboard/PlatformToggle";
 import MediaUploadArea from "@/components/ui/media-upload-area";
 import { Post, PostStatus } from '@/types/post';
-import { PlatformType } from '@/types';
+import { PlatformType, SupportedPostType } from '@/types';
 import { ENABLE_AI_GENERATE } from '@/commons/constant';
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
@@ -26,7 +25,7 @@ interface EditPostProps {
 const PostTypeSelector: React.FC<{
   postType: string;
   isEditing: boolean;
-  onPostTypeToggle: (type: string) => void;
+  onPostTypeToggle: (type: SupportedPostType) => void;
 }> = ({ postType, isEditing, onPostTypeToggle }) => (
   <div className="mb-4">
     <h3 className="text-xs sm:text-sm text-gray-700 font-medium mb-2">Post Type</h3>
@@ -41,7 +40,7 @@ const PostTypeSelector: React.FC<{
               : "bg-gray-100 text-gray-600",
             !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
           )}
-          onClick={() => isEditing && onPostTypeToggle(type)}
+          onClick={() => isEditing && onPostTypeToggle(type as SupportedPostType)}
           disabled={!isEditing}
         >
           {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -285,7 +284,7 @@ const EditPost: React.FC<EditPostProps> = ({
     }));
   };
 
-  const handlePostTypeToggle = (type: string) => {
+  const handlePostTypeToggle = (type: SupportedPostType) => {
     setEditedPost(prev => ({ ...prev, postType: type }));
   };
 
@@ -373,6 +372,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 containerClassName="mb-4 rounded-lg border-2 border-dashed border-gray-300"
                 height="h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80"
                 mediaClassName="rounded-lg"
+                postType={editedPost.postType as SupportedPostType}
               />
               <PostTypeSelector
                 postType={editedPost.postType}
@@ -394,6 +394,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   containerClassName="mb-4 rounded-lg border-2 border-dashed border-gray-300"
                   height="h-48 sm:h-56"
                   mediaClassName="rounded-lg"
+                  postType={editedPost.postType as SupportedPostType}
                 />
                 <PostFormFields
                   editedPost={editedPost}
