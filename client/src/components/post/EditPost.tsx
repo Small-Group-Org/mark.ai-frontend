@@ -161,6 +161,16 @@ const EditPost: React.FC<EditPostProps> = ({
     }
   };
 
+  const handleLocationSelect = (locationName: string, locationId: string) => {
+    setSelectedLocation(locationName);
+    
+    if (editedPost.platform[0] === 'instagram') {
+      setEditedPost(prev => ({ ...prev, instagramLocationId: locationId }));
+    } else if (editedPost.platform[0] === 'facebook') {
+      setEditedPost(prev => ({ ...prev, facebookLocationId: locationId }));
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -200,10 +210,10 @@ const EditPost: React.FC<EditPostProps> = ({
           <div className="hidden md:flex gap-4 py-4 w-1/2 border-r border-gray-200 flex-col min-h-0">
             {
               (!isMobileView && (editedPost.platform[0] === "facebook" || editedPost.platform[0] === "instagram")) && (
-                <div className="px-4 sticky top-0 bg-white z-50 pb-2">
+                <div className="px-4 sticky top-0 bg-white z-50">
                   <LocationDropdown
                     selectedLocation={selectedLocation}
-                    setSelectedLocation={setSelectedLocation}
+                    setSelectedLocation={(name, id) => handleLocationSelect(name, id)}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     isLocationOpen={isLocationOpen}
@@ -241,7 +251,7 @@ const EditPost: React.FC<EditPostProps> = ({
                     <div className="sticky top-0 bg-white z-50 pb-2">
                       <LocationDropdown
                         selectedLocation={selectedLocation}
-                        setSelectedLocation={setSelectedLocation}
+                        setSelectedLocation={(name, id) => handleLocationSelect(name, id)}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
                         isLocationOpen={isLocationOpen}

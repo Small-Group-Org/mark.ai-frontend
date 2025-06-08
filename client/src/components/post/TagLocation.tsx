@@ -24,7 +24,7 @@ const useDebounce = (value: string, delay: number) => {
 
 interface LocationDropdownProps {
     selectedLocation: string;
-    setSelectedLocation: (location: string) => void;
+    setSelectedLocation: (location: string, locationId: string) => void;
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     isLocationOpen: boolean;
@@ -94,19 +94,19 @@ interface LocationDropdownProps {
     });
 
     return (
-      <div className="flex flex-col md:flex-row gap-2 md:items-center">
-        <h3 className="text-xs md:text-sm font-medium text-gray-700 whitespace-nowrap">
+      <div className="flex flex-col gap-2">
+        <h3 className="text-xs font-medium text-gray-700 whitespace-nowrap">
           Tag Location:
         </h3>
         <DropdownMenu open={isLocationOpen} onOpenChange={setIsLocationOpen}>
           <DropdownMenuTrigger className="flex items-center flex-1 gap-2 px-3 py-1.5 text-xs md:text-sm border rounded-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 focus:outline-none">
             <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
-            <span className="flex-1 text-left truncate">
+            <span className="flex-1 text-[13px] text-left overflow-hidden whitespace-nowrap max-w-[90vw] sm:max-w-[80vw] md:max-w-[36vw] xl:max-w-[30vw]">
               {selectedLocation || 'Add Location'}
             </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent 
-            className={`w-[90vw] sm:w-[300px] p-2 z-[100]`}
+            className={`w-[90vw] sm:w-[80vw] md:w-[36vw] xl:w-[30vw] p-2 z-[100]`}
             align="start"
           >
             <div className="relative mb-2">
@@ -125,14 +125,14 @@ interface LocationDropdownProps {
               {isLoading ? (
                 <div className="flex items-center flex-col justify-center py-4">
                   <Loader2 className="w-4 h-4 text-gray-500 animate-spin" />
-                 <p className="text-sm text-gray-500"> Searching...</p>
+                 <p className="text-xs mt-1 text-gray-500"> Searching...</p>
                 </div>
               ) : filteredLocations.length > 0 ? (
                 filteredLocations.map((location) => (
                   <DropdownMenuItem
                     key={location.id}
                     onClick={() => {
-                      setSelectedLocation(location.name);
+                      setSelectedLocation(location.name, location.id);
                       setSearchQuery('');
                       setIsLocationOpen(false);
                     }}

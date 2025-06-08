@@ -20,6 +20,8 @@ export interface Post {
   scheduleDate: Date;
   publish?: string;
   createdAt?: string;
+  instagramLocationId: string;
+  facebookLocationId: string;
 }
 
 export interface PostApiDetails {
