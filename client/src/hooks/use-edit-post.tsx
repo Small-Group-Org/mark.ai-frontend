@@ -160,7 +160,7 @@ export const useEditPost = () => {
 
   const updatePostHandler = async (
     key: string,
-    value: PlatformType[] | string | Date,
+    value: PlatformType[] | string | Date | string[],
   ) => {
     const { livePost, setLivePost } = usePostStore.getState();
     
@@ -177,8 +177,6 @@ export const useEditPost = () => {
         livePost._id || ""
       );
 
-      console.log("[update post]", response);
-      
       if(response){
         setLivePost({
           ...response.data,

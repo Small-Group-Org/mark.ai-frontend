@@ -254,3 +254,5 @@ export const postTypeConfig: PostTypeConfig = {
     emptyText: 'No story selected'
   }
 };
+
+export const VIDEO_EXTENSIONS_REGEX = /\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i;

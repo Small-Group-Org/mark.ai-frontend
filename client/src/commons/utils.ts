@@ -10,6 +10,7 @@ import threadsPng from "@/assets/icons/social/png/threads.png";
 import tiktokPng from "@/assets/icons/social/png/tiktok.png";
 import twitterPng from "@/assets/icons/social/png/twitter.png";
 import youtubePng from "@/assets/icons/social/png/youtube.png";
+import { VIDEO_EXTENSIONS_REGEX } from "./constant";
 
 export function convertMarkdownToHTML(md: string) {
     return md
@@ -59,4 +60,8 @@ export const getMediaSupportInfo = (postType: SupportedPostType) => {
     default:
       return 'Please select a valid post type.';
   }
+};
+
+export const isVideo = (url: string) => {
+  return url.match(VIDEO_EXTENSIONS_REGEX);
 };

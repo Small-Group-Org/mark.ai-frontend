@@ -31,7 +31,7 @@ interface SocialMediaPostPreviewProps {
 
   // Add these props for upload
   uploadedMediaFile?: string | string[];
-  onMediaChange?: (mediaUrls: string[]) => void;
+  onMediaChange?: (mediaUrls: string[]) => Promise<void>;
 }
 
 /**

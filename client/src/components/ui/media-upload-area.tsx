@@ -5,13 +5,14 @@ import { uploadMultipleMedia } from '@/services/uploadServices';
 import { useToast } from '@/hooks/use-toast';
 import { SupportedPostType } from '@/types';
 import { postTypeConfig } from '@/commons/constant';
+import { isVideo } from '@/commons/utils';
 
 interface MediaUploadAreaProps {
   // Media data
   mediaUrl?: string | string[];
   postType: SupportedPostType;
   isUploading?: boolean;
-  onMediaChange?: (mediaUrls: string[]) => void;
+  onMediaChange?: (mediaUrls: string[]) => Promise<void>;
   
   // Behavior props
   isEditable?: boolean;
@@ -53,15 +54,11 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
   
   const isUploading = externalIsUploading || internalIsUploading;
   
-  const isVideo = (url: string) => {
-    return url.match(/\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i);
-  };
-
   // Handle both string and array formats
   const mediaArray = Array.isArray(mediaUrl) ? mediaUrl : mediaUrl ? [mediaUrl] : [];
   const hasMedia = mediaArray.length > 0;
   const hasMultipleMedia = mediaArray.length > 1;
-  const config = postTypeConfig[postType] || postTypeConfig.video;
+  const config = postTypeConfig[postType] || postTypeConfig.carousel;
   
   // Reset error when media changes
   React.useEffect(() => {
@@ -156,7 +153,7 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
       const newMediaArray = [...mediaArray, ...uploadedUrls];
       
       if (onMediaChange) {
-        onMediaChange(newMediaArray);
+        await onMediaChange(newMediaArray);
       }
       
       toast({ 
@@ -177,11 +174,11 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
     }
   };
 
-  const handleDeleteMedia = (index: number) => {
+  const handleDeleteMedia = async (index: number) => {
     const newMediaArray = mediaArray.filter((_, i) => i !== index);
     
     if (onMediaChange) {
-      onMediaChange(newMediaArray);
+      await onMediaChange(newMediaArray);
     }
     
     // Adjust current index if necessary

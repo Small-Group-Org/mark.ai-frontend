@@ -3,7 +3,7 @@ import { resetLivePost, usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PostStatus } from "@/types/post";
 import SocialMediaPostPreview from "@/components/ui/social-media-post-preview";
-import { AllPostType } from "@/commons/constant";
+import { AllPostType, VIDEO_EXTENSIONS_REGEX } from "@/commons/constant";
 import { useToast } from "@/hooks/use-toast";
 import useEditPost from "@/hooks/use-edit-post";
 import { createDummyLivePost } from "@/services/authServices";
@@ -18,6 +18,7 @@ import { getMediaSupportInfo } from "@/commons/utils";
 const CreatePost = () => {
   const { livePost, setLivePost,  } = usePostStore();
   const { isMobileView, socialPlatforms } = useAuthStore();
+  const {updatePostHandler} = useEditPost();
   const { platform, postType, scheduleDate, mediaUrl } = livePost;
 
   const { toast } = useToast();
@@ -76,12 +77,26 @@ const CreatePost = () => {
     selectedPostTypeRef.current = livePost.postType;
   }, [livePost.platform.length])
 
-  const handlePostTypeClick = (type: SupportedPostType) => {
+  const handlePostTypeClick = async (type: SupportedPostType) => {
     if(livePost.postType !== type){
+      let filteredMediaUrls = livePost.mediaUrl || [];
+      
+      if (type === 'video' || type === 'reel' || type === 'story') {
+        const videoUrls = filteredMediaUrls.filter(url => url.match(VIDEO_EXTENSIONS_REGEX));
+        filteredMediaUrls = videoUrls.length > 0 ? [videoUrls[0]] : [];
+      } else if (type === 'carousel') {
+        filteredMediaUrls = filteredMediaUrls.filter(url => !url.match(VIDEO_EXTENSIONS_REGEX));
+      }
+
       setLivePost({
         ...livePost,
         postType: type,
-      })
+        mediaUrl: filteredMediaUrls
+      });
+
+     if(postType !== "text" && mediaUrl.length !== filteredMediaUrls.length){
+        await updatePostHandler ("mediaUrl", filteredMediaUrls);
+     }
     }
   };
 
@@ -90,8 +105,10 @@ const CreatePost = () => {
     setLivePost({ scheduleDate: newDate });
   };
   
-  const handleMediaChange = (mediaUrls: string[]) => {
+  const handleMediaChange = async (mediaUrls: string[]) => {
     setLivePost({ ...livePost, mediaUrl: mediaUrls });
+
+    await updatePostHandler("mediaUrl", mediaUrls);
   };
 
   const handleSave = async (status: PostStatus) => {
