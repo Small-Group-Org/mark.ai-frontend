@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, useLocation } from 'wouter';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -14,16 +14,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { isAuth } = useAuthStore();
   const [, navigate] = useLocation();
 
+  // Handle redirect after render
+  useEffect(() => {
+    if (isAuth === false) {
+      navigate('/');
+    }
+  }, [isAuth, navigate]);
+
   return (
     <Route path={path}>
-      {() => {
-        if (isAuth === false) {
-          navigate("/");
-          return null;
-        }
-
-        return <Component />;
-      }}
+      {() => (isAuth ? <Component /> : null)}
     </Route>
   );
 };
