@@ -51,30 +51,6 @@ const PostTypeSelector: React.FC<{
   </div>
 );
 
-// Platform Selection Component
-const PlatformSelector: React.FC<{
-  platforms: PlatformType[];
-  connectedPlatforms: any[];
-  isEditing: boolean;
-  onPlatformToggle: (platform: PlatformType, isActive: boolean) => void;
-}> = ({ platforms, connectedPlatforms, isEditing, onPlatformToggle }) => (
-  <div className="mb-4">
-    <h3 className="text-xs sm:text-sm text-gray-700 font-medium mb-3">Platforms</h3>
-    <div className="grid gap-4 mb-4 w-full max-w-2xl grid-cols-[repeat(auto-fit,_minmax(140px,_1fr))]">
-      {connectedPlatforms.map((platformObj) => (
-        <div key={platformObj.value} className="flex-shrink-0">
-          <PlatformToggle
-            label={platformObj.label}
-            platform={platformObj.value}
-            initialState={platforms.includes(platformObj.value as PlatformType)}
-            onToggle={(isActive) => isEditing && onPlatformToggle(platformObj.value as PlatformType, isActive)}
-          />
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
 // Form Fields Component
 const PostFormFields: React.FC<{
   editedPost: Post;
@@ -265,7 +241,7 @@ const EditPost: React.FC<EditPostProps> = ({
   const { showConfirmation } = useConfirmationDialogContext();
 
   useEffect(() => {
-    setCharacterCount(editedPost.content.length);
+    setCharacterCount(editedPost.content?.length);
   }, [editedPost.content]);
 
   useEffect(() => {
@@ -403,14 +379,6 @@ const EditPost: React.FC<EditPostProps> = ({
                 isEditing={isEditing}
                 onPostTypeToggle={handlePostTypeToggle}
               />
-              <div className="border-t border-gray-100 pt-4">
-                <PlatformSelector
-                  platforms={editedPost.platform}
-                  connectedPlatforms={connectedPlatforms}
-                  isEditing={isEditing}
-                  onPlatformToggle={handlePlatformToggle}
-                />
-              </div>
             </div>
           </div>
 
@@ -436,12 +404,6 @@ const EditPost: React.FC<EditPostProps> = ({
                   onGenerate={handleAIGenerate}
                 />
                 <div className={cn("mb-4", !isEditing && "opacity-50")}>
-                  <PlatformSelector
-                    platforms={editedPost.platform}
-                    connectedPlatforms={connectedPlatforms}
-                    isEditing={isEditing}
-                    onPlatformToggle={handlePlatformToggle}
-                  />
                   <PostTypeSelector
                     postType={editedPost.postType}
                     isEditing={isEditing}

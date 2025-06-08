@@ -19,10 +19,10 @@ export const API_METHODS = {
 };
   
 
-export const postTypes: PostType[] = [
+export const AllPostType: PostType[] = [
   {
-      id: 'post',
-      label: 'Post'
+      id: 'carousel',
+      label: 'Carousel'
   },
   {
       id: 'story',
@@ -31,7 +31,15 @@ export const postTypes: PostType[] = [
   {
       id: 'reel',
       label: 'Reel'
-  }
+  },
+  {
+      id: 'text',
+      label: 'Text'
+  },
+  {
+      id: 'video',
+      label: 'Video'
+  },
 ];
 
 export const initialMessages: MessageType[] = [
@@ -61,6 +69,7 @@ export const platformsRow1: { name: PlatformType; icon: string }[] = [
 
 export const initialiseChatWithMark = "This is the system message. The user is online. Send greetings and provide 1 liner update. DO NOT mention anything about system. Just greet the user."
 
+
 export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
   {
     label: "Bluesky",
@@ -68,7 +77,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: false,
     img: SocialIconComponents.bluesky,
-    toggleColor: "#0085C3"  // Darker blue while maintaining Bluesky brand
+    toggleColor: "#0085C3",
+    mediaGuidelines: "Bluesky supports images in JPG, PNG, and GIF formats. Maximum file size is 5MB."
   },
   {
     label: "Facebook",
@@ -76,7 +86,19 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: true,
     img: SocialIconComponents.facebook,
-    toggleColor: "#1565C0"  // Darker Facebook blue
+    toggleColor: "#1565C0",
+    postType: {
+      carousel: true,
+      video: true,
+      text: false,
+      reel: true,
+      story: true,
+    },
+    feature: {
+      location: true,
+      collab: false
+    },
+    mediaGuidelines: "Facebook supports images (JPG, PNG, GIF) and videos (MP4, MOV). Maximum video length is 240 minutes. Image size should be at least 1200x630 pixels for optimal display."
   },
   {
     label: "Gmb",
@@ -84,7 +106,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: false,
     img: "",
-    toggleColor: "#3367D6"  // Darker Google blue
+    toggleColor: "#3367D6",
+    mediaGuidelines: "Google My Business supports images in JPG and PNG formats. Recommended size is 720x720 pixels."
   },
   {
     label: "Instagram",
@@ -92,7 +115,19 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: true,
     img: SocialIconComponents.instagram,
-    toggleColor: "#C13584"  // Darker Instagram pink/purple
+    toggleColor: "#C13584",
+    postType: {
+      carousel: true,
+      video: true,
+      text: false,
+      reel: true,
+      story: true,
+    },
+    feature: {
+      location: true,
+      collab: true
+    },
+    mediaGuidelines: "Instagram supports images (JPG, PNG) and videos (MP4). Feed posts: 1:1, 4:5, or 16:9 aspect ratio. Stories: 9:16 aspect ratio. Reels: 9:16 aspect ratio, max 90 seconds."
   },
   {
     label: "Linkedin",
@@ -100,7 +135,15 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: true,
     img: SocialIconComponents.linkedin,
-    toggleColor: "#005885"  // Darker LinkedIn blue
+    toggleColor: "#005885",
+    postType: {
+      carousel: true,
+      video: true,
+      text: true,
+      reel: false,
+      story: false,
+    },
+    mediaGuidelines: "LinkedIn supports images (JPG, PNG) and videos (MP4). Maximum video length is 10 minutes. Recommended image size is 1200x627 pixels."
   },
   {
     label: "Pinterest",
@@ -108,7 +151,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: false,
     img: SocialIconComponents.pinterest,
-    toggleColor: "#BD081C"  // Darker Pinterest red
+    toggleColor: "#BD081C",
+    mediaGuidelines: "Pinterest supports images in JPG and PNG formats. Recommended aspect ratio is 2:3 or 1:1. Minimum width should be 1000 pixels."
   },
   {
     label: "Reddit",
@@ -116,7 +160,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: false,
     img: SocialIconComponents.reddit,
-    toggleColor: "#D93900"  // Darker Reddit orange
+    toggleColor: "#D93900",
+    mediaGuidelines: "Reddit supports images (JPG, PNG, GIF) and videos (MP4). Maximum file size is 100MB for videos and 20MB for images."
   },
   {
     label: "Telegram",
@@ -124,15 +169,17 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: false,
     img: SocialIconComponents.telegram,
-    toggleColor: "#006BA6"  // Darker Telegram blue
+    toggleColor: "#006BA6",
+    mediaGuidelines: "Telegram supports images (JPG, PNG) and videos (MP4). Maximum file size is 2GB."
   },
   {
     label: "Threads",
     value: "threads",
     isConnected: false,
-    isEnabled: true,
+    isEnabled: false,
     img: SocialIconComponents.threads,
-    toggleColor: "#1A1A1A"  // Darker than pure black for better visibility
+    toggleColor: "#1A1A1A",
+    mediaGuidelines: "Threads supports images (JPG, PNG) and videos (MP4). Maximum video length is 5 minutes. Recommended aspect ratio is 1:1 or 4:5."
   },
   {
     label: "Tiktok",
@@ -140,7 +187,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: false,
     img: SocialIconComponents.tiktok,
-    toggleColor: "#4A9DA8"  // Darker TikTok teal
+    toggleColor: "#4A9DA8",
+    mediaGuidelines: "TikTok supports videos in MP4 format. Maximum video length is 3 minutes. Recommended aspect ratio is 9:16."
   },
   {
     label: "Twitter",
@@ -148,14 +196,23 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     isConnected: false,
     isEnabled: true,
     img: SocialIconComponents.twitter,
-    toggleColor: "#1976D2"  // Darker Twitter blue
+    toggleColor: "#1976D2",
+    postType: {
+      carousel: true,
+      video: true,
+      text: true,
+      reel: false,
+      story: false,
+    },
+    mediaGuidelines: "Twitter supports images (JPG, PNG, GIF) and videos (MP4). Maximum video length is 2 minutes and 20 seconds. Maximum file size is 512MB."
   },
   {
     label: "Youtube",
     value: "youtube",
     isConnected: false,
-    isEnabled: true,
+    isEnabled: false,
     img: SocialIconComponents.youtube,
-    toggleColor: "#CC0000"  // Darker YouTube red
+    toggleColor: "#CC0000",
+    mediaGuidelines: "YouTube supports videos in MP4, MOV, AVI formats. Maximum video length is 12 hours. Recommended resolution is 1920x1080 pixels."
   }
 ];

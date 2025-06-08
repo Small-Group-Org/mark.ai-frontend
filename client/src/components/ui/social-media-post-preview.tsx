@@ -92,7 +92,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
         )}
 
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 h-[300px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
+          <div className="md:w-1/2 h-[300px] md:h-[350px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
             <MediaUploadArea
               mediaUrl={uploadedMediaFile}
               isUploading={false}
@@ -103,7 +103,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
             />
           </div>
 
-          <div className="md:w-1/2 p-5 max-h-[280px] overflow-y-auto">
+          <div className="md:w-1/2 p-5 max-h-[280px] md:max-h-[330px] overflow-y-auto">
             {postTitle ? (
               <h2 className="font-bold text-lg text-gray-900 mb-2">
                 {postTitle}

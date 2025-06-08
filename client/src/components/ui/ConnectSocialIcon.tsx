@@ -1,58 +1,34 @@
+import { getPlatformImage } from "@/commons/utils";
 import { PlatformType } from "@/types";
-import React, { useState } from "react";
-// Import PNG files directly
-import blueskyPng from "@/assets/icons/social/png/bluesky.png";
-import facebookPng from "@/assets/icons/social/png/facebook.png";
-import instagramPng from "@/assets/icons/social/png/instagram.png";
-import linkedinPng from "@/assets/icons/social/png/linkedin.png";
-import pinterestPng from "@/assets/icons/social/png/pinterest.png";
-import redditPng from "@/assets/icons/social/png/reddit.png";
-import telegramPng from "@/assets/icons/social/png/telegram.png";
-import threadsPng from "@/assets/icons/social/png/threads.png";
-import tiktokPng from "@/assets/icons/social/png/tiktok.png";
-import twitterPng from "@/assets/icons/social/png/twitter.png";
-import youtubePng from "@/assets/icons/social/png/youtube.png";
+import React, { useEffect, useState } from "react";
 
 interface ConnectSocialIconProps {
   isConnected: boolean;
   platform: PlatformType;
   handleAyrshareConnection: (platform: PlatformType) => void;
-  isLoading?: boolean;
   isToggleOn: boolean;
   onToggle: (platform: PlatformType, isOn: boolean) => void;
   toggleColor?: string;
+  loadingPlatforms: string[]
 }
 
 const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
   isConnected,
   platform,
   handleAyrshareConnection,
-  isLoading = false,
   isToggleOn = true,
   onToggle,
   toggleColor,
+  loadingPlatforms
 }) => {
-  const getPlatformImage = (platform: PlatformType): string => {
-    const platformImages: Record<PlatformType, string> = {
-      bluesky: blueskyPng,
-      facebook: facebookPng,
-      gmb: facebookPng,
-      instagram: instagramPng,
-      linkedin: linkedinPng,
-      pinterest: pinterestPng,
-      reddit: redditPng,
-      telegram: telegramPng,
-      threads: threadsPng,
-      tiktok: tiktokPng,
-      twitter: twitterPng,
-      youtube: youtubePng,
-    };
-   
-    return platformImages[platform] || facebookPng;
-  };
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(loadingPlatforms.includes(platform))
+  }, [loadingPlatforms])
 
   const handleClick = () => {
-    if (isLoading) return;
+    if (isLoading || loadingPlatforms.length) return;
 
     if (isConnected) {
       onToggle?.(platform, !isToggleOn);
@@ -63,7 +39,9 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
 
   return (
     <div
-      className={`relative h-full flex items-center justify-center cursor-pointer p-[2px] rounded-full border-2`}
+      className={`relative h-full flex items-center justify-center p-[2px] rounded-full border-2 ${
+        (isLoading || loadingPlatforms.length) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+      }`}
       style={{ borderColor: isConnected && isToggleOn && toggleColor ? toggleColor : "#444" }}
       onClick={handleClick}
     >

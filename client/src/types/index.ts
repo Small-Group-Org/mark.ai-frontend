@@ -26,7 +26,17 @@ export interface AyrsharePlatformDetails {
   isEnabled: boolean;
   img?: any;
   toggleColor?: string;
+  postType?: {
+    [key in SupportedPostType]: boolean;
+  };
+  feature?: {
+    location: boolean;
+    collab: boolean;
+  };
+  mediaGuidelines?: string;
 }
+
+export type SupportedPostType = "carousel" | "video" | "text" | "reel" | "story";
 
 export interface User {
   name: string;
@@ -39,7 +49,7 @@ export interface User {
 }
 
 export interface PostType {
-  id: "post" | "story" | "reel";
+  id: SupportedPostType;
   label: string;
 }
 

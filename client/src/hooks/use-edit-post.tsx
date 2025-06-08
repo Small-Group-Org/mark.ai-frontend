@@ -64,15 +64,10 @@ export const useEditPost = () => {
     setIsLoading(true);
     try {
       const response = await updatePost({
-        title: updatedPost.title,
-        content: updatedPost.content,
-        hashtag: updatedPost.hashtag,
-        mediaUrl: updatedPost.mediaUrl,
-        platform: updatedPost.platform,
-        postType: updatedPost.postType,
-        status: updatedPost.status,
+        ...updatedPost,
         scheduleDate: updatedPost.scheduleDate.toISOString(),
       }, updatedPost._id || '');
+
 
       if (!response?.success) {
         throw new Error('Failed to save post');
@@ -85,6 +80,8 @@ export const useEditPost = () => {
       
       await syncPostsFromDB(displayDate);
       setIsOpen(false);
+
+      return true;
     } catch (error) {
       console.error('Failed to save post:', error);
       toast({
@@ -92,6 +89,7 @@ export const useEditPost = () => {
         description: 'Failed to save post',
         variant: 'destructive',
       });
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -162,28 +160,30 @@ export const useEditPost = () => {
 
   const updatePostHandler = async (
     key: string,
-    value: PlatformType[] | string,
+    value: PlatformType[] | string | Date,
   ) => {
     const { livePost, setLivePost } = usePostStore.getState();
-    setLivePost({
-      ...livePost,
-      [key]: value,
-    })
+    
 
     try {
       const response = await updatePost(
         {
           ...livePost,
-          scheduleDate: typeof livePost.scheduleDate === "object" && livePost.scheduleDate instanceof Date
-            ? livePost.scheduleDate.toISOString()
-            : livePost.scheduleDate,
+          scheduleDate: livePost.scheduleDate instanceof Date 
+            ? livePost.scheduleDate.toISOString() 
+            : new Date(livePost.scheduleDate).toISOString(),
           [key]: value,
         },
         livePost._id || ""
       );
 
+      console.log("[update post]", response);
+      
       if(response){
-        setLivePost(response);
+        setLivePost({
+          ...response.data,
+          scheduleDate: new Date(response.data.scheduleDate)
+        });
       }
 
     } catch (error) {

@@ -152,7 +152,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
             isConnected={platform.isConnected}
             platform={platform.value}
             handleAyrshareConnection={handleAyrshareConnection}
-            isLoading={loadingPlatforms.includes(platform.value)}
+            loadingPlatforms={loadingPlatforms}
             isToggleOn={currentPlatforms.includes(platform.value)}
             onToggle={handlePlatformToggle}
             toggleColor={platform.toggleColor}
@@ -196,7 +196,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
                       isConnected={platform.isConnected}
                       platform={platform.value}
                       handleAyrshareConnection={handleAyrshareConnection}
-                      isLoading={loadingPlatforms.includes(platform.value)}
+                      loadingPlatforms={loadingPlatforms}
                       isToggleOn={currentPlatforms.includes(platform.value)}
                       onToggle={handlePlatformToggle}
                       toggleColor={platform.toggleColor}
