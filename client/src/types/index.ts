@@ -53,6 +53,16 @@ export interface PostType {
   label: string;
 }
 
+export type PostTypeConfig = {
+  [key in SupportedPostType]: {
+    maxFiles: number;
+    allowedTypes: string;
+    showCarousel: boolean,
+    allowMultiple: boolean,
+    emptyText: string
+  }
+}
+
 export interface UserCredential {
   email: string;
   password: string;

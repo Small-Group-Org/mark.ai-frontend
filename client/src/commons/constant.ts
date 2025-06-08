@@ -1,5 +1,5 @@
 import { MessageType } from "@/components/ChatInterface";
-import { AyrsharePlatformDetails, PostType, PlatformType } from "@/types";
+import { AyrsharePlatformDetails, PostType, PlatformType, PostTypeConfig } from "@/types";
 import { SocialIconComponents } from "@/assets/icons/social/SocialIcons";
 
 // export const BASE_URL = "http://localhost:5000";
@@ -216,3 +216,41 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     mediaGuidelines: "YouTube supports videos in MP4, MOV, AVI formats. Maximum video length is 12 hours. Recommended resolution is 1920x1080 pixels."
   }
 ];
+
+export const postTypeConfig: PostTypeConfig = {
+  video: {
+    maxFiles: 1,
+    allowedTypes: 'video/*',
+    showCarousel: false,
+    allowMultiple: false,
+    emptyText: 'No video selected'
+  },
+  carousel: {
+    maxFiles: 10,
+    allowedTypes: 'image/*',
+    showCarousel: true,
+    allowMultiple: true,
+    emptyText: 'No images selected'
+  },
+  reel: {
+    maxFiles: 1,
+    allowedTypes: 'video/*',
+    showCarousel: false,
+    allowMultiple: false,
+    emptyText: 'No reel selected'
+  },
+  text: {
+    maxFiles: 0,
+    allowedTypes: '',
+    showCarousel: false,
+    allowMultiple: false,
+    emptyText: ''
+  },
+  story: {
+    maxFiles: 1,
+    allowedTypes: 'image/*,video/*',
+    showCarousel: false,
+    allowMultiple: false,
+    emptyText: 'No story selected'
+  }
+};

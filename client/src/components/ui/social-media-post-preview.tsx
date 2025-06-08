@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import ScheduleActionButton from "./schedule-action-button";
 import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { User } from "@/types";
+import { SupportedPostType, User } from "@/types";
 import DatePickerWithButton from "./date-picker-with-button";
 import { cn } from "@/lib/utils";
 import { parseHashtagsToArray } from "@/utils/postUtils";
@@ -58,7 +58,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   onMediaChange
 }) => {
   const {livePost} = usePostStore();
-  const {content: postContent, hashtag, title: postTitle} = livePost;
+  const {content: postContent, hashtag, title: postTitle, postType} = livePost;
   const { userDetails = {} } = useAuthStore();
   const { name: userName = "" } = userDetails as User;
   
@@ -91,19 +91,22 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
           </div>
         )}
 
-        <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 h-[300px] md:h-[350px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
-            <MediaUploadArea
-              mediaUrl={uploadedMediaFile}
-              isUploading={false}
-              onMediaChange={onMediaChange}
-              isEditable={true}
-              height="h-full"
-              containerClassName="w-full h-full"
-            />
-          </div>
+        <div className="flex flex-col md:flex-row h-[300px] md:h-[350px]">
+          {postType !== "text" && (
+            <div className="md:w-1/2 h-full flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
+              <MediaUploadArea
+                mediaUrl={uploadedMediaFile}
+                isUploading={false}
+                onMediaChange={onMediaChange}
+                isEditable={true}
+                height="h-full"
+                containerClassName="w-full h-full"
+                postType={postType as SupportedPostType}
+              />
+            </div>
+          )}
 
-          <div className="md:w-1/2 p-5 max-h-[280px] md:max-h-[330px] overflow-y-auto">
+          <div className="md:w-auto p-5 h-full overflow-y-auto box-border">
             {postTitle ? (
               <h2 className="font-bold text-lg text-gray-900 mb-2">
                 {postTitle}
