@@ -6,12 +6,13 @@ import { useAuthStore } from '@/store/useAuthStore';
 import MediaUploadArea from "@/components/ui/media-upload-area";
 import { Post, PostStatus } from '@/types/post';
 import { PlatformType, SupportedPostType } from '@/types';
-import { ENABLE_AI_GENERATE } from '@/commons/constant';
+import { ENABLE_AI_GENERATE, initialSocialPlatforms } from '@/commons/constant';
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
 import PostTypeSelector from './PostTypeSelector';
 import PostFormFields from './PostFormFields';
 import SchedulingControls from './SchedulingControls';
+import { getPlatformImage } from '@/commons/utils';
 
 interface EditPostProps {
   isOpen: boolean;
@@ -80,13 +81,6 @@ const EditPost: React.FC<EditPostProps> = ({
     const { name, value } = e.target;
     setEditedPost(prev => ({ ...prev, [name]: value }));
   };
-  
-  const handlePlatformToggle = (platform: PlatformType, isActive: boolean) => {
-    setEditedPost(prev => ({
-      ...prev,
-      platform: isActive ? [...prev.platform, platform] : prev.platform.filter(p => p !== platform)
-    }));
-  };
 
   const handlePostTypeToggle = (type: SupportedPostType) => {
     setEditedPost(prev => ({ ...prev, postType: type }));
@@ -153,10 +147,29 @@ const EditPost: React.FC<EditPostProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-hidden p-2 sm:p-4" onClick={handleClose}>
       <div className="bg-white rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-[80vw] xl:max-w-[64vw] flex flex-col h-full max-h-[65vh] md:max-h-[85vh] relative" onClick={(e) => e.stopPropagation()}>
         
-        {/* Header */}
-        <div className="flex justify-between items-center p-3 sm:p-4 border-b rounded-tr-[8px] rounded-tl-[8px] border-gray-200 bg-white z-10 flex-shrink-0">
-          <div className="w-5 h-5"></div>
-          <h2 className="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-100">Post Details</h2>
+        <div className="flex justify-between items-center p-2 sm:p-4 border-b rounded-tr-[8px] rounded-tl-[8px] border-gray-200 bg-white z-10 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            {editedPost.platform?.[0] && (() => {
+              const platformInfo = initialSocialPlatforms.find(p => p.value === editedPost.platform[0]);
+              return (
+                <div 
+                  className="flex items-center gap-1.5 sm:gap-1.5 px-2 sm:px-3 py-[2px] sm:py-[2px] rounded-full border"
+                  style={{ borderColor: platformInfo?.toggleColor || '#e5e7eb' }}
+                >
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center bg-gray-50 rounded-full">
+                    <img
+                      src={getPlatformImage(editedPost.platform[0])}
+                      alt={editedPost.platform[0]}
+                      className="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                    />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium capitalize" style={{ color: platformInfo?.toggleColor || '#374151' }}>
+                    {platformInfo?.label || editedPost.platform[0]}
+                  </span>
+                </div>
+              );
+            })()}
+          </div>
           <button className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0" onClick={handleClose}>
             <X className="w-5 h-5 text-gray-700" />
           </button>
@@ -165,7 +178,6 @@ const EditPost: React.FC<EditPostProps> = ({
         {/* Content */}
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden rounded-bl-[8px] rounded-br-[8px] min-h-0">
           
-          {/* Desktop: Left side - Media and controls */}
           <div className="hidden md:flex w-1/2 border-r border-gray-200 flex-col min-h-0">
             <div className="flex-1 overflow-y-auto p-3 sm:p-4">
               <MediaUploadArea
@@ -182,11 +194,11 @@ const EditPost: React.FC<EditPostProps> = ({
                 postType={editedPost.postType}
                 isEditing={isEditing}
                 onPostTypeToggle={handlePostTypeToggle}
+                platform={editedPost.platform?.[0]}
               />
             </div>
           </div>
 
-          {/* Mobile: Full width stacked layout */}
           <div className="md:hidden flex flex-col w-full h-full min-h-0">
             <div className="flex-1 overflow-y-auto">
               <div className="p-3 sm:p-4" onClick={(e) => e.stopPropagation()}>
@@ -213,6 +225,7 @@ const EditPost: React.FC<EditPostProps> = ({
                     postType={editedPost.postType}
                     isEditing={isEditing}
                     onPostTypeToggle={handlePostTypeToggle}
+                    platform={editedPost.platform?.[0]}
                   />
                 </div>
               </div>
@@ -231,7 +244,6 @@ const EditPost: React.FC<EditPostProps> = ({
             />
           </div>
 
-          {/* Desktop: Right side - Form fields */}
           <div className="hidden md:flex w-full md:w-1/2 flex-col h-full min-h-0">
             <div className="flex-1 overflow-y-auto p-3 sm:p-4">
               <PostFormFields
