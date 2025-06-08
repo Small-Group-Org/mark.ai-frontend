@@ -102,25 +102,25 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
   };
 
   return (
-    <div className={`relative bg-white mb-5 pt-6`}>
-      <h2 className="text-2xl font-semibold text-gray-800 m-0  px-4 md:px-6">{title}</h2>
-      <div className={`flex justify-between items-center mt-2 md:mt-4  px-4 md:px-6}`}>
+    <div className={`relative bg-white mb-5 pt-4 md:pt-6`}>
+      <h2 className="text-xl md:text-2xl font-semibold text-gray-800 m-0 px-4 md:px-6">{title}</h2>
+      <div className="flex justify-between items-center mt-3 md:mt-4 pl-2 pr-4 md:pl-4 md:pr-6">
         <div className="flex items-center gap-0">
           <ChevronLeft
             className="text-lg text-black cursor-pointer transition-transform duration-200 hover:scale-110"
             onClick={handlePrevPeriod}
           />
           <ChevronRight
-            className="text-lg text-black cursor-pointer transition-transform duration-200 hover:scale-110 ml-[10px]"
+            className="text-lg text-black cursor-pointer transition-transform duration-200 hover:scale-110 md:ml-[10px]"
             onClick={handleNextPeriod}
           />
-          <span className="text-base text-gray-800">
+          <span className="text-[15px] md:text-base text-gray-800">
             {timeframe === 'month' ? `${months[selectedMonth]} ${selectedYear}` : getWeekRange(weekStart, weekEnd)}
           </span>
         </div>
         <div className={`flex rounded`}>
           <button
-            className={`px-5 py-[5px] text-sm cursor-pointer transition-colors duration-200 rounded ${
+            className={`px-5 py-[5px] text-sm cursor-pointer transition-colors duration-200 rounded-[4px_0px_0px_4px] ${
               timeframe === 'month' ? 'bg-cyan-600 text-white' : 'bg-gray-100 text-gray-800'
             } border-none`}
             onClick={() => setTimeframe('month')}
@@ -128,7 +128,7 @@ const ActionScreenHeader: React.FC<ActionScreenHeaderProps> = ({
             Month
           </button>
           <button
-            className={`px-5 py-[5px] text-sm cursor-pointer transition-colors duration-200 rounded ${
+            className={`px-5 py-[5px] text-sm cursor-pointer transition-colors duration-200 rounded-[0px_4px_4px_0px] ${
               timeframe === 'week' ? 'bg-cyan-600 text-white' : 'bg-gray-100 text-gray-800'
             } border-none`}
             onClick={() => setTimeframe('week')}
