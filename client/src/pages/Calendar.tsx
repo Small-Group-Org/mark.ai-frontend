@@ -5,12 +5,23 @@ import ActionScreenHeader from './ActionScreenHeader';
 import { syncPostsFromDB } from '@/utils/postSync';
 import { CalendarView } from '@/types/post';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useEditPostContext } from '@/context/EditPostProvider';
+import { useLocation } from 'wouter';
+import { 
+  calculateDisplayDate, 
+  handlePostOpening, 
+  navigateToPostMonth 
+} from '@/utils/calendarUtils';
+import { getAndClearCalendarNavigationState } from '@/utils/infoMessageUtils';
 
 export default function CalendarRoute() {
   const today = new Date();
   const posts = usePostStore((state) => state.posts);
+  const setDisplayDate = usePostStore((state) => state.setDisplayDate);
   const [timeframe, setTimeframe] = useState<CalendarView>('month');
   const { isMobileView } = useAuthStore();
+  const [location] = useLocation();
+  const editPostContext = useEditPostContext();
 
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
@@ -25,8 +36,47 @@ export default function CalendarRoute() {
     return end;
   });
 
+  const [displayDate, setLocalDisplayDate] = useState(today);
+  const [navigationState, setNavigationState] = useState<{ editPostId?: string; scheduleDate?: string } | null>(null);
+
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const weekNavigationCountRef = useRef<number>(0);
+
+  // Check for navigation state from global state (from ChatPanel)
+  useEffect(() => {
+    const globalNavState = getAndClearCalendarNavigationState();
+    if (globalNavState) {
+      setNavigationState(globalNavState);
+    }
+  }, [location]);
+
+  // Handle navigation from info messages
+  useEffect(() => {
+    if (navigationState?.editPostId && navigationState?.scheduleDate) {
+      const scheduleDate = new Date(navigationState.scheduleDate);
+      
+      navigateToPostMonth(scheduleDate, setSelectedMonth, setSelectedYear);
+      
+      const openPost = () => {
+        handlePostOpening(
+          navigationState.editPostId!,
+          scheduleDate,
+          posts,
+          editPostContext
+        );
+      };
+
+      setTimeout(openPost, 1000);
+      setNavigationState(null);
+    }
+  }, [navigationState, posts, editPostContext]);
+
+  // Update display date when dependencies change
+  useEffect(() => {
+    const newDisplayDate = calculateDisplayDate(timeframe, selectedMonth, selectedYear, weekStart);
+    setLocalDisplayDate(newDisplayDate);
+    setDisplayDate(newDisplayDate);
+  }, [selectedMonth, selectedYear, weekStart, timeframe, setDisplayDate]);
 
   // Effect for syncing posts when month or week changes
   useEffect(() => {
@@ -36,7 +86,7 @@ export default function CalendarRoute() {
       const shouldSync = timeframe === 'month' || (timeframe === 'week' && Math.abs(weekNavigationCountRef.current) >= 3);
       
       if (shouldSync) {
-        await syncPostsFromDB(getDisplayDate());
+        await syncPostsFromDB(displayDate);
         if (timeframe === 'week') {
           weekNavigationCountRef.current = 0;
         }
@@ -46,25 +96,12 @@ export default function CalendarRoute() {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [selectedMonth, selectedYear, weekStart, weekEnd]);
+  }, [selectedMonth, selectedYear, weekStart, weekEnd, displayDate]);
 
   useEffect(() => {
-    syncPostsFromDB(getDisplayDate());
+    syncPostsFromDB(displayDate);
     weekNavigationCountRef.current = 0;
-  }, [timeframe]);
-
-  const getDisplayDate = () => {
-    let date;
-    if (timeframe === 'month') {
-      date = new Date();
-      date.setMonth(selectedMonth);
-      date.setFullYear(selectedYear);
-    } else {
-      date = weekStart;
-    }
-    usePostStore.getState().setDisplayDate(date);
-    return date;
-  };
+  }, [timeframe, displayDate]);
 
   return (
     <div className={`h-full flex flex-col bg-white`}>
@@ -87,7 +124,7 @@ export default function CalendarRoute() {
         <SocialCalendar
           posts={posts.filter(post => post.status !== 'deleted' && post.status !== 'live')}
           currentView={timeframe}
-          displayDate={getDisplayDate()}
+          displayDate={displayDate}
         />
       </div>
     </div>

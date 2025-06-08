@@ -8,6 +8,16 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { marked } from 'marked';
 import { initialiseChatWithMark } from "@/commons/constant";
 import { formatHashtagsForDisplay } from "@/utils/postUtils";
+import { 
+  extractPostDetailsFromMessage, 
+  cleanMessageText, 
+  setCalendarNavigationState 
+} from "@/utils/infoMessageUtils";
+import { useLocation } from 'wouter';
+import { Info } from "lucide-react";
+
+// TESTING IMPORT - REMOVE BEFORE PRODUCTION
+import { exposeTestingFunctions, cleanupTestingFunctions } from "@/utils/testingUtils";
 
 const ChatPanel = () => {
   const {
@@ -18,6 +28,7 @@ const ChatPanel = () => {
     setMessages,
     livePost,
     loadChatHistory,
+    addInfoMessage,
   } = usePostStore();
   
   const [inputValue, setInputValue] = React.useState("");
@@ -25,7 +36,9 @@ const ChatPanel = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isAuth, isMobileView, isOnboardingComplete, fetchOnboardingState } = useAuthStore();
+  const [, navigate] = useLocation();
 
+  // Theme constants
   const chatPanelBg = "bg-[#11132f]";
   const chatHeaderBorder = "border-gray-600/60";
   const chatInputBorder = "border-[#475569]/50";
@@ -53,25 +66,21 @@ const ChatPanel = () => {
     loadHistory();
   }, [isAuth, loadChatHistory]);
 
-  // Initialize chat with Mark only once when conditions are met
+  // Initialize chat with Mark
   useEffect(() => {
-    // Only proceed if we're authenticated and chat history has finished loading
-    if (!isAuth || isLoadingHistory) {
-      return;
-    }
+    if (!isAuth || isLoadingHistory) return;
 
-    // Case 1: If onboarding is complete, always initialize chat with Mark
     if (isOnboardingComplete()) {
       handleChatResponse(initialiseChatWithMark);
       return;
     }
 
-    // Case 2: If onboarding is NOT complete, only initialize if no messages exist
     if (!isOnboardingComplete() && messages?.length === 0) {
       handleChatResponse(initialiseChatWithMark);
     }
   }, [isAuth, isLoadingHistory]);
 
+  // Auto-scroll to bottom
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
         if (chatContainerRef.current) {
@@ -85,10 +94,9 @@ const ChatPanel = () => {
     return () => clearTimeout(scrollTimeout);
   }, [messages, isThinking]);
 
-  // Auto-focus textarea when response is received
+  // Auto-focus textarea
   useEffect(() => {
     if (!isThinking && textareaRef.current) {
-      // Small delay to ensure the textarea is enabled before focusing
       const focusTimeout = setTimeout(() => {
         textareaRef.current?.focus();
       }, 100);
@@ -119,15 +127,21 @@ const ChatPanel = () => {
       const response = await chatWithMark(requestBody);
       
       if (response?.bot?.text) {
-        const aiResponseMessage: Message = {
-          id: Date.now().toString(),
-          text: response.bot.text,
-          sender: "system",
-          timestamp: new Date()
-        };
-        setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
+        const postDetails = extractPostDetailsFromMessage(response.bot.text);
+        const cleanText = cleanMessageText(response.bot.text);
+        
+        if (postDetails && postDetails.action) {
+          addInfoMessage(cleanText, postDetails.action, postDetails.postId, postDetails.scheduleDate);
+        } else {
+          const aiResponseMessage: Message = {
+            id: Date.now().toString(),
+            text: response.bot.text,
+            sender: "system",
+            timestamp: new Date()
+          };
+          setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
+        }
 
-        // Update post state if available
         if (response.hasPost) {
           const { post } = response;
           const rawHashtags = Array.isArray(post.hashtag) ? post.hashtag.join(' ') : (post.hashtag ?? "");
@@ -138,8 +152,18 @@ const ChatPanel = () => {
             content: post.content ?? "",
             hashtag: formattedHashtags
           });
-        } else {
+
+          if (!isOnboardingComplete()) {
             await fetchOnboardingState();
+            setTimeout(() => {
+              addInfoMessage(
+                "Hey! I'm creating your post, checkout the preview here",
+                "navigate-create"
+              );
+            }, 1000);
+          }
+        } else {
+          await fetchOnboardingState();
         }
       } else {
         const aiErrorResponse: Message = {
@@ -176,9 +200,7 @@ const ChatPanel = () => {
       setMessages((prevMessages: Message[]) => [...prevMessages, newMessage]);
       setInputValue("");
 
-      const textarea = document.getElementById(
-        "chat-textarea"
-      ) as HTMLTextAreaElement;
+      const textarea = document.getElementById("chat-textarea") as HTMLTextAreaElement;
       if (textarea) {
         textarea.style.height = "auto";
       }
@@ -195,16 +217,12 @@ const ChatPanel = () => {
   };
 
   const renderMessageContent = (text: string) => {
-    // Configure marked options
     marked.setOptions({
-      breaks: true, // Convert line breaks to <br>
-      gfm: true, // GitHub Flavored Markdown
+      breaks: true,
+      gfm: true,
     });
 
-    // Pre-process text to handle double line breaks
     const processedText = text.replace(/\n/g, '<br>');
-
-    // Convert markdown to HTML
     const htmlContent = marked(processedText);
 
     return (
@@ -214,6 +232,41 @@ const ChatPanel = () => {
       />
     );
   };
+
+  // Navigation handler for info messages
+  const handleInfoNavigation = (action: string, postId?: string, scheduleDate?: string) => {
+    if (action === "navigate-create") {
+      navigate("/create");
+    } else if (action === "navigate-calendar" && postId) {
+      setCalendarNavigationState(postId, scheduleDate || "");
+      navigate("/calendar");
+    }
+  };
+
+  // Production function for creating info messages
+  const createPostScheduledInfoMessage = (postId: string, scheduleDate: string, action: "schedule" | "draft") => {
+    const actionText = action === "schedule" ? "scheduled" : "drafted";
+    addInfoMessage(
+      `Hey! I have ${actionText} your post, you can edit it here`,
+      "navigate-calendar",
+      postId,
+      scheduleDate
+    );
+  };
+
+  /* ========================================
+   * TESTING CODE - REMOVE BEFORE PRODUCTION
+   * ======================================== */
+  
+  // Expose testing functions globally (TESTING ONLY - REMOVE IN PRODUCTION)
+  React.useEffect(() => {
+    exposeTestingFunctions();
+    return cleanupTestingFunctions;
+  }, []);
+
+  /* ========================================
+   * END OF TESTING CODE
+   * ======================================== */
 
   return (
     <div
@@ -252,21 +305,29 @@ const ChatPanel = () => {
         ) : (
           <>
             {(messages || []).map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.sender === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${
-                    message.sender === "user"
-                      ? `${userChatBubbleBg} ${userChatBubbleText}`
-                      : `${chatBubbleGradient} text-white`
-                  }`}
-                >
-                  {renderMessageContent(message.text)}
-                </div>
+              <div key={message.id}>
+                {message.type === "info" ? (
+                  <InfoMessage 
+                    message={message} 
+                    onNavigate={handleInfoNavigation}
+                  />
+                ) : (
+                  <div
+                    className={`flex ${
+                      message.sender === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${
+                        message.sender === "user"
+                          ? `${userChatBubbleBg} ${userChatBubbleText}`
+                          : `${chatBubbleGradient} text-white`
+                      }`}
+                    >
+                      {renderMessageContent(message.text)}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 
@@ -315,6 +376,56 @@ const ChatPanel = () => {
           >
             <SendIcon className="w-5 h-5 transform rotate-90" />
           </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// InfoMessage Component
+interface InfoMessageProps {
+  message: Message;
+  onNavigate: (action: string, postId?: string, scheduleDate?: string) => void;
+}
+
+const InfoMessage: React.FC<InfoMessageProps> = ({ message, onNavigate }) => {
+  const handleClick = () => {
+    if (message.postDetails?.action) {
+      onNavigate(
+        message.postDetails.action,
+        message.postDetails.postId,
+        message.postDetails.scheduleDate
+      );
+    }
+  };
+
+  const renderMessageWithLink = (text: string) => {
+    const parts = text.split('here');
+    if (parts.length === 2) {
+      return (
+        <>
+          {parts[0]}
+          <button
+            onClick={handleClick}
+            className="text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer bg-transparent border-none p-0 inline"
+          >
+            here
+          </button>
+          {parts[1]}
+        </>
+      );
+    }
+    return text;
+  };
+
+  return (
+    <div className="flex justify-start">
+      <div className="px-4 py-3 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm bg-blue-50 border border-blue-200 text-blue-800">
+        <div className="flex items-start space-x-2">
+          <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p>{renderMessageWithLink(message.text)}</p>
+          </div>
         </div>
       </div>
     </div>

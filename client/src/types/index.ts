@@ -3,6 +3,12 @@ export interface Message {
   text: string;
   sender: "user" | "system";
   timestamp: Date;
+  type?: "normal" | "info";
+  postDetails?: {
+    postId?: string;
+    scheduleDate?: string;
+    action?: "navigate-create" | "navigate-calendar";
+  };
 }
 
 export type PlatformType =

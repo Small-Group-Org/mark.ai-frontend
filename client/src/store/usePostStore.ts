@@ -9,6 +9,7 @@ interface PostState {
   loadChatHistory: () => Promise<void>;
   isThinking: boolean;
   setIsThinking: (isThinking: boolean) => void;
+  addInfoMessage: (text: string, action: "navigate-create" | "navigate-calendar", postId?: string, scheduleDate?: string) => void;
 
   livePost:Post;
   setLivePost: (postState: Partial<PostState['livePost']>) => void;
@@ -75,6 +76,21 @@ export const usePostStore = create<PostState>((set) => ({
       livePost: { ...initialState.livePost }
     }));
   },
+
+  addInfoMessage: (text, action, postId, scheduleDate) => set((state) => ({
+    messages: [...state.messages, {
+      id: Date.now().toString(),
+      text,
+      sender: 'system',
+      timestamp: new Date(),
+      type: 'info',
+      postDetails: {
+        action,
+        postId,
+        scheduleDate
+      }
+    } as Message]
+  })),
 }));
 
 export const resetPostState = usePostStore.getState().resetPostState;
