@@ -158,9 +158,6 @@ const EditPost: React.FC<EditPostProps> = ({
     }
   };
 
-  console.log("[initialMediaUrlRef]", initialMediaUrlRef.current);
-  
-
   if (!isOpen) return null;
 
   return (
