@@ -9,7 +9,7 @@ import useEditPost from "@/hooks/use-edit-post";
 import { createDummyLivePost } from "@/services/authServices";
 import { formatHashtagsForSubmission } from "@/utils/postUtils";
 import { SupportedPostType } from "@/types";
-import { Info } from "lucide-react";
+import { BadgeInfo, CircleHelp, Info, TriangleAlert } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import MediaGuidelinesDialog from "@/components/ui/media-guidelines-dialog";
@@ -188,9 +188,10 @@ const CreatePost = () => {
           {
             supportedPostTypes.length === 0 
               ? (
-                <div className="flex items-center gap-2 text-blue-600 border border-blue-200 bg-blue-50 px-4 py-[5.5px] rounded-lg">
-                  <p className="text-gray-500 text-sm italic">
-                    <Info className="w-4 h-4 inline-block mb-1" /> Please select a social media to show post-type
+                <div className="flex items-center gap-1 text-blue-600 border border-blue-200 bg-blue-50 px-2 py-[5.5px] rounded-sm">
+                  <TriangleAlert className="w-4 h-4 inline-block mb-1" /> 
+                  <p className="text-gray-500 text-xs italic">
+                    Please select a social media to show post-type
                   </p>
                 </div>
               )
@@ -217,11 +218,11 @@ const CreatePost = () => {
                     platform && platform.length > 0 
                       ? 'text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-100 cursor-pointer' 
                       : 'text-gray-400 border border-gray-200 bg-gray-50 cursor-not-allowed'
-                  } px-3 py-0 rounded-sm`}
+                  } px-1 md:px-3 py-0 rounded-sm`}
                   onClick={() => platform && platform.length > 0 && setShowMediaGuidelines(true)}
                 >
-                  <Info className="w-3 h-3 inline-block mb-1 text-gray-500 mt-[2.5px]" />
-                  <p className="text-gray-500 text-xs italic">
+                  <CircleHelp className="w-4 h-4 md:h-3 md:w-3 inline-block mb-1 text-gray-500 mt-[2.5px]" />
+                  <p className="text-gray-500 text-xs italic hidden md:block">
                      Media Guidelines
                   </p>
                 </div>

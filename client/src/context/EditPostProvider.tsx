@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import useEditPost from '@/hooks/use-edit-post';
-import EditPost from '@/components/EditPost';
 import { Post } from '@/types/post';
+import EditPost from '@/components/post/EditPost';
 
 interface EditPostContextType {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <EditPostContext.Provider value={editPost}>
-      <EditPost 
+      <EditPost
         isOpen={editPost.isOpen}
         onClose={editPost.onClose}
         post={editPost.post}

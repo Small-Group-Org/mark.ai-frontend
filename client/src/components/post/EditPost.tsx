@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { X, Edit, Trash2, PlusCircle, CheckSquare, XSquare, Image, CheckCircle, Video } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/useAuthStore';
-import ScheduleActionButton from "@/components/ui/schedule-action-button";
-import DatePickerWithButton from "./ui/date-picker-with-button";
 import MediaUploadArea from "@/components/ui/media-upload-area";
 import { Post, PostStatus } from '@/types/post';
 import { PlatformType, SupportedPostType } from '@/types';
 import { ENABLE_AI_GENERATE } from '@/commons/constant';
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
+import PostTypeSelector from './PostTypeSelector';
+import PostFormFields from './PostFormFields';
+import SchedulingControls from './SchedulingControls';
 
 interface EditPostProps {
   isOpen: boolean;
@@ -20,203 +21,6 @@ interface EditPostProps {
   onDelete: () => void;
   onGenerate?: (prompt: string) => void;
 }
-
-// Post Type Selection Component
-const PostTypeSelector: React.FC<{
-  postType: string;
-  isEditing: boolean;
-  onPostTypeToggle: (type: SupportedPostType) => void;
-}> = ({ postType, isEditing, onPostTypeToggle }) => (
-  <div className="mb-4">
-    <h3 className="text-xs sm:text-sm text-gray-700 font-medium mb-2">Post Type</h3>
-    <div className="flex gap-1 sm:gap-2">
-      {['post', 'story', 'reel'].map((type) => (
-        <button
-          key={type}
-          className={cn(
-            "px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-medium transition-colors flex-1",
-            (postType === type || (postType === 'text' && type === 'post'))
-              ? "bg-blue-500 text-white" 
-              : "bg-gray-100 text-gray-600",
-            !isEditing && "opacity-75 cursor-not-allowed hover:bg-gray-100 hover:text-gray-600"
-          )}
-          onClick={() => isEditing && onPostTypeToggle(type as SupportedPostType)}
-          disabled={!isEditing}
-        >
-          {type.charAt(0).toUpperCase() + type.slice(1)}
-        </button>
-      ))}
-    </div>
-  </div>
-);
-
-// Form Fields Component
-const PostFormFields: React.FC<{
-  editedPost: Post;
-  characterCount: number;
-  isEditing: boolean;
-  onTextChange: (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
-  onHashtagsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onGenerate?: () => void;
-  textareaHeight?: string;
-}> = ({ editedPost, characterCount, isEditing, onTextChange, onHashtagsChange, onGenerate, textareaHeight = "h-20 sm:h-24" }) => (
-  <>
-    {/* Title input */}
-    <div className={cn("mb-3", !isEditing && "opacity-50")}>
-      <label className="block text-xs sm:text-sm text-gray-600 mb-1">Title</label>
-      <input
-        type="text"
-        name="title"
-        className={cn(
-          "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm",
-          !isEditing && "bg-gray-50 cursor-default"
-        )}
-        value={editedPost.title}
-        onChange={onTextChange}
-        placeholder="Enter post title"
-        readOnly={!isEditing}
-      />
-    </div>
-    
-    {/* Content textarea */}
-    <div className={cn("mb-3", !isEditing && "opacity-50")}>
-      <div className="flex justify-between items-center mb-1">
-        <label className="block text-xs sm:text-sm text-gray-600">Caption</label>
-        <span className="text-xs text-gray-400">{characterCount}/2,200</span>
-      </div>
-      {!isEditing ? (
-        <div className={cn("w-full px-3 py-2 border border-gray-300 rounded-md resize-none overflow-y-auto text-gray-800 bg-gray-50 text-sm", textareaHeight)}>
-          {editedPost.content.split('\n').map((line, i) => (
-            <div key={i} className="mb-1 relative flex items-center">
-              {line.includes("Netflix and Chill") && (
-                <div className="flex items-center">
-                  <span>{line}</span>
-                  <XSquare className="ml-1 text-red-500 h-4 w-4" />
-                </div>
-              )}
-              {line.includes("Mountain-ing and Hill") && (
-                <div className="flex items-center">
-                  <span>{line}</span>
-                  <CheckSquare className="ml-1 text-green-600 h-4 w-4" />
-                </div>
-              )}
-              {!line.includes("Netflix and Chill") && !line.includes("Mountain-ing and Hill") && (
-                <span>{line}</span>
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <textarea
-          name="content"
-          className={cn("w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none text-gray-800 text-sm", textareaHeight)}
-          value={editedPost.content}
-          onChange={onTextChange}
-          placeholder="Write your caption..."
-          maxLength={2200}
-        />
-      )}
-    </div>
-    
-    {/* Hashtags input */}
-    <div className={cn("mb-4", !isEditing && "opacity-50")}>
-      <div className="flex justify-between items-center mb-1">
-        <label className="block text-xs sm:text-sm text-gray-600">Hashtags</label>
-        <span className="text-xs text-gray-400">0/2,200</span>
-      </div>
-      <input
-        type="text"
-        className={cn(
-          "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-800 text-sm",
-          !isEditing && "bg-gray-50 cursor-default"
-        )}
-        value={editedPost.hashtag}
-        onChange={onHashtagsChange}
-        placeholder="#hashtag1 #hashtag2 #hashtag3"
-        readOnly={!isEditing}
-      />
-    </div>
-    
-    {/* AI Generation Button */}
-    {onGenerate && ENABLE_AI_GENERATE && (
-      <div className={cn("mb-4", !isEditing && "opacity-50")}>
-        <button 
-          className={cn(
-            "inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-600 w-full",
-            isEditing 
-              ? "hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              : "cursor-not-allowed"
-          )}
-          onClick={onGenerate}
-          disabled={!isEditing}
-        >
-          <Edit className="mr-2 h-4 w-4" />
-          AI Generate
-        </button>
-      </div>
-    )}
-  </>
-);
-
-// Scheduling Controls Component
-const SchedulingControls: React.FC<{
-  editedPost: Post;
-  post: Post;
-  date: Date;
-  timeZoneLabel: string;
-  isEditing: boolean;
-  hasChanges: boolean;
-  onDateChange: (date: Date) => void;
-  onSave: (status: PostStatus) => void;
-  onDelete: () => void;
-  showDeleteConfirmation: (config: any) => void;
-}> = ({ editedPost, post, date, timeZoneLabel, isEditing, hasChanges, onDateChange, onSave, onDelete, showDeleteConfirmation }) => (
-  <div className="px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200 bg-white flex-shrink-0">
-    <div className="flex justify-between items-center mb-1">
-      <div className="text-xs text-gray-500">{timeZoneLabel}</div>
-    </div>
-    <div className="flex flex-col space-y-2">
-      <DatePickerWithButton
-        date={date}
-        onDateChange={onDateChange}
-        disabled={!isEditing}
-        className={cn("w-full", !isEditing && "opacity-75")}
-      />
-      {editedPost.status === 'published' ? (
-        <div className="flex justify-center items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-md">
-          <CheckCircle className="w-5 h-5" />
-          <span>Post Published</span>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => showDeleteConfirmation({
-              title: 'Delete Post',
-              description: 'Are you sure you want to delete this post? This action cannot be undone.',
-              confirmText: 'Delete Post',
-              confirmButtonClass: 'bg-red-500 text-white hover:bg-red-600 border-0',
-              onConfirm: onDelete,
-            })}
-            className="p-2 hover:bg-red-50 rounded-lg transition-colors border border-red-200 hover:border-red-300"
-            title="Delete post"
-          >
-            <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
-          </button>
-          <div className="flex-1">
-            <ScheduleActionButton
-              onSchedule={() => isEditing && onSave('schedule')}
-              onDraft={() => isEditing && onSave('draft')}
-              className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
-              disabled={!isEditing}
-              initialPostStatus={post.status}
-              hasChanges={hasChanges}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  </div>
-);
 
 const EditPost: React.FC<EditPostProps> = ({
   isOpen,
@@ -461,4 +265,4 @@ const EditPost: React.FC<EditPostProps> = ({
   );
 };
 
-export default EditPost;
+export default EditPost; 
