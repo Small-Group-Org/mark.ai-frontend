@@ -17,7 +17,9 @@ const DEFAULT_POST: Post = {
   platform: [],
   postType: '',
   status: 'draft',
-  scheduleDate: new Date()
+  scheduleDate: new Date(),
+  instagramLocationId: "",
+  facebookLocationId: "",
 };
 
 export interface EditPostStore {

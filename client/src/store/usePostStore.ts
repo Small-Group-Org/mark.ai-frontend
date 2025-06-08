@@ -35,6 +35,8 @@ const initialState = {
     postType: "",
     scheduleDate: new Date(),
     status: "live" as PostStatus,
+    instagramLocationId: "",
+    facebookLocationId: "",
   },
   posts: [],
   displayDate: new Date(),
