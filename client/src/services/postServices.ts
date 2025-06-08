@@ -82,3 +82,19 @@ export const deletePost = async (postId: string) => {
     throw error;
   }
 };
+
+export const searchLocation = async (query: string) => {
+  try {
+    const response = await doPOST(
+      `${BASE_URL}/ayrshare/search-location`,
+      { query }
+    );
+    return response.data.data.facebook;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to search location');
+    }
+    throw error;
+  }
+};
+

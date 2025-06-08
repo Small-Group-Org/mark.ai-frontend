@@ -5,14 +5,15 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/useAuthStore';
 import MediaUploadArea from "@/components/ui/media-upload-area";
 import { Post, PostStatus } from '@/types/post';
-import { PlatformType, SupportedPostType } from '@/types';
-import { ENABLE_AI_GENERATE, initialSocialPlatforms, VIDEO_EXTENSIONS_REGEX } from '@/commons/constant';
+import { SupportedPostType } from '@/types';
+import { initialSocialPlatforms, VIDEO_EXTENSIONS_REGEX } from '@/commons/constant';
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
 import PostTypeSelector from './PostTypeSelector';
 import PostFormFields from './PostFormFields';
 import SchedulingControls from './SchedulingControls';
 import { getPlatformImage } from '@/commons/utils';
+import LocationDropdown from './TagLocation';
 
 interface EditPostProps {
   isOpen: boolean;
@@ -34,16 +35,18 @@ const EditPost: React.FC<EditPostProps> = ({
   const [editedPost, setEditedPost] = useState<Post>(post);
   const [originalPost, setOriginalPost] = useState<Post>(post);
   const [hasChanges, setHasChanges] = useState<boolean>(false);
-  const { timeZoneLabel = 'GMT+00:00', getConnectedPlatforms } = useAuthStore();
+  const { timeZoneLabel = 'GMT+00:00', isMobileView } = useAuthStore();
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft' || post.status === 'schedule');
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
+  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
 
   const initialMediaUrlRef = useRef<string[] | null>(null);
   
   const { toast } = useToast();
-  const connectedPlatforms = getConnectedPlatforms();
   const { showConfirmation } = useConfirmationDialogContext();
 
   useEffect(() => {
@@ -162,7 +165,7 @@ const EditPost: React.FC<EditPostProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-hidden p-2 sm:p-4" onClick={handleClose}>
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-[80vw] xl:max-w-[64vw] flex flex-col h-full max-h-[65vh] md:max-h-[85vh] relative" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-lg shadow-xl h-[90vh] w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-[80vw] xl:max-w-[64vw] flex flex-col md:h-full md:max-h-[85vh] relative" onClick={(e) => e.stopPropagation()}>
         
         <div className="flex justify-between items-center p-2 sm:p-4 border-b rounded-tr-[8px] rounded-tl-[8px] border-gray-200 bg-white z-10 flex-shrink-0">
           <div className="flex items-center gap-2">
@@ -194,9 +197,22 @@ const EditPost: React.FC<EditPostProps> = ({
 
         {/* Content */}
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden rounded-bl-[8px] rounded-br-[8px] min-h-0">
-          
-          <div className="hidden md:flex w-1/2 border-r border-gray-200 flex-col min-h-0">
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+          <div className="hidden md:flex gap-4 py-4 w-1/2 border-r border-gray-200 flex-col min-h-0">
+            {
+              (!isMobileView && (editedPost.platform[0] === "facebook" || editedPost.platform[0] === "instagram")) && (
+                <div className="px-4 sticky top-0 bg-white z-50 pb-2">
+                  <LocationDropdown
+                    selectedLocation={selectedLocation}
+                    setSelectedLocation={setSelectedLocation}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    isLocationOpen={isLocationOpen}
+                    setIsLocationOpen={setIsLocationOpen}
+                  />
+                </div>
+              )
+            }
+            <div className="flex-1 overflow-y-auto px-3 sm:px-4 relative">
               <MediaUploadArea
                 mediaUrl={editedPost.mediaUrl}
                 onMediaChange={handleMediaChange}
@@ -220,6 +236,20 @@ const EditPost: React.FC<EditPostProps> = ({
           <div className="md:hidden flex flex-col w-full h-full min-h-0">
             <div className="flex-1 overflow-y-auto">
               <div className="p-3 sm:p-4" onClick={(e) => e.stopPropagation()}>
+                {
+                  (isMobileView && (editedPost.platform[0] === "facebook" || editedPost.platform[0] === "instagram")) && (
+                    <div className="sticky top-0 bg-white z-50 pb-2">
+                      <LocationDropdown
+                        selectedLocation={selectedLocation}
+                        setSelectedLocation={setSelectedLocation}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        isLocationOpen={isLocationOpen}
+                        setIsLocationOpen={setIsLocationOpen}
+                      />
+                    </div>
+                  )
+                }
                 <MediaUploadArea
                   mediaUrl={editedPost.mediaUrl}
                   onMediaChange={handleMediaChange}

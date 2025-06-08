@@ -120,3 +120,12 @@ export interface OnboardingResponse {
   onboarding_complete: boolean;
   last_updated: string;
 }
+
+export interface Location {
+  id: string;
+  name: string;
+  location: {
+    city: string;
+    country: string;
+  };
+}
