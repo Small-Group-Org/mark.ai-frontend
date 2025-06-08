@@ -208,14 +208,14 @@ const CreatePost = () => {
         </div>
 
         <div
-          className={`px-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-3 justify-between items-center`}
+          className={`px-3 mdpx-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-2 justify-between items-center`}
         >
           {
             supportedPostTypes.length === 0 
               ? (
                 <div className="flex items-center gap-1 text-blue-600 border border-blue-200 bg-blue-50 px-2 py-[5.5px] rounded-sm">
                   <TriangleAlert className="w-4 h-4 inline-block mb-1" /> 
-                  <p className="text-gray-500 text-xs italic">
+                  <p className="text-gray-500 text-[11px] sm:text-xs italic">
                     Please select a social media to show post-type
                   </p>
                 </div>
