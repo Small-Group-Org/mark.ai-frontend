@@ -5,28 +5,29 @@ import { PlatformType } from "@/types";
 import { initialSocialPlatforms } from "@/commons/constant";
 import { X } from "lucide-react";
 import { getPlatformImage } from '@/commons/utils';
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface MediaGuidelinesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  selectedPlatforms: PlatformType[];
 }
 
 const MediaGuidelinesDialog: React.FC<MediaGuidelinesDialogProps> = ({
   open,
   onOpenChange,
-  selectedPlatforms,
 }) => {
+  const { getConnectedPlatforms } = useAuthStore();
+  const connectedPlatforms = getConnectedPlatforms();
 
   const getPlatformGuidelines = () => {
-    return selectedPlatforms.map(platform => {
-      const platformInfo = initialSocialPlatforms.find(sp => sp.value === platform);
+    return connectedPlatforms.map(platform => {
+      const platformInfo = initialSocialPlatforms.find(sp => sp.value === platform.value);
 
       return {
-        platform,
-        label: platformInfo?.label || platform,
+        platform: platform.value,
+        label: platformInfo?.label || platform.value,
         guidelines: platformInfo?.mediaGuidelines || 'No specific guidelines available for this platform.',
-        img: getPlatformImage(platformInfo?.value as PlatformType )
+        img: getPlatformImage(platformInfo?.value as PlatformType)
       };
     });
   };
@@ -47,7 +48,7 @@ const MediaGuidelinesDialog: React.FC<MediaGuidelinesDialogProps> = ({
             </Button>
           </div>
           <DialogDescription className="text-gray-500">
-            Guidelines for media uploads on selected platforms
+            Guidelines for media uploads on your connected platforms
           </DialogDescription>
         </DialogHeader>
 

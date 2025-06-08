@@ -17,9 +17,10 @@ import { getMediaSupportInfo } from "@/commons/utils";
 
 const CreatePost = () => {
   const { livePost, setLivePost,  } = usePostStore();
-  const { isMobileView, socialPlatforms } = useAuthStore();
+  const { isMobileView, socialPlatforms, getConnectedPlatforms } = useAuthStore();
   const {updatePostHandler} = useEditPost();
   const { platform, postType, scheduleDate, mediaUrl } = livePost;
+  const connectedPlatforms = getConnectedPlatforms() || []; 
 
   const { toast } = useToast();
   const { onSave } = useEditPost();
@@ -202,13 +203,28 @@ const CreatePost = () => {
     <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isMobileView ? 'h-[calc(100vh-70px-65px)]' : ''}`}>
       <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
         <div
-          className={`h-[58px] flex items-center px-5 border-b border-gray-200 shrink-0 bg-white`}
+          className={`h-[58px] flex items-center justify-between px-5 border-b border-gray-200 shrink-0 bg-white`}
         >
           <h2 className={`font-semibold text-gray-800`}>Post Preview</h2>
+          <div
+            className={`h-[24px] flex items-center gap-1 text-gray-400 border border-gray-200 bg-gray-50 ${
+              connectedPlatforms.length > 0
+                ? "cursor-pointer"
+                : " cursor-not-allowed"
+            } px-1 md:px-3 py-0 rounded-sm`}
+            onClick={() =>
+              connectedPlatforms.length > 0 && setShowMediaGuidelines(true)
+            }
+          >
+            <CircleHelp className="w-4 h-4 md:h-3 md:w-3 inline-block mb-1 text-gray-500 mt-[2.5px]" />
+            <p className="text-gray-500 text-xs hidden md:block">
+              Media Guidelines
+            </p>
+          </div>
         </div>
 
         <div
-          className={`px-3 mdpx-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-2 justify-between items-center`}
+          className={`px-3 md:px-5 py-3 border-b border-gray-200 bg-white shrink-0 flex flex-wrap gap-2 justify-between items-center`}
         >
           {
             supportedPostTypes.length === 0 
@@ -238,19 +254,7 @@ const CreatePost = () => {
                 </div>
           }
 
-                <div 
-                  className={`h-[24px] flex items-center gap-1 ${
-                    platform && platform.length > 0 
-                      ? 'text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-100 cursor-pointer' 
-                      : 'text-gray-400 border border-gray-200 bg-gray-50 cursor-not-allowed'
-                  } px-1 md:px-3 py-0 rounded-sm`}
-                  onClick={() => platform && platform.length > 0 && setShowMediaGuidelines(true)}
-                >
-                  <CircleHelp className="w-4 h-4 md:h-3 md:w-3 inline-block mb-1 text-gray-500 mt-[2.5px]" />
-                  <p className="text-gray-500 text-xs italic hidden md:block">
-                     Media Guidelines
-                  </p>
-                </div>
+                
         </div>
 
         <div className={`flex-1 overflow-y-auto bg-white`}>
@@ -300,7 +304,6 @@ const CreatePost = () => {
       <MediaGuidelinesDialog
         open={showMediaGuidelines}
         onOpenChange={setShowMediaGuidelines}
-        selectedPlatforms={platform || []}
       />
     </div>
   );
