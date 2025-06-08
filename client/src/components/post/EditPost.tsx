@@ -51,6 +51,10 @@ const EditPost: React.FC<EditPostProps> = ({
   }, [editedPost.content]);
 
   useEffect(() => {
+    initialMediaUrlRef.current = editedPost.mediaUrl;
+  }, [editedPost._id]);
+
+  useEffect(() => {
     if (post) {
       const formattedHashtags = formatHashtagsForDisplay(post.hashtag || '');
       const postWithFormattedHashtags = { ...post, hashtag: formattedHashtags };
@@ -87,11 +91,13 @@ const EditPost: React.FC<EditPostProps> = ({
   const handlePostTypeToggle = (type: SupportedPostType) => {
     let filteredMediaUrls = initialMediaUrlRef.current || [];
       
-      if (type === 'video' || type === 'reel' || type === 'story') {
+      if (type === 'video' || type === 'reel') {
         const videoUrls = filteredMediaUrls.filter(url => url.match(VIDEO_EXTENSIONS_REGEX));
         filteredMediaUrls = videoUrls.length > 0 ? [videoUrls[0]] : [];
       } else if (type === 'carousel') {
         filteredMediaUrls = filteredMediaUrls.filter(url => !url.match(VIDEO_EXTENSIONS_REGEX));
+      } else {
+        filteredMediaUrls = [filteredMediaUrls[0]];
       }
 
       setEditedPost(prev => ({ ...prev, postType: type, mediaUrl: filteredMediaUrls }));
@@ -151,6 +157,9 @@ const EditPost: React.FC<EditPostProps> = ({
       handleGenerate();
     }
   };
+
+  console.log("[initialMediaUrlRef]", initialMediaUrlRef.current);
+  
 
   if (!isOpen) return null;
 

@@ -89,11 +89,13 @@ const CreatePost = () => {
     if(livePost.postType !== type){
       let filteredMediaUrls = initialMediaUrlRef.current || [];
       
-      if (type === 'video' || type === 'reel' || type === 'story') {
+      if (type === 'video' || type === 'reel') {
         const videoUrls = filteredMediaUrls.filter(url => url.match(VIDEO_EXTENSIONS_REGEX));
         filteredMediaUrls = videoUrls.length > 0 ? [videoUrls[0]] : [];
       } else if (type === 'carousel') {
         filteredMediaUrls = filteredMediaUrls.filter(url => !url.match(VIDEO_EXTENSIONS_REGEX));
+      } else {
+        filteredMediaUrls = [filteredMediaUrls[0]];
       }
 
       setLivePost({
