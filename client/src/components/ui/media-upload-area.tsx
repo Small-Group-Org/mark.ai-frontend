@@ -220,10 +220,8 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
     <div className={cn("relative", containerClassName)}>
       {hasMedia && !mediaError ? (
         <div className={cn("relative overflow-hidden flex items-start justify-center", height)}>
-          {/* Media Display */}
           {renderMediaItem(mediaArray[currentIndex])}
           
-          {/* Navigation Arrows (only show if multiple media and carousel is enabled) */}
           {hasMultipleMedia && config.showCarousel && (
             <>
               <button
@@ -241,7 +239,6 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
             </>
           )}
           
-          {/* Delete Button */}
           {isEditable && (
             <button 
               className="absolute top-2 right-2 p-1 bg-gray-800/80 rounded-full hover:bg-gray-800 text-white z-10"
@@ -254,7 +251,6 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
             </button>
           )}
           
-          {/* Add More Media Button (show when editable and under max files) */}
           {isEditable && config.allowMultiple && mediaArray.length < config.maxFiles && (
             <button 
               className="absolute bottom-2 right-2 p-2 bg-blue-600/90 rounded-full hover:bg-blue-700 text-white z-10"
@@ -282,7 +278,6 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
             </button>
           )}
           
-          {/* Navigation Dots (Instagram-style) */}
           {hasMedia && config.showCarousel && (
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
               {mediaArray.map((_, index) => (
@@ -300,7 +295,6 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
             </div>
           )}
           
-          {/* Hidden file input for adding more media */}
           {isEditable && (
             <input
               type="file"
