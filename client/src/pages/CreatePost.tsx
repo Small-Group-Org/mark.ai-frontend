@@ -29,6 +29,14 @@ const CreatePost = () => {
   const [pendingAction, setPendingAction] = useState<"schedule" | "draft" | null>(null);
 
   const selectedPostTypeRef = useRef<string | null>(null);
+  const initialMediaUrlRef = useRef<string[] | null>(null);
+  const updateDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if(!initialMediaUrlRef.current && mediaUrl.length){
+      initialMediaUrlRef.current = mediaUrl;
+    }
+  }, [mediaUrl]);
 
   const supportedPostTypes = useMemo(() => {
     if (!livePost.platform || livePost.platform.length === 0) {
@@ -52,7 +60,7 @@ const CreatePost = () => {
     });
 
     return newSupportedPostTypes;
-  }, [livePost.platform]);
+  }, [platform]);
 
   useEffect(() => {
     try {
@@ -64,7 +72,7 @@ const CreatePost = () => {
       const now = new Date();
       setDate(now);
     }
-  }, [livePost.scheduleDate]);
+  }, [scheduleDate]);
 
   useEffect(() => {
     if(selectedPostTypeRef.current !== null){
@@ -75,11 +83,11 @@ const CreatePost = () => {
     }
 
     selectedPostTypeRef.current = livePost.postType;
-  }, [livePost.platform.length])
+  }, [platform.length]);
 
   const handlePostTypeClick = async (type: SupportedPostType) => {
     if(livePost.postType !== type){
-      let filteredMediaUrls = livePost.mediaUrl || [];
+      let filteredMediaUrls = initialMediaUrlRef.current || [];
       
       if (type === 'video' || type === 'reel' || type === 'story') {
         const videoUrls = filteredMediaUrls.filter(url => url.match(VIDEO_EXTENSIONS_REGEX));
@@ -94,8 +102,15 @@ const CreatePost = () => {
         mediaUrl: filteredMediaUrls
       });
 
-     if(postType !== "text" && mediaUrl.length !== filteredMediaUrls.length){
-        await updatePostHandler ("mediaUrl", filteredMediaUrls);
+     if(postType !== "text"){
+        if (updateDebounceRef.current) {
+          clearTimeout(updateDebounceRef.current);
+        }
+        
+        updateDebounceRef.current = setTimeout(async () => {
+          await updatePostHandler("mediaUrl", filteredMediaUrls);
+          updateDebounceRef.current = null;
+        }, 2*1000);
      }
     }
   };
@@ -173,6 +188,14 @@ const CreatePost = () => {
 
   const previewPanelBg = "bg-gray-100";
 
+  useEffect(() => {
+    return () => {
+      if (updateDebounceRef.current) {
+        clearTimeout(updateDebounceRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isMobileView ? 'h-[calc(100vh-70px-65px)]' : ''}`}>
       <div className={`flex flex-col ${previewPanelBg} text-black h-full`}>
@@ -238,6 +261,7 @@ const CreatePost = () => {
               hideFooter={false}
               uploadedMediaFile={mediaUrl}
               onMediaChange={handleMediaChange}
+              initialMediaUrlRef={initialMediaUrlRef}
             />
           </div>
         </div>

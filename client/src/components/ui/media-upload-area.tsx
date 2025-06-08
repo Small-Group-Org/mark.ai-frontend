@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MutableRefObject } from 'react';
 import { Trash2, Image, Video, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { uploadMultipleMedia } from '@/services/uploadServices';
@@ -31,6 +31,7 @@ interface MediaUploadAreaProps {
   maxFiles?: number;
   maxVideoSizeMB?: number;
   maxImageSizeMB?: number;
+  initialMediaUrlRef: MutableRefObject<string[] | null>
 }
 
 const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
@@ -45,7 +46,8 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
   emptyText = "No media",
   uploadingText = "Uploading...",
   maxFiles = 10,
-  postType
+  postType,
+  initialMediaUrlRef
 }) => {
   const [mediaError, setMediaError] = React.useState(false);
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -151,6 +153,7 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
     try {
       const uploadedUrls = await uploadMultipleMedia(validFiles);
       const newMediaArray = [...mediaArray, ...uploadedUrls];
+      initialMediaUrlRef.current = newMediaArray;
       
       if (onMediaChange) {
         await onMediaChange(newMediaArray);
@@ -176,6 +179,7 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
 
   const handleDeleteMedia = async (index: number) => {
     const newMediaArray = mediaArray.filter((_, i) => i !== index);
+    initialMediaUrlRef.current = newMediaArray;
     
     if (onMediaChange) {
       await onMediaChange(newMediaArray);
@@ -337,11 +341,14 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
             </div>
           ) : isEditable ? (
             <>
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-2">
+              <div className="w-auto p-3 h-auto rounded-full bg-gray-200 flex items-center gap-1 justify-center mb-2">
                 {postType === 'video' || postType === 'reel' ? (
                   <Video className="w-6 h-6 text-gray-500" />
-                ) : postType === 'carousel' ? (
-                  <Image className="w-6 h-6 text-gray-500" />
+                ) : postType === 'story' ? (
+                  <>
+                    <Image className="w-6 h-6 text-gray-500" />
+                    <Video className="w-6 h-6 text-gray-500" />
+                  </>
                 ) : (
                     <Image className="w-6 h-6 text-gray-500" />
                 )}

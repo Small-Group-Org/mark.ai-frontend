@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, MutableRefObject } from "react";
 import ScheduleActionButton from "./schedule-action-button";
 import { usePostStore } from "@/store/usePostStore";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -32,6 +32,7 @@ interface SocialMediaPostPreviewProps {
   // Add these props for upload
   uploadedMediaFile?: string | string[];
   onMediaChange?: (mediaUrls: string[]) => Promise<void>;
+  initialMediaUrlRef: MutableRefObject<string[] | null>
 }
 
 /**
@@ -55,7 +56,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
   // Add these props for upload
   uploadedMediaFile,
-  onMediaChange
+  onMediaChange,
+  initialMediaUrlRef
 }) => {
   const {livePost} = usePostStore();
   const {content: postContent, hashtag, title: postTitle, postType} = livePost;
@@ -102,6 +104,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
                 height="h-full"
                 containerClassName="w-full h-full"
                 postType={postType as SupportedPostType}
+                initialMediaUrlRef={initialMediaUrlRef}
               />
             </div>
           )}

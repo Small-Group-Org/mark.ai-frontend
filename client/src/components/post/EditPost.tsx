@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -6,7 +6,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import MediaUploadArea from "@/components/ui/media-upload-area";
 import { Post, PostStatus } from '@/types/post';
 import { PlatformType, SupportedPostType } from '@/types';
-import { ENABLE_AI_GENERATE, initialSocialPlatforms } from '@/commons/constant';
+import { ENABLE_AI_GENERATE, initialSocialPlatforms, VIDEO_EXTENSIONS_REGEX } from '@/commons/constant';
 import { formatHashtagsForDisplay, formatHashtagsForSubmission } from "@/utils/postUtils";
 import { useConfirmationDialogContext } from '@/context/ConfirmationDialogProvider';
 import PostTypeSelector from './PostTypeSelector';
@@ -39,6 +39,8 @@ const EditPost: React.FC<EditPostProps> = ({
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft' || post.status === 'schedule');
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
+
+  const initialMediaUrlRef = useRef<string[] | null>(null);
   
   const { toast } = useToast();
   const connectedPlatforms = getConnectedPlatforms();
@@ -83,7 +85,16 @@ const EditPost: React.FC<EditPostProps> = ({
   };
 
   const handlePostTypeToggle = (type: SupportedPostType) => {
-    setEditedPost(prev => ({ ...prev, postType: type }));
+    let filteredMediaUrls = initialMediaUrlRef.current || [];
+      
+      if (type === 'video' || type === 'reel' || type === 'story') {
+        const videoUrls = filteredMediaUrls.filter(url => url.match(VIDEO_EXTENSIONS_REGEX));
+        filteredMediaUrls = videoUrls.length > 0 ? [videoUrls[0]] : [];
+      } else if (type === 'carousel') {
+        filteredMediaUrls = filteredMediaUrls.filter(url => !url.match(VIDEO_EXTENSIONS_REGEX));
+      }
+
+      setEditedPost(prev => ({ ...prev, postType: type, mediaUrl: filteredMediaUrls }));
   };
 
   const handleHashtagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,6 +200,7 @@ const EditPost: React.FC<EditPostProps> = ({
                 height="h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80"
                 mediaClassName="rounded-lg"
                 postType={editedPost.postType as SupportedPostType}
+                initialMediaUrlRef={initialMediaUrlRef}
               />
               <PostTypeSelector
                 postType={editedPost.postType}
@@ -211,6 +223,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   height="h-48 sm:h-56"
                   mediaClassName="rounded-lg"
                   postType={editedPost.postType as SupportedPostType}
+                  initialMediaUrlRef={initialMediaUrlRef}
                 />
                 <PostFormFields
                   editedPost={editedPost}
