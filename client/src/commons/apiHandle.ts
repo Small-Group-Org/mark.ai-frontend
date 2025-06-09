@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import {API_METHODS, BASE_URL} from "./constant";
 import { useAuthStore } from "@/store/useAuthStore";
 import { getValue, removeValue, STORAGE_KEYS } from "./storage";
@@ -9,7 +9,7 @@ export const api = axios.create({
 
 const isFormData = (value: unknown): value is FormData => value instanceof FormData;
 
-const apiHandler = async (endPoint: any, method: string, data = null) => {
+const apiHandler = async (endPoint: any, method: string, data = null, signal?: AbortSignal) => {
     try {
         const contentType: string = isFormData(data) ? "multipart/form-data" : "application/json";
         const token = getValue(STORAGE_KEYS.TOKEN);
@@ -18,6 +18,7 @@ const apiHandler = async (endPoint: any, method: string, data = null) => {
             method: method,
             url: endPoint,
             ...(![API_METHODS.GET, API_METHODS.DELETE].includes(method) && { data: data }),
+            signal,
             headers: {
                 "Content-Type": contentType,
                 "Authorization": `Bearer ${token}`,
@@ -27,6 +28,11 @@ const apiHandler = async (endPoint: any, method: string, data = null) => {
 
         return { error: false, message: "", status: response?.status, data: response?.data };
     } catch (error: any) {
+        // Handle abort error separately
+        if (error.name === 'CanceledError' || error.message === 'canceled') {
+            return { error: false, message: "", status: 499, data: null };
+        }
+
         // Default error message
         let errorMessage = 'An error occurred.';
         let statusCode = 500;
@@ -38,7 +44,7 @@ const apiHandler = async (endPoint: any, method: string, data = null) => {
             errorMessage = error.message;
         }
 
-        // // Handle 401 Unauthorized error
+        // Handle 401 Unauthorized error
         if (statusCode === 401) {
             removeValue(STORAGE_KEYS.TOKEN);
             

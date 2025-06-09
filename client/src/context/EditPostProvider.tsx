@@ -22,16 +22,18 @@ export const EditPostProvider: React.FC<{ children: React.ReactNode }> = ({
   children 
 }) => {
   const editPost = useEditPost();
+  const {isOpen, isLoading, onClose, post, onSave, onDelete, onGenerate} = editPost;
 
   return (
     <EditPostContext.Provider value={editPost}>
       <EditPost
-        isOpen={editPost.isOpen}
-        onClose={editPost.onClose}
-        post={editPost.post}
-        onSave={editPost.onSave}
-        onDelete={editPost.onDelete}
-        onGenerate={editPost.onGenerate}
+        isOpen={isOpen}
+        onClose={onClose}
+        post={post}
+        onSave={onSave}
+        onDelete={onDelete}
+        onGenerate={onGenerate}
+        isLoading={isLoading}
       />
       {children}
     </EditPostContext.Provider>

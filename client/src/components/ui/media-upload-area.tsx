@@ -343,9 +343,10 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
                     <Image className="w-6 h-6 text-gray-500" />
                     <Video className="w-6 h-6 text-gray-500" />
                   </>
-                ) : (
+                ) :  postType === 'text' ? (
                     <ImageOff className="w-6 h-6 text-gray-500" />
-                )}
+                ) : <Image className="w-6 h-6 text-gray-500" />
+                }
               </div>
               <p className="text-sm text-gray-500 text-center mx-4">
                 <span className="font-semibold text-blue-600 cursor-pointer">

@@ -1,6 +1,6 @@
 import { BASE_URL } from '@/commons/constant';
 import { doGET, doPOST, doPUT, doDELETE } from '@/commons/serviceUtils';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { PostStatus, PostApiDetails } from '@/types/post';
 import { PlatformType } from '@/types';
 
@@ -80,11 +80,12 @@ export const deletePost = async (postId: string) => {
   }
 };
 
-export const searchLocation = async (query: string) => {
+export const searchLocation = async (query: string, signal?: AbortSignal) => {
   try {
     const response = await doPOST(
       `${BASE_URL}/ayrshare/search-location`,
-      { query }
+      { query },
+      signal
     );
     return response.data.data.facebook;
   } catch (error) {

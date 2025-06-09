@@ -75,13 +75,13 @@ export const useEditPost = () => {
         throw new Error('Failed to save post');
       }
 
+      await syncPostsFromDB(displayDate);
+      
+      setIsOpen(false);
       toast({
         title: 'Success',
         description: updatedPost.status === 'schedule' ? 'Post scheduled successfully!' : 'Post saved as draft!',
       });
-      
-      await syncPostsFromDB(displayDate);
-      setIsOpen(false);
 
       return true;
     } catch (error) {
@@ -104,11 +104,11 @@ export const useEditPost = () => {
       // Call the deletePost API
       const response = await deletePost(post._id);
       if (response && response.success) {
+        await syncPostsFromDB(displayDate);
         toast({
           title: 'Success',
           description: 'Post deleted successfully',
         });
-        await syncPostsFromDB(displayDate);
         setIsLoading(false);
         setIsOpen(false);
       } else {
@@ -163,7 +163,6 @@ export const useEditPost = () => {
     value: PlatformType[] | string | Date | string[],
   ) => {
     const { livePost, setLivePost } = usePostStore.getState();
-    
 
     try {
       const response = await updatePost(

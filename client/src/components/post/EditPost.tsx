@@ -17,6 +17,7 @@ import LocationDropdown from './TagLocation';
 
 interface EditPostProps {
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
   post: Post;
   onSave: (updatedPost: Post) => void;
@@ -26,6 +27,7 @@ interface EditPostProps {
 
 const EditPost: React.FC<EditPostProps> = ({
   isOpen,
+  isLoading,
   onClose,
   post,
   onSave,
@@ -33,14 +35,11 @@ const EditPost: React.FC<EditPostProps> = ({
   onGenerate
 }) => {
   const [editedPost, setEditedPost] = useState<Post>(post);
-  const [originalPost, setOriginalPost] = useState<Post>(post);
-  const [hasChanges, setHasChanges] = useState<boolean>(false);
   const { timeZoneLabel = 'GMT+00:00', isMobileView } = useAuthStore();
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [generatePrompt, setGeneratePrompt] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(post.status === 'draft' || post.status === 'schedule');
   const [date, setDate] = useState<Date>(new Date(post.scheduleDate));
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
 
@@ -66,10 +65,8 @@ const EditPost: React.FC<EditPostProps> = ({
         ...postWithFormattedHashtags,
         content: postWithFormattedHashtags.content.split("#")[0],
       });
-      setOriginalPost(postWithFormattedHashtags);
       setDate(new Date(post.scheduleDate));
-      setHasChanges(false);
-      setSelectedLocation('');
+      setSearchQuery(postWithFormattedHashtags?.location?.split(",")?.[0] || "")
       setIsEditing(post.status === 'draft' || post.status === 'schedule');
     }
   }, [post, timeZoneLabel]);
@@ -158,7 +155,7 @@ const EditPost: React.FC<EditPostProps> = ({
   };
 
   const handleLocationSelect = (locationName: string, locationId: string) => {
-    setSelectedLocation(locationName);
+    setEditedPost(prev => ({ ...prev, location: locationName }));
     
     if (editedPost.platform[0] === 'instagram') {
       setEditedPost(prev => ({ ...prev, instagramLocationId: locationId }));
@@ -170,10 +167,10 @@ const EditPost: React.FC<EditPostProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-hidden p-2 sm:p-4" onClick={handleClose}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-hidden p-2 sm:p-4`} onClick={handleClose}>
       <div className="bg-white rounded-lg shadow-xl h-[90vh] w-full max-w-[95vw] sm:max-w-[85vw] md:max-w-[80vw] xl:max-w-[64vw] flex flex-col md:h-full md:max-h-[85vh] relative" onClick={(e) => e.stopPropagation()}>
         
-        <div className="flex justify-between items-center p-2 sm:p-4 border-b rounded-tr-[8px] rounded-tl-[8px] border-gray-200 bg-white z-10 flex-shrink-0">
+        <div className={`flex justify-between items-center p-2 sm:p-4 border-b rounded-tr-[8px] rounded-tl-[8px] border-gray-200 bg-white z-10 flex-shrink-0`}>
           <div className="flex items-center gap-2">
             {editedPost.platform?.[0] && (() => {
               const platformInfo = initialSocialPlatforms.find(p => p.value === editedPost.platform[0]);
@@ -202,13 +199,13 @@ const EditPost: React.FC<EditPostProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden rounded-bl-[8px] rounded-br-[8px] min-h-0">
+        <div className={`flex flex-col md:flex-row flex-1 overflow-hidden rounded-bl-[8px] rounded-br-[8px] min-h-0 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
           <div className="hidden md:flex gap-4 py-4 w-1/2 border-r border-gray-200 flex-col min-h-0">
             {
               (!isMobileView && (editedPost.platform[0] === "facebook" || editedPost.platform[0] === "instagram")) && (
                 <div className="px-4 sticky top-0 bg-white z-50">
                   <LocationDropdown
-                    selectedLocation={selectedLocation}
+                    selectedLocation={editedPost.location || ''}
                     setSelectedLocation={(name, id) => handleLocationSelect(name, id)}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
@@ -246,7 +243,7 @@ const EditPost: React.FC<EditPostProps> = ({
                   (isMobileView && (editedPost.platform[0] === "facebook" || editedPost.platform[0] === "instagram")) && (
                     <div className="sticky top-0 bg-white z-50 pb-2">
                       <LocationDropdown
-                        selectedLocation={selectedLocation}
+                        selectedLocation={editedPost.location || ''}
                         setSelectedLocation={(name, id) => handleLocationSelect(name, id)}
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}

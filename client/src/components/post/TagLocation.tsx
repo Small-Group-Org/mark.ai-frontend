@@ -2,7 +2,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MapPin, Loader2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { searchLocation } from '@/services/postServices';
-import { useToast } from '@/hooks/use-toast';
 import { Location } from '@/types';
 
 // Custom debounce hook
@@ -43,8 +42,8 @@ interface LocationDropdownProps {
     const [locationResults, setLocationResults] = useState<Location[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const debouncedSearchQuery = useDebounce(searchQuery, 500);
-    const { toast } = useToast();
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
       if (isLocationOpen && searchInputRef.current) {
@@ -56,27 +55,41 @@ interface LocationDropdownProps {
       const fetchLocations = async () => {
         if (!debouncedSearchQuery) return;
         
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        
+        abortControllerRef.current = new AbortController();
         setIsLoading(true);
         try {
-          const response = await searchLocation(debouncedSearchQuery) as Location[];
+          const response = await searchLocation(debouncedSearchQuery, abortControllerRef.current.signal) as Location[];
           
           if (response) {
             const correctSearchResults = response.filter(result => result?.location)
             setLocationResults(correctSearchResults.slice(0, 20));
           }
         } catch (error) {
-          console.error('Error fetching locations:', error);
-          toast({
-            title: "Error",
-            description: "Failed to fetch locations",
-            variant: "destructive",
-          });
+          console.error(error);
+          // if ((error as Error).name !== 'CanceledError') {
+          //   toast({
+          //     title: "Error",
+          //     description: "Failed to fetch locations",
+          //     variant: "destructive",
+          //   });
+          // }
         } finally {
           setIsLoading(false);
         }
       };
 
       fetchLocations();
+
+      // Cleanup function to abort any pending request when component unmounts
+      return () => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+      };
     }, [debouncedSearchQuery]);
 
     const filteredLocations = locationResults.map(location => {
