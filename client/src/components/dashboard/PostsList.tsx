@@ -3,6 +3,7 @@ import { Image } from 'lucide-react';
 import { Post as PostType } from '@/types/post';
 import { PlatformType } from '@/types';
 import { SocialIconComponents } from '@/assets/icons/social/SocialIcons';
+import { VIDEO_EXTENSIONS_REGEX } from '@/commons/constant';
 
 type TabType = 'past' | 'upcoming' | 'drafts';
 
@@ -118,8 +119,8 @@ const PostsList: React.FC<PostsListProps> = ({
         )}
         {filteredPosts.map((post, index) => {
           const media = post.mediaUrl?.[0];
-          const isImage = media && (media.startsWith('http://') || media.startsWith('https://'));
-          const isVideo = false; // Since we're treating all URLs as images
+          const isImage = media && (media.startsWith('http://') || media.startsWith('https://')) && !media.match(VIDEO_EXTENSIONS_REGEX);
+          const isVideo = media && media.match(VIDEO_EXTENSIONS_REGEX);
 
           return (
             <div
@@ -137,10 +138,12 @@ const PostsList: React.FC<PostsListProps> = ({
                   <img src={media} alt="Media Preview" className="max-w-full max-h-full object-cover rounded" />
                 )}
                 {isVideo && (
-                  <video className="max-w-full max-h-full object-cover rounded" muted>
-                    <source src={media} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  <video 
+                    src={media} 
+                    className="max-w-full max-h-full object-cover rounded pointer-events-none" 
+                    muted 
+                    playsInline
+                  />
                 )}
                 {!isImage && !isVideo && (
                   <div className="flex flex-col items-center justify-center w-full h-full bg-gray-50">
