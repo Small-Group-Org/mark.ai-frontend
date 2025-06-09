@@ -1,5 +1,5 @@
 import React, { MutableRefObject } from 'react';
-import { Trash2, Image, Video, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, Image, Video, ChevronLeft, ChevronRight, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { uploadMultipleMedia } from '@/services/uploadServices';
 import { useToast } from '@/hooks/use-toast';
@@ -344,24 +344,29 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
                     <Video className="w-6 h-6 text-gray-500" />
                   </>
                 ) : (
-                    <Image className="w-6 h-6 text-gray-500" />
+                    <ImageOff className="w-6 h-6 text-gray-500" />
                 )}
               </div>
               <p className="text-sm text-gray-500 text-center mx-4">
                 <span className="font-semibold text-blue-600 cursor-pointer">
-                  Click to Upload
+                  {postType === "text" ? "No Media Allowed" : "Click to Upload"}
                 </span>
-                <span className="block mt-1">or Drag & Drop</span>
-                <span className="block mt-1 text-xs text-gray-400">
-                  {config.maxFiles === 1 ? 'Single file' : `Max ${config.maxFiles} files`}
-                </span>
+               {
+                postType !== "text" &&
+                <>
+                    <span className="block mt-1">or Drag & Drop</span>
+                    <span className="block mt-1 text-xs text-gray-400">
+                      {config.maxFiles === 1 ? 'Single file' : `Max ${config.maxFiles} files`}
+                    </span>
+                </>
+               }
               </p>
               <input
                 type="file"
                 accept={config.allowedTypes}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 onChange={handleMediaUpload}
-                disabled={isUploading}
+                disabled={isUploading || postType === "text"}
                 multiple={config.allowMultiple}
               />
             </>

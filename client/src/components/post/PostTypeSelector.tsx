@@ -35,7 +35,7 @@ const PostTypeSelector: React.FC<PostTypeSelectorProps> = ({ postType, isEditing
                     onClick={() => isEditing && onPostTypeToggle(key as SupportedPostType)}
                     disabled={!isEditing}
                   >
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                    { key === "carousel" ? "Post" : key.charAt(0).toUpperCase() + key.slice(1)}
                   </button>
                 );
             })}

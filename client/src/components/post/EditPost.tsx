@@ -62,29 +62,17 @@ const EditPost: React.FC<EditPostProps> = ({
       const formattedHashtags = formatHashtagsForDisplay(post.hashtag || '');
       const postWithFormattedHashtags = { ...post, hashtag: formattedHashtags };
       
-      setEditedPost(postWithFormattedHashtags);
+      setEditedPost({
+        ...postWithFormattedHashtags,
+        content: postWithFormattedHashtags.content.split("#")[0],
+      });
       setOriginalPost(postWithFormattedHashtags);
       setDate(new Date(post.scheduleDate));
       setHasChanges(false);
+      setSelectedLocation('');
       setIsEditing(post.status === 'draft' || post.status === 'schedule');
     }
   }, [post, timeZoneLabel]);
-
-  useEffect(() => {
-    const checkForChanges = () => {
-      const titleChanged = editedPost.title !== originalPost.title;
-      const contentChanged = editedPost.content !== originalPost.content;
-      const hashtagChanged = editedPost.hashtag !== originalPost.hashtag;
-      const platformChanged = JSON.stringify(editedPost.platform.sort()) !== JSON.stringify(originalPost.platform.sort());
-      const postTypeChanged = editedPost.postType !== originalPost.postType;
-      const mediaChanged = JSON.stringify(editedPost.mediaUrl) !== JSON.stringify(originalPost.mediaUrl);
-      const dateChanged = date.getTime() !== new Date(originalPost.scheduleDate).getTime();
-      
-      setHasChanges(titleChanged || contentChanged || hashtagChanged || platformChanged || postTypeChanged || mediaChanged || dateChanged);
-    };
-    
-    checkForChanges();
-  }, [editedPost, date, originalPost]);
   
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -99,8 +87,10 @@ const EditPost: React.FC<EditPostProps> = ({
         filteredMediaUrls = videoUrls.length > 0 ? [videoUrls[0]] : [];
       } else if (type === 'carousel') {
         filteredMediaUrls = filteredMediaUrls.filter(url => !url.match(VIDEO_EXTENSIONS_REGEX));
-      } else {
+      }  else if(type === "story"){
         filteredMediaUrls = [filteredMediaUrls[0]];
+      } else {
+        filteredMediaUrls = [];
       }
 
       setEditedPost(prev => ({ ...prev, postType: type, mediaUrl: filteredMediaUrls }));
@@ -127,7 +117,6 @@ const EditPost: React.FC<EditPostProps> = ({
   const handleSave = (status: PostStatus) => {
     if (!isEditing) return;
     
-    // Check if platforms are selected when scheduling
     if (editedPost.platform.length === 0) {
       toast({
         title: "Select Platform",
@@ -144,7 +133,14 @@ const EditPost: React.FC<EditPostProps> = ({
     }
     
     const formattedHashtags = formatHashtagsForSubmission(editedPost.hashtag || '');
-    const updatedPost = { ...editedPost, hashtag: formattedHashtags, scheduleDate: date, status };
+    const updatedPost = 
+      { 
+        ...editedPost, 
+        hashtag: formattedHashtags, 
+        scheduleDate: date, 
+        status,
+        content: `${editedPost.content} \n\n ${formattedHashtags}`
+      };
     onSave(updatedPost);
     setIsEditing(false);
   };
@@ -295,7 +291,6 @@ const EditPost: React.FC<EditPostProps> = ({
               date={date}
               timeZoneLabel={timeZoneLabel}
               isEditing={isEditing}
-              hasChanges={hasChanges}
               onDateChange={handleDateChange}
               onSave={handleSave}
               onDelete={onDelete}
@@ -322,7 +317,6 @@ const EditPost: React.FC<EditPostProps> = ({
                 date={date}
                 timeZoneLabel={timeZoneLabel}
                 isEditing={isEditing}
-                hasChanges={hasChanges}
                 onDateChange={handleDateChange}
                 onSave={handleSave}
                 onDelete={onDelete}

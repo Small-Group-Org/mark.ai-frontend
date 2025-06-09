@@ -48,7 +48,7 @@ export const getPlatformImage = (platform: PlatformType): string => {
 export const getMediaSupportInfo = (postType: SupportedPostType) => {
   switch (postType) {
     case 'carousel':
-      return 'Carousel posts support multiple images (2-10 images). Each image should be in JPG, PNG, or GIF format.';
+      return 'Post support multiple images (upto 10). Each image should be in JPG, PNG, or GIF format.';
     case 'video':
       return 'Video posts support MP4, MOV, or AVI formats. Maximum duration varies by platform.';
     case 'text':
@@ -62,6 +62,6 @@ export const getMediaSupportInfo = (postType: SupportedPostType) => {
   }
 };
 
-export const isVideo = (url: string) => {
-  return url.match(VIDEO_EXTENSIONS_REGEX);
+export const isVideo = (url: string = "") => {
+  return url?.match(VIDEO_EXTENSIONS_REGEX);
 };

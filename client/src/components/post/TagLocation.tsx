@@ -62,7 +62,7 @@ interface LocationDropdownProps {
           
           if (response) {
             const correctSearchResults = response.filter(result => result?.location)
-            setLocationResults(correctSearchResults.slice(0, 10));
+            setLocationResults(correctSearchResults.slice(0, 20));
           }
         } catch (error) {
           console.error('Error fetching locations:', error);
@@ -144,7 +144,9 @@ interface LocationDropdownProps {
                 ))
               ) : (
                 <div className="px-3 py-2 text-xs text-gray-500">
-                  No locations found
+                  { 
+                    searchQuery ? "No locations found" : "Please enter a location"
+                  }
                 </div>
               )}
             </div>

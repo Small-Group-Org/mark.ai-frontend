@@ -22,7 +22,7 @@ export const API_METHODS = {
 export const AllPostType: PostType[] = [
   {
       id: 'carousel',
-      label: 'Carousel'
+      label: 'Post'
   },
   {
       id: 'story',

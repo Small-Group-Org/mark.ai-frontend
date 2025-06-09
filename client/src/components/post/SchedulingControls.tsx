@@ -11,7 +11,6 @@ interface SchedulingControlsProps {
   date: Date;
   timeZoneLabel: string;
   isEditing: boolean;
-  hasChanges: boolean;
   onDateChange: (date: Date) => void;
   onSave: (status: PostStatus) => void;
   onDelete: () => void;
@@ -24,7 +23,6 @@ const SchedulingControls: React.FC<SchedulingControlsProps> = ({
   date,
   timeZoneLabel,
   isEditing,
-  hasChanges,
   onDateChange,
   onSave,
   onDelete,
@@ -68,7 +66,6 @@ const SchedulingControls: React.FC<SchedulingControlsProps> = ({
               className={!isEditing ? "opacity-70 cursor-not-allowed" : ""}
               disabled={!isEditing}
               initialPostStatus={post.status}
-              hasChanges={hasChanges}
             />
           </div>
         </div>
