@@ -8,8 +8,10 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { marked } from 'marked';
 import { initialiseChatWithMark } from "@/commons/constant";
 import { formatHashtagsForDisplay } from "@/utils/postUtils";
+import { useLocation } from "wouter";
 
 const ChatPanel = () => {
+  const [location, navigate] = useLocation();
   const {
     messages,
     isThinking,
@@ -60,16 +62,16 @@ const ChatPanel = () => {
       return;
     }
 
-    // // Case 1: If onboarding is complete, always initialize chat with Mark
-    // if (isOnboardingComplete()) {
-    //   handleChatResponse(initialiseChatWithMark);
-    //   return;
-    // }
+    // Case 1: If onboarding is complete, always initialize chat with Mark
+    if (isOnboardingComplete()) {
+      handleChatResponse(initialiseChatWithMark);
+      return;
+    }
 
-    // // Case 2: If onboarding is NOT complete, only initialize if no messages exist
-    // if (!isOnboardingComplete() && messages?.length === 0) {
-    //   handleChatResponse(initialiseChatWithMark);
-    // }
+    // Case 2: If onboarding is NOT complete, only initialize if no messages exist
+    if (!isOnboardingComplete() && messages?.length === 0) {
+      handleChatResponse(initialiseChatWithMark);
+    }
   }, [isAuth, isLoadingHistory]);
 
   useEffect(() => {
@@ -122,7 +124,7 @@ const ChatPanel = () => {
         const aiResponseMessage: Message = {
           id: Date.now().toString(),
           text: response.bot.text,
-          sender: "system",
+          sender: "mark",
           timestamp: new Date()
         };
         setMessages((prevMessages: Message[]) => [...prevMessages, aiResponseMessage]);
@@ -138,6 +140,24 @@ const ChatPanel = () => {
             content: post.content ?? "",
             hashtag: formattedHashtags
           });
+
+          if (!location.startsWith('/create')) {
+            setMessages((prevMessages) => [
+              ...prevMessages, 
+              {
+                id: Date.now().toString(),
+                text: 
+                  <>
+                    Mark has created the post. 
+                    <span className="cursor-pointer underline" onClick={() =>  navigate('/create')}>
+                     {" "} Click to view.
+                    </span>
+                  </>,
+                sender: "system",
+                timestamp: new Date()
+              }
+            ]);
+          }
         } else {
             await fetchOnboardingState();
         }
@@ -258,15 +278,21 @@ const ChatPanel = () => {
                   message.sender === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                <div
-                  className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${
-                    message.sender === "user"
-                      ? `${userChatBubbleBg} ${userChatBubbleText}`
-                      : `${chatBubbleGradient} text-white`
-                  }`}
-                >
-                  {renderMessageContent(message.text)}
-                </div>
+                {message.sender === "system" ? (
+                  <div className="w-full text-center text-gray-400 text-sm italic py-1">
+                    {message.text}
+                  </div>
+                ) : (
+                  <div
+                    className={`px-4 py-2 rounded-lg max-w-[85%] md:max-w-[80%] shadow-md text-sm ${
+                      message.sender === "user"
+                        ? `${userChatBubbleBg} ${userChatBubbleText}`
+                        : `${chatBubbleGradient} text-white`
+                    }`}
+                  >
+                    {renderMessageContent(message.text as string)}
+                  </div>
+                )}
               </div>
             ))}
 

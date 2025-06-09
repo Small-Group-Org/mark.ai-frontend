@@ -1,8 +1,8 @@
 export interface Message {
   id: string;
-  text: string;
-  sender: "user" | "system";
-  timestamp: Date;
+  text: string | JSX.Element;
+  sender: "user" | "mark" | "system";
+  timestamp?: Date;
 }
 
 export type PlatformType =

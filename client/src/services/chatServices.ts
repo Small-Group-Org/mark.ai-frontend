@@ -85,7 +85,7 @@ export const transformChatHistoryToMessages = (chatHistory: ChatHistoryResponse)
     return conversationFlow.map((historyItem, index) => ({
         id: `history-${index}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Generate unique ID
         text: historyItem.text_content,
-        sender: historyItem.sender_first_name === "Mark" ? "system" : "user",
+        sender: historyItem.sender_first_name === "Mark" ? "mark" : "user",
         timestamp: new Date(Date.now() - (conversationFlow.length - index) * 1000) // Simulate chronological order
     }));
 };

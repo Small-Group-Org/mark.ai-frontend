@@ -218,7 +218,7 @@ const Mind = () => {
           {/* Footer Info */}
           <div className="mt-6">
             <p className="text-gray-500 text-sm italic">
-             <Info className="w-4 h-4 inline-block mr-1" /> Data updates automatically as the agent learns from conversations
+             <Info className="w-4 h-4 inline-block mr-1" /> Data updates automatically as the Mark learns from conversations
             </p>
           </div>
         </div>

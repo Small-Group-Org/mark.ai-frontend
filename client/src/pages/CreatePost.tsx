@@ -15,13 +15,18 @@ import { Button } from "@/components/ui/button";
 import MediaGuidelinesDialog from "@/components/ui/media-guidelines-dialog";
 import { getMediaSupportInfo } from "@/commons/utils";
 import { Loader2 } from "lucide-react";
+import { useLocation } from 'wouter';
+import { useEditPostContext } from '@/context/EditPostProvider';
+import { getPosts } from "@/services/postServices";
 
 const CreatePost = () => {
-  const { livePost, setLivePost,  } = usePostStore();
+  const { livePost, setLivePost, setMessages, messages, posts } = usePostStore();
   const { isMobileView, socialPlatforms, getConnectedPlatforms } = useAuthStore();
   const {updatePostHandler} = useEditPost();
   const { platform, postType, scheduleDate, mediaUrl } = livePost;
   const connectedPlatforms = getConnectedPlatforms() || []; 
+  const [, navigate] = useLocation();
+  const editPostContext = useEditPostContext();
 
   const { toast } = useToast();
   const { onSave } = useEditPost();
@@ -121,6 +126,19 @@ const CreatePost = () => {
     await updatePostHandler("mediaUrl", mediaUrls);
   };
 
+  const onOpenEditModal = async (postId: string) => {
+    navigate('/calendar');
+    // try {
+    //   const response = await getPosts({ postId });
+    //   if (response && response.length > 0) {
+    //     const post = response[0];
+    //     editPostContext.onOpen(postId, post);
+    //   }
+    // } catch (error) {
+    //   console.error('Error fetching post:', error);
+    // }
+  }
+
   const handleSave = async (status: PostStatus) => {
     const now = new Date();
     if (date && date < now) {
@@ -146,6 +164,14 @@ const CreatePost = () => {
     if(response){
       resetLivePost();
       createDummyLivePost();
+      setMessages([
+        ...messages,
+        {
+          id: Date.now().toString(),
+          text: <>Post added to calendar. <span className="cursor-pointer underline" onClick={() => onOpenEditModal("")}>Click to edit.</span></>,
+          sender: "system",
+        }
+      ])
     }
   };
 

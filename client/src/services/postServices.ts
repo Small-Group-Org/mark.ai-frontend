@@ -10,6 +10,7 @@ interface GetPostsFilters {
   status?: PostStatus;
   startDate?: string;
   endDate?: string;
+  postId?: string;
 }
 
 export const getPosts = async (filters: GetPostsFilters) => {
@@ -26,6 +27,7 @@ export const getPosts = async (filters: GetPostsFilters) => {
     if (filters.status) queryParams.append('status', filters.status);
     if (filters.startDate) queryParams.append('startDate', filters.startDate);
     if (filters.endDate) queryParams.append('endDate', filters.endDate);
+    if (filters.postId) queryParams.append('postId', filters.postId);
 
     const response = await doGET(
       `${BASE_URL}/post/user?${queryParams.toString()}`

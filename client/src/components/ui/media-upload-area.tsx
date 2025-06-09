@@ -158,11 +158,6 @@ const MediaUploadArea: React.FC<MediaUploadAreaProps> = ({
       if (onMediaChange) {
         await onMediaChange(newMediaArray);
       }
-      
-      toast({ 
-        title: "Success", 
-        description: `${uploadedUrls.length} file(s) uploaded successfully` 
-      });
     } catch (error) {
       console.error('Error uploading files:', error);
       toast({ 
