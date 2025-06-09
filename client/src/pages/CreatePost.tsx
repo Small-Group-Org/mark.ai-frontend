@@ -9,11 +9,12 @@ import useEditPost from "@/hooks/use-edit-post";
 import { createDummyLivePost } from "@/services/authServices";
 import { formatHashtagsForSubmission } from "@/utils/postUtils";
 import { SupportedPostType } from "@/types";
-import { BadgeInfo, CircleHelp, Info, TriangleAlert } from "lucide-react";
+import { CircleHelp, TriangleAlert } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import MediaGuidelinesDialog from "@/components/ui/media-guidelines-dialog";
 import { getMediaSupportInfo } from "@/commons/utils";
+import { Loader2 } from "lucide-react";
 
 const CreatePost = () => {
   const { livePost, setLivePost,  } = usePostStore();
@@ -28,10 +29,10 @@ const CreatePost = () => {
   const [showMediaConfirm, setShowMediaConfirm] = useState(false);
   const [showMediaGuidelines, setShowMediaGuidelines] = useState(false);
   const [pendingAction, setPendingAction] = useState<"schedule" | "draft" | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const selectedPostTypeRef = useRef<string | null>(null);
   const initialMediaUrlRef = useRef<string[] | null>(null);
-  const updateDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if(!initialMediaUrlRef.current && mediaUrl.length){
@@ -88,15 +89,17 @@ const CreatePost = () => {
 
   const handlePostTypeClick = async (type: SupportedPostType) => {
     if(livePost.postType !== type){
-      let filteredMediaUrls = initialMediaUrlRef.current || [];
-      
+      let filteredMediaUrls = initialMediaUrlRef.current?.filter(url => !!url) || [];
+
       if (type === 'video' || type === 'reel') {
-        const videoUrls = filteredMediaUrls.filter(url => url.match(VIDEO_EXTENSIONS_REGEX));
+        const videoUrls = filteredMediaUrls.filter(url => url?.match(VIDEO_EXTENSIONS_REGEX));
         filteredMediaUrls = videoUrls.length > 0 ? [videoUrls[0]] : [];
       } else if (type === 'carousel') {
-        filteredMediaUrls = filteredMediaUrls.filter(url => !url.match(VIDEO_EXTENSIONS_REGEX));
-      } else {
+        filteredMediaUrls = filteredMediaUrls.filter(url => !url?.match(VIDEO_EXTENSIONS_REGEX));
+      } else if(type === "story"){
         filteredMediaUrls = [filteredMediaUrls[0]];
+      } else {
+        filteredMediaUrls = [];
       }
 
       setLivePost({
@@ -104,17 +107,6 @@ const CreatePost = () => {
         postType: type,
         mediaUrl: filteredMediaUrls
       });
-
-     if(postType !== "text"){
-        if (updateDebounceRef.current) {
-          clearTimeout(updateDebounceRef.current);
-        }
-        
-        updateDebounceRef.current = setTimeout(async () => {
-          await updatePostHandler("mediaUrl", filteredMediaUrls);
-          updateDebounceRef.current = null;
-        }, 2*1000);
-     }
     }
   };
 
@@ -183,21 +175,18 @@ const CreatePost = () => {
 
   const handleMediaConfirm = async () => {
     if (pendingAction) {
-      await handleSave(pendingAction);
-      setPendingAction(null);
+      setIsSaving(true);
+      try {
+        await handleSave(pendingAction);
+      } finally {
+        setIsSaving(false);
+        setPendingAction(null);
+        setShowMediaConfirm(false);
+      }
     }
-    setShowMediaConfirm(false);
   };
 
   const previewPanelBg = "bg-gray-100";
-
-  useEffect(() => {
-    return () => {
-      if (updateDebounceRef.current) {
-        clearTimeout(updateDebounceRef.current);
-      }
-    };
-  }, []);
 
   return (
     <div className={`flex flex-col ${previewPanelBg} text-black h-full ${isMobileView ? 'h-[calc(100vh-70px-65px)]' : ''}`}>
@@ -273,8 +262,10 @@ const CreatePost = () => {
         </div>
       </div>
       <Dialog open={showMediaConfirm} onOpenChange={() => {
-        setShowMediaConfirm(false);
-        setPendingAction(null);
+        if (!isSaving) {
+          setShowMediaConfirm(false);
+          setPendingAction(null);
+        }
       }}>
         <DialogContent>
           <DialogHeader>
@@ -291,11 +282,18 @@ const CreatePost = () => {
             <Button variant="outline" className="text-gray-800" onClick={() => {
               setShowMediaConfirm(false);
               setPendingAction(null);
-            }}>
+            }} disabled={isSaving}>
               Cancel
             </Button>
-            <Button onClick={handleMediaConfirm}>
-              Confirm
+            <Button onClick={handleMediaConfirm} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Confirm'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

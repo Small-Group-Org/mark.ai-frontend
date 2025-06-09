@@ -60,7 +60,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   initialMediaUrlRef
 }) => {
   const {livePost} = usePostStore();
-  const {content: postContent, hashtag, title: postTitle, postType} = livePost;
+  const {content: _postContent, hashtag, title: postTitle, postType} = livePost;
   const { userDetails = {} } = useAuthStore();
   const { name: userName = "" } = userDetails as User;
   
@@ -78,6 +78,8 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
   
   // Parse hashtags for display
   const hashtagsArray = parseHashtagsToArray(hashtag || '');
+  const postContent = _postContent.split(`#`)?.[0];
+
 
   return (
     <div className={`flex flex-col ${className}`}>
@@ -95,7 +97,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
 
         <div className="flex flex-col md:flex-row">
           {postType !== "text" && (
-            <div className="md:w-1/2 h-[250px] md:h-[350px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
+            <div className="md:flex-1 h-[250px] md:h-[350px] flex items-center justify-center bg-gray-100 border-r border-gray-100 relative">
               <MediaUploadArea
                 mediaUrl={uploadedMediaFile}
                 isUploading={false}
@@ -109,7 +111,7 @@ const SocialMediaPostPreview: React.FC<SocialMediaPostPreviewProps> = ({
             </div>
           )}
 
-          <div className="md:w-1/2 p-5 h-[250px] md:h-[350px] overflow-y-auto box-border">
+          <div className={`md:flex-1 p-5 h-[250px] md:h-[350px] overflow-y-auto box-border ${postType === "text" ? "h-[400px]" : ""}`}>
             {postTitle ? (
               <h2 className="font-bold text-lg text-gray-900 mb-2">
                 {postTitle}

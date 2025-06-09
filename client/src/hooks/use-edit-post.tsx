@@ -85,10 +85,9 @@ export const useEditPost = () => {
 
       return true;
     } catch (error) {
-      console.error('Failed to save post:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to save post',
+        title: 'Post cannot be saved',
+        description: (error as Error).message || 'Failed to save post',
         variant: 'destructive',
       });
       return false;
@@ -114,17 +113,16 @@ export const useEditPost = () => {
         setIsOpen(false);
       } else {
         toast({
-          title: 'Error',
+          title: 'Post cannot be deleted',
           description: 'Failed to delete post',
           variant: 'destructive',
         });
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('Failed to delete post', error);
       toast({
         title: 'Error',
-        description: 'Failed to delete post',
+        description: (error as Error).message || 'Failed to save post',
         variant: 'destructive',
       });
       setIsLoading(false);

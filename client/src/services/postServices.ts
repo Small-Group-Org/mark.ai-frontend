@@ -33,7 +33,7 @@ export const getPosts = async (filters: GetPostsFilters) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to fetch posts');
+      throw new Error(error.message || 'Failed to fetch posts');
     }
     throw error;
   }
@@ -48,7 +48,7 @@ export const createPost = async (postData: PostApiDetails) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to create post');
+      throw new Error(error.message || 'Failed to create post');
     }
     throw error;
   }
@@ -62,10 +62,7 @@ export const updatePost = async (postData: PostApiDetails, postId: string) => {
     );
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to update post');
-    }
-    throw error;
+      throw new Error((error as Error).message || 'Failed to update post');
   }
 };
 
@@ -77,7 +74,7 @@ export const deletePost = async (postId: string) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to delete post');
+      throw new Error(error.message || 'Failed to delete post');
     }
     throw error;
   }
@@ -92,7 +89,7 @@ export const searchLocation = async (query: string) => {
     return response.data.data.facebook;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message || 'Failed to search location');
+      throw new Error(error.message || 'Failed to search location');
     }
     throw error;
   }

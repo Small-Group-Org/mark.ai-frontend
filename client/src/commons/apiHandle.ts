@@ -39,15 +39,15 @@ const apiHandler = async (endPoint: any, method: string, data = null) => {
         }
 
         // // Handle 401 Unauthorized error
-        // if (statusCode === 401) {
-        //     removeValue(STORAGE_KEYS.TOKEN);
+        if (statusCode === 401) {
+            removeValue(STORAGE_KEYS.TOKEN);
             
-        //     const logout = useAuthStore.getState().logout;
-        //     logout();
+            const logout = useAuthStore.getState().logout;
+            logout();
             
-        //     window.location.href = '/';
-        //     errorMessage = 'Session expired. Please login again.';
-        // }
+            window.location.href = '/';
+            errorMessage = 'Session expired. Please login again.';
+        }
 
         throw new Error(error.response?.data?.message || 'Facing some technical issue, please try after some time');
     }
