@@ -1,34 +1,32 @@
 import { getPlatformImage } from "@/commons/utils";
-import { PlatformType } from "@/types";
+import { AyrsharePlatformDetails, PlatformType } from "@/types";
 import React, { useEffect, useState } from "react";
 
 interface ConnectSocialIconProps {
-  isConnected: boolean;
-  platform: PlatformType;
+  platform: AyrsharePlatformDetails;
   handleAyrshareConnection: (platform: PlatformType) => void;
   isToggleOn: boolean;
   onToggle: (platform: PlatformType, isOn: boolean) => void;
-  toggleColor?: string;
-  loadingPlatforms: string[]
+  loadingPlatforms: string[];
 }
 
 const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
-  isConnected,
-  platform,
+  platform: _platform,
   handleAyrshareConnection,
   isToggleOn = true,
   onToggle,
-  toggleColor,
-  loadingPlatforms
+  loadingPlatforms,
 }) => {
+  const {isConnected, value: platform, toggleColor, willLaunching} = _platform;
   const [isLoading, setIsLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     setIsLoading(loadingPlatforms.includes(platform))
   }, [loadingPlatforms])
 
   const handleClick = () => {
-    if (isLoading || loadingPlatforms.length) return;
+    if (isLoading || loadingPlatforms.length || willLaunching) return;
 
     if (isConnected) {
       onToggle?.(platform, !isToggleOn);
@@ -37,13 +35,18 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
     }
   };
 
+  console.log("[]", {showTooltip});
+  
+
   return (
     <div
-      className={`relative h-full flex items-center justify-center p-[2px] rounded-full border-2 ${
-        (isLoading || loadingPlatforms.length) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+      className={`relative min-w-10 h-full flex items-center justify-center p-[2px] rounded-full border-2 ${
+        (isLoading || loadingPlatforms.length || willLaunching) ? 'opacity-80' : 'cursor-pointer'
       }`}
       style={{ borderColor: isConnected && isToggleOn && toggleColor ? toggleColor : "#444" }}
       onClick={handleClick}
+      onMouseEnter={() => willLaunching && setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
     >
       {isConnected && !isLoading && (
         <span
@@ -74,7 +77,7 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
           !isConnected || !isToggleOn ? 'grayscale' : ''
         } ${isLoading ? 'opacity-50' : ''}`}
       />
-      {!isConnected && !isLoading && (
+      {!isConnected && !isLoading && !willLaunching && (
         <span className="absolute bottom-[-2px] right-[-6px] w-4 h-4 md:w-6 md:h-6 text-xs md:text-lg bg-gray-700 rounded-full flex items-center justify-center border border-white pb-[1px] md:pb-[2px] pl-[0.25px] md:pl-[0.5px]">
           <span>+</span>
         </span>
@@ -82,6 +85,12 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
+      {showTooltip && willLaunching && (
+        <div className="absolute top-[56px] left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+          Coming soon in Beta Launch
+          <div className="absolute top-[-4px] left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
         </div>
       )}
     </div>

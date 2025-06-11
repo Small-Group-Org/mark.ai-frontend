@@ -63,15 +63,15 @@ const ChatPanel = () => {
     }
 
     // Case 1: If onboarding is complete, always initialize chat with Mark
-    if (isOnboardingComplete()) {
-      handleChatResponse(initialiseChatWithMark);
-      return;
-    }
+    // if (isOnboardingComplete()) {
+    //   handleChatResponse(initialiseChatWithMark);
+    //   return;
+    // }
 
-    // Case 2: If onboarding is NOT complete, only initialize if no messages exist
-    if (!isOnboardingComplete() && messages?.length === 0) {
-      handleChatResponse(initialiseChatWithMark);
-    }
+    // // Case 2: If onboarding is NOT complete, only initialize if no messages exist
+    // if (!isOnboardingComplete() && messages?.length === 0) {
+    //   handleChatResponse(initialiseChatWithMark);
+    // }
   }, [isAuth, isLoadingHistory]);
 
   useEffect(() => {
@@ -108,8 +108,14 @@ const ChatPanel = () => {
   };
 
   const handleChatResponse = async (messageText: string) => {
+    let apiCompleted = false;
+    let thinkingTimeout = setTimeout(() => {
+      if (!apiCompleted) {
+        setIsThinking(true);
+      }
+    }, 5000);
+
     try {
-      setIsThinking(true);
       const requestBody = {
         message: messageText,
         post: {
@@ -119,6 +125,7 @@ const ChatPanel = () => {
       };
 
       const response = await chatWithMark(requestBody);
+      apiCompleted = true;
       
       if (response?.bot?.text) {
         const aiResponseMessage: Message = {
@@ -159,7 +166,9 @@ const ChatPanel = () => {
             ]);
           }
         } else {
-            await fetchOnboardingState();
+            if (location === '/mind') {
+                await fetchOnboardingState();
+            }
         }
       } else {
         const aiErrorResponse: Message = {
@@ -180,6 +189,7 @@ const ChatPanel = () => {
       };
       setMessages((prev: Message[]) => [...prev, aiErrorResponse]);
     } finally {
+      clearTimeout(thinkingTimeout);
       setIsThinking(false);
     }
   };
@@ -325,7 +335,7 @@ const ChatPanel = () => {
           <textarea
             id="chat-textarea"
             rows={1}
-            placeholder={isThinking ? "Mark is thinking..." : "Type your message..."}
+            placeholder="Type your message..."
             className={`flex-1 bg-transparent ${messagePlaceholderColor} text-sm focus:outline-none resize-none py-1.5 placeholder-gray-400 max-h-24 overflow-y-auto`}
             style={{ scrollbarWidth: "none" }}
             value={inputValue}

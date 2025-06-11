@@ -76,6 +76,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "bluesky",
     isConnected: false,
     isEnabled: false,
+    willLaunching: false,
     img: SocialIconComponents.bluesky,
     toggleColor: "#0085C3",
     mediaGuidelines: "Bluesky supports images in JPG, PNG, and GIF formats. Maximum file size is 5MB."
@@ -85,6 +86,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "facebook",
     isConnected: false,
     isEnabled: true,
+    willLaunching: false,
     img: SocialIconComponents.facebook,
     toggleColor: "#1565C0",
     postType: {
@@ -105,6 +107,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "gmb",
     isConnected: false,
     isEnabled: false,
+    willLaunching: true,
     img: "",
     toggleColor: "#3367D6",
     mediaGuidelines: "Google My Business supports images in JPG and PNG formats. Recommended size is 720x720 pixels."
@@ -114,6 +117,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "instagram",
     isConnected: false,
     isEnabled: true,
+    willLaunching: false,
     img: SocialIconComponents.instagram,
     toggleColor: "#C13584",
     postType: {
@@ -134,6 +138,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "linkedin",
     isConnected: false,
     isEnabled: true,
+    willLaunching: false,
     img: SocialIconComponents.linkedin,
     toggleColor: "#005885",
     postType: {
@@ -149,7 +154,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     label: "Pinterest",
     value: "pinterest",
     isConnected: false,
-    isEnabled: false,
+    isEnabled: true,
+    willLaunching: true,
     img: SocialIconComponents.pinterest,
     toggleColor: "#BD081C",
     mediaGuidelines: "Pinterest supports images in JPG and PNG formats. Recommended aspect ratio is 2:3 or 1:1. Minimum width should be 1000 pixels."
@@ -159,6 +165,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "reddit",
     isConnected: false,
     isEnabled: false,
+    willLaunching: true,
     img: SocialIconComponents.reddit,
     toggleColor: "#D93900",
     mediaGuidelines: "Reddit supports images (JPG, PNG, GIF) and videos (MP4). Maximum file size is 100MB for videos and 20MB for images."
@@ -168,6 +175,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "telegram",
     isConnected: false,
     isEnabled: false,
+    willLaunching: true,
     img: SocialIconComponents.telegram,
     toggleColor: "#006BA6",
     mediaGuidelines: "Telegram supports images (JPG, PNG) and videos (MP4). Maximum file size is 2GB."
@@ -177,6 +185,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "threads",
     isConnected: false,
     isEnabled: false,
+    willLaunching: true,
     img: SocialIconComponents.threads,
     toggleColor: "#1A1A1A",
     mediaGuidelines: "Threads supports images (JPG, PNG) and videos (MP4). Maximum video length is 5 minutes. Recommended aspect ratio is 1:1 or 4:5."
@@ -185,7 +194,8 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     label: "Tiktok",
     value: "tiktok",
     isConnected: false,
-    isEnabled: false,
+    isEnabled: true,
+    willLaunching: true,
     img: SocialIconComponents.tiktok,
     toggleColor: "#4A9DA8",
     mediaGuidelines: "TikTok supports videos in MP4 format. Maximum video length is 3 minutes. Recommended aspect ratio is 9:16."
@@ -195,6 +205,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "twitter",
     isConnected: false,
     isEnabled: true,
+    willLaunching: false,
     img: SocialIconComponents.twitter,
     toggleColor: "#1976D2",
     postType: {
@@ -211,6 +222,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     value: "youtube",
     isConnected: false,
     isEnabled: false,
+    willLaunching: true,
     img: SocialIconComponents.youtube,
     toggleColor: "#CC0000",
     mediaGuidelines: "YouTube supports videos in MP4, MOV, AVI formats. Maximum video length is 12 hours. Recommended resolution is 1920x1080 pixels."

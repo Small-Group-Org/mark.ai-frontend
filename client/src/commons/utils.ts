@@ -1,4 +1,4 @@
-import { PlatformType, SupportedPostType } from "@/types";
+import { AyrsharePlatformDetails, PlatformType, SupportedPostType } from "@/types";
 import blueskyPng from "@/assets/icons/social/png/bluesky.png";
 import facebookPng from "@/assets/icons/social/png/facebook.png";
 import instagramPng from "@/assets/icons/social/png/instagram.png";
@@ -8,8 +8,8 @@ import redditPng from "@/assets/icons/social/png/reddit.png";
 import telegramPng from "@/assets/icons/social/png/telegram.png";
 import threadsPng from "@/assets/icons/social/png/threads.png";
 import tiktokPng from "@/assets/icons/social/png/tiktok.png";
-import twitterPng from "@/assets/icons/social/png/twitter.png";
 import youtubePng from "@/assets/icons/social/png/youtube.png";
+import xLogo from "@/assets/icons/social/png/x-logo.jpg"
 import { VIDEO_EXTENSIONS_REGEX } from "./constant";
 
 export function convertMarkdownToHTML(md: string) {
@@ -38,7 +38,7 @@ export const getPlatformImage = (platform: PlatformType): string => {
     telegram: telegramPng,
     threads: threadsPng,
     tiktok: tiktokPng,
-    twitter: twitterPng,
+    twitter: xLogo,
     youtube: youtubePng,
   };
  
@@ -65,3 +65,21 @@ export const getMediaSupportInfo = (postType: SupportedPostType) => {
 export const isVideo = (url: string = "") => {
   return url?.match(VIDEO_EXTENSIONS_REGEX);
 };
+
+export const getSortedPlatforms = (socialPlatforms: AyrsharePlatformDetails[]) => {
+  return socialPlatforms.sort((a, b) => {
+    // First sort by connection status
+    if (a.isConnected && !b.isConnected) return -1;
+    if (!a.isConnected && b.isConnected) return 1;
+    
+    // Then sort by enabled status
+    if (a.isEnabled && !b.isEnabled) return -1;
+    if (!a.isEnabled && b.isEnabled) return 1;
+    
+    // Finally sort by willLaunching status (true comes last)
+    if (a.willLaunching && !b.willLaunching) return 1;
+    if (!a.willLaunching && b.willLaunching) return -1;
+    
+    return 0;
+  });
+}

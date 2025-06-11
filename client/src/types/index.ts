@@ -26,6 +26,7 @@ export interface AyrsharePlatformDetails {
   isEnabled: boolean;
   img?: any;
   toggleColor?: string;
+  willLaunching?: boolean;
   postType?: {
     [key in SupportedPostType]: boolean;
   };

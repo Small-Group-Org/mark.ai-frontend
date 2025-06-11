@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { LogOut, Menu, X, MessageCircle, FileText } from "lucide-react";
 import markAiLogo from "../../assets/logo.png";
 import markPng from "../../assets/mark.png";
@@ -11,6 +11,7 @@ import { PlatformType } from "@/types";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
 import { usePostStore } from "@/store/usePostStore";
 import useEditPost from "@/hooks/use-edit-post";
+import { getSortedPlatforms } from "@/commons/utils";
 
 const headerBg = "bg-[#11132f]";
 const headerBorder = "border-gray-700/50";
@@ -33,6 +34,11 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const enabledPlatforms = getEnabledPlatforms();
   const { isMobileView } = useMobileDetection();
+
+  // Sort platforms using useMemo to prevent unnecessary re-sorting
+  const sortedPlatforms = useMemo(() => {
+    return getSortedPlatforms(enabledPlatforms);
+  }, [enabledPlatforms]);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -179,16 +185,14 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
       {/* Social Media Icons - hidden on mobile, shown on desktop */}
       {!isMobileView && (
       <div className="flex items-center gap-4 h-[50px]">
-        {enabledPlatforms.map((platform) => (
+        {sortedPlatforms.map((platform) => (
           <ConnectSocialIcon
             key={platform.value}
-            isConnected={platform.isConnected}
-            platform={platform.value}
             handleAyrshareConnection={handleAyrshareConnection}
             loadingPlatforms={loadingPlatforms}
             isToggleOn={currentPlatforms.includes(platform.value)}
             onToggle={handlePlatformToggle}
-            toggleColor={platform.toggleColor}
+            platform={platform}
           />
         ))}
       </div>
@@ -223,16 +227,14 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
             <div className="p-4">
               <h3 className="text-l font-medium text-gray-300 mb-3">Connect Social Media</h3>
               <div className="grid grid-cols-5 gap-2 mb-4">
-                {enabledPlatforms.map((platform) => (
+                {sortedPlatforms.map((platform) => (
                   <div key={platform.value} className="w-10 h-10">
                     <ConnectSocialIcon
-                      isConnected={platform.isConnected}
-                      platform={platform.value}
+                      platform={platform}
                       handleAyrshareConnection={handleAyrshareConnection}
                       loadingPlatforms={loadingPlatforms}
                       isToggleOn={currentPlatforms.includes(platform.value)}
                       onToggle={handlePlatformToggle}
-                      toggleColor={platform.toggleColor}
                     />
                   </div>
                 ))}
