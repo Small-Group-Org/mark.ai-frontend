@@ -20,7 +20,7 @@ interface EditPostProps {
   isLoading: boolean;
   onClose: () => void;
   post: Post;
-  onSave: (updatedPost: Post) => void;
+  onSave: (updatedPost: Post) => Promise<boolean>;
   onDelete: () => void;
   onGenerate?: (prompt: string) => void;
 }
@@ -111,7 +111,7 @@ const EditPost: React.FC<EditPostProps> = ({
   
   const handleDateChange = (newDate: Date) => setDate(newDate);
 
-  const handleSave = (status: PostStatus) => {
+  const handleSave = async (status: PostStatus) => {
     if (!isEditing) return;
     
     if (editedPost.platform.length === 0) {
@@ -138,8 +138,10 @@ const EditPost: React.FC<EditPostProps> = ({
         status,
         content: `${editedPost.content} \n\n ${formattedHashtags}`
       };
-    onSave(updatedPost);
-    setIsEditing(false);
+    const isSaved = await onSave(updatedPost);
+    if (isSaved) {
+      setIsEditing(false);
+    }
   };
 
   const handleClose = () => {
