@@ -73,7 +73,7 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
       <img
         src={getPlatformImage(platform)}
         alt={`${platform} icon`}
-        className={`h-full w-full rounded-full object-cover opacity-90 ${
+        className={`h-full rounded-full object-cover opacity-90 ${
           !isConnected || !isToggleOn ? 'grayscale' : ''
         } ${isLoading ? 'opacity-50' : ''}`}
       />
