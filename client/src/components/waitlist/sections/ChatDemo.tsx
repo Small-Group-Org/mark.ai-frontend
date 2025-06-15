@@ -1,8 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, User, Bot } from 'lucide-react';
 
 const ChatDemo = () => {
+  const [visibleMessages, setVisibleMessages] = useState<number>(2);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleMessages(2);
+            setIsAnimating(true);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isAnimating) return;
+
+    const interval = setInterval(() => {
+      setVisibleMessages(prev => {
+        if (prev >= chatMessages.length) {
+          setIsAnimating(false);
+          clearInterval(interval);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, Math.random() * 2000 + 2000); // Random delay between 3-5 seconds
+
+    return () => clearInterval(interval);
+  }, [isAnimating]);
+
+  const resetAnimation = () => {
+    setVisibleMessages(1);
+    setIsAnimating(true);
+  };
+
   const chatMessages = [
+    {
+      type: 'bot',
+      message: "Hi, I'm Mark. How can I help you today?"
+    },
     {
       type: 'user',
       message: "Hi Mark, I need to create content for our new product launch next week."
@@ -22,11 +76,19 @@ const ChatDemo = () => {
     {
       type: 'bot',
       message: "Done! ✅ Content scheduled for peak engagement times\n✅ Follow-up reminders set for 48h and 1 week\n✅ Analytics tracking enabled\n\nI'll monitor performance and suggest optimizations. Anything else for the launch?"
+    },
+    {
+      type: 'user',
+      message: "Great, thank you Mark!"
+    },
+    {
+      type: 'bot',
+      message: "You're welcome! If you need anything else, just let me know. Have a great day!"
     }
   ];
 
   return (
-    <section className="py-24 bg-light-bg relative">
+    <section ref={sectionRef} className="py-24 bg-light-bg relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(14,165,233,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -50,14 +112,14 @@ const ChatDemo = () => {
             <div className="flex items-center mb-6 pb-4 border-b border-white/10">
               <MessageSquare className="text-purple-400 mr-3" size={24} />
               <h3 className="text-lg font-semibold text-white">Chat with Mark.ai</h3>
-              <div className="ml-auto flex items-center space-x-2">
+              <div className="ml-auto flex items-center space-x-2 animate-blink">
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-sm text-gray-400">Online</span>
+                <span className="text-sm text-green-300">Online</span>
               </div>
             </div>
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
-              {chatMessages.map((msg, index) => (
+              {chatMessages.slice(0, visibleMessages).map((msg, index) => (
                 <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`flex items-start space-x-3 max-w-[80%] ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -65,7 +127,7 @@ const ChatDemo = () => {
                         ? 'bg-gradient-primary' 
                         : 'bg-gradient-primary'
                     }`}>
-                      {msg.type === 'user' ? <User size={16} /> : <Bot size={16} />}
+                      {msg.type === 'user' ? <User size={18} /> : <Bot size={20} />}
                     </div>
                     <div className={`rounded-lg p-4 ${
                       msg.type === 'user'
@@ -80,7 +142,7 @@ const ChatDemo = () => {
             </div>
             
             <div className="mt-6 pt-4 border-t border-white/10">
-              <div className="flex items-center text-sm text-gray-400">
+              <div className="flex items-center text-sm text-gray-400 space-x-2">
                 <div className="flex space-x-1 mr-3">
                   <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
                   <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -88,9 +150,18 @@ const ChatDemo = () => {
                 </div>
                 Mark is typing...
               </div>
+              <div className="absolute bottom-6 right-6">
+                <button
+                  onClick={resetAnimation}
+                  className="text-sm text-gray-300 hover:text-white transition-colors"
+                >
+                  Reset Demo
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );
