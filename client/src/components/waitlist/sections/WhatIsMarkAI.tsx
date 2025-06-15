@@ -26,7 +26,7 @@ const WhatIsMarkAI = () => {
   ];
 
   return (
-    <section id="what-is-mark" className="py-24 bg-black relative">
+    <section id="what-is-mark" className="py-24 bg-dark-bg relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(139,92,246,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">

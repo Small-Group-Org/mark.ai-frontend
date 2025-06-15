@@ -3,7 +3,7 @@ import markAiLogo from '../../../../public/images/logos/mark-logo-light.png';
 
 const Footer = () => {
   return (
-    <footer className="py-12 bg-gradient-dark border-t border-gray-800">
+    <footer className="py-12 bg-light-bg border-t border-gray-800">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">

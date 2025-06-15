@@ -20,7 +20,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen bg-gradient-dark bg-grid" style={{ paddingTop: '80px' }}>
+    <section className="relative min-h-screen bg-dark-bg bg-grid" style={{ paddingTop: '80px' }}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.15),transparent_40%)]"></div>
       
       {/* Main content */}
@@ -78,7 +78,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent pointer-events-none"></div>
+      {/* <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent pointer-events-none"></div> */}
       
       {/* Waitlist Form Dialog */}
       <WaitlistForm 

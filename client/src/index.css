@@ -114,6 +114,8 @@ body.dragging-active {
   /* Waitlist page colors */
   --gradient-primary: linear-gradient(to right, #00AFFF, #7B61FF, #FF00B8);
   --gradient-primary-hover: linear-gradient(to right, #0095dd, #6849e6, #e100a3);
+  --dark-bg: #051D2D;
+  --light-bg: #16232c;
 }
 
 .dark {
@@ -552,11 +554,6 @@ select option {
 /* Styles for the blur glass effect */
 .glass {
   @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg;
-}
-
-/* Gradient background */
-.bg-gradient-dark {
-  background: radial-gradient(circle at top left, #1c1c2c, #121222);
 }
 
 .bg-grid {
