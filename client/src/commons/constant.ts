@@ -2,7 +2,7 @@ import { MessageType } from "@/components/ChatInterface";
 import { AyrsharePlatformDetails, PostType, PlatformType, PostTypeConfig } from "@/types";
 import { SocialIconComponents } from "@/assets/icons/social/SocialIcons";
 
-// export const BASE_URL = "http://localhost:5000";
+// export const BASE_URL = "http://localhost:5001";
 export const BASE_URL = 'https://mark-ai-backend-1057029383450.asia-south2.run.app';
 
 export const ENABLE_AI_GENERATE = false;
