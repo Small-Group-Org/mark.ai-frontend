@@ -110,6 +110,10 @@ body.dragging-active {
   --input: 217.2 32.6% 17.5%;
   --ring: 224.3 76.3% 48%;
   --radius: 0.75rem;
+
+  /* Waitlist page colors */
+  --gradient-primary: linear-gradient(to right, #00AFFF, #7B61FF, #FF00B8);
+  --gradient-primary-hover: linear-gradient(to right, #0095dd, #6849e6, #e100a3);
 }
 
 .dark {
@@ -519,7 +523,7 @@ select option {
 }
 
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-violet-500;
+  @apply bg-clip-text text-transparent bg-gradient-primary;
 }
 
 .gradient-border {

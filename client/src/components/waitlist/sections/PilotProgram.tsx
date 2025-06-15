@@ -32,7 +32,7 @@ const PilotProgram = () => {
           </div>
 
           <div className="glass p-8 rounded-lg border border-white/10 text-center">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center mx-auto mb-4">
               <Star size={32} className="text-white" />
             </div>
             <h4 className="text-lg font-semibold mb-2 text-white">Your Role</h4>
@@ -60,7 +60,7 @@ const PilotProgram = () => {
         <div className="text-center">
           <Button 
             onClick={scrollToApplication}
-            className="h-12 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium px-8"
+            className="h-12 bg-gradient-primary bg-gradient-primary-hover text-white font-medium px-8"
           >
             Apply for the Pilot Program
           </Button>

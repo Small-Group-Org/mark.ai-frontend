@@ -48,7 +48,7 @@ const WhatIsMarkAI = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-16">
           {features.map((feature, index) => (
             <div key={index} className="glass p-6 rounded-lg border border-white/10 hover:border-purple-500/30 transition-all duration-300">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mb-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center mb-4">
                 <feature.icon size={24} className="text-white" />
               </div>
               <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>

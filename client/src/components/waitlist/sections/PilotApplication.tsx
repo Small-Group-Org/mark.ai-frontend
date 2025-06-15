@@ -41,7 +41,7 @@ const PilotApplication = () => {
                 />
                 <Button 
                   type="submit" 
-                  className="h-12 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-medium px-8"
+                  className="h-12 bg-gradient-primary bg-gradient-primary-hover text-white font-medium px-8"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Submitting...' : 'Apply Now'}

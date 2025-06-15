@@ -47,7 +47,7 @@ const Roadmap = () => {
               <div key={index} className="relative mb-12">
                 <div className={`flex flex-col md:flex-row items-start ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
                   {/* Timeline point */}
-                  <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 border-4 border-black"></div>
+                  <div className="absolute left-0 md:left-1/2 transform -translate-x-1/2 w-5 h-5 rounded-full bg-gradient-primary border-4 border-black"></div>
                   
                   <div className={`pl-8 md:pl-0 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'} md:w-1/2`}>
                     <div className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 bg-${item.color}-500/20 text-${item.color}-400`}>

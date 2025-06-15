@@ -67,7 +67,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Button 
             onClick={scrollToApplication}
-            className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white rounded-full px-6"
+            className="bg-gradient-primary hover:bg-gradient-primary-hover text-white rounded-full px-6"
           >
             Join Waitlist
           </Button>

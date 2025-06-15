@@ -75,7 +75,7 @@ const PilotDetails = () => {
             <div className="space-y-6">
               {requirements.map((requirement, index) => (
                 <div key={index} className="glass p-6 rounded-lg border border-white/10 flex items-start space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
                     <requirement.icon size={20} className="text-white" />
                   </div>
                   <p className="text-gray-300 pt-2">{requirement.title}</p>

@@ -45,7 +45,7 @@ const SolutionBenefits = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12">
           {benefits.map((benefit, index) => (
             <div key={index} className="glass p-8 rounded-lg border border-white/10 hover:border-purple-500/30 transition-all duration-300 text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center mx-auto mb-4">
                 <benefit.icon size={32} className="text-white" />
               </div>
               <h3 className="text-lg font-semibold mb-3">{benefit.title}</h3>

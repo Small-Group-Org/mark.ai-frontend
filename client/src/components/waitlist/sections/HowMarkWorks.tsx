@@ -49,13 +49,13 @@ const HowMarkWorks = () => {
               {steps.map((step, index) => (
                 <div key={index} className="relative">
                   {/* Step Number Circle */}
-                  <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
+                  <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-primary flex items-center justify-center mx-auto mb-6 text-2xl font-bold">
                     {step.number}
                   </div>
                   
                   <div className="glass p-8 rounded-lg border border-white/10 text-center h-[260px] flex flex-col justify-between">
                     <div>
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600/20 to-blue-500/20 flex items-center justify-center mx-auto mb-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-primary/20 flex items-center justify-center mx-auto mb-4">
                         <step.icon size={24} className="text-purple-400" />
                       </div>
                       <h3 className="text-xl font-bold mb-2 md:mb-4">{step.title}</h3>

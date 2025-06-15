@@ -42,7 +42,7 @@ const WhoShouldUse = () => {
           {userTypes.map((type, index) => (
             <div key={index} className="glass p-8 rounded-lg border border-white/10 hover:border-purple-500/30 transition-all duration-300 text-center">
               <div className="text-6xl mb-4">{type.outfit}</div>
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center mx-auto mb-4">
                 <type.icon size={24} className="text-white" />
               </div>
               <h3 className="text-lg font-semibold mb-3">{type.title}</h3>

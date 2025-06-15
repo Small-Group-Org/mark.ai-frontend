@@ -8,6 +8,10 @@ export default {
       fontFamily: {
         'inter': ['Inter', 'sans-serif']
       },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-primary-hover': 'var(--gradient-primary-hover)',
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
