@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import markAiLogo from '../../../assets/logo.png';
+import markAiLogo from '../../../../public/images/logos/mark-logo-light.png';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,6 +22,18 @@ const Navbar = () => {
     }
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      const offset = 140;
+      const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: sectionTop - offset,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 h-[80px] ${
@@ -29,18 +41,23 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
-        <Link to="/" className="flex items-center">
-          <span className="text-purple-500 text-2xl font-bold font-space-grotesk">
-            <img src={markAiLogo} alt="Mark.AI" className="h-20" />
-          </span>
-        </Link>
+        <div>
+          <img src={markAiLogo} alt="Mark.AI" className="h-10" />
+        </div>
 
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-gray-300 hover:text-white transition-colors">
-            Features
+          <a href="#what-is-mark" className="text-gray-300 hover:text-white transition-colors">
+            What is Mark
           </a>
-          <a href="#benefits" className="text-gray-300 hover:text-white transition-colors">
-            Benefits
+          <a 
+            href="#" 
+            className="text-gray-300 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection('how-mark-works');
+            }}
+          >
+            How it Works
           </a>
           <a href="#roadmap" className="text-gray-300 hover:text-white transition-colors">
             Roadmap

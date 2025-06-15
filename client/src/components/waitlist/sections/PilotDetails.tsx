@@ -92,9 +92,6 @@ const PilotDetails = () => {
               alt="Split visual: Mark avatar with golden key (benefits) and Mark avatar with checklist (requirements)" 
               className="mx-auto mb-4 w-full max-w-2xl h-auto object-contain" 
             />
-            <p className="text-gray-300">
-              The perfect balance: Mark presenting the golden key to exclusive benefits, alongside the clear requirements checklist for pilot participants.
-            </p>
           </div>
         </div>
       </div>

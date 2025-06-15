@@ -37,7 +37,7 @@ const Hero = () => {
           <img 
             src="/images/mark_choosingOptions.png" 
             alt="Mark mascot with arms out and friendly message - Don't worry, he's friendly" 
-            className="mx-auto w-64 h-64 md:w-72 md:h-72 object-contain animate-float" 
+            className="mx-auto w-80 h-80 object-contain animate-float" 
           />
 
           {/* Button with proper spacing */}

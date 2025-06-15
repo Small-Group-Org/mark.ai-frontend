@@ -6,8 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'inter': ['Inter', 'sans-serif'],
-        'space-grotesk': ['Space Grotesk', 'sans-serif'],
+        'inter': ['Inter', 'sans-serif']
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -19,13 +19,10 @@ const WaitlistPage = () => {
     <div className="waitlist-page min-h-screen bg-background text-foreground overflow-x-hidden">
       <Navbar />
       <Hero />
-      <WhatIsMarkAI />
-      <PilotProgram />
-      <HowMarkWorks />
-      <WhoShouldUse />
-      <SolutionBenefits />
-      <PilotDetails />
       <ChatDemo />
+      <WhatIsMarkAI />
+      <HowMarkWorks />
+      <SolutionBenefits />
       <Roadmap />
       <PilotApplication />
       <Footer />

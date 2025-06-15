@@ -30,8 +30,16 @@ const SolutionBenefits = () => {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(139,92,246,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Transform Your Workflow</h2>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Transform Your Workflow</h2>
+        </div>
+
+        <div className="text-center">
+          <img 
+            src="/images/mark_growthROI.png" 
+            alt="Mark avatar pointing to upward-trending growth chart - highlighting ROI and data-driven growth" 
+            className="mx-auto mb-12 w-80 h-80 object-contain" 
+          />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto mb-12">
@@ -46,18 +54,6 @@ const SolutionBenefits = () => {
           ))}
         </div>
 
-        <div className="text-center">
-          <div className="glass p-8 rounded-lg border border-white/10 max-w-4xl mx-auto">
-            <img 
-              src="/images/mark_growthROI.png" 
-              alt="Mark avatar pointing to upward-trending growth chart - highlighting ROI and data-driven growth" 
-              className="mx-auto mb-4 w-96 h-96 object-contain" 
-            />
-            <p className="text-gray-300">
-              Mark pointing to an upward-trending chart, demonstrating the growth and ROI you can expect from implementing AI automation in your workflow.
-            </p>
-          </div>
-        </div>
       </div>
     </section>
   );

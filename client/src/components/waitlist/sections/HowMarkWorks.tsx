@@ -24,12 +24,20 @@ const HowMarkWorks = () => {
   ];
 
   return (
-    <section className="py-24 bg-black relative">
+    <section className="py-24 bg-gradient-dark relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Your AI Employee in 3 Steps</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">Your AI Employee in 3 Steps</h2>
+        </div>
+
+        <div className="text-center mb-12">
+            <img 
+              src="/images/mark_performingTasks.png" 
+              alt="Mark avatar typing at keyboard - demonstrating automated execution step" 
+              className="mx-auto mb-4 w-72 h-72 object-contain" 
+            />
         </div>
 
         <div className="max-w-6xl mx-auto">
@@ -45,29 +53,18 @@ const HowMarkWorks = () => {
                     {step.number}
                   </div>
                   
-                  <div className="glass p-8 rounded-lg border border-white/10 text-center">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600/20 to-blue-500/20 flex items-center justify-center mx-auto mb-4">
-                      <step.icon size={24} className="text-purple-400" />
+                  <div className="glass p-8 rounded-lg border border-white/10 text-center h-[260px] flex flex-col justify-between">
+                    <div>
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600/20 to-blue-500/20 flex items-center justify-center mx-auto mb-4">
+                        <step.icon size={24} className="text-purple-400" />
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 md:mb-4">{step.title}</h3>
                     </div>
-                    <h3 className="text-xl font-bold mb-4">{step.title}</h3>
-                    <p className="text-gray-400">{step.description}</p>
+                    <p className="text-gray-400 mt-2 md:mt-0">{step.description}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-
-        <div className="text-center mt-16">
-          <div className="glass p-8 rounded-lg border border-white/10 max-w-3xl mx-auto">
-            <img 
-              src="/images/mark_performingTasks.png" 
-              alt="Mark avatar typing at keyboard - demonstrating automated execution step" 
-              className="mx-auto mb-4 w-80 h-80 object-contain" 
-            />
-            <p className="text-gray-300">
-              Mark working at his keyboard, demonstrating the automated execution that happens after your simple conversational setup.
-            </p>
           </div>
         </div>
       </div>

@@ -156,14 +156,6 @@ body.dragging-active {
     @apply bg-background text-foreground font-inter antialiased;
   }
 
-  .waitlist-page h1, 
-  .waitlist-page h2, 
-  .waitlist-page h3, 
-  .waitlist-page h4, 
-  .waitlist-page h5, 
-  .waitlist-page h6 {
-    @apply font-space-grotesk;
-  }
 }
 
 /* Media queries for responsive design */

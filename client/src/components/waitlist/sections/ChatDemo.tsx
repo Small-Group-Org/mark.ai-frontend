@@ -26,26 +26,26 @@ const ChatDemo = () => {
   ];
 
   return (
-    <section className="py-24 bg-black relative">
+    <section className="py-24 bg-gradient-dark relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(14,165,233,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">The 'AI Employee' Experience</h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
             Sample chat transcript demonstrating Mark.ai's proactive planning and on‑brand content drafting.
-          </p>
-          
-          <div className="mb-8">
+          </p>   
+        </div>
+
+        <div className="mb-12">
             <img 
               src="/images/mark_thinking.png" 
               alt="Mark avatar with chat bubble - demonstrating conversational AI employee experience" 
-              className="mx-auto w-64 h-64 object-contain" 
+              className="mx-auto w-72 h-72 object-contain" 
             />
           </div>
-        </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div id="how-mark-works" className="max-w-4xl mx-auto">
           <div className="glass p-8 rounded-lg border border-white/10">
             <div className="flex items-center mb-6 pb-4 border-b border-white/10">
               <MessageSquare className="text-purple-400 mr-3" size={24} />
