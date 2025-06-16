@@ -25,6 +25,7 @@ interface PostState {
   setIsVerifying: (isVerifying: boolean) => void;
   setTimeZoneLabel: (timeZoneLabel: string) => void;
   updatePlatformConnection: (value: string, isConnected: boolean) => void;
+  updatePlatformToggleStatus: (value: string, toggleStatus: boolean) => void;
   getEnabledPlatforms: () => AyrsharePlatformDetails[];
   getConnectedPlatforms: () => AyrsharePlatformDetails[];
   setOnboardingState: (onboardingState: OnboardingResponse) => void;
@@ -57,7 +58,22 @@ export const useAuthStore = create<PostState>((set, get) => ({
   isMobileView: false,
 
   setIsAuth: (isAuth: boolean) => set({isAuth}),
-  setUserDetails: (userDetails: User) => set({userDetails}),
+  setUserDetails: (userDetails: User) => {
+    // Update social platforms based on activePlatforms from userDetails
+    if (userDetails.activePlatforms) {
+      const updatedSocialPlatforms = get().socialPlatforms.map((platform) => ({
+        ...platform,
+        toggleStatus: userDetails.activePlatforms?.[platform.value as keyof typeof userDetails.activePlatforms] || false
+      }));
+      
+      set({ 
+        userDetails, 
+        socialPlatforms: updatedSocialPlatforms 
+      });
+    } else {
+      set({ userDetails });
+    }
+  },
   setIsOpen: (isOpen: boolean) => set({isOpen}),
   setView: (view) => set({ view }),
   setToken: (token: string) => set({token}),
@@ -68,6 +84,25 @@ export const useAuthStore = create<PostState>((set, get) => ({
       platform.value === value ? { ...platform, isConnected } : platform
     )
   })),
+  updatePlatformToggleStatus: (value: string, toggleStatus: boolean) => set((state) => {
+    const updatedSocialPlatforms = state.socialPlatforms.map((platform) =>
+      platform.value === value ? { ...platform, toggleStatus } : platform
+    );
+    
+    // Also update activePlatforms in userDetails if it exists
+    const updatedUserDetails = state.userDetails?.activePlatforms ? {
+      ...state.userDetails,
+      activePlatforms: {
+        ...state.userDetails.activePlatforms,
+        [value]: toggleStatus
+      }
+    } : state.userDetails;
+    
+    return {
+      socialPlatforms: updatedSocialPlatforms,
+      userDetails: updatedUserDetails
+    };
+  }),
   getEnabledPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled),
   getConnectedPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled && platform.isConnected),
   setOnboardingState: (onboardingState: OnboardingResponse) => set({ onboardingState }),

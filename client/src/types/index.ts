@@ -19,11 +19,15 @@ export type PlatformType =
 | "twitter"
 | "youtube";
 
+// isEnabled - platform enabled in the backend
+// isConnected - platform connected to the user's account
+// toggleStatus - platform toggled on in the frontend (for the user)
 export interface AyrsharePlatformDetails {
   label: string;
   value: PlatformType;
   isConnected: boolean;
   isEnabled: boolean;
+  toggleStatus: boolean;
   img?: any;
   toggleColor?: string;
   willLaunching?: boolean;
@@ -47,6 +51,9 @@ export interface User {
   plan: string;
   status: string;
   _id: string;
+  activePlatforms: {
+    [key in PlatformType]: boolean;
+  };
 }
 
 export interface PostType {

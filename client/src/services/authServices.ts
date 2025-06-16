@@ -2,11 +2,12 @@ import axios from "axios";
 import { User } from "@/types";
 import { LoginRequest, SignUpRequest } from "@/types/requestTypes";
 import { BASE_URL } from "@/commons/constant";
-import { doGET } from "@/commons/serviceUtils";
+import { doGET, doPUT } from "@/commons/serviceUtils";
 import { usePostStore } from '@/store/usePostStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { createPost } from './postServices';
 import { setValue, STORAGE_KEYS } from '@/commons/storage';
+import { PlatformType } from "@/types";
 
 interface AuthResponse {
   data: {
@@ -122,5 +123,25 @@ const detectUserTimezone = (): string => {
   } catch (error) {
     console.error('Error detecting timezone:', error);
     return 'GMT+00:00';
+  }
+};
+
+export const updatePlatforms = async (activePlatforms: Partial<Record<PlatformType, boolean>>): Promise<User> => {
+  try {
+    const response = await doPUT(
+      `${BASE_URL}/auth/updateplatforms`,
+      { activePlatforms }
+    );
+    
+    // Update the auth store with new user details
+    const authStore = useAuthStore.getState();
+    authStore.setUserDetails(response.data.data);
+    
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to update platforms");
+    }
+    throw error;
   }
 };
