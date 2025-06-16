@@ -9,9 +9,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { generateAyrshareToken, getAyrshareSocialHandles } from "@/services/ayrShareServices";
 import { PlatformType } from "@/types";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
-import { usePostStore } from "@/store/usePostStore";
-import useEditPost from "@/hooks/use-edit-post";
 import { getSortedPlatforms } from "@/commons/utils";
+import { updatePlatforms } from "@/services/authServices";
 
 // Constants
 const HEADER_STYLES = {
@@ -29,10 +28,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) => {
   // Hooks
-  const { logout, updatePlatformConnection, getEnabledPlatforms } = useAuthStore();
-  const { updatePostHandler } = useEditPost();
-  const { livePost } = usePostStore();
-  const { platform: currentPlatforms = [] } = livePost;
+  const { logout, updatePlatformConnection, getEnabledPlatforms, updatePlatformToggleStatus, socialPlatforms } = useAuthStore();
   const { isMobileView } = useMobileDetection();
 
   // State
@@ -47,6 +43,15 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
   // Derived state
   const enabledPlatforms = getEnabledPlatforms();
   const sortedPlatforms = useMemo(() => getSortedPlatforms(enabledPlatforms), [enabledPlatforms]);
+
+  // Get active platforms from user's toggle status
+  const getActivePlatforms = useCallback(() => {
+    return socialPlatforms
+      .filter(platform => platform.toggleStatus)
+      .map(platform => platform.value);
+  }, [socialPlatforms]);
+
+  const activePlatforms = getActivePlatforms();
 
   // Touch handlers
   const onTouchStart = useCallback((e: React.TouchEvent) => {
@@ -100,15 +105,26 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
     }
   }, []);
 
-  const handlePlatformToggle = useCallback(async (platformName: PlatformType, isActive: boolean) => {
-    const newPlatforms = isActive
-      ? [...currentPlatforms, platformName]
-      : currentPlatforms.filter((p) => p !== platformName);
-    
-    setLoadingPlatforms(prev => [...prev, platformName]);
-    await updatePostHandler("platform", newPlatforms);
-    setLoadingPlatforms(prev => prev.filter(p => p !== platformName));
-  }, [currentPlatforms, updatePostHandler]);
+  const handlePlatformToggle = useCallback(async (platformName: PlatformType, isActive: boolean) => {    
+    try {
+      setLoadingPlatforms(prev => [...prev, platformName]);
+      
+      // Update local state first
+      updatePlatformToggleStatus(platformName, isActive);
+      
+      // Call API to update user's active platforms
+      await updatePlatforms({
+        [platformName]: isActive
+      });
+      
+    } catch (error) {
+      console.error('Failed to update platform toggle:', error);
+      // Revert local state on error
+      updatePlatformToggleStatus(platformName, !isActive);
+    } finally {
+      setLoadingPlatforms(prev => prev.filter(p => p !== platformName));
+    }
+  }, []);
 
   // Effects
   useEffect(() => {
@@ -165,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
             key={platform.value}
             handleAyrshareConnection={handleAyrshareConnection}
             loadingPlatforms={loadingPlatforms}
-            isToggleOn={currentPlatforms.includes(platform.value)}
+            isToggleOn={activePlatforms.includes(platform.value)}
             onToggle={handlePlatformToggle}
             platform={platform}
           />
@@ -186,7 +202,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
                   platform={platform}
                   handleAyrshareConnection={handleAyrshareConnection}
                   loadingPlatforms={loadingPlatforms}
-                  isToggleOn={currentPlatforms.includes(platform.value)}
+                  isToggleOn={activePlatforms.includes(platform.value)}
                   onToggle={handlePlatformToggle}
                 />
               </div>

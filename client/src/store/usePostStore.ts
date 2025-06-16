@@ -31,7 +31,7 @@ const initialState = {
     content: "This is your social media post. Edit it to get started!",
     hashtag: "#welcome",
     mediaUrl: [],
-    platform: [],
+    platform: [], // Keep for backward compatibility but will be overridden by user settings
     postType: "",
     scheduleDate: new Date(),
     status: "live" as PostStatus,

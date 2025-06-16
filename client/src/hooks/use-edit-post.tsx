@@ -164,6 +164,11 @@ export const useEditPost = () => {
   ) => {
     const { livePost, setLivePost } = usePostStore.getState();
 
+    // Skip platform updates as they are now handled at user level
+    if (key === 'platform') {
+      return;
+    }
+
     try {
       const response = await updatePost(
         {

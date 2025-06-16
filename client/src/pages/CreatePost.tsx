@@ -16,17 +16,23 @@ import MediaGuidelinesDialog from "@/components/ui/media-guidelines-dialog";
 import { getMediaSupportInfo } from "@/commons/utils";
 import { Loader2 } from "lucide-react";
 import { useLocation } from 'wouter';
-import { useEditPostContext } from '@/context/EditPostProvider';
-import { getPosts } from "@/services/postServices";
 
 const CreatePost = () => {
-  const { livePost, setLivePost, setMessages, messages, posts } = usePostStore();
+  const { livePost, setLivePost, setMessages, messages } = usePostStore();
   const { isMobileView, socialPlatforms, getConnectedPlatforms } = useAuthStore();
   const {updatePostHandler} = useEditPost();
-  const { platform, postType, scheduleDate, mediaUrl } = livePost;
+  const { postType, scheduleDate, mediaUrl } = livePost;
   const connectedPlatforms = getConnectedPlatforms() || []; 
   const [, navigate] = useLocation();
-  const editPostContext = useEditPostContext();
+
+  // Get active platforms from user's toggle status
+  const getActivePlatforms = () => {
+    return socialPlatforms
+      .filter(platform => platform.toggleStatus)
+      .map(platform => platform.value);
+  };
+
+  const activePlatforms = getActivePlatforms();
 
   const { toast } = useToast();
   const { onSave } = useEditPost();
@@ -46,13 +52,13 @@ const CreatePost = () => {
   }, [mediaUrl]);
 
   const supportedPostTypes = useMemo(() => {
-    if (!livePost.platform || livePost.platform.length === 0) {
+    if (!activePlatforms || activePlatforms.length === 0) {
       return [];
     }
 
     let newSupportedPostTypes = [...AllPostType];
 
-    livePost.platform.forEach((selectedPlatform) => {
+    activePlatforms.forEach((selectedPlatform) => {
       const supportedPostTypes = socialPlatforms.find(
         (socialMedia) => socialMedia.value === selectedPlatform
       )?.postType;
@@ -67,7 +73,7 @@ const CreatePost = () => {
     });
 
     return newSupportedPostTypes;
-  }, [platform]);
+  }, [activePlatforms, socialPlatforms]);
 
   useEffect(() => {
     try {
@@ -90,7 +96,7 @@ const CreatePost = () => {
     }
 
     selectedPostTypeRef.current = livePost.postType;
-  }, [platform.length]);
+  }, [activePlatforms.length]);
 
   const handlePostTypeClick = async (type: SupportedPostType) => {
     if(livePost.postType !== type){
@@ -154,6 +160,7 @@ const CreatePost = () => {
 
     const updatedPost = {
       ...livePost,
+      platform: activePlatforms,
       hashtag: formattedHashtags,
       scheduleDate: date || new Date(),
       status,
@@ -176,7 +183,7 @@ const CreatePost = () => {
   };
 
   const handleSavePost = async (type: "schedule" | "draft") => {
-    const currentPlatforms = Array.isArray(platform) ? platform : [];
+    const currentPlatforms = Array.isArray(activePlatforms) ? activePlatforms : [];
     if (currentPlatforms.length === 0) {
       toast({
         title: "Please select a Platform",
