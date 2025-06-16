@@ -18,7 +18,7 @@ const PilotApplication = () => {
   } = useWaitlist();
 
   return (
-    <section id="pilot-application" className="py-24 bg-dark-bg relative">
+    <section id="pilot-application" className="py-24 bg-light-bg relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.15),transparent_40%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">

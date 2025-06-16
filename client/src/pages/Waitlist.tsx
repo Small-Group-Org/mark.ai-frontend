@@ -18,7 +18,7 @@ const WaitlistPage = () => {
       <ChatDemo />
       <WhatIsMarkAI />
       <HowMarkWorks />
-      <SolutionBenefits />
+      {/* <SolutionBenefits /> */}
       <Roadmap />
       <PilotApplication />
       <Footer />
