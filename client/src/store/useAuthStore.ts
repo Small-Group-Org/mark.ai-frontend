@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, AyrsharePlatformDetails, OnboardingResponse } from '@/types';
+import { User, AyrsharePlatformDetails, OnboardingResponse, PlatformType } from '@/types';
 import { removeValue, STORAGE_KEYS } from '@/commons/storage';
 import { resetPostState } from './usePostStore';
 import { initialSocialPlatforms } from '@/commons/constant';
@@ -28,6 +28,7 @@ interface PostState {
   updatePlatformToggleStatus: (value: string, toggleStatus: boolean) => void;
   getEnabledPlatforms: () => AyrsharePlatformDetails[];
   getConnectedPlatforms: () => AyrsharePlatformDetails[];
+  getActivePlatforms: () => PlatformType[];
   setOnboardingState: (onboardingState: OnboardingResponse) => void;
   fetchOnboardingState: () => Promise<void>;
   isOnboardingComplete: () => boolean;
@@ -105,6 +106,7 @@ export const useAuthStore = create<PostState>((set, get) => ({
   }),
   getEnabledPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled),
   getConnectedPlatforms: () => get().socialPlatforms.filter((platform) => platform.isEnabled && platform.isConnected),
+  getActivePlatforms: () => get().socialPlatforms.filter((platform) => platform.toggleStatus).map((platform) => platform.value as PlatformType),
   setOnboardingState: (onboardingState: OnboardingResponse) => set({ onboardingState }),
   fetchOnboardingState: async () => {
     try {

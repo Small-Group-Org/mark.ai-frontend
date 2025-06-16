@@ -11,6 +11,7 @@ import { PlatformType } from "@/types";
 import { useMobileDetection } from "@/hooks/useMobileDetection";
 import { getSortedPlatforms } from "@/commons/utils";
 import { updatePlatforms } from "@/services/authServices";
+import { syncPostsFromDB } from "@/utils/postSync";
 
 // Constants
 const HEADER_STYLES = {
@@ -28,7 +29,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) => {
   // Hooks
-  const { logout, updatePlatformConnection, getEnabledPlatforms, updatePlatformToggleStatus, socialPlatforms } = useAuthStore();
+  const { logout, updatePlatformConnection, getEnabledPlatforms, updatePlatformToggleStatus, socialPlatforms, getActivePlatforms } = useAuthStore();
   const { isMobileView } = useMobileDetection();
 
   // State
@@ -43,14 +44,6 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
   // Derived state
   const enabledPlatforms = getEnabledPlatforms();
   const sortedPlatforms = useMemo(() => getSortedPlatforms(enabledPlatforms), [enabledPlatforms]);
-
-  // Get active platforms from user's toggle status
-  const getActivePlatforms = useCallback(() => {
-    return socialPlatforms
-      .filter(platform => platform.toggleStatus)
-      .map(platform => platform.value);
-  }, [socialPlatforms]);
-
   const activePlatforms = getActivePlatforms();
 
   // Touch handlers
@@ -117,6 +110,9 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
         [platformName]: isActive
       });
       
+      // Sync posts from DB (platform filtering handled automatically)
+      await syncPostsFromDB();
+      
     } catch (error) {
       console.error('Failed to update platform toggle:', error);
       // Revert local state on error
@@ -124,7 +120,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
     } finally {
       setLoadingPlatforms(prev => prev.filter(p => p !== platformName));
     }
-  }, []);
+  }, [updatePlatformToggleStatus]);
 
   // Effects
   useEffect(() => {

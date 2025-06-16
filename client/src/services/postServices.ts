@@ -19,9 +19,17 @@ export const getPosts = async (filters: GetPostsFilters) => {
     
     // Handle multiple platforms
     if (filters.platform) {
-      filters.platform.forEach(platform => {
-        queryParams.append('platform', platform);
-      });
+      // If platform array contains empty string or is empty, add platform=""
+      if (filters.platform.length === 0 || (filters.platform.length === 1 && filters.platform[0] === "" as PlatformType)) {
+        queryParams.append('platform', '""');
+      } else {
+        filters.platform.forEach(platform => {
+          queryParams.append('platform', platform);
+        });
+      }
+    } else {
+      // If no platform filter provided, add platform=""
+      queryParams.append('platform', '""');
     }
     
     if (filters.status) queryParams.append('status', filters.status);

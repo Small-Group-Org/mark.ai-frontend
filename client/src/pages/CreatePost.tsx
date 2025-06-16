@@ -19,19 +19,13 @@ import { useLocation } from 'wouter';
 
 const CreatePost = () => {
   const { livePost, setLivePost, setMessages, messages } = usePostStore();
-  const { isMobileView, socialPlatforms, getConnectedPlatforms } = useAuthStore();
+  const { isMobileView, socialPlatforms, getConnectedPlatforms, getActivePlatforms } = useAuthStore();
   const {updatePostHandler} = useEditPost();
   const { postType, scheduleDate, mediaUrl } = livePost;
   const connectedPlatforms = getConnectedPlatforms() || []; 
   const [, navigate] = useLocation();
 
   // Get active platforms from user's toggle status
-  const getActivePlatforms = () => {
-    return socialPlatforms
-      .filter(platform => platform.toggleStatus)
-      .map(platform => platform.value);
-  };
-
   const activePlatforms = getActivePlatforms();
 
   const { toast } = useToast();

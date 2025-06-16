@@ -8,7 +8,6 @@ import { syncPostsFromDB } from '@/utils/postSync';
 import { usePostStore } from '@/store/usePostStore';
 import { useEditPostContext } from '@/context/EditPostProvider';
 import { ENABLE_ANALYTICS } from '@/commons/constant';
-import { useAuthStore } from '@/store/useAuthStore';
 
 type TabType = 'past' | 'upcoming' | 'drafts';
 
@@ -46,7 +45,6 @@ const Dashboard = () => {
   const weekNavigationCountRef = useRef<number>(0);
   const posts = usePostStore((state) => state.posts);
   const editPostContext = useEditPostContext();
-  const { isMobileView } = useAuthStore();
 
   // Effect for syncing posts when month or week changes
   useEffect(() => {
