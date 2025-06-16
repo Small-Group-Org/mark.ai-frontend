@@ -179,7 +179,7 @@ const WaitlistForm = ({ open, onOpenChange, onSubmit, initialEmail, isSubmitting
             <div className="flex justify-end pt-4">
               <Button 
                 type="submit" 
-                className="bg-gradient-primary hover:bg-gradient-primary-hover text-white font-medium px-8 shadow-lg hover:shadow-xl transition-all duration-200"
+                className="bg-gradient-primary hover:bg-gradient-primary-hover text-black font-medium px-8 shadow-lg hover:shadow-xl transition-all duration-200"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Submitting...' : 'Complete Registration'}
