@@ -99,7 +99,7 @@ const ChatDemo = () => {
           </p>   
         </div>
 
-        <div className="mb-12">
+        <div id="how-mark-works" className="mb-12">
             <img 
               src="/images/mark_thinking.png" 
               alt="Mark avatar with chat bubble - demonstrating conversational AI employee experience" 
@@ -107,7 +107,7 @@ const ChatDemo = () => {
             />
           </div>
 
-        <div id="how-mark-works" className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <div className="glass p-8 rounded-lg border border-white/10">
             <div className="flex items-center mb-6 pb-4 border-b border-white/10">
               <MessageSquare className="text-purple-400 mr-3" size={24} />
