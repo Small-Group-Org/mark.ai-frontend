@@ -1,13 +1,13 @@
 import React from 'react';
-import markAiLogo from '../../../../public/images/logos/mark-logo-light.png';
+import markAiLogo from '../../../../public/images/logos/mark-logo-light-grad.png';
 
 const Footer = () => {
   return (
-    <footer className="py-12 bg-light-bg border-t border-gray-800">
+    <footer className="py-12 bg-dark-bg border-t border-gray-800">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <img src={markAiLogo} alt="Mark.AI" className="h-10" />
+            <img src={markAiLogo} alt="Mark.AI" className="h-12" />
             <p className="mt-2 text-gray-400 text-sm">
               Built by The Honeymooners Club
             </p>

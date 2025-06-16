@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import markAiLogo from '../../../../public/images/logos/mark-logo-light.png';
+import markAiLogo from '../../../../public/images/logos/mark-logo-light-grad.png';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,7 +42,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
         <div>
-          <img src={markAiLogo} alt="Mark.AI" className="h-10" />
+          <img src={markAiLogo} alt="Mark.AI" className="h-12 mt-1" />
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
