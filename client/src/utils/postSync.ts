@@ -2,6 +2,8 @@ import { toast } from '@/hooks/use-toast';
 import { getPosts } from '@/services/postServices';
 import { usePostStore } from '@/store/usePostStore';
 import { Post } from '@/types/post';
+import { useAuthStore } from '@/store/useAuthStore';
+import { PlatformType } from '@/types';
 
 // Function to get date range based on center date
 const getDateRange = (centerDate?: Date) => {
@@ -21,7 +23,19 @@ const getDateRange = (centerDate?: Date) => {
 // Reusable function to fetch and process posts
 export const syncPostsByDateRange = async (startDate: string, endDate: string): Promise<Post[]> => {
   try {
-    const response = await getPosts({ startDate, endDate });
+    // Get active platforms from auth store
+    const activePlatforms = useAuthStore.getState().getActivePlatforms();
+    
+    // If no active platforms, pass empty string to get no posts
+    const platformFilter = activePlatforms && activePlatforms.length > 0 
+      ? activePlatforms 
+      : ["" as PlatformType];
+    
+    const response = await getPosts({ 
+      startDate, 
+      endDate,
+      platform: platformFilter
+    });
     if (response?.success && response?.data?.data?.length > 0) {
       const parsedPosts = response.data.data.map((post: any) => ({
         ...post,

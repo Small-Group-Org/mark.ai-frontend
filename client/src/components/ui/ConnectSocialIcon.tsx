@@ -35,9 +35,6 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
     }
   };
 
-  console.log("[]", {showTooltip});
-  
-
   return (
     <div
       className={`relative min-w-10 h-full flex items-center justify-center p-[2px] rounded-full border-2 ${

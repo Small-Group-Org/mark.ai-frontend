@@ -1,58 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { MessageSquare, User, Bot } from 'lucide-react';
 
+const TYPING_DELAY = 2000; // Base delay in ms
+const RANDOM_DELAY = 2000; // Additional random delay in ms
+const INITIAL_MESSAGES = 2;
+
 const ChatDemo = () => {
-  const [visibleMessages, setVisibleMessages] = useState<number>(2);
+  const [visibleMessages, setVisibleMessages] = useState<number>(INITIAL_MESSAGES);
   const [isAnimating, setIsAnimating] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout>();
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleMessages(2);
-            setIsAnimating(true);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isAnimating) return;
-
-    const interval = setInterval(() => {
-      setVisibleMessages(prev => {
-        if (prev >= chatMessages.length) {
-          setIsAnimating(false);
-          clearInterval(interval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, Math.random() * 2000 + 2000); // Random delay between 3-5 seconds
-
-    return () => clearInterval(interval);
-  }, [isAnimating]);
-
-  const resetAnimation = () => {
-    setVisibleMessages(1);
-    setIsAnimating(true);
-  };
-
-  const chatMessages = [
+  const chatMessages = useMemo(() => [
     {
       type: 'bot',
       message: "Hi, I'm Mark. How can I help you today?"
@@ -85,7 +44,68 @@ const ChatDemo = () => {
       type: 'bot',
       message: "You're welcome! If you need anything else, just let me know. Have a great day!"
     }
-  ];
+  ], []);
+
+  const resetAnimation = useCallback(() => {
+    setVisibleMessages(INITIAL_MESSAGES);
+    setIsAnimating(true);
+  }, []);
+
+  // Handle message animation
+  useEffect(() => {
+    if (!isAnimating) return;
+
+    intervalRef.current = setInterval(() => {
+      setVisibleMessages(prev => {
+        if (prev >= chatMessages.length) {
+          setIsAnimating(false);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, TYPING_DELAY + Math.random() * RANDOM_DELAY);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isAnimating, chatMessages.length]);
+
+  // Handle intersection observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          resetAnimation();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [resetAnimation]);
+
+  const renderMessage = useCallback((msg: typeof chatMessages[0], index: number) => (
+    <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex items-start space-x-3 max-w-[80%] ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-primary`}>
+          {msg.type === 'user' ? <User size={18} /> : <Bot size={20} />}
+        </div>
+        <div className={`rounded-lg p-4 ${
+          msg.type === 'user'
+            ? 'bg-gradient-to-r from-blue-600/20 to-purple-500/20 border border-blue-500/30'
+            : 'bg-white/5 border border-white/10'
+        }`}>
+          <p className="text-sm whitespace-pre-line">{msg.message}</p>
+        </div>
+      </div>
+    </div>
+  ), []);
 
   return (
     <section ref={sectionRef} className="py-24 bg-light-bg relative">
@@ -100,12 +120,12 @@ const ChatDemo = () => {
         </div>
 
         <div id="how-mark-works" className="mb-12">
-            <img 
-              src="/images/mark_thinking.png" 
-              alt="Mark avatar with chat bubble - demonstrating conversational AI employee experience" 
-              className="mx-auto w-72 h-72 object-contain" 
-            />
-          </div>
+          <img 
+            src="/images/mark_thinking.png" 
+            alt="Mark avatar with chat bubble - demonstrating conversational AI employee experience" 
+            className="mx-auto w-72 h-72 object-contain" 
+          />
+        </div>
 
         <div className="max-w-4xl mx-auto">
           <div className="glass p-8 rounded-lg border border-white/10">
@@ -119,26 +139,7 @@ const ChatDemo = () => {
             </div>
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
-              {chatMessages.slice(0, visibleMessages).map((msg, index) => (
-                <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`flex items-start space-x-3 max-w-[80%] ${msg.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      msg.type === 'user' 
-                        ? 'bg-gradient-primary' 
-                        : 'bg-gradient-primary'
-                    }`}>
-                      {msg.type === 'user' ? <User size={18} /> : <Bot size={20} />}
-                    </div>
-                    <div className={`rounded-lg p-4 ${
-                      msg.type === 'user'
-                        ? 'bg-gradient-to-r from-blue-600/20 to-purple-500/20 border border-blue-500/30'
-                        : 'bg-white/5 border border-white/10'
-                    }`}>
-                      <p className="text-sm whitespace-pre-line">{msg.message}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              {chatMessages.slice(0, visibleMessages).map(renderMessage)}
             </div>
             
             <div className="mt-6 pt-4 border-t border-white/10">
@@ -161,7 +162,6 @@ const ChatDemo = () => {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );
