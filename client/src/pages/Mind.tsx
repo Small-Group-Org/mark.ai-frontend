@@ -98,6 +98,7 @@ const Mind = () => {
         <div className="max-w-full mx-auto">
           <MainInfo 
             clientInfo={mindData.client_info} 
+            websiteScraping={onboardingState.websiteScraping}
             newlyLearned={newlyLearned}
           />
 
