@@ -69,6 +69,22 @@ export const platformsRow1: { name: PlatformType; icon: string }[] = [
 
 export const initialiseChatWithMark = "This is the system message. The user is online. Send greetings and provide 1 liner update. DO NOT mention anything about system. Just greet the user."
 
+// Refer to https://www.ayrshare.com/docs/media-guidelines/overview for media guidelines
+export const mediaGuidelines: Partial<Record<PlatformType, string>> = {
+  linkedin: "LinkedIn supports images (JPG, PNG, GIF) up to 5MB, videos (MP4) up to 200MB and 30 mins, and documents (PDF, DOC, PPT). Recommended image size is 1200x627 px. Aspect ratio: 1:2.4 to 2.4:1.",
+
+  twitter: "Twitter (X) supports up to 4 images (JPG, PNG, GIF, WEBP) and 4 videos (MP4, MOV) per post. Max video size 512MB, duration up to 140 secs. Recommended video resolution: 1280x720 px, aspect ratio 1:3 to 3:1.",
+
+  instagram: "Instagram supports carousel (up to 10 images), reels, stories, and videos. Images up to 8MB (JPG, PNG, GIF), videos up to 300MB. Recommended size for reels/stories: 1080x1920 px. Aspect ratio: 4:5 to 1.91:1.",
+
+  facebook: "Facebook supports carousel (up to 10 images), stories, reels, and videos. Images up to 10MB (JPG, PNG, GIF, TIFF), videos up to 2GB and 4 hrs. Reels: max 90s, 1080x1920 px. Aspect ratio: 9:16.",
+
+  pinterest: "Pinterest supports up to 5 carousel images (JPG, PNG, GIF, WEBP) and 1 video (MP4, MOV, M4V) per post. Max image size: 20MB. Recommended image size: 1000x1500 px. Video duration: 4s to 15 mins, max size 1GB. Aspect ratio: 2:3 or 9:16.",
+
+  tiktok: "TikTok supports up to 35 images (JPG, JPEG, WebP) and 1 video (MP4, MOV, WebM) per post. Max video size: 1GB, duration: 3s to 10 mins. Recommended resolution: 1080x1920 px. Aspect ratio: 9:16 or 16:9. PNG images not supported.",
+
+};
+
 
 export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
   {
@@ -80,7 +96,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: false,
     img: SocialIconComponents.bluesky,
     toggleColor: "#0085C3",
-    mediaGuidelines: "Bluesky supports images in JPG, PNG, and GIF formats. Maximum file size is 5MB."
+    mediaGuidelines: mediaGuidelines.bluesky || ""
   },
   {
     label: "Facebook",
@@ -102,7 +118,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
       location: true,
       collab: false
     },
-    mediaGuidelines: "Facebook supports images (JPG, PNG, GIF) and videos (MP4, MOV). Maximum video length is 240 minutes. Image size should be at least 1200x630 pixels for optimal display."
+    mediaGuidelines: mediaGuidelines.facebook || ""
   },
   {
     label: "Gmb",
@@ -113,7 +129,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: "",
     toggleColor: "#3367D6",
-    mediaGuidelines: "Google My Business supports images in JPG and PNG formats. Recommended size is 720x720 pixels."
+    mediaGuidelines: mediaGuidelines.gmb || ""
   },
   {
     label: "Instagram",
@@ -135,7 +151,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
       location: true,
       collab: true
     },
-    mediaGuidelines: "Instagram supports images (JPG, PNG) and videos (MP4). Feed posts: 1:1, 4:5, or 16:9 aspect ratio. Stories: 9:16 aspect ratio. Reels: 9:16 aspect ratio, max 90 seconds."
+    mediaGuidelines: mediaGuidelines.instagram || ""
   },
   {
     label: "Linkedin",
@@ -153,7 +169,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
       reel: false,
       story: false,
     },
-    mediaGuidelines: "LinkedIn supports images (JPG, PNG) and videos (MP4). Maximum video length is 10 minutes. Recommended image size is 1200x627 pixels."
+    mediaGuidelines: mediaGuidelines.linkedin || ""
   },
   {
     label: "Pinterest",
@@ -164,7 +180,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: SocialIconComponents.pinterest,
     toggleColor: "#BD081C",
-    mediaGuidelines: "Pinterest supports images in JPG and PNG formats. Recommended aspect ratio is 2:3 or 1:1. Minimum width should be 1000 pixels."
+    mediaGuidelines: mediaGuidelines.pinterest || ""
   },
   {
     label: "Reddit",
@@ -175,7 +191,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: SocialIconComponents.reddit,
     toggleColor: "#D93900",
-    mediaGuidelines: "Reddit supports images (JPG, PNG, GIF) and videos (MP4). Maximum file size is 100MB for videos and 20MB for images."
+    mediaGuidelines: mediaGuidelines.reddit || ""
   },
   {
     label: "Telegram",
@@ -186,7 +202,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: SocialIconComponents.telegram,
     toggleColor: "#006BA6",
-    mediaGuidelines: "Telegram supports images (JPG, PNG) and videos (MP4). Maximum file size is 2GB."
+    mediaGuidelines: mediaGuidelines.telegram || ""
   },
   {
     label: "Threads",
@@ -197,7 +213,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: SocialIconComponents.threads,
     toggleColor: "#1A1A1A",
-    mediaGuidelines: "Threads supports images (JPG, PNG) and videos (MP4). Maximum video length is 5 minutes. Recommended aspect ratio is 1:1 or 4:5."
+    mediaGuidelines: mediaGuidelines.threads || ""
   },
   {
     label: "Tiktok",
@@ -208,7 +224,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: SocialIconComponents.tiktok,
     toggleColor: "#4A9DA8",
-    mediaGuidelines: "TikTok supports videos in MP4 format. Maximum video length is 3 minutes. Recommended aspect ratio is 9:16."
+    mediaGuidelines: mediaGuidelines.tiktok || ""
   },
   {
     label: "Twitter",
@@ -226,7 +242,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
       reel: false,
       story: false,
     },
-    mediaGuidelines: "Twitter supports images (JPG, PNG, GIF) and videos (MP4). Maximum video length is 2 minutes and 20 seconds. Maximum file size is 512MB."
+    mediaGuidelines: mediaGuidelines.twitter || ""
   },
   {
     label: "Youtube",
@@ -237,7 +253,7 @@ export const initialSocialPlatforms: AyrsharePlatformDetails[] = [
     willLaunching: true,
     img: SocialIconComponents.youtube,
     toggleColor: "#CC0000",
-    mediaGuidelines: "YouTube supports videos in MP4, MOV, AVI formats. Maximum video length is 12 hours. Recommended resolution is 1920x1080 pixels."
+    mediaGuidelines: mediaGuidelines.youtube || ""
   }
 ];
 

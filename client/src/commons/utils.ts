@@ -68,15 +68,19 @@ export const isVideo = (url: string = "") => {
 
 export const getSortedPlatforms = (socialPlatforms: AyrsharePlatformDetails[]) => {
   return socialPlatforms.sort((a, b) => {
-    // First sort by connection status
+    // First sort by connection status (connected first)
     if (a.isConnected && !b.isConnected) return -1;
     if (!a.isConnected && b.isConnected) return 1;
     
-    // Then sort by enabled status
+    // Then sort by toggle status (toggled on first)
+    if (a.toggleStatus && !b.toggleStatus) return -1;
+    if (!a.toggleStatus && b.toggleStatus) return 1;
+    
+    // Then sort by enabled status (enabled first)
     if (a.isEnabled && !b.isEnabled) return -1;
     if (!a.isEnabled && b.isEnabled) return 1;
     
-    // Finally sort by willLaunching status (true comes last)
+    // Finally sort by willLaunching status (false first, true last)
     if (a.willLaunching && !b.willLaunching) return 1;
     if (!a.willLaunching && b.willLaunching) return -1;
     

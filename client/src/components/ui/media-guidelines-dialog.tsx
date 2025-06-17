@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PlatformType } from "@/types";
 import { initialSocialPlatforms } from "@/commons/constant";
 import { X } from "lucide-react";
-import { getPlatformImage } from '@/commons/utils';
+import { getPlatformImage, getSortedPlatforms } from '@/commons/utils';
 import { useAuthStore } from "@/store/useAuthStore";
 
 interface MediaGuidelinesDialogProps {
@@ -16,11 +16,19 @@ const MediaGuidelinesDialog: React.FC<MediaGuidelinesDialogProps> = ({
   open,
   onOpenChange,
 }) => {
-  const { getConnectedPlatforms } = useAuthStore();
-  const connectedPlatforms = getConnectedPlatforms();
+  const { getEnabledPlatforms } = useAuthStore();
+  const enabledPlatforms = getEnabledPlatforms();
 
   const getPlatformGuidelines = () => {
-    return connectedPlatforms.map(platform => {
+    // Filter platforms that are enabled and not in willLaunching state
+    const availablePlatforms = enabledPlatforms.filter(platform => 
+      platform.isEnabled && !platform.willLaunching
+    );
+
+    // Sort platforms using the utility function
+    const sortedPlatforms = getSortedPlatforms(availablePlatforms);
+
+    return sortedPlatforms.map(platform => {
       const platformInfo = initialSocialPlatforms.find(sp => sp.value === platform.value);
 
       return {
