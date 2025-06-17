@@ -118,7 +118,7 @@ export const useAuthStore = create<PostState>((set, get) => ({
   },
   isOnboardingComplete: () => {
     const state = get().onboardingState;
-    return state?.onboarding_complete ?? false;
+    return state?.onboarding?.onboarding_complete ?? false;
   },
   setIsMobileView: (isMobile: boolean) => set({ isMobileView: isMobile }),
   initializeMobileDetection: () => {

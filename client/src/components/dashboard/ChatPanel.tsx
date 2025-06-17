@@ -113,7 +113,7 @@ const ChatPanel = () => {
       if (!apiCompleted) {
         setIsThinking(true);
       }
-    }, 5000);
+    }, 2000);
 
     try {
       const requestBody = {

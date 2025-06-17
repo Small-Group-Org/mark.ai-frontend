@@ -17,9 +17,9 @@ const Mind = () => {
   const contentStrategyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!onboardingState?.current_json_state) return;
+    if (!onboardingState?.onboarding?.current_json_state) return;
 
-    const currentState = onboardingState.current_json_state;
+    const currentState = onboardingState.onboarding.current_json_state;
     const prevState = previousStateRef.current;
 
     if (prevState) {
@@ -86,7 +86,7 @@ const Mind = () => {
     );
   }
 
-  const mindData = onboardingState.current_json_state;
+  const mindData = onboardingState.onboarding.current_json_state;
 
   const hasBusinessGoals = Object.values(mindData.business_goals || {}).some(v => v !== null);
   const hasTargetAudience = Object.values(mindData.target_audience || {}).some(v => v !== null);

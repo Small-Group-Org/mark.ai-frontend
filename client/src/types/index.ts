@@ -124,9 +124,25 @@ export interface OnboardingState {
 }
 
 export interface OnboardingResponse {
-  current_json_state: OnboardingState;
-  onboarding_complete: boolean;
-  last_updated: string;
+  onboarding: {
+    current_json_state: OnboardingState;
+    onboarding_complete: boolean;
+    last_updated: string;
+  };
+  websiteScraping: WebsiteScraping;
+}
+
+export interface WebsiteScraping {
+  website_url: string;
+  website_logo_url: string | null;
+  scraping_status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  raw_content: string | null;
+  content_summary: string | null;
+  scraping_attempts: number;
+  last_scraped: string | null;
+  created_at: string;
+  updated_at: string;
+  error_message: string | null;
 }
 
 export interface Location {
@@ -137,3 +153,4 @@ export interface Location {
     country: string;
   };
 }
+
