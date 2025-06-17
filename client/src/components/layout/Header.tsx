@@ -105,10 +105,20 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
       // Update local state first
       updatePlatformToggleStatus(platformName, isActive);
       
-      // Call API to update user's active platforms
-      await updatePlatforms({
+      // Get current active platforms and create updated payload
+      const currentActivePlatforms = socialPlatforms.reduce((acc, platform) => {
+        acc[platform.value as PlatformType] = platform.toggleStatus;
+        return acc;
+      }, {} as Record<PlatformType, boolean>);
+      
+      // Update with the new toggle status
+      const updatedActivePlatforms = {
+        ...currentActivePlatforms,
         [platformName]: isActive
-      });
+      };
+      
+      // Call API to update user's active platforms
+      await updatePlatforms(updatedActivePlatforms);
       
       // Sync posts from DB (platform filtering handled automatically)
       await syncPostsFromDB();
@@ -120,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
     } finally {
       setLoadingPlatforms(prev => prev.filter(p => p !== platformName));
     }
-  }, [updatePlatformToggleStatus]);
+  }, [updatePlatformToggleStatus, socialPlatforms]);
 
   // Effects
   useEffect(() => {

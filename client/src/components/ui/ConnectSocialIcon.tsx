@@ -26,7 +26,7 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
   }, [loadingPlatforms])
 
   const handleClick = () => {
-    if (isLoading || loadingPlatforms.length || willLaunching) return;
+    if (isLoading || willLaunching) return;
 
     if (isConnected) {
       onToggle?.(platform, !isToggleOn);
@@ -38,7 +38,7 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
   return (
     <div
       className={`relative min-w-10 h-full flex items-center justify-center p-[2px] rounded-full border-2 ${
-        (isLoading || loadingPlatforms.length || willLaunching) ? 'opacity-80' : 'cursor-pointer'
+        (isLoading || willLaunching) ? 'opacity-80' : 'cursor-pointer'
       }`}
       style={{ borderColor: isConnected && isToggleOn && toggleColor ? toggleColor : "#444" }}
       onClick={handleClick}
@@ -48,11 +48,11 @@ const ConnectSocialIcon: React.FC<ConnectSocialIconProps> = ({
       {isConnected && !isLoading && (
         <span
           className="absolute -top-[4px] -right-[4px] w-4 md:w-5 h-4 md:h-5 flex items-center justify-center rounded-full border bg-white z-10"
-          style={{ borderColor: isToggleOn && toggleColor ? toggleColor : !isToggleOn ? '#9ca3af' : "#444" }}
+          style={{ borderColor: isToggleOn && toggleColor ? toggleColor : !isToggleOn ? '#9ca3af' : "#444", backgroundColor: isToggleOn && toggleColor ? 'green' : 'default' }}
         >
           <svg
             className="w-3 h-3"
-            style={{ color: isToggleOn && toggleColor ? toggleColor : !isToggleOn ? '#9ca3af' : "#444" }}
+            style={{ color: isToggleOn ? 'white' : '#9ca3af' }}
             fill="none"
             viewBox="0 0 20 20"
           >
