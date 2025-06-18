@@ -47,7 +47,7 @@ const ChatDemo = () => {
   ], []);
 
   const resetAnimation = useCallback(() => {
-    setVisibleMessages(INITIAL_MESSAGES);
+    setVisibleMessages(INITIAL_MESSAGES - 1);
     setIsAnimating(true);
   }, []);
 
