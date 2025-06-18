@@ -72,21 +72,47 @@ const Mind = () => {
     previousStateRef.current = currentState;
   }, [onboardingState]);
 
-  if (!onboardingState) {
-    return (
-      <div className=" bg-slate-900 overflow-auto">
-        <div className="p-4 md:p-6">
-          <div className="max-w-full mx-auto">
-            <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Use empty data structure if onboardingState is not available
+  const mindData = onboardingState?.onboarding?.current_json_state || {
+    client_info: {
+      company_name: null,
+      industry: null,
+      website: null,
+      location: null
+    },
+    business_goals: {
+      primary_objective: null,
+      secondary_objectives: null,
+      pain_points: null,
+      success_metrics: null
+    },
+    target_audience: {
+      customer_segments: null,
+      demographics: null,
+      psychographics: null
+    },
+    content_strategy: {
+      brand_voice: null,
+      key_messaging: null,
+      preferred_content_types: null,
+      posting_frequency: null
+    },
+    onboarding_progress: { missing_required_info: [] },
+    additional_information: {}
+  };
 
-  const mindData = onboardingState.onboarding.current_json_state;
+  const websiteScrapingData = onboardingState?.websiteScraping || {
+    website_url: '',
+    website_logo_url: null,
+    scraping_status: 'pending' as const,
+    raw_content: null,
+    content_summary: null,
+    scraping_attempts: 0,
+    last_scraped: null,
+    created_at: '',
+    updated_at: '',
+    error_message: null
+  };
 
   const hasBusinessGoals = Object.values(mindData.business_goals || {}).some(v => v !== null);
   const hasTargetAudience = Object.values(mindData.target_audience || {}).some(v => v !== null);
@@ -98,7 +124,7 @@ const Mind = () => {
         <div className="max-w-full mx-auto">
           <MainInfo 
             clientInfo={mindData.client_info} 
-            websiteScraping={onboardingState.websiteScraping}
+            websiteScraping={websiteScrapingData}
             newlyLearned={newlyLearned}
           />
 
