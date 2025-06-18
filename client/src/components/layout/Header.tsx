@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
-import { LogOut, Menu, X, MessageCircle, FileText } from "lucide-react";
+import { LogOut, Menu, X, MessageCircle, FileText, CircleUser } from "lucide-react";
+import UserProfileDialog from "@/components/ui/UserProfileDialog";
 import markAiLogo from "../../assets/logo.png";
 import markPng from "../../assets/mark.png";
 import { AYRSHARE } from "@/commons/constant";
@@ -35,6 +36,7 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
   // State
   const [loadingPlatforms, setLoadingPlatforms] = useState<string[]>([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
@@ -215,13 +217,23 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
             ))}
           </div>
           
-          <div className="border-t border-gray-600 pt-3">
+          <div className="border-t border-gray-600 pt-3 flex gap-2">
+            <button
+              onClick={() => {
+                setShowUserProfile(true);
+                setShowMobileMenu(false);
+              }}
+              className="flex items-center justify-center gap-2 flex-1 bg-slate-800 hover:bg-slate-700 text-white px-2 py-2 rounded-md transition-colors text-xs border border-gray-700"
+            >
+              <CircleUser size={16} />
+              <span>Profile</span>
+            </button>
             <button
               onClick={() => {
                 logout();
                 setShowMobileMenu(false);
               }}
-              className="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-slate-700 text-white px-2 py-2 rounded-md transition-colors text-xs border border-gray-700"
+              className="flex items-center justify-center gap-2 flex-1 bg-slate-800 hover:bg-slate-700 text-white px-2 py-2 rounded-md transition-colors text-xs border border-gray-700"
             >
               <LogOut size={16} />
               <span>Sign out</span>
@@ -279,6 +291,12 @@ const Header: React.FC<HeaderProps> = ({ mobileView = 'chat', setMobileView }) =
 
         {renderMobileMenu()}
       </div>
+
+      {/* User Profile Dialog */}
+      <UserProfileDialog 
+        open={showUserProfile} 
+        onOpenChange={setShowUserProfile} 
+      />
     </header>
   );
 };

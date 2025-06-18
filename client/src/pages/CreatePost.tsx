@@ -355,7 +355,7 @@ const CreatePost = () => {
             }} disabled={isSaving}>
               Cancel
             </Button>
-            <Button onClick={handleMediaConfirm} disabled={isSaving}>
+            <Button className="mb-2 md:mb-0" onClick={handleMediaConfirm} disabled={isSaving}>
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
