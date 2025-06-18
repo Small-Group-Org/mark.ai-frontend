@@ -304,14 +304,9 @@ const CreatePost = () => {
               {/* Post Summary */}
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <div>
-                  <h4 className="font-medium mb-2 text-gray-800">Post Type:</h4>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {postType?.charAt(0).toUpperCase() + postType?.slice(1)}
-                  </span>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2 text-gray-800">Publishing to:</h4>
+                  <h4 className="font-medium mb-2 text-gray-800">
+                    {pendingAction === "schedule" ? "Publishing to:" : "Target platforms:"}
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {activePlatforms.map((platform) => {
                       const platformInfo = socialPlatforms.find(p => p.value === platform);
@@ -327,6 +322,13 @@ const CreatePost = () => {
                       );
                     })}
                   </div>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-2 text-gray-800">Post Type:</h4>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {postType?.charAt(0).toUpperCase() + postType?.slice(1)}
+                  </span>
                 </div>
               </div>
               
