@@ -54,13 +54,7 @@ const ScheduleActionButton = ({
   const handleMainButtonClick = () => {
     if (isButtonDisabled) return;
     if (selectedType === 'schedule') {
-      showConfirmation({
-        title: 'Confirm Schedule Post',
-        description: 'Are you sure you want to schedule this post?',
-        confirmText: 'Schedule Post',
-        confirmButtonClass: 'bg-cyan-500 text-white hover:bg-cyan-600 border-0',
-        onConfirm: () => onSchedule?.(),
-      });
+      onSchedule?.();
     } else {
       onDraft?.();
     }

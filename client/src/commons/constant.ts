@@ -1,5 +1,5 @@
 import { MessageType } from "@/components/ChatInterface";
-import { AyrsharePlatformDetails, PostType, PlatformType, PostTypeConfig } from "@/types";
+import { AyrsharePlatformDetails, PostType, PlatformType, PostTypeConfig, SupportedPostType } from "@/types";
 import { SocialIconComponents } from "@/assets/icons/social/SocialIcons";
 
 // export const BASE_URL = "http://localhost:5001";
@@ -82,7 +82,6 @@ export const mediaGuidelines: Partial<Record<PlatformType, string>> = {
   pinterest: "Pinterest supports up to 5 carousel images (JPG, PNG, GIF, WEBP) and 1 video (MP4, MOV, M4V) per post. Max image size: 20MB. Recommended image size: 1000x1500 px. Video duration: 4s to 15 mins, max size 1GB. Aspect ratio: 2:3 or 9:16.",
 
   tiktok: "TikTok supports up to 35 images (JPG, JPEG, WebP) and 1 video (MP4, MOV, WebM) per post. Max video size: 1GB, duration: 3s to 10 mins. Recommended resolution: 1080x1920 px. Aspect ratio: 9:16 or 16:9. PNG images not supported.",
-
 };
 
 
@@ -296,3 +295,43 @@ export const postTypeConfig: PostTypeConfig = {
 };
 
 export const VIDEO_EXTENSIONS_REGEX = /\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)$/i;
+
+export const getMediaSupportInfo: Record<PlatformType, Partial<Record<SupportedPostType, string>>> = {
+  linkedin: {
+    carousel: "LinkedIn carousel supports up to 10 images (JPG, PNG, GIF) up to 5MB each. Recommended size: 1200x627 px. Aspect ratio: 1:2.4 to 2.4:1.",
+    video: "LinkedIn video supports MP4 format up to 200MB and 30 minutes duration. Recommended resolution: 1280x720 px.",
+    text: "LinkedIn text posts support rich text formatting with links, mentions, and hashtags. No media files required."
+  },
+  twitter: {
+    carousel: "Twitter supports up to 4 images (JPG, PNG, GIF, WEBP) per post. Recommended resolution: 1280x720 px. Aspect ratio: 1:3 to 3:1.",
+    video: "Twitter video supports MP4, MOV formats up to 512MB and 140 seconds duration. Recommended resolution: 1280x720 px.",
+    text: "Twitter text posts support up to 280 characters with links, mentions, hashtags, and emojis. No media files required."
+  },
+  instagram: {
+    carousel: "Instagram carousel supports up to 10 images (JPG, PNG, GIF) up to 8MB each. Recommended size: 1080x1080 px. Aspect ratio: 4:5 to 1.91:1.",
+    video: "Instagram video supports MP4 format up to 300MB. Feed videos: up to 60 minutes. Recommended size: 1080x1920 px.",
+    reel: "Instagram Reels support vertical videos (MP4) up to 300MB and 90 seconds. Recommended size: 1080x1920 px. Aspect ratio: 9:16.",
+    story: "Instagram Stories support images (JPG, PNG, GIF) up to 8MB and videos (MP4) up to 300MB and 15 seconds. Size: 1080x1920 px."
+  },
+  facebook: {
+    carousel: "Facebook carousel supports up to 10 images (JPG, PNG, GIF, TIFF) up to 10MB each. Recommended size: 1200x630 px.",
+    video: "Facebook video supports MP4 format up to 2GB and 4 hours duration. Recommended resolution: 1280x720 px or higher.",
+    reel: "Facebook Reels support vertical videos (MP4) up to 90 seconds. Recommended size: 1080x1920 px. Aspect ratio: 9:16.",
+    story: "Facebook Stories support images (JPG, PNG, GIF, TIFF) up to 10MB and videos (MP4) up to 2GB and 15 seconds. Size: 1080x1920 px."
+  },
+  pinterest: {
+    carousel: "Pinterest carousel supports up to 5 images (JPG, PNG, GIF, WEBP) up to 20MB each. Recommended size: 1000x1500 px. Aspect ratio: 2:3.",
+    video: "Pinterest video supports MP4, MOV, M4V formats up to 1GB. Duration: 4 seconds to 15 minutes. Aspect ratio: 2:3 or 9:16."
+  },
+  tiktok: {
+    carousel: "TikTok carousel supports up to 35 images (JPG, JPEG, WebP) per post. PNG images not supported. Recommended size: 1080x1920 px.",
+    video: "TikTok video supports MP4, MOV, WebM formats up to 1GB. Duration: 3 seconds to 10 minutes. Recommended size: 1080x1920 px.",
+    reel: "TikTok videos support MP4, MOV, WebM formats up to 1GB. Duration: 3 seconds to 10 minutes. Aspect ratio: 9:16 or 16:9."
+  },
+  bluesky: {},
+  gmb: {},
+  reddit: {},
+  telegram: {},
+  threads: {},
+  youtube: {}
+};

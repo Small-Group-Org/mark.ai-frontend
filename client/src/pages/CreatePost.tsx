@@ -13,7 +13,7 @@ import { CircleHelp, TriangleAlert } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import MediaGuidelinesDialog from "@/components/ui/media-guidelines-dialog";
-import { getMediaSupportInfo } from "@/commons/utils";
+import { getPlatformImage } from "@/commons/utils";
 import { Loader2 } from "lucide-react";
 import { useLocation } from 'wouter';
 
@@ -204,7 +204,8 @@ const CreatePost = () => {
     if (pendingAction) {
       setIsSaving(true);
       try {
-        await handleSave(pendingAction);
+        const status = pendingAction === "schedule" ? "schedule" : "draft";
+        await handleSave(status);
       } finally {
         setIsSaving(false);
         setPendingAction(null);
@@ -286,7 +287,7 @@ const CreatePost = () => {
               initialMediaUrlRef={initialMediaUrlRef}
             />
           </div>
-        </div>
+                </div>
       </div>
       <Dialog open={showMediaConfirm} onOpenChange={() => {
         if (!isSaving) {
@@ -296,12 +297,52 @@ const CreatePost = () => {
       }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-gray-800">Confirm Media Support</DialogTitle>
+            <DialogTitle className="text-gray-800">Confirm Post Details</DialogTitle>
             <DialogDescription>
-              <p className="mt-2 mb-4">Please confirm that the media uploaded is supported for the selected post type.</p>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-2">Supported Media for {postType?.charAt(0).toUpperCase() + postType?.slice(1)}:</h4>
-                <p className="text-sm text-gray-600">{getMediaSupportInfo(postType as SupportedPostType)}</p>
+              <p className="mt-2 mb-4">Please review your post details before publishing.</p>
+              
+              {/* Post Summary */}
+              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                <div>
+                  <h4 className="font-medium mb-2 text-gray-800">Post Type:</h4>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {postType?.charAt(0).toUpperCase() + postType?.slice(1)}
+                  </span>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium mb-2 text-gray-800">Publishing to:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {activePlatforms.map((platform) => {
+                      const platformInfo = socialPlatforms.find(p => p.value === platform);
+                      return (
+                        <div key={platform} className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <img 
+                            src={getPlatformImage(platform)} 
+                            alt={platform}
+                            className="w-3 h-3 rounded-full object-cover"
+                          />
+                          {platformInfo?.label || platform}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Helper Text */}
+              <div className="mt-4 flex items-start gap-2 text-sm text-gray-600">
+                <CircleHelp className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <p>
+                  Need help with media formats? 
+                  <button 
+                    type="button"
+                    className="text-blue-600 hover:text-blue-800 underline ml-1"
+                    onClick={() => setShowMediaGuidelines(true)}
+                  >
+                    See media guidelines
+                  </button>
+                </p>
               </div>
             </DialogDescription>
           </DialogHeader>
@@ -316,10 +357,10 @@ const CreatePost = () => {
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  {pendingAction === "schedule" ? "Scheduling..." : "Saving..."}
                 </>
               ) : (
-                'Confirm'
+                pendingAction === "schedule" ? "Schedule Post" : "Save Draft"
               )}
             </Button>
           </DialogFooter>
