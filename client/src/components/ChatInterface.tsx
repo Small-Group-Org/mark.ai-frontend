@@ -66,7 +66,7 @@ useEffect(() => {
       className={className}
       style={{ 
         width: '100%',
-        maxWidth: '592px',
+        maxWidth: '720px',
         border: '1px solid rgba(51, 65, 85, 0.5)',
         background: 'rgba(30, 41, 59, 0.4)',
         backdropFilter: 'blur(6px)',
@@ -134,6 +134,8 @@ useEffect(() => {
               padding: '8px 16px',
               color: message.sender === 'user' ? '#334155' : 'white',
               maxWidth: '80%',
+              fontSize: '14px',
+              lineHeight: '1.4',
               boxShadow: message.sender === 'user'
                 ? 'none'
                 : '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)',

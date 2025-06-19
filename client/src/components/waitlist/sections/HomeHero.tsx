@@ -109,7 +109,7 @@ const HomeHero: React.FC<HomeHeroProps> = ({ backgroundColor = 'bg-dark-bg' }) =
           </div>
           
           {/* Chat Interface */}
-          <div className="w-full max-w-lg mx-auto animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+          <div className="w-full max-w-3xl mx-auto animate-fadeIn" style={{ animationDelay: '0.6s' }}>
             <ChatInterface 
               messages={visibleMessages}
               onSendMessage={handleSendMessage}
