@@ -88,8 +88,8 @@ body.dragging-active {
   --right-panel-bg: #ECECEC;
 }
 
-/* Waitlist-specific CSS variables scoped to waitlist-page and home-page */
-.waitlist-page, .home-page {
+/* Waitlist-specific CSS variables scoped to mark-pages */
+.mark-pages {
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
   --card: 240 10% 3.9%;
@@ -178,7 +178,7 @@ body.dragging-active {
   }
 
   /* Waitlist-specific body styling */
-  .waitlist-page, .home-page {
+  .mark-pages {
     @apply bg-background text-foreground font-inter antialiased;
   }
 
@@ -778,7 +778,7 @@ select option {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientShift 4s ease infinite;
+  animation: gradientShift 8s ease infinite;
 }
 
 .gradient-text-neon {
@@ -786,7 +786,7 @@ select option {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 10px rgba(131, 56, 236, 0.5));
+  filter: drop-shadow(0 0 40px rgba(131, 56, 236, 0.5));
 }
 
 /* Enhanced background patterns */

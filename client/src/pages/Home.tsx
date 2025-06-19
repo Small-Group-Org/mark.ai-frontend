@@ -25,7 +25,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="home-page min-h-screen text-foreground overflow-x-hidden">
+    <div className="mark-pages min-h-screen text-foreground overflow-x-hidden">
       <Navbar variant="home" />
       {sections.map(({ Component }, index) => (
         <Component key={index} backgroundColor={index % 2 !== 0 ? BG_COLOR_LIGHT : BG_COLOR_DARK} />
