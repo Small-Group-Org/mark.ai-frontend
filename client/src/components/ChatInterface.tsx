@@ -139,7 +139,8 @@ useEffect(() => {
               boxShadow: message.sender === 'user'
                 ? 'none'
                 : '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -4px rgba(59, 130, 246, 0.2)',
-              animation: 'messageAppear 0.5s ease-out'
+              animation: 'messageAppear 0.5s ease-out',
+              textAlign: message.sender === 'user' ? 'right' : 'left'
             }}>
               {message.text}
             </div>
