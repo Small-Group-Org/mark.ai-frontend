@@ -27,7 +27,7 @@ const WaitlistPage = () => {
 
   return (
     <div className="waitlist-page min-h-screen text-foreground overflow-x-hidden">
-      <Navbar />
+      <Navbar variant="waitlist" />
       {sections.map(({ Component }, index) => (
         <Component key={index} backgroundColor={index % 2 !== 0 ? BG_COLOR_LIGHT : BG_COLOR_DARK} />
       ))}
