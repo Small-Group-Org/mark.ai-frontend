@@ -1,7 +1,11 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-const Roadmap = () => {
+interface RoadmapProps {
+  backgroundColor?: string;
+}
+
+const Roadmap: React.FC<RoadmapProps> = ({ backgroundColor = 'bg-dark-bg' }) => {
   const roadmapItems = [
     {
       date: "June 2025",
@@ -27,7 +31,7 @@ const Roadmap = () => {
   ];
 
   return (
-    <section id="roadmap" className="py-24 bg-dark-bg relative">
+    <section id="roadmap" className={`py-24 ${backgroundColor} relative`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_right,rgba(14,165,233,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">

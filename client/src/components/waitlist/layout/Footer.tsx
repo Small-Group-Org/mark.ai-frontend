@@ -1,9 +1,13 @@
 import React from 'react';
 import markAiLogo from '../../../../public/images/logos/mark-logo-light-grad.png';
 
-const Footer = () => {
+interface FooterProps {
+  backgroundColor?: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ backgroundColor = '' }) => {
   return (
-    <footer className="py-12 bg-dark-bg border-t border-gray-800">
+    <footer className={`py-12 ${backgroundColor} border-t border-gray-800`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">

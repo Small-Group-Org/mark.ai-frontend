@@ -5,7 +5,11 @@ import { Check } from 'lucide-react';
 import WaitlistForm from '@/components/waitlist/WaitlistForm';
 import { useWaitlist } from '@/hooks/use-waitlist';
 
-const PilotApplication = () => {
+interface PilotApplicationProps {
+  backgroundColor?: string;
+}
+
+const PilotApplication: React.FC<PilotApplicationProps> = ({ backgroundColor = 'bg-light-bg' }) => {
   const {
     email,
     setEmail,
@@ -18,7 +22,7 @@ const PilotApplication = () => {
   } = useWaitlist();
 
   return (
-    <section id="pilot-application" className="py-24 bg-light-bg relative">
+    <section id="pilot-application" className={`py-24 ${backgroundColor} relative`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.15),transparent_40%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">

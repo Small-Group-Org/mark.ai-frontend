@@ -5,7 +5,11 @@ const TYPING_DELAY = 2000; // Base delay in ms
 const RANDOM_DELAY = 2000; // Additional random delay in ms
 const INITIAL_MESSAGES = 2;
 
-const ChatDemo = () => {
+interface ChatDemoProps {
+  backgroundColor?: string;
+}
+
+const ChatDemo: React.FC<ChatDemoProps> = ({ backgroundColor = '' }) => {
   const [visibleMessages, setVisibleMessages] = useState<number>(INITIAL_MESSAGES);
   const [isAnimating, setIsAnimating] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
@@ -108,7 +112,7 @@ const ChatDemo = () => {
   ), []);
 
   return (
-    <section ref={sectionRef} className="py-24 bg-light-bg relative">
+    <section ref={sectionRef} className={`py-24 ${backgroundColor} relative`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,rgba(14,165,233,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">
