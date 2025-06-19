@@ -50,15 +50,15 @@ const platformHoverColors = {
 
 const Footer: React.FC<FooterProps> = ({ backgroundColor = '' }) => {
   return (
-    <footer className={`py-12 ${backgroundColor} border-t border-gray-800`}>
+    <footer className={`py-6 md:py-12 ${backgroundColor} border-t border-gray-800`}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-6 md:mb-0">
-            <img src={markAiLogo} alt="Mark.AI" className="h-12" />
+          <div className="mb-6 md:mb-0 text-center md:text-left">
+            <img src={markAiLogo} alt="Mark.AI" className="h-12 mx-auto md:mx-0" />
             <p className="mt-2 text-gray-400 text-sm mb-1">
               Built by The Honeymooners Club
             </p>
-            <div className="text-gray-400 text-sm">
+            <div className="text-gray-400 text-sm mb-6 md:mb-0">
               <div className="flex items-center justify-center md:justify-start">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -96,8 +96,8 @@ const Footer: React.FC<FooterProps> = ({ backgroundColor = '' }) => {
           </div>
         </div>
         
-        <div className="mt-8 pt-6 border-t border-gray-800 text-center text-gray-400 text-sm">
-          <p className="mb-2">Mark.ai – Built by The Honeymooners Club</p>
+        <div className="mt-0 md:mt-8  pt-0 md:pt-6 border-t border-gray-800 text-center text-gray-400 text-sm">
+          <p className="hidden md:block mb-2">Mark.ai – Built by The Honeymooners Club</p>
           <p>© {new Date().getFullYear()} Mark.AI. All rights reserved.</p>
         </div>
       </div>

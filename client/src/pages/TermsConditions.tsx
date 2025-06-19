@@ -10,11 +10,11 @@ const TermsConditions: React.FC = () => {
   });
 
       return (
-      <div className="mark-pages min-h-screen text-white mt-4" style={{ backgroundColor: 'var(--dark-bg)' }}>
+      <div className="mark-pages min-h-screen text-white mt-6" style={{ backgroundColor: 'var(--dark-bg)' }}>
         <Navbar variant="home" />
         
-        <div className="container mx-auto px-4 py-16 max-w-4xl">
-          <h1 className="text-4xl font-bold mb-8 text-center text-[rgb(252 250 255)]">
+        <div className="container mx-auto px-4 py-16 max-w-5xl">
+          <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-[rgb(252 250 255)]">
             Mark.ai Terms & Conditions
           </h1>
         
