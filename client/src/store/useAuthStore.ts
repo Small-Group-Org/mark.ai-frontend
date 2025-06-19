@@ -60,6 +60,19 @@ export const useAuthStore = create<PostState>((set, get) => ({
 
   setIsAuth: (isAuth: boolean) => set({isAuth}),
   setUserDetails: (userDetails: User) => {
+    const formatName = (name: string): string => {
+      return name
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+
+    const formattedUserDetails = {
+      ...userDetails,
+      name: userDetails.name ? formatName(userDetails.name) : userDetails.name
+    };
+
     // Update social platforms based on activePlatforms from userDetails
     if (userDetails.activePlatforms) {
       const updatedSocialPlatforms = get().socialPlatforms.map((platform) => ({
@@ -68,11 +81,11 @@ export const useAuthStore = create<PostState>((set, get) => ({
       }));
       
       set({ 
-        userDetails, 
+        userDetails: formattedUserDetails, 
         socialPlatforms: updatedSocialPlatforms 
       });
     } else {
-      set({ userDetails });
+      set({ userDetails: formattedUserDetails });
     }
   },
   setIsOpen: (isOpen: boolean) => set({isOpen}),
