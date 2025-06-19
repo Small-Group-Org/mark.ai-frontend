@@ -1,7 +1,11 @@
 import React from 'react';
 import { MessageSquare, Cog, RefreshCw } from 'lucide-react';
 
-const HowMarkWorks = () => {
+interface HowMarkWorksProps {
+  backgroundColor?: string;
+}
+
+const HowMarkWorks: React.FC<HowMarkWorksProps> = ({ backgroundColor = 'bg-light-bg' }) => {
   const steps = [
     {
       icon: MessageSquare,
@@ -24,7 +28,7 @@ const HowMarkWorks = () => {
   ];
 
   return (
-    <section className="py-24 bg-light-bg relative">
+    <section className={`py-24 ${backgroundColor} relative`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.07),transparent_50%)]"></div>
       
       <div className="container mx-auto px-4 relative z-10">

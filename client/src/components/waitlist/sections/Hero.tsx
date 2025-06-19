@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import WaitlistForm from '@/components/waitlist/WaitlistForm';
 import { useWaitlist } from '@/hooks/use-waitlist';
 
-const Hero = () => {
+interface HeroProps {
+  backgroundColor?: string;
+}
+
+const Hero: React.FC<HeroProps> = ({ backgroundColor = 'bg-dark-bg' }) => {
   const [isVisible, setIsVisible] = useState(false);
   
   const {
@@ -26,7 +30,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen bg-dark-bg overflow-hidden" style={{ paddingTop: '80px' }}>
+    <section className={`relative min-h-screen ${backgroundColor} overflow-hidden`} style={{ paddingTop: '80px' }}>
       {/* Enhanced animated background */}
       <div className="absolute inset-0 bg-mesh-gradient opacity-30"></div>
       <div className="absolute inset-0 bg-grid-enhanced opacity-50"></div>
@@ -47,9 +51,6 @@ const Hero = () => {
               <h2 className="text-lg md:text-xl lg:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
                 Meet <span className="gradient-text-neon font-semibold">Mark.ai</span>, your personal AI employee that never sleeps—handling content, scheduling, and follow‑ups with human‑like understanding.
               </h2>
-              
-              {/* Shimmer effect overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
             </div>
           </div>
           

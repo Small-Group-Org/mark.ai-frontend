@@ -28,7 +28,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   placeholderText = 'Type your message...'
 }) => {
   const [inputValue, setInputValue] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
 useEffect(() => {
   const scrollTimeout = setTimeout(() => {
@@ -70,18 +80,18 @@ useEffect(() => {
         borderBottom: '1px solid rgba(51, 65, 85, 0.5)',
         padding: '10px'
       }}>
-        {/* Features in a responsive layout */}
+        {/* Features in a grid layout */}
         <div className="features-container" style={{ 
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
           gap: '8px'
         }}>
           {features.map((feature, index) => (
             <div key={index} className="feature-item" style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '0.5rem'
+              gap: '0.5rem',
+              justifyContent: 'flex-start'
             }}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8.66667 1.33337L2 9.33337H8L7.33333 14.6667L14 6.66671L8 6.66671L8.66667 1.33337Z" 

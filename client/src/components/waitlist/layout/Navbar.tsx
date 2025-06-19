@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'wouter';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
+import { useAuthStore } from '@/store/useAuthStore';
 import markAiLogo from '../../../../public/images/logos/mark-logo-light-grad.png';
 
-const Navbar = () => {
+interface NavbarProps {
+  variant?: 'home' | 'waitlist';
+}
+
+const Navbar: React.FC<NavbarProps> = ({ variant = 'waitlist' }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { setIsOpen: onOpen, setView, logout, isAuth } = useAuthStore();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +38,65 @@ const Navbar = () => {
         top: sectionTop - offset,
         behavior: 'smooth'
       });
+    }
+  };
+
+  const renderButtons = () => {
+    if (variant === 'home') {
+      // Show authentication buttons for Home page
+      if (isAuth) {
+        return (
+          <div className="flex items-center space-x-3">
+            <Button 
+              onClick={() => setLocation('/create')}
+              className="bg-slate-800 hover:bg-slate-700 text-white rounded-full px-6 text-sm"
+            >
+              Create Post
+            </Button>
+            <Button 
+              onClick={async () => {
+                await logout();
+              }}
+              className="bg-gradient-primary hover:bg-gradient-primary-hover text-white rounded-full px-6 text-sm"
+            >
+              Sign out
+            </Button>
+          </div>
+        );
+      } else {
+        return (
+          <div className="flex items-center space-x-3">
+            <Button 
+              onClick={() => {
+                setView('signin');
+                onOpen(true);
+              }}
+              className="bg-slate-800 hover:bg-slate-700 text-white rounded-full px-6 text-sm"
+            >
+              Sign in
+            </Button>
+            <Button 
+              onClick={() => {
+                setView('signup');
+                onOpen(true);
+              }}
+              className="bg-gradient-primary hover:bg-gradient-primary-hover text-white rounded-full px-6 text-sm"
+            >
+              Sign up
+            </Button>
+          </div>
+        );
+      }
+    } else {
+      // Show Join Waitlist button for Waitlist page
+      return (
+        <Button 
+          onClick={scrollToApplication}
+          className="bg-gradient-primary hover:bg-gradient-primary-hover text-white rounded-full px-6"
+        >
+          Join Waitlist
+        </Button>
+      );
     }
   };
 
@@ -65,12 +131,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <Button 
-            onClick={scrollToApplication}
-            className="bg-gradient-primary hover:bg-gradient-primary-hover text-white rounded-full px-6"
-          >
-            Join Waitlist
-          </Button>
+          {renderButtons()}
         </div>
       </div>
     </nav>

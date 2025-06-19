@@ -19,6 +19,8 @@ import { useAuth } from "@/context/AuthProvider";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEffect } from "react";
 import Waitlist from "@/pages/Waitlist";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsConditions from "@/pages/TermsConditions";
 
 function Router() {
   const { isVerifying } = useAuth();
@@ -36,6 +38,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/waitlist" component={Waitlist} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms-conditions" component={TermsConditions} />
       <Layout>
         <ProtectedRoute path="/create" component={CreatePost} />
         <ProtectedRoute path="/dashboard" component={Dashboard} />
