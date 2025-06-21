@@ -7,7 +7,6 @@ import HowMarkWorks from '@/components/waitlist/sections/HowMarkWorks';
 import Roadmap from '@/components/waitlist/sections/Roadmap';
 import Footer from '@/components/waitlist/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthModal } from '@/components/auth/AuthModal';
 
 // Background color constants
 const BG_COLOR_DARK = 'bg-dark-bg';
@@ -31,7 +30,6 @@ export default function Home() {
         <Component key={index} backgroundColor={index % 2 !== 0 ? BG_COLOR_LIGHT : BG_COLOR_DARK} />
       ))}
       <Toaster />
-      <AuthModal />
     </div>
   );
 }

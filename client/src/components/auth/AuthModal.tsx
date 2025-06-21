@@ -284,11 +284,11 @@ export function AuthModal() {
                     className="text-xs text-gray-300 font-medium leading-none"
                   >
                     I agree to the{" "}
-                    <a href="#" className={cn(accentText, "hover:underline")}>
-                      Terms of Service
+                    <a href="/terms-conditions" className={cn(accentText, "hover:underline")}>
+                      Terms & Conditions
                     </a>{" "}
                     and{" "}
-                    <a href="#" className={cn(accentText, "hover:underline")}>
+                    <a href="/privacy-policy" className={cn(accentText, "hover:underline")}>
                       Privacy Policy
                     </a>
                   </Label>
