@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,10 +58,13 @@ export function AuthModal() {
 
         {/* Header */}
         <div className="flex items-center justify-center p-6 pb-2">
-          <h1 className="text-2xl font-bold">
+          <DialogTitle className="text-2xl font-bold">
             <span className="text-white">Interview</span>
             <span className="text-blue-400">Mark</span>
-          </h1>
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Sign in or create an account to access Mark.ai features
+          </DialogDescription>
         </div>
 
         {/* Tabs for Sign In / Sign Up */}
